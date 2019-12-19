@@ -13,16 +13,23 @@ import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
+import com.bykea.pk.partner.models.response.TripHistoryResponse
+import com.bykea.pk.partner.repositories.UserDataHandler
+import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
+import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_ID
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_problem.*
+import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 
 
@@ -40,6 +47,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
     private val RC_SIGN_IN = 9001
 
     var selectedReason: String? = null
+    var tripHistoryId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,17 +60,50 @@ class ComplaintSubmissionActivity : BaseActivity() {
         toolBar.setNavigationOnClickListener { onBackPressed() }
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
         if (intent?.extras != null) {
             if (intent.extras.containsKey(INTENT_TRIP_HISTORY_DATA))
                 tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
+            if (intent.extras.containsKey(INTENT_TRIP_HISTORY_ID)) {
+                tripHistoryId = intent.getStringExtra(INTENT_TRIP_HISTORY_ID)
+                updateTripDetailsById(tripHistoryId!!)
+                return
+            }
         }
+        updateUi()
+    }
 
+
+    /**
+     * this method will update the trip details by id
+     *
+     * @param tripHistoryId (optional) if any specific trip details needed
+     */
+    private fun updateTripDetailsById(tripHistoryId: String) {
+        Dialogs.INSTANCE.showLoader(this@ComplaintSubmissionActivity)
+        UserRepository().requestTripHistory(this@ComplaintSubmissionActivity, object : UserDataHandler() {
+            override fun onGetTripHistory(tripHistoryResponse: TripHistoryResponse?) {
+                super.onGetTripHistory(tripHistoryResponse)
+                Dialogs.INSTANCE.dismissDialog()
+                if (tripHistoryResponse?.isSuccess!! && CollectionUtils.isNotEmpty(tripHistoryResponse?.data)) {
+                    tripHistoryDate = tripHistoryResponse.data[Constants.DIGIT_ZERO]
+                    updateUi()
+                } else {
+                    Utils.appToast(tripHistoryResponse?.message)
+                }
+            }
+        }, Constants.DIGIT_ONE.toString(), tripHistoryId)
+    }
+
+    private fun updateUi() {
         if (tripHistoryDate != null && tripHistoryDate?.tripNo != null) {
             //CREATE TICKET FOR RIDE REASONS
             toolbar_title.text = tripHistoryDate?.tripNo
         } else {
             //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
-            toolbar_title.text = SpannableStringBuilder("")
+            toolbar_title.text = SpannableStringBuilder(StringUtils.EMPTY)
                     .append(StringUtils.SPACE)
                     .append(FontUtils.getStyledTitle(this@ComplaintSubmissionActivity, getString(R.string.title_report_ur), "jameel_noori_nastaleeq.ttf"))
                     .append(FontUtils.getStyledTitle(this@ComplaintSubmissionActivity, StringUtils.SPACE, "roboto_medium.ttf"))
@@ -70,8 +111,6 @@ class ComplaintSubmissionActivity : BaseActivity() {
                     .append(StringUtils.SPACE)
         }
 
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         fragmentManager = supportFragmentManager
         changeFragment(ComplainReasonFragment())

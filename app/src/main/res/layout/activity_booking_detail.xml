@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.bykea.pk.partner.utils.Utils" />
+
+        <import type="android.view.View" />
+
+        <import type="com.bykea.pk.partner.ui.helpers.AppPreferences" />
+
+        <variable
+            name="viewModel"
+            type="com.bykea.pk.partner.ui.booking.BookingDetailViewModel" />
+
+        <variable
+            name="invoiceAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/toolbar" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/tripDetailMainLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/secondaryColorLight"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/padding.normal"
+                        android:paddingTop="@dimen/padding.tiny"
+                        android:paddingBottom="@dimen/padding.tiny">
+
+
+                        <include layout="@layout/inline_pickup_dropoff_signs" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+                            <com.bykea.pk.partner.widgets.FontTextView
+                                android:id="@+id/startAddressTv"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/height.large"
+                                android:layout_gravity="center"
+                                android:drawablePadding="@dimen/padding.normal"
+                                android:gravity="left|center_vertical"
+                                android:maxLines="1"
+                                android:padding="@dimen/padding.tiny"
+                                android:text="@{viewModel.bookingDetailData.pickup.address}"
+                                android:textColor="@color/secondaryColorDark"
+                                android:textSize="@dimen/textsize.small.medium"
+                                app:fontName="roboto_light.ttf" />
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/secondaryColorDark" />
+
+                            <com.bykea.pk.partner.widgets.FontTextView
+                                android:id="@+id/endAddressTv"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/height.large"
+                                android:layout_below="@+id/dotThreeIv"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:drawablePadding="@dimen/padding.normal"
+                                android:gravity="left|center_vertical"
+                                android:maxLines="1"
+                                android:padding="@dimen/padding.tiny"
+                                android:text="@{viewModel.bookingDetailData.dropoff.address}"
+                                android:textColor="@color/secondaryColorDark"
+                                android:textSize="@dimen/textsize.small.medium"
+                                app:fontName="roboto_light.ttf" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height.large"
+                        android:layout_marginLeft="@dimen/margin.small"
+                        android:layout_marginRight="@dimen/margin.small"
+                        android:gravity="center_vertical">
+
+                        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                            android:id="@+id/nameTv"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/windowBackground"
+                            android:gravity="left|center_vertical"
+                            android:maxLength="22"
+                            android:maxLines="1"
+                            android:text="@{viewModel.bookingDetailData.customer.name}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="roboto_light.ttf"
+                            tools:text="Muhammad Salman Qureshi" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/windowBackground"
+                            android:gravity="right|center_vertical"
+                            android:paddingRight="@dimen/_4sdp"
+                            android:text="@string/customer_name_urdu"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height.large"
+                        android:layout_marginLeft="@dimen/margin.small"
+                        android:layout_marginRight="@dimen/margin.small"
+                        android:gravity="center_vertical">
+
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/timeTv"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/windowBackground"
+                            android:gravity="left|center_vertical"
+                            android:text="@{viewModel.bookingDetailData.formattedDate}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="roboto_light.ttf" />
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/windowBackground"
+                            android:gravity="right|center_vertical"
+                            android:paddingRight="@dimen/_4sdp"
+                            android:text="@string/booking_time_urdu"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height.large"
+                        android:layout_marginLeft="@dimen/margin.small"
+                        android:layout_marginRight="@dimen/margin.small"
+                        android:gravity="center_vertical">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/serviceTypeTv"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/windowBackground"
+                            android:gravity="left|center_vertical"
+                            android:text="@{viewModel.bookingDetailData.service.name}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="roboto_light.ttf" />
+
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/windowBackground"
+                            android:gravity="right|center_vertical"
+                            android:paddingRight="@dimen/_4sdp"
+                            android:text="@string/service_urdu"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height.large"
+                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}"
+                        android:layout_marginLeft="@dimen/margin.small"
+                        android:layout_marginRight="@dimen/margin.small"
+                        android:gravity="center_vertical">
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/cancelTypeTv"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/windowBackground"
+                            android:gravity="left|center_vertical"
+                            android:text="@{viewModel.bookingDetailData.cancelBy}"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="roboto_light.ttf" />
+
+
+                        <com.bykea.pk.partner.widgets.FontTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@color/windowBackground"
+                            android:gravity="right|center_vertical"
+                            android:paddingRight="@dimen/_4sdp"
+                            android:text="@string/cancel_karne_wala"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="@dimen/textsize.normal"
+                            app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{invoiceAdapter}"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/btnProblem"
+                    android:layout_width="@dimen/_230sdp"
+                    android:layout_height="@dimen/_55sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:background="@drawable/button_gray_round"
+                    android:gravity="center"
+                    android:onClick="onComplainButtonClicked"
+                    android:text="@string/masla_darj_karain"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_20sdp"
+                    android:visibility="@{viewModel.showComplainButton ? View.VISIBLE : View.GONE}"
+                    app:fontName="jameel_noori_nastaleeq.ttf"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</layout>

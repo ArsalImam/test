@@ -104,7 +104,7 @@ public class ContactUsFragment extends Fragment {
             }
             break;
             case R.id.reportComplain: {
-                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null);
+                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null, null);
             }
             break;
             case R.id.bankAccountNumber:

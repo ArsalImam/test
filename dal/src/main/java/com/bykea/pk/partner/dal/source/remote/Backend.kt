@@ -3,19 +3,14 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
-import com.bykea.pk.partner.dal.source.remote.response.*
-import com.bykea.pk.partner.dal.source.remote.request.AcceptJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
+import com.bykea.pk.partner.dal.source.remote.response.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
 
 
 /**
@@ -266,6 +261,9 @@ interface Backend {
     fun updateBookingDetails(
             @Path("trip_id") jobRequestId: String,
             @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
+
+    @GET
+    fun getBookingDetailsById(@Url bookingUrl: String): Call<BookingDetailResponse>
 
     companion object {
 
