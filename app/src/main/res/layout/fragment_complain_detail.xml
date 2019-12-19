@@ -22,6 +22,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontEditText
@@ -42,6 +44,152 @@
                     android:textColorHint="@color/color_gray373737"
                     android:textSize="@dimen/textsize.body1"
                     android:visibility="visible" />
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
+
+                <com.bykea.pk.partner.widgets.FontEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:background="@drawable/square_outline_bg"
+                    android:gravity="left"
+                    android:hint="@string/pickup_address"
+                    android:inputType="textMultiLine"
+                    android:maxLength="120"
+                    android:maxLines="3"
+                    android:overScrollMode="always"
+                    android:padding="@dimen/_9sdp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/color_gray373737"
+                    android:textSize="@dimen/textsize.body1"
+                    android:visibility="visible" />
+
 
             </LinearLayout>
         </ScrollView>
