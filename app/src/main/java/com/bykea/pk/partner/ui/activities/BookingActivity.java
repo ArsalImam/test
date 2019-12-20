@@ -1863,9 +1863,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         if (Connectivity.isConnected(mCurrentActivity)
                 && (Utils.isDirectionApiCallRequired()) && mGoogleMap != null) {
-            AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
             // DRAW ROUTES FOR THE FIRST TIME AND AFTER THAT DRAW IF JOB ACTIVITY IS IN FOREGROUND
             if (AppPreferences.isJobActivityOnForeground() || mapPolylines == null) {
+                AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
                 if (isDirectionApiCallRequired(start)) {
                     Log.v(TAG, "Direction API Called");
                     lastApiCallLatLng = start;

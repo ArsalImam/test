@@ -290,11 +290,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private synchronized void drawRoute(LatLng start, LatLng end, int routeType) {
         if (Connectivity.isConnected(mCurrentActivity)
                 && (Utils.isDirectionApiCallRequiredForMultiDelivery()) && mGoogleMap != null) {
-            AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
             if (callDriverData != null && callDriverData.getBatchStatus() != null &&
                     callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) &&
                     (AppPreferences.isMultiDeliveryJobActivityOnForeground() || mapPolylines == null)) {
                 // DRAW ROUTES FOR THE FIRST TIME AND AFTER THAT DRAW IF MULTIDELIVERY JOB ACTIVITY IS IN FOREGROUND
+                AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
                 if (isDirectionApiCallRequired(start)) {
                     Log.v(TAG, "Direction API Called");
                     lastApiCallLatLng = start;
