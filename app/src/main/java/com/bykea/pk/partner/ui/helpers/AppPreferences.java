@@ -562,6 +562,45 @@ public class AppPreferences {
     }
 
     /**
+     * Set Mutlidelivery activity is visible or not
+     * Return true if visible else false
+     */
+    public static boolean isMultiDeliveryJobActivityOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.MULTIDELIVERY_JOB_ACTIVITY_FOREGROUND, false);
+    }
+
+    /**
+     * Set Mutlidelivery activity is visible or not
+     * @param value : True or False
+     */
+    public static void setMultiDeliveryJobActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.MULTIDELIVERY_JOB_ACTIVITY_FOREGROUND, value)
+                .apply();
+    }
+
+
+    /**
+     * Check If Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     * @return true if required else false
+     */
+    public static boolean isMultiDeliveryDistanceMatrixCalledRequired() {
+        return mSharedPreferences.getBoolean(Keys.MULTIDELIVERY_DISTANCE_MATRIX_CALLED_REQUIRED, false);
+    }
+
+    /**
+     * Set Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     * @param value : True or False
+     */
+    public static void setMultiDeliveryDistanceMatrixCalledRequired(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.MULTIDELIVERY_DISTANCE_MATRIX_CALLED_REQUIRED, value)
+                .apply();
+    }
+
+    /**
      * Check If Drop Of Update Is Required Or Not
      * @return  True/False
      */

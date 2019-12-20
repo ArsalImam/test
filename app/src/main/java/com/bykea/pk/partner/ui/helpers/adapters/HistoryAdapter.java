@@ -1,15 +1,17 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -50,9 +52,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
         } else {
             holder.tripNoTv.setText(data.getTripNo());
         }
-        if(data.isDd()){
+        if (data.isDd() || data.is_verified()) {
             holder.ivDriverDestination.setVisibility(View.VISIBLE);
-        }else{
+            Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_DD_ICON_URL);
+        } else if (data.getTrip_status_code() != null
+                && data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_RIDE))) {
+            holder.ivDriverDestination.setVisibility(View.VISIBLE);
+            Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_OFFLINE_RIDE_ICON_URL);
+        }else if (data.getTrip_status_code() != null
+                && data.getTrip_status_code().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.OFFLINE_DELIVERY))) {
+            holder.ivDriverDestination.setVisibility(View.VISIBLE);
+            Utils.loadImgPicasso(mContext, holder.ivDriverDestination, Constants.S3_OFFLINE_DELIVERY_ICON_URL);
+        } else {
             holder.ivDriverDestination.setVisibility(View.GONE);
         }
         if (data.getStatus().equalsIgnoreCase("completed")) {
@@ -73,7 +84,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ItemHold
             holder.status.setTextColor(ContextCompat.getColor(mContext, R.color.color_error));
             holder.totalAmountTv.setVisibility(View.VISIBLE);
 //            if (StringUtils.isNotBlank(data.getCancel_feeNoCheck())) {
-                holder.totalAmountTv.setText("Rs. " + data.getCancel_fee());
+            holder.totalAmountTv.setText("Rs. " + data.getCancel_fee());
 //            } else {
 //                holder.totalAmountTv.setText("N/A");
 //            }

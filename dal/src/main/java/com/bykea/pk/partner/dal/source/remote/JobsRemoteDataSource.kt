@@ -299,4 +299,16 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, subCode: Int?, message: String?) = callbackBykeaCash.onFail(code, subCode, message)
         })
     }
+    /**
+     * Get Booking Details By Id
+     *
+     * @param bookingUrl for kronos
+     * @param callback to return data after API call succeed
+     */
+    fun getBookingDetailsById(bookingUrl: String, callback: JobsDataSource.GetBookingDetailCallback) {
+        Backend.talos.getBookingDetailsById(bookingUrl).enqueue(object : Callback<BookingDetailResponse> {
+            override fun onSuccess(responseBykeaCash: BookingDetailResponse) = callback.onSuccess(responseBykeaCash)
+            override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
+        })
+    }
 }

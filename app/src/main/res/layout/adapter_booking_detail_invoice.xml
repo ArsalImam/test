@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.bykea.pk.partner.dal.source.remote.data.Invoice" />
+        <import type="com.bykea.pk.partner.utils.Constants" />
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/divider"
+            android:visibility="@{item.separator.equalsIgnoreCase(`above`)? View.VISIBLE : View.GONE}"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin.small"
+            android:layout_marginRight="@dimen/margin.small"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingTop="@dimen/_4sdp">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:background="@color/windowBackground"
+                android:gravity="left|center_vertical"
+                android:text="@{String.valueOf(Math.round(item.value))}"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
+                android:visibility="@{item.viewType == Constants.BOOKING_DETAIL_VIEW_TYPE_RATING ? View.GONE : View.VISIBLE}"
+                app:fontName="roboto_light.ttf"
+                tools:text="1.5"
+                tools:visibility="gone" />
+
+            <RatingBar
+                android:id="@+id/driverRb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusableInTouchMode="true"
+                android:isIndicator="true"
+                android:max="5"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:numStars="5"
+                android:progressDrawable="@drawable/custom_rating_bar"
+                android:rating="@{item.value}"
+                android:stepSize="0.1"
+                android:visibility="@{item.viewType != Constants.BOOKING_DETAIL_VIEW_TYPE_RATING ? View.GONE : View.VISIBLE}"
+                tools:visibility="gone" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/windowBackground"
+                android:gravity="right|center_vertical"
+                android:paddingRight="@dimen/_4sdp"
+                android:text="@{item.titleUr}"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
+                app:fontName="jameel_noori_nastaleeq.ttf"
+                tools:text="@string/waiting_charges_urdu" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/divider"
+            android:visibility="@{item.separator.equalsIgnoreCase(`below`) ? View.VISIBLE : View.GONE}"
+            tools:visibility="visible" />
+    </LinearLayout>
+</layout>

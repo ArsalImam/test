@@ -10,8 +10,10 @@
     <dimen name="textsize.small">@dimen/_10sdp</dimen>
     <dimen name="textsize.small.medium">@dimen/_12sdp</dimen>
     <dimen name="textsize.normal">@dimen/_14sdp</dimen>
+    <!--<dimen name="textsize_normal">@dimen/_14sdp</dimen>-->
     <dimen name="textsize.medium">@dimen/_16sdp</dimen>
     <dimen name="textsize.large">@dimen/_20sdp</dimen>
+    <!--<dimen name="textsize_large">@dimen/_20sdp</dimen>-->
     <dimen name="textsize.xlarge">@dimen/_24sdp</dimen>
     <dimen name="textsize.title">@dimen/_18sdp</dimen>
     <dimen name="textsize.body1">@dimen/_14sdp</dimen>

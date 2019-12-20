@@ -10,6 +10,8 @@ public class TripHistoryData implements Serializable {
 
     @SerializedName("_id")
     private String id;
+    @SerializedName("trip_status_code")
+    private String trip_status_code;
     @SerializedName("start_address")
     private String startAddress;
     @SerializedName("end_address")
@@ -164,6 +166,14 @@ public class TripHistoryData implements Serializable {
 
     public void setDd(boolean dd) {
         this.dd = dd;
+    }
+
+    public String getTrip_status_code() {
+        return trip_status_code;
+    }
+
+    public void setTrip_status_code(String trip_status_code) {
+        this.trip_status_code = trip_status_code;
     }
 
     public static class Driver implements Serializable {

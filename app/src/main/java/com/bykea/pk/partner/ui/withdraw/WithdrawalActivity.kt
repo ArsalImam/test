@@ -35,7 +35,7 @@ import kotlin.math.roundToLong
  *
  * @author Arsal Imam
  */
-class WithdrawalActivity : BaseActivity() {
+class   WithdrawalActivity : BaseActivity() {
 
     /**
      * Binding object between activity and xml file, it contains all objects

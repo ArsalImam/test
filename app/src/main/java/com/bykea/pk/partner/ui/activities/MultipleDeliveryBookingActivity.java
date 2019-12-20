@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
@@ -39,6 +41,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
 import com.bykea.pk.partner.utils.TripStatus;
@@ -68,11 +71,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY;
+
 /***
  * MultiDelivery Booking Activity.
  */
 public class MultipleDeliveryBookingActivity extends BaseActivity implements RoutingListener {
-
+    private final String TAG = MultipleDeliveryBookingActivity.class.getSimpleName();
     private static final float ZOOM_LEVEL = 14.0f;
     private MultipleDeliveryBookingActivity mCurrentActivity;
     private UserRepository dataRepository;
@@ -128,6 +133,15 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     @BindView(R.id.serviceImageView)
     AppCompatImageView serviceImageView;
 
+    private GeocodeStrategyManager geocodeStrategyManager;
+
+    private PlacesDataHandler placesDataHandler = new PlacesDataHandler() {
+        @Override
+        public void onPlacesResponse(String response) {
+            super.onPlacesResponse(response);
+            repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler, response);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,11 +150,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initialize();
         mapView.onCreate(savedInstanceState);
+        AppPreferences.setLastDirectionsApiCallTime(0);
         setUpMapView();
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
         Notifications.removeAllNotifications(mCurrentActivity);
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        geocodeStrategyManager = new GeocodeStrategyManager(this, placesDataHandler, Constants.NEAR_LBL);
     }
 
     /***
@@ -173,6 +189,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
+        AppPreferences.setMultiDeliveryJobActivityOnForeground(true);
         Utils.loadImgURL(serviceImageView, callDriverData.getImageURL());
     }
 
@@ -272,24 +289,30 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private synchronized void drawRoute(LatLng start, LatLng end, int routeType) {
         if (Connectivity.isConnected(mCurrentActivity)
-                && (Utils.isDirectionApiCallRequired()) && mGoogleMap != null) {
-            AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
-            if (isDirectionApiCallRequired(start)) {
-                lastApiCallLatLng = start;
-                if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-                    mRouteLatLng.clear();
+                && (Utils.isDirectionApiCallRequiredForMultiDelivery()) && mGoogleMap != null) {
+            if (callDriverData != null && callDriverData.getBatchStatus() != null &&
+                    callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) &&
+                    (AppPreferences.isMultiDeliveryJobActivityOnForeground() || mapPolylines == null)) {
+                // DRAW ROUTES FOR THE FIRST TIME AND AFTER THAT DRAW IF MULTIDELIVERY JOB ACTIVITY IS IN FOREGROUND
+                AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
+                if (isDirectionApiCallRequired(start)) {
+                    Log.v(TAG, "Direction API Called");
+                    lastApiCallLatLng = start;
+                    if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
+                        mRouteLatLng.clear();
+                    }
+                    Routing.Builder builder = new Routing.Builder();
+                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
+                        builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
+                    }
+                    builder.context(mCurrentActivity)
+                            .waypoints(start, end)
+                            .travelMode(AbstractRouting.TravelMode.DRIVING)
+                            .withListener(this)
+                            .routeType(routeType);
+                    Routing routing = builder.build();
+                    routing.execute();
                 }
-                Routing.Builder builder = new Routing.Builder();
-                if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
-                    builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
-                }
-                builder.context(mCurrentActivity)
-                        .waypoints(start, end)
-                        .travelMode(AbstractRouting.TravelMode.DRIVING)
-                        .withListener(this)
-                        .routeType(routeType);
-                Routing routing = builder.build();
-                routing.execute();
             }
         }
     }
@@ -306,7 +329,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         if (lastApiCallLatLng != null && (lastApiCallLatLng.equals(currentApiCallLatLng)
                 || Utils.calculateDistance(currentApiCallLatLng.latitude,
                 currentApiCallLatLng.longitude, lastApiCallLatLng.latitude,
-                lastApiCallLatLng.longitude) < 15)) {
+                lastApiCallLatLng.longitude) < DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY)) {
             return false;
         }
         return true;
@@ -929,7 +952,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        repository.requestMultiDeliveryDriverStarted(mCurrentActivity, handler);
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude());
     }
 
     /***
@@ -1002,8 +1025,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     String.valueOf((route.get(0).getDurationValue())),
                     String.valueOf(
                             (route.get(0).getDistanceValue())));
-            if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))
-                updatePolyLine(route);
+            updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;
         }
@@ -1199,6 +1221,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     @Override
     protected void onDestroy() {
+        AppPreferences.setMultiDeliveryJobActivityOnForeground(false);
         //unregister the location receiver to stop receiving location when activity has destroyed.
         unregisterReceiver(locationReceiver);
         //unregister the network change receiver to stop receiving when activity has destroyed.
@@ -1208,6 +1231,11 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AppPreferences.setMultiDeliveryJobActivityOnForeground(false);
+    }
 
     @Override
     public void onBackPressed() {

@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.repositories;
 
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -406,6 +407,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onUpdateAppVersionResponse(UpdateAppVersionResponse response) {
+
+    }
+
+    @Override
+    public void onBookingListingResponse(BookingListingResponse bookingListingResponse) {
 
     }
 
