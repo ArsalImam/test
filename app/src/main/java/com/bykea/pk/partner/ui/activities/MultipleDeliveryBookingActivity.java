@@ -150,6 +150,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initialize();
         mapView.onCreate(savedInstanceState);
+        AppPreferences.setLastDirectionsApiCallTime(0);
         setUpMapView();
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
@@ -291,7 +292,9 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                 && (Utils.isDirectionApiCallRequiredForMultiDelivery()) && mGoogleMap != null) {
             AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
             if (callDriverData != null && callDriverData.getBatchStatus() != null &&
-                    callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                    callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) &&
+                    (AppPreferences.isMultiDeliveryJobActivityOnForeground() || mapPolylines == null)) {
+                // DRAW ROUTES FOR THE FIRST TIME AND AFTER THAT DRAW IF MULTIDELIVERY JOB ACTIVITY IS IN FOREGROUND
                 if (isDirectionApiCallRequired(start)) {
                     Log.v(TAG, "Direction API Called");
                     lastApiCallLatLng = start;

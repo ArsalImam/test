@@ -1864,23 +1864,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Connectivity.isConnected(mCurrentActivity)
                 && (Utils.isDirectionApiCallRequired()) && mGoogleMap != null) {
             AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
-            if (isDirectionApiCallRequired(start)) {
-                Log.v(TAG, "Direction API Called");
-                lastApiCallLatLng = start;
-                if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-                    mRouteLatLng.clear();
+            // DRAW ROUTES FOR THE FIRST TIME AND AFTER THAT DRAW IF JOB ACTIVITY IS IN FOREGROUND
+            if (AppPreferences.isJobActivityOnForeground() || mapPolylines == null) {
+                if (isDirectionApiCallRequired(start)) {
+                    Log.v(TAG, "Direction API Called");
+                    lastApiCallLatLng = start;
+                    if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
+                        mRouteLatLng.clear();
+                    }
+                    Routing.Builder builder = new Routing.Builder();
+                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
+                        builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
+                    }
+                    builder.context(mCurrentActivity)
+                            .waypoints(start, end)
+                            .travelMode(AbstractRouting.TravelMode.DRIVING)
+                            .withListener(this)
+                            .routeType(routeType);
+                    Routing routing = builder.build();
+                    routing.execute();
                 }
-                Routing.Builder builder = new Routing.Builder();
-                if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
-                    builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
-                }
-                builder.context(mCurrentActivity)
-                        .waypoints(start, end)
-                        .travelMode(AbstractRouting.TravelMode.DRIVING)
-                        .withListener(this)
-                        .routeType(routeType);
-                Routing routing = builder.build();
-                routing.execute();
             }
         }
     }
