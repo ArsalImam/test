@@ -963,6 +963,17 @@ public class Utils {
         }
     }
 
+    /**
+     * Hide Keyboard
+     * @param view : View For Window Token
+     */
+    public static void hideKeyboard(View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     public static void shareWithWhatsApp(Context context, String promo) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -3580,6 +3591,7 @@ public class Utils {
 
     /**
      * Set Scale Animation (Zoom In and Zoom Out Animation)
+     *
      * @param view : On Which Animation Has To Perform
      */
     public static void setScaleAnimation(View view) {
