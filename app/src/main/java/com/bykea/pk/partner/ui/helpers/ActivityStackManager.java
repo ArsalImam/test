@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.source.remote.data.ComplainReason;
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
@@ -600,7 +601,15 @@ public class ActivityStackManager {
         context.startActivity(intent);
     }
 
-    public void startComplainAddActivity(@NonNull Activity activity) {
-        ComplainAddActivity.Companion.openActivity(activity, Constants.REQUEST_CODE_SUBMIT_COMPLAIN);
+    /**
+     * this method can be used to open complain addition activity with/without trip details, complain reason
+     *
+     * @param activity context from which this needs to open
+     * @param requestCode to identify data after completion in [Activity.onActivityResult]
+     * @param tripDetails on which trip complain is registered
+     * @param selectedReason reason, why submitting request if user select any?
+     */
+    public void startComplainAddActivity(@NonNull Activity activity, @Nullable TripHistoryData tripDetails, @Nullable ComplainReason selectedReason) {
+        ComplainAddActivity.Companion.openActivity(activity, Constants.REQUEST_CODE_SUBMIT_COMPLAIN, tripDetails, selectedReason);
     }
 }

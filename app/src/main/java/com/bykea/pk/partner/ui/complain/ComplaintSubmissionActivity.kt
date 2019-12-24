@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.complain
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -34,9 +35,17 @@ import kotlinx.android.synthetic.main.activity_problem.*
 import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 
-
+/**
+ * This class will responsible to manage the complain submission process (zendesk)
+ *
+ * @author Arsal Imam
+ */
 class ComplaintSubmissionActivity : BaseActivity() {
 
+    /**
+     * Binding object between activity and xml file, it contains all objects
+     * of UI components used by activity
+     */
     private lateinit var binding: ActivityProblemBinding
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
@@ -51,6 +60,15 @@ class ComplaintSubmissionActivity : BaseActivity() {
     var selectedReason: ComplainReason? = null
     var tripHistoryId: String? = null
 
+    /**
+     * {@inheritDoc}
+     *
+     *
+     * This will calls on every new initialization of this activity,
+     * It can be used for any initializations or on start executions
+     *
+     * @param savedInstanceState to get data on activity state changed
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_problem)
@@ -161,8 +179,10 @@ class ComplaintSubmissionActivity : BaseActivity() {
             } catch (e: ApiException) {
             }
         } else if (requestCode == Constants.REQUEST_CODE_SUBMIT_COMPLAIN) {
-            isTicketSubmitted = true
-            changeFragment(ComplainSubmittedFragment())
+            if (resultCode == Activity.RESULT_OK) {
+                isTicketSubmitted = true
+                changeFragment(ComplainSubmittedFragment())
+            }
         }
     }
 
@@ -177,7 +197,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 AppPreferences.setDriverEmail(emailId)
                 AppPreferences.setEmailVerified()
                 mGoogleSignInClient?.signOut()
-                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity)
+                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity, tripHistoryDate, selectedReason)
             }
 
             override fun onFail(message: String?) {

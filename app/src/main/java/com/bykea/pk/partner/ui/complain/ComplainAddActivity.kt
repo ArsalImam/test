@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.complain
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.annotation.NonNull
 import androidx.databinding.DataBindingUtil
@@ -14,6 +15,7 @@ import com.bykea.pk.partner.databinding.FragmentComplainDetailBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Utils
@@ -23,53 +25,36 @@ import kotlinx.android.synthetic.main.fragment_complain_detail.*
 import org.apache.commons.lang3.StringUtils
 import zendesk.support.*
 
+/**
+ * This class will responsible to manage the complain submission process (zendesk)
+ *
+ * @author Arsal Imam
+ */
 class ComplainAddActivity : BaseActivity() {
+
+    /**
+     * reason, why submitting request if user select any?
+     */
     var selectedReason: ComplainReason? = null
+
+    /**
+     * trip data, if performing complain on a trip
+     */
     var tripHistoryDate: TripHistoryData? = null
+    /**
+     * request submitter for zendesk
+     */
     private var requestProvider: RequestProvider? = null
+    /**
+     * title of the ticket mentioned on zendesk
+     */
     private var ticketSubject: String? = null
 
-
+    /**
+     * Binding object between activity and xml file, it contains all objects
+     * of UI components used by activity
+     */
     var binding: FragmentComplainDetailBinding? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.fragment_complain_detail)
-
-        requestProvider = Support.INSTANCE.provider()?.requestProvider()
-
-        binding?.listener = object : GenericFragmentListener {
-            override fun onSubmitClicked() {
-                if (isValid)
-                    createRequest()
-            }
-        }
-
-
-        if (intent?.extras != null) {
-            if (intent.extras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA))
-                tripHistoryDate = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
-        }
-
-        if (tripHistoryDate != null) {
-            //CREATE TICKET FOR RIDE REASONS
-            ticketSubject = tripHistoryDate?.tripNo
-        } else {
-            //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
-            ticketSubject = AppPreferences.getPilotData().id
-        }
-        val code = selectedReason?.code
-        binding?.wrongFareLayout?.visibility = if (StringUtils.isEmpty(code) || code != COMPLAIN_WRONGE_FARE_CALCULATION) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-
-//        editText_lay.setOnClickListener { }
-        Utils.enableScroll(edittextDropOffAddress)
-
-        Utils.enableScroll(editTextPickUpAddress)
-        Utils.enableScroll(editTextStops)
-    }
 
     /**
      * Check Is Details Are Empty Or Not
@@ -131,6 +116,73 @@ class ComplainAddActivity : BaseActivity() {
         }
 
     /**
+     * {@inheritDoc}
+     *
+     *
+     * This will calls on every new initialization of this activity,
+     * It can be used for any initializations or on start executions
+     *
+     * @param savedInstanceState to get data on activity state changed
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.fragment_complain_detail)
+
+        setSupportActionBar(toolBar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolBar.setNavigationOnClickListener { onBackPressed() }
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        requestProvider = Support.INSTANCE.provider()?.requestProvider()
+
+        binding?.listener = object : GenericFragmentListener {
+            override fun onSubmitClicked() {
+                if (isValid)
+                    createRequest()
+            }
+        }
+
+        if (intent?.extras != null) {
+            if (intent.extras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA))
+                tripHistoryDate = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
+
+            if (intent.extras.containsKey(SELECTED_REASON_INTENT_KEY))
+                selectedReason = intent.getParcelableExtra(SELECTED_REASON_INTENT_KEY) as ComplainReason
+        }
+
+        if (tripHistoryDate != null) {
+            //CREATE TICKET FOR RIDE REASONS
+            ticketSubject = tripHistoryDate?.tripNo
+        } else {
+            //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
+            ticketSubject = AppPreferences.getPilotData().id
+        }
+        val code = selectedReason?.code
+        binding?.wrongFareLayout?.visibility = if (StringUtils.isEmpty(code) || code != COMPLAIN_WRONGE_FARE_CALCULATION) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+        Utils.enableScroll(edittextDropOffAddress)
+
+        Utils.enableScroll(editTextPickUpAddress)
+        Utils.enableScroll(editTextStops)
+
+        if (tripHistoryDate != null && tripHistoryDate?.tripNo != null) {
+            //CREATE TICKET FOR RIDE REASONS
+            toolbar_title.text = tripHistoryDate?.tripNo
+        } else {
+            //CREATE TICKET FOR FINANCIAL AND SUPERVISOR REASONS
+            toolbar_title.text = SpannableStringBuilder(StringUtils.EMPTY)
+                    .append(StringUtils.SPACE)
+                    .append(FontUtils.getStyledTitle(this@ComplainAddActivity, getString(R.string.title_report_ur), "jameel_noori_nastaleeq.ttf"))
+                    .append(FontUtils.getStyledTitle(this@ComplainAddActivity, StringUtils.SPACE, "roboto_medium.ttf"))
+                    .append(FontUtils.getStyledTitle(this@ComplainAddActivity, getString(R.string.title_report_en), "roboto_medium.ttf"))
+                    .append(StringUtils.SPACE)
+        }
+    }
+
+    /**
      * Get All Submitted Tickets For Zendesk
      */
     private fun createRequest() {
@@ -141,8 +193,6 @@ class ComplainAddActivity : BaseActivity() {
                     Dialogs.INSTANCE.dismissDialog()
                     setResult(Activity.RESULT_OK)
                     finish()
-//                    mCurrentActivity?.isTicketSubmitted = true
-//                    mCurrentActivity?.changeFragment(ComplainSubmittedFragment());
                 }
 
                 override fun onError(errorResponse: ErrorResponse) {
@@ -229,18 +279,31 @@ class ComplainAddActivity : BaseActivity() {
         }
     }
 
+    /**
+     * static reference of this [javaClass]
+     */
     companion object {
-        fun openActivity(@NonNull activity: Activity, requestCode: Int) {
-            openActivity(activity, requestCode)
-        }
 
+        /**
+         * intent key to send reason's intent key
+         */
+        private val SELECTED_REASON_INTENT_KEY: String? = "selected_reason"
+
+        /**
+         * this method can be used to open complain addition activity with/without trip details, complain reason
+         *
+         * @param activity context from which this needs to open
+         * @param requestCode to identify data after completion in [Activity.onActivityResult]
+         * @param tripDetails on which trip complain is registered
+         * @param selectedReason reason, why submitting request if user select any?
+         */
         fun openActivity(@NonNull activity: Activity, requestCode: Int, tripDetails: TripHistoryData?, selectedReason: ComplainReason?) {
             val i = Intent(activity!!, ComplainAddActivity::class.java)
             if (tripDetails != null) {
-                i.putExtra("trip_details", tripDetails!!)
+                i.putExtra(Constants.INTENT_TRIP_HISTORY_DATA, tripDetails!!)
             }
             if (selectedReason != null) {
-                i.putExtra("selected_reason", selectedReason!!)
+                i.putExtra(SELECTED_REASON_INTENT_KEY, selectedReason!!)
             }
             activity?.startActivityForResult(i, requestCode)
         }
