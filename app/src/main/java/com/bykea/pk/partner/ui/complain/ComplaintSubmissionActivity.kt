@@ -15,8 +15,10 @@ import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA
 import com.bykea.pk.partner.utils.Dialogs
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -98,6 +100,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
         }
     }
 
+
     /**
      * Create GoogleSignInClient, Dialog For Account Selection
      */
@@ -119,6 +122,9 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 }
             } catch (e: ApiException) {
             }
+        } else if (requestCode == Constants.REQUEST_CODE_SUBMIT_COMPLAIN) {
+            isTicketSubmitted = true
+            changeFragment(ComplainSubmittedFragment())
         }
     }
 
@@ -133,7 +139,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 AppPreferences.setDriverEmail(emailId)
                 AppPreferences.setEmailVerified()
                 mGoogleSignInClient?.signOut()
-                changeFragment(ComplainDetailFragment())
+                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity)
             }
 
             override fun onFail(message: String?) {

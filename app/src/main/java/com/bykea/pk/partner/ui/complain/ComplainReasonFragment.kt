@@ -16,6 +16,7 @@ import com.bykea.pk.partner.dal.source.remote.data.ComplainReason
 import com.bykea.pk.partner.dal.source.remote.response.ComplainReasonResponse
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.FragmentComplainReasonBinding
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
 import com.bykea.pk.partner.utils.Dialogs
@@ -121,7 +122,7 @@ class ComplainReasonFragment : Fragment() {
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
             if (AppPreferences.isEmailVerified()) {
-                mCurrentActivity?.changeFragment(ComplainDetailFragment())
+                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity)
             } else {
                 checkIsEmailUpdatedFromRemoteDataSource()
             }
@@ -138,7 +139,8 @@ class ComplainReasonFragment : Fragment() {
                 Dialogs.INSTANCE.dismissDialog()
                 if (isEmailUpdated) {
                     AppPreferences.setEmailVerified()
-                    mCurrentActivity?.changeFragment(ComplainDetailFragment())
+                    ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity)
+//                    mCurrentActivity?.changeFragment(ComplainDetailFragment())
                 } else {
                     mCurrentActivity?.signIn()
                 }

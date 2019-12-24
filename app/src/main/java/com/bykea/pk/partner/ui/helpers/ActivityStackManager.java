@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
@@ -46,6 +48,7 @@ import com.bykea.pk.partner.ui.activities.ShahkarActivity;
 import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
+import com.bykea.pk.partner.ui.complain.ComplainAddActivity;
 import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
@@ -56,6 +59,8 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+
+import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 
@@ -571,6 +576,7 @@ public class ActivityStackManager {
 
     /**
      * Ride Create Code Verification Activity
+     *
      * @param phoneNumber : Phone Number For OTP Code Message and Call
      */
     public void startWaitingActivity(Context context, RideCreateRequestObject createRequestBody, String phoneNumber) {
@@ -578,5 +584,9 @@ public class ActivityStackManager {
         intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumber);
         intent.putExtra(Constants.Extras.RIDE_CREATE_DATA, createRequestBody);
         context.startActivity(intent);
+    }
+
+    public void startComplainAddActivity(@NonNull Activity activity) {
+        ComplainAddActivity.Companion.openActivity(activity, Constants.REQUEST_CODE_SUBMIT_COMPLAIN);
     }
 }

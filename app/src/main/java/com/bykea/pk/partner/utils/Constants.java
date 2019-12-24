@@ -3,6 +3,8 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
@@ -133,6 +135,8 @@ public class Constants {
     public static final int MAX_COMPLAIN_PAY_AMOUNT = 35000;
     public static final String COMMA = ",";
     public static final String NEAR_LBL = "Near ";
+    @Nullable
+    public static final int REQUEST_CODE_SUBMIT_COMPLAIN = 1001;
 
     public static class CallType {
         public static final String SINGLE = "single";

@@ -275,6 +275,9 @@
             android:name=".ui.activities.MultiDeliveryFeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.complain.ComplainAddActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.loadboard.detail.JobDetailActivity"
             android:launchMode="singleTop" />
         <activity
