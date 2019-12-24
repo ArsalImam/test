@@ -122,7 +122,7 @@ class ComplainReasonFragment : Fragment() {
         mAdapter?.setMyOnItemClickListener { position, view, reason ->
             mCurrentActivity?.selectedReason = reason
             if (AppPreferences.isEmailVerified()) {
-                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity)
+                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity!!)
             } else {
                 checkIsEmailUpdatedFromRemoteDataSource()
             }
@@ -139,7 +139,7 @@ class ComplainReasonFragment : Fragment() {
                 Dialogs.INSTANCE.dismissDialog()
                 if (isEmailUpdated) {
                     AppPreferences.setEmailVerified()
-                    ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity)
+                    ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity!!)
 //                    mCurrentActivity?.changeFragment(ComplainDetailFragment())
                 } else {
                     mCurrentActivity?.signIn()

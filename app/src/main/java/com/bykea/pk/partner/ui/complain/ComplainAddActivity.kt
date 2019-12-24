@@ -226,26 +226,23 @@ class ComplainAddActivity : BaseActivity() {
                         add(CustomField(Constants.ZendeskCustomFields.Customer_Name, tripHistoryDate?.passenger?.name))
                 }
             }
-            //WILL SEE LATER ON
-//            add(CustomField(Constants.ZendeskCustomFields.COD_Amount, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Received_Amount, StringUtils.EMPTY))
-
-            //NOT RECEIVING FROM API
-//            add(CustomField(Constants.ZendeskCustomFields.Customer_Number,StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Cancellation_Reason, StringUtils.EMPTY))
-
-//            add(CustomField(Constants.ZendeskCustomFields.Receivers_Name, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Receivers_Number, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Distance_to_Pickup, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Last_Trip_Status, StringUtils.EMPTY))
-//            add(CustomField(Constants.ZendeskCustomFields.Parcel_Value, StringUtils.EMPTY))
         }
     }
 
     companion object {
         fun openActivity(@NonNull activity: Activity, requestCode: Int) {
+            openActivity(activity, requestCode)
+        }
+
+        fun openActivity(@NonNull activity: Activity, requestCode: Int, tripDetails: TripHistoryData?, selectedReason: ComplainReason?) {
             val i = Intent(activity!!, ComplainAddActivity::class.java)
-            activity?.startActivity(i)
+            if (tripDetails != null) {
+                i.putExtra("trip_details", tripDetails)
+            }
+            if (selectedReason != null) {
+                i.putExtra("selected_reason", selectedReason)
+            }
+            activity?.startActivityForResult(i, requestCode)
         }
     }
 }
