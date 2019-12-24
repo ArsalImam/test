@@ -60,6 +60,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
     }
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
@@ -76,6 +79,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation ('commons-validator:commons-validator:1.5.0') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
     // Testing dependencies
     androidTestImplementation 'androidx.test:runner:1.1.1'

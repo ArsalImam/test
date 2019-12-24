@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat"/>
+
+        <variable
+            name="item"
+            type="com.bykea.pk.partner.dal.source.remote.data.BookingList" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/llTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/ivRight"
+            android:layout_toLeftOf="@+id/ivRight"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_12sdp"
+            android:paddingLeft="@dimen/_12sdp"
+            android:paddingTop="@dimen/_16sdp"
+            android:paddingBottom="@dimen/_16sdp">
+
+            <LinearLayout
+                android:id="@+id/llLeft"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="start"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/dateTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/_3sdp"
+                    android:gravity="center_vertical"
+                    android:text="@{item.formatedDate}"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="roboto_regular.ttf"
+                    tools:text="22 Aug, 10:44 am." />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/totalAmountTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_weight="1"
+                    android:text="@{item.manipulatedAmount != `N/A` ? String.format(@string/amount_rs, item.manipulatedAmount) : `N/A`}"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/textsize.large"
+                    android:visibility="@{item.showAmount ? View.VISIBLE : View.GONE}"
+                    app:fontName="roboto_bold.ttf"
+                    tools:text="Rs. 90"
+                    tools:visibility="visible" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="start"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tripNoTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:gravity="bottom|start"
+                    android:text="@{item.bookingCode}"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="roboto_bold.ttf"
+                    tools:text="KHI1602092092" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_weight="1"
+                    android:text="@{item.formatedStatus}"
+                    android:textColor="@{ContextCompat.getColor(context, item.statusColor)}"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="visible"
+                    app:fontName="roboto_regular.ttf"
+                    tools:text="Driver Cancelled"
+                    tools:textColor="@color/color.error" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="center_vertical|right"
+                android:orientation="horizontal"
+                android:visibility="@{item.priorTag == `` ? View.GONE : View.VISIBLE}"
+                android:weightSum="2">
+
+                <ImageView
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    app:loadUrl="@{item.priorTag}" />
+
+                <!--android:text="@{item.priorTagName}"-->
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="2dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_11sdp"
+                    android:visibility="gone"
+                    app:fontName="roboto_regular.ttf" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivDriverDestination"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:layout_toLeftOf="@id/ivRight"
+            android:src="@drawable/ic_driver_destination"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ivRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginRight="@dimen/_12sdp"
+            android:src="@drawable/right_arrow_history" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_below="@+id/llTop"
+            android:background="@color/divider" />
+    </RelativeLayout>
+
+</layout>

@@ -1,8 +1,8 @@
 package com.bykea.pk.partner.utils;
 
-
 import com.bykea.pk.partner.BuildConfig;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Constants {
@@ -78,6 +78,14 @@ public class Constants {
     public static final String DEFAULT_ADMIN_FEE = "10";
     public static final String FONT_NASTALIQ = "jameel_noori_nastaleeq.ttf";
     public static final String FONT_ROBOTO_MED = "roboto_medium.ttf";
+    public static final String INTENT_TRIP_HISTORY_ID = "INTENT_TRIP_HISTORY_ID";
+    public static final int MAX_RECORDS_PER_PAGE = 20;
+    public static final String SORT_BY_NEWEST = "newest";
+
+    public static final String S3_DD_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_driver_destination.png";
+    public static final String S3_OFFLINE_RIDE_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline.png";
+    public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline_delivery.png";
+
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
@@ -133,6 +141,10 @@ public class Constants {
     public static final int MAX_COMPLAIN_KILOMETRES_TRAVELLED = 50;
     public static final int MAX_COMPLAIN_MINIUTES_TRAVELLED = 120;
     public static final int MAX_COMPLAIN_PAY_AMOUNT = 35000;
+    public static final String SEPERATOR_ABOVE = "above";
+    @Nullable
+    public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
+    @NotNull
     public static final String COMMA = ",";
     public static final String NEAR_LBL = "Near ";
     @Nullable
@@ -498,6 +510,10 @@ public class Constants {
 
     }
 
+    public class BookingFetchingStates {
+        public static final String END = "end";
+        public static final String START = "start";
+    }
 
     /**
      * Inner class for Font Names
@@ -697,6 +713,5 @@ public class Constants {
     public static final float SET_SCALE_ANIMATION_PIVOT_Y = 0.5f;
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
-
     public static final String ANDROID_RESOURCE_URI = "android.resource://";
 }

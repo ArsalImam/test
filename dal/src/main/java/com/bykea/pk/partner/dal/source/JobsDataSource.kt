@@ -172,6 +172,21 @@ interface JobsDataSource {
     fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: CreateTripCallback)
 
     /**
+     * Update Booking Details
+     *
+     * @param callbackBykeaCash Callback to executed
+     */
+    fun updateBykeaCashBookingDetails(tripId: String, requestObjBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: UpdateBykeaCashBookingCallback)
+
+    /**
+     * Get Booking Details By Id
+     *
+     * @param bookingId id of the booking
+     * @param callback to return data after API call succeed
+     */
+    fun getBookingDetailsById(bookingId: String, callback: GetBookingDetailCallback)
+
+    /**
      * Callback interface used for fetch JobRequest listing
      *
      */
@@ -375,11 +390,13 @@ interface JobsDataSource {
     }
 
     /**
-     * Update Booking Details
-     *
-     * @param callbackBykeaCash Callback to executed
+     * Callback interface to otp generate
      */
-    fun updateBykeaCashBookingDetails(tripId: String, requestObjBykeaCash: UpdateBykeaCashBookingRequest, callbackBykeaCash: UpdateBykeaCashBookingCallback)
+    interface GetBookingDetailCallback {
+        fun onSuccess(bookingDetailResponse: BookingDetailResponse)
+
+        fun onFail(code: Int, message: String?) {}
+    }
 
     /**
      * Callback interface for update booking details

@@ -20,10 +20,10 @@
         android:weightSum="2">
 
         <FrameLayout
-            android:layout_gravity="center"
             android:id="@+id/frameLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginRight="@dimen/_11sdp"
             android:layout_weight="2">
 
@@ -39,49 +39,49 @@
                 tool:visibility="gone" />
 
             <FrameLayout
-                android:visibility="gone"
+                android:id="@+id/logo_bismilla"
+                android:layout_width="@dimen/_170sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                android:id="@+id/logo_bismilla"
                 android:background="@drawable/bismilla_round1"
-                android:layout_gravity="center"
-                android:layout_width="@dimen/_170sdp"
-                android:layout_height="@dimen/_45sdp">
+                android:visibility="gone">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/bismillaTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:text="بسم اللہ"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/_20sdp"
                     android:textStyle="bold"
-                    android:textColor="@color/white"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </FrameLayout>
 
             <FrameLayout
-                android:visibility="gone"
+                android:id="@+id/logo_khudaHafiz"
+                android:layout_width="@dimen/_170sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                android:id="@+id/logo_khudaHafiz"
                 android:background="@drawable/khudahafiz_round"
-                android:layout_gravity="center"
-                android:layout_width="@dimen/_170sdp"
-                android:layout_height="@dimen/_45sdp">
+                android:visibility="gone">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/mKhudaHafizTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:text="اللہ حافظ"
+                    android:textColor="@color/color_282828"
                     android:textSize="@dimen/_20sdp"
                     android:textStyle="bold"
-                    android:textColor="@color/color_282828"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
             </FrameLayout>
@@ -110,8 +110,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:maxLines="2"
                     android:maxWidth="@dimen/_220sdp"
+                    android:maxLines="2"
                     android:textAllCaps="false"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/_16sdp"
@@ -124,10 +124,10 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:gravity="center"
-                    android:maxLines="2"
                     android:maxWidth="@dimen/_220sdp"
-                    android:paddingRight="@dimen/_2sdp"
+                    android:maxLines="2"
                     android:paddingTop="@dimen/_2sdp"
+                    android:paddingRight="@dimen/_2sdp"
                     android:textAllCaps="false"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/_16sdp"
@@ -155,13 +155,13 @@
 
         <RelativeLayout
             android:id="@+id/achaconnectionRL"
-            android:visibility="visible"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:gravity="center"
+            android:visibility="visible">
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/achaconnectionTv"
@@ -169,22 +169,22 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/acha_connection_ur"
-                android:visibility="invisible"
                 android:textColor="@color/black_3a3a3a"
                 android:textSize="@dimen/_12sdp"
+                android:visibility="invisible"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/connectionStatusIv"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:visibility="invisible"
                 android:layout_marginLeft="@dimen/_4sdp"
                 android:layout_toEndOf="@+id/achaconnectionTv"
                 android:layout_toRightOf="@+id/achaconnectionTv"
-                app:srcCompat="@drawable/wifi_connection_signal_symbol"
-                android:layout_width="@dimen/_14sdp"
-                android:layout_height="@dimen/_14sdp" />
+                android:visibility="invisible"
+                app:srcCompat="@drawable/wifi_connection_signal_symbol" />
 
 
         </RelativeLayout>
@@ -193,8 +193,8 @@
             android:id="@+id/statusLayout"
             android:layout_width="@dimen/margin.xlarge"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:visibility="gone">
 
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -212,7 +212,6 @@
                 android:textSize="@dimen/textsize.small.medium"
                 android:visibility="invisible"
                 app:fontName="roboto_light.ttf" />
-
 
 
             <ImageView

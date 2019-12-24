@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.communication.rest;
 
 
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -120,7 +121,18 @@ interface IRestClient {
     Call<TripHistoryResponse> getTripHistory(@Query(Fields.id) String Id,
                                              @Query(Fields.tokenId) String tokenId,
                                              @Query(Fields.USER_TYPE) String userType,
-                                             @Query("page") String pageNo);
+                                             @Query(Fields.PAGE) String pageNo,
+                                             @Query(Fields.TRIP_ID) String trip_id);
+
+    @GET
+    Call<BookingListingResponse> getBookingListing(
+            @Url String url,
+            @Header(Fields.HEADER_X_USER_ID) String driverId,
+            @Header(Fields.HEADER_X_TOKEN) String driverToken,
+            @Query(Fields.STATE) String state,
+            @Query(Fields.PAGE) String page,
+            @Query(Fields.LIMIT) String limit,
+            @Query(Fields.SORT) String sort);
 
     @GET(ApiTags.GET_MISSED_TRIPS_HISTORY_LIST)
     Call<TripMissedHistoryResponse> getMissedTripHistory(@Query(Fields.id) String Id,
@@ -421,11 +433,12 @@ interface IRestClient {
 
     /**
      * Accept a booking
+     *
      * @param bookingId selected booking Id
      * @param driver_id driver's id
-     * @param token_id driver's access token
-     * @param lat driver's current lat
-     * @param lng driver's current lng
+     * @param token_id  driver's access token
+     * @param lat       driver's current lat
+     * @param lng       driver's current lng
      * @return Booking accept response
      */
     @FormUrlEncoded
@@ -438,6 +451,7 @@ interface IRestClient {
 
     /**
      * Driver cancel booking picked from load board
+     *
      * @param body Body having details of Booking
      * @return Server response
      */

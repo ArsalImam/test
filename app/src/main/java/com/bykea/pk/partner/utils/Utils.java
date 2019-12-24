@@ -242,6 +242,10 @@ public class Utils {
             return Constants.BYKEA_SUPPORT_HELPLINE;
     }
 
+    public static int getMaxPageSize(int maxRecordsPerPage, Integer totalRecords) {
+        return (int) Math.ceil((double) totalRecords / maxRecordsPerPage);
+    }
+
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
@@ -1586,7 +1590,7 @@ public class Utils {
     }
 
     public static void loadImgPicasso(ImageView imageView, int placeHolder, String link) {
-        if (imageView != null) {
+        if (imageView != null && StringUtils.isNotEmpty(link)) {
             Picasso.get().load(link)
                     .fit().centerInside()
                     .placeholder(placeHolder)

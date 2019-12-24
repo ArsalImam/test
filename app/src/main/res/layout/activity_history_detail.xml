@@ -510,9 +510,7 @@
                 android:paddingTop="@dimen/_7sdp"
                 android:paddingBottom="@dimen/_7sdp">
 
-
             </LinearLayout>
-
 
             <View
                 android:layout_width="match_parent"
@@ -521,9 +519,9 @@
 
 
             <LinearLayout
+                android:id="@+id/commission_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/commission_layout"
                 android:orientation="vertical">
 
                 <LinearLayout

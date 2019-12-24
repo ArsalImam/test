@@ -61,6 +61,19 @@ public class Settings {
     private boolean withdrawalDisplay;
 
     /**
+     * kronos URL to get booking listings. if null, will starts the older trip flow
+     */
+    @SerializedName("get_bookings_for_driver")
+    private String bookingLisitingForDriverUrl;
+
+    /**
+     * kronos URL to get booking details by id. if null, will starts the older trip flow
+     */
+    @SerializedName("get_bookings_by_id")
+    private String bookingDetailByIdUrl;
+
+
+    /**
      * trip fees percentage taken by bykea
      */
     @SerializedName("admin_fee")
@@ -250,5 +263,21 @@ public class Settings {
 
     public void setAdmin_fee(String admin_fee) {
         this.admin_fee = admin_fee;
+    }
+
+    public String getBookingLisitingForDriverUrl() {
+        return bookingLisitingForDriverUrl;
+    }
+
+    public void setBookingLisitingForDriverUrl(String bookingLisitingForDriverUrl) {
+        this.bookingLisitingForDriverUrl = bookingLisitingForDriverUrl;
+    }
+
+    public String getBookingDetailByIdUrl() {
+        return bookingDetailByIdUrl;
+    }
+
+    public void setBookingDetailByIdUrl(String bookingDetailByIdUrl) {
+        this.bookingDetailByIdUrl = bookingDetailByIdUrl;
     }
 }

@@ -1,14 +1,6 @@
-package com.bykea.pk.partner.ui.fragments;
+package com.bykea.pk.partner.ui.booking;
 
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +8,28 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bykea.pk.partner.R;
-import com.bykea.pk.partner.models.data.TripHistoryData;
+import com.bykea.pk.partner.dal.source.remote.data.BookingList;
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.response.TripHistoryResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
+import com.bykea.pk.partner.ui.common.LastAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
-import com.bykea.pk.partner.ui.helpers.adapters.HistoryAdapter;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Utils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -38,7 +40,12 @@ import butterknife.Unbinder;
 
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
 
-public class TripHistoryFragment extends Fragment {
+/**
+ * this class is created in legacy style to give support to the home activity
+ * and will be updated after server sides updates
+ * @author ArsalImam
+ */
+public class BookingListingFragment extends Fragment {
 
     //no_data
     @BindView(R.id.noDataIv)
@@ -47,10 +54,10 @@ public class TripHistoryFragment extends Fragment {
     ProgressBar loader;
 
     private UserRepository repository;
-    private HistoryAdapter mHistoryAdapter;
+    private LastAdapter mHistoryAdapter;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private ArrayList<TripHistoryData> mHistoryList;
+    private ArrayList<BookingList> mHistoryList;
 
     private int page = 1;
     private int pages;
@@ -65,7 +72,7 @@ public class TripHistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_trip_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_booking_list, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -91,24 +98,15 @@ public class TripHistoryFragment extends Fragment {
     private void initViews(View view) {
 
         repository = new UserRepository();
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.historyRV);
+        mRecyclerView = view.findViewById(R.id.historyRV);
 
         mHistoryList = new ArrayList<>();
-
-        mHistoryAdapter = new HistoryAdapter(mCurrentActivity, mHistoryList);
-        mHistoryAdapter.setMyOnItemClickListener(new HistoryAdapter.MyOnItemClickListener() {
-            @Override
-            public void onItemClickListener(int position, View view, TripHistoryData historyData) {
-                if (!historyData.getStatus().equalsIgnoreCase("cancelled")) {
-                    if (historyData.getInvoice() != null) {
-                        ActivityStackManager.getInstance().startCompletedDetailsActivity(historyData, mCurrentActivity);
-                        HomeActivity.visibleFragmentNumber = TRIP_HISTORY_SCREEN_S;
-                    }
-                } else {
-                    ActivityStackManager.getInstance().startCancelDetailsActivity(historyData, mCurrentActivity);
-                }
-            }
+        mHistoryAdapter = new LastAdapter<BookingList>(R.layout.adapter_booking_listing, item -> {
+            ActivityStackManager.getInstance().startBookingDetail(mCurrentActivity, item.getBookingId());
+            HomeActivity.visibleFragmentNumber = TRIP_HISTORY_SCREEN_S;
         });
+
+
         mLayoutManager = new LinearLayoutManager(mCurrentActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -148,7 +146,9 @@ public class TripHistoryFragment extends Fragment {
         if (loader != null) {
             loader.setVisibility(View.VISIBLE);
         }
-        repository.requestTripHistory(mCurrentActivity, callbackHandler, page + "", null);
+        repository.requestBookingListing(mCurrentActivity,
+                callbackHandler, page + StringUtils.EMPTY,
+                /*"100"*/String.valueOf(Constants.MAX_RECORDS_PER_PAGE));
     }
 
     private void setMissedCallsIcon() {
@@ -169,8 +169,9 @@ public class TripHistoryFragment extends Fragment {
     }
 
     private UserDataHandler callbackHandler = new UserDataHandler() {
+
         @Override
-        public void onGetTripHistory(final TripHistoryResponse historyResponse) {
+        public void onBookingListingResponse(BookingListingResponse bookingListingResponse) {
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -178,26 +179,32 @@ public class TripHistoryFragment extends Fragment {
                         if (loader != null) {
                             loader.setVisibility(View.GONE);
                         }
-                        if (historyResponse.isSuccess()) {
-                            if (historyResponse.getData().size() > 0) {
+                        if (bookingListingResponse.isSuccess()) {
 
-                                pages = historyResponse.getPages();
+                            if (CollectionUtils.isNotEmpty(bookingListingResponse.getData().getResult())) {
+                                pages = Utils.getMaxPageSize(Constants.MAX_RECORDS_PER_PAGE,
+                                        bookingListingResponse.getData().getPagination().getTotal_records());
                                 noDataIv.setVisibility(View.GONE);
-                                mHistoryList.addAll(historyResponse.getData());
-                                mHistoryAdapter.notifyDataSetChanged();
+                                mHistoryList.addAll(bookingListingResponse.getData().getResult());
 
+                                mHistoryAdapter.setItems(mHistoryList);
                             } else {
                                 showNoTripData();
                             }
                         } else {
                             showNoTripData();
-                            if (historyResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
+                            if (bookingListingResponse.getCode() == HTTPStatus.UNAUTHORIZED) {
                                 Utils.onUnauthorized(mCurrentActivity);
                             }
                         }
                     }
                 }
             });
+        }
+
+        @Override
+        public void onGetTripHistory(final TripHistoryResponse historyResponse) {
+
         }
 
         @Override

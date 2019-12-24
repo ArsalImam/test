@@ -150,6 +150,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         initialize();
         mapView.onCreate(savedInstanceState);
+        AppPreferences.setLastDirectionsApiCallTime(0);
         setUpMapView();
         AppPreferences.setStatsApiCallRequired(true);
         Utils.keepScreenOn(mCurrentActivity);
@@ -289,24 +290,29 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private synchronized void drawRoute(LatLng start, LatLng end, int routeType) {
         if (Connectivity.isConnected(mCurrentActivity)
                 && (Utils.isDirectionApiCallRequiredForMultiDelivery()) && mGoogleMap != null) {
-            AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
-            if (isDirectionApiCallRequired(start)) {
-                Log.v(TAG, "Direction API Called");
-                lastApiCallLatLng = start;
-                if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
-                    mRouteLatLng.clear();
+            if (callDriverData != null && callDriverData.getBatchStatus() != null &&
+                    callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) &&
+                    (AppPreferences.isMultiDeliveryJobActivityOnForeground() || mapPolylines == null)) {
+                // DRAW ROUTES FOR THE FIRST TIME AND AFTER THAT DRAW IF MULTIDELIVERY JOB ACTIVITY IS IN FOREGROUND
+                AppPreferences.setLastDirectionsApiCallTime(System.currentTimeMillis());
+                if (isDirectionApiCallRequired(start)) {
+                    Log.v(TAG, "Direction API Called");
+                    lastApiCallLatLng = start;
+                    if (mRouteLatLng != null && mRouteLatLng.size() > 0) {
+                        mRouteLatLng.clear();
+                    }
+                    Routing.Builder builder = new Routing.Builder();
+                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
+                        builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
+                    }
+                    builder.context(mCurrentActivity)
+                            .waypoints(start, end)
+                            .travelMode(AbstractRouting.TravelMode.DRIVING)
+                            .withListener(this)
+                            .routeType(routeType);
+                    Routing routing = builder.build();
+                    routing.execute();
                 }
-                Routing.Builder builder = new Routing.Builder();
-                if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
-                    builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
-                }
-                builder.context(mCurrentActivity)
-                        .waypoints(start, end)
-                        .travelMode(AbstractRouting.TravelMode.DRIVING)
-                        .withListener(this)
-                        .routeType(routeType);
-                Routing routing = builder.build();
-                routing.execute();
             }
         }
     }
@@ -1019,8 +1025,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     String.valueOf((route.get(0).getDurationValue())),
                     String.valueOf(
                             (route.get(0).getDistanceValue())));
-            if (callDriverData.getBatchStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))
-                updatePolyLine(route);
+            updatePolyLine(route);
         } else {
             lastApiCallLatLng = null;
         }

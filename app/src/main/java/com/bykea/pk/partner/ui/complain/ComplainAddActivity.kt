@@ -237,10 +237,10 @@ class ComplainAddActivity : BaseActivity() {
         fun openActivity(@NonNull activity: Activity, requestCode: Int, tripDetails: TripHistoryData?, selectedReason: ComplainReason?) {
             val i = Intent(activity!!, ComplainAddActivity::class.java)
             if (tripDetails != null) {
-                i.putExtra("trip_details", tripDetails)
+                i.putExtra("trip_details", tripDetails!!)
             }
             if (selectedReason != null) {
-                i.putExtra("selected_reason", selectedReason)
+                i.putExtra("selected_reason", selectedReason!!)
             }
             activity?.startActivityForResult(i, requestCode)
         }

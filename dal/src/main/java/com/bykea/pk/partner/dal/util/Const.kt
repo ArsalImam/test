@@ -36,3 +36,30 @@ val LANG_TYPE = "ur"
 
 val COMPLAIN_WRONGE_FARE_CALCULATION = "139"
 
+val BOOKING_CURRENT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+val BOOKING_REQUIRED_DATE_FORMAT = "HH:mm:ss MM-dd-yyyy"
+val BOOKING_LIST_REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a"
+val BOOKING_ID_TO_REPLACE = ":id"
+
+val LABEL_NOT_AVAILABLE = "N/A"
+val DIGIT_ZERO = 0
+
+
+object AvailableTripStatus {
+    val STATUS_COMPLETED: String = "completed"
+    val STATUS_MISSED: String = "missed"
+    val STATUS_CANCELLED: String = "cancelled"
+    val STATUS_FEEDBACK: String = "feedback"
+}
+
+object CancelByStatus {
+    val CANCEL_BY_ADMIN: String = "cancel_by_admin"
+    val CANCEL_BY_PARTNER: String = "cancel_by_partner"
+    val CANCEL_BY_CUSTOMER: String = "cancel_by_customer"
+}
+
+object RolesByName {
+    val CANCEL_BY_ADMIN: String = "Admin"
+    val CANCEL_BY_PARTNER: String = "Partner"
+    val CANCEL_BY_CUSTOMER: String = "Customer"
+}

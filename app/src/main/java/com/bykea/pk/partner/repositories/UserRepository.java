@@ -9,6 +9,7 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
 import com.bykea.pk.partner.models.data.DirectionDropOffData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultipleDeliveryRemainingETA;
@@ -225,10 +226,35 @@ public class UserRepository {
         mRestRequestHandler.checkActiveTrip(mContext, mDataCallback);
     }
 
-    public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo) {
+    /**
+     * this method can be used to get all trips history from driver id
+     * this is a legacy function and is replaced with {@link #requestBookingListing(Context, IUserDataHandler, String, String)}
+     * and will be removed in the future release
+     *
+     * @param context       component which requires data
+     * @param handler       callback to receive data on task completed
+     * @param pageNo        param needs to send for pagination
+     * @param tripHistoryId (optional) if any specific trip details needed
+     */
+    @Deprecated
+    public void requestTripHistory(Context context, IUserDataHandler handler, String pageNo, String tripHistoryId) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.getTripHistory(mContext, mDataCallback, pageNo);
+        mRestRequestHandler.getTripHistory(mContext, mDataCallback, pageNo, tripHistoryId);
+    }
+
+    /**
+     * this method can be used to get all booking listing by driver id from kronos
+     *
+     * @param context context component which requires data
+     * @param handler onResponseCallBack callback to receive data on task completed
+     * @param pageNo  param needs to send for pagination
+     * @param limit   number of records per page
+     */
+    public void requestBookingListing(Context context, IUserDataHandler handler, String pageNo, String limit) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestBookingListing(mContext, mDataCallback, pageNo, limit);
     }
 
     public void requestMissedTripHistory(Context context, IUserDataHandler handler, String pageNo) {
@@ -1707,6 +1733,9 @@ public class UserRepository {
                         mUserCallback.onMultiDeliveryDriverCancelBatch(
                                 (MultiDeliveryCancelBatchResponse) object
                         );
+                        break;
+                    case "BookingListingResponse":
+                        mUserCallback.onBookingListingResponse((BookingListingResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);
