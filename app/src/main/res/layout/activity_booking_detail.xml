@@ -17,6 +17,10 @@
         <variable
             name="invoiceAdapter"
             type="com.bykea.pk.partner.ui.common.LastAdapter" />
+
+        <variable
+            name="feedbackAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -212,10 +216,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height.large"
-                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}"
                         android:layout_marginLeft="@dimen/margin.small"
                         android:layout_marginRight="@dimen/margin.small"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}">
 
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:id="@+id/cancelTypeTv"
@@ -252,6 +256,15 @@
                     android:adapter="@{invoiceAdapter}"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <!--app:spanCount="@{viewModel.feedbackSpanCount}"-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/feedback_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{feedbackAdapter}"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/btnProblem"

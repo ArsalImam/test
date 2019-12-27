@@ -2,8 +2,8 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Constants {
     public static final int DIGIT_ZERO = 0;
@@ -145,6 +145,7 @@ public class Constants {
     public static final String COMMA = ",";
     @NotNull
     public static final String NEAR_LBL = "Near ";
+    public static final int DIGIT_THREE = 3;
 
     public static class CallType {
         public static final String SINGLE = "single";

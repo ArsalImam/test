@@ -144,7 +144,9 @@ data class Rate(
         @SerializedName("customer")
         val customer: Double?,
         @SerializedName("partner")
-        val partner: Double?
+        val partner: Double?,
+        @SerializedName("driver_feedback")
+        val driverFeedback: ArrayList<String>?
 ) : Parcelable
 
 @Parcelize
