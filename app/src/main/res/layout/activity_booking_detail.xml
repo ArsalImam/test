@@ -57,10 +57,22 @@
 
                         <FrameLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}">
+                            android:layout_height="wrap_content">
 
-                            <include layout="@layout/inline_pickup_dropoff_signs" />
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}">
+
+                                <include layout="@layout/inline_pickup_dropoff_signs" />
+                            </FrameLayout>
+
+                            <ImageView
+                                android:layout_width="@dimen/_10sdp"
+                                android:layout_height="@dimen/_10sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/green_circle_shape"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address != null ? View.GONE : View.VISIBLE}" />
 
                         </FrameLayout>
 
