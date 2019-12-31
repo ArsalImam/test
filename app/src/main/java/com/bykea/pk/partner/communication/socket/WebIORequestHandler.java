@@ -58,6 +58,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -533,7 +534,7 @@ public class WebIORequestHandler {
                     if (!AppPreferences.getLastMessageID()
                             .equalsIgnoreCase(receivedMessage.getData().getMessageId())) {
                         if (!AppPreferences.isChatActivityOnForeground()) {
-                            Notifications.createChatNotification(DriverApp.getContext(), receivedMessage);
+                            Notifications.createChatNotification(DriverApp.getContext(), SerializationUtils.clone(receivedMessage));
                         }
                         Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
                         intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
