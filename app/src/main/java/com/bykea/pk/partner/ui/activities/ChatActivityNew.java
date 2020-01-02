@@ -769,7 +769,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                     isKeyBoardVisible = false;
                     messageEdit.setFocusable(false);
                     messageEdit.setFocusableInTouchMode(false);
-                    Utils.hideKeyboard(mCurrentActivity);
+                    Utils.hideKeyboard(messageEdit);
                     toggleKeyboardMessage.setImageResource(R.drawable.ic_chat_keyboard);
                     linLayoutChatMessages.setVisibility(View.VISIBLE);
                 } else {

@@ -10,6 +10,8 @@
 
         <import type="com.bykea.pk.partner.ui.helpers.AppPreferences" />
 
+        <import type="org.apache.commons.lang3.StringUtils" />
+
         <variable
             name="viewModel"
             type="com.bykea.pk.partner.ui.booking.BookingDetailViewModel" />
@@ -57,9 +59,26 @@
                         android:paddingTop="@dimen/padding.tiny"
                         android:paddingBottom="@dimen/padding.tiny">
 
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
 
-                        <include layout="@layout/inline_pickup_dropoff_signs" />
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}">
 
+                                <include layout="@layout/inline_pickup_dropoff_signs" />
+                            </FrameLayout>
+
+                            <ImageView
+                                android:layout_width="@dimen/_10sdp"
+                                android:layout_height="@dimen/_10sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/green_circle_shape"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address != null ? View.GONE : View.VISIBLE}" />
+
+                        </FrameLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -85,7 +104,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/secondaryColorDark" />
+                                android:background="@color/secondaryColorDark"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}" />
 
                             <com.bykea.pk.partner.widgets.FontTextView
                                 android:id="@+id/endAddressTv"
@@ -100,6 +120,7 @@
                                 android:text="@{viewModel.bookingDetailData.dropoff.address}"
                                 android:textColor="@color/secondaryColorDark"
                                 android:textSize="@dimen/textsize.small.medium"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}"
                                 app:fontName="roboto_light.ttf" />
 
                         </LinearLayout>

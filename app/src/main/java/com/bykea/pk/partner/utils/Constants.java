@@ -138,14 +138,18 @@ public class Constants {
 
     public static final int TRIP_STATUS_CODE_DELIVERY = 10;
     public static final int TRIP_STATUS_CODE_RIDE = 7;
+    public static final int MAX_COMPLAIN_KILOMETRES_TRAVELLED = 50;
+    public static final int MAX_COMPLAIN_MINIUTES_TRAVELLED = 120;
+    public static final int MAX_COMPLAIN_PAY_AMOUNT = 35000;
     public static final String SEPERATOR_ABOVE = "above";
     @Nullable
     public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
     @NotNull
     public static final String COMMA = ",";
-    @NotNull
     public static final String NEAR_LBL = "Near ";
     public static final int DIGIT_THREE = 3;
+    @Nullable
+    public static final int REQUEST_CODE_SUBMIT_COMPLAIN = 1001;
 
     public static class CallType {
         public static final String SINGLE = "single";
@@ -648,6 +652,13 @@ public class Constants {
         public static long Type = 360020675514L;
         public static long Wait_Time = 360023230974L;
         public static long Wallet_Deduction = 360023253753L;
+
+        public static long Wrong_Fare_Pick_Up_Address = 360029983133L;
+        public static long Wrong_Fare_Drop_Off_Address = 360029983153L;
+        public static long Wrong_Fare_Stops = 360029983173L;
+        public static long Wrong_Fare_Kilometers_Travelled = 360029993514L;
+        public static long Wrong_Fare_Booking_Time = 360029983193L;
+        public static long Wrong_Fare_Paid_Amount = 360029983213L;
     }
 
     public static class ZendeskTicketStatus {

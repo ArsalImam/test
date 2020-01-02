@@ -8,7 +8,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.dal.source.remote.data.ComplainReason;
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
@@ -47,6 +50,7 @@ import com.bykea.pk.partner.ui.booking.BookingDetailActivity;
 import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
+import com.bykea.pk.partner.ui.complain.ComplainAddActivity;
 import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
@@ -57,6 +61,8 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+
+import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_ID;
@@ -593,5 +599,17 @@ public class ActivityStackManager {
         intent.putExtra(Constants.Extras.PHONE_NUMBER, phoneNumber);
         intent.putExtra(Constants.Extras.RIDE_CREATE_DATA, createRequestBody);
         context.startActivity(intent);
+    }
+
+    /**
+     * this method can be used to open complain addition activity with/without trip details, complain reason
+     *
+     * @param activity context from which this needs to open
+     * @param requestCode to identify data after completion in [Activity.onActivityResult]
+     * @param tripDetails on which trip complain is registered
+     * @param selectedReason reason, why submitting request if user select any?
+     */
+    public void startComplainAddActivity(@NonNull Activity activity, @Nullable TripHistoryData tripDetails, @Nullable ComplainReason selectedReason) {
+        ComplainAddActivity.Companion.openActivity(activity, Constants.REQUEST_CODE_SUBMIT_COMPLAIN, tripDetails, selectedReason);
     }
 }
