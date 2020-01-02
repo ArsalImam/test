@@ -30,6 +30,12 @@ val SUB_CODE_1052_MSG = "Invalid phone number"
 val SUB_CODE_1054_MSG = "Driver has an active trip"
 val SUB_CODE_1055_MSG = "Customer has an active trip"
 
+val USER_TYPE_DRIVER = "d"
+val MESSAGE_TYPE = "Reason"
+val LANG_TYPE = "ur"
+
+val COMPLAIN_WRONGE_FARE_CALCULATION = "139"
+
 val BOOKING_CURRENT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 val BOOKING_REQUIRED_DATE_FORMAT = "HH:mm:ss MM-dd-yyyy"
 val BOOKING_LIST_REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a"

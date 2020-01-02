@@ -540,6 +540,19 @@
     <string name="muntakhib_manzil">منزل</string>
     <string name="commission_text_urdu">بائیکیاکمیشن</string>
     <string name="braces_percent">(%%%s)</string>
-    <string name="passenger_has_cancelled_the_trip">Passenger has cancelled the Trip</string>
-    <string name="drop_off_update_by_passenger">Drop Off has been Updated by Passenger.</string>
+    <string name="pickup_address" translatable="false">Pickup Address</string>
+    <string name="dropoff_address" translatable="false">Dropoff Address</string>
+    <string name="stops_if_any" translatable="false">Stops (if any)</string>
+    <string name="kilometer_travel" translatable="false">Kilometers Travelled</string>
+    <string name="booking_time_min" translatable="false">Booking Time (Minutes)</string>
+    <string name="paid_amount" translatable="false">Paid Amount</string>
+    <string name="enter_details" translatable="false">Enter Details</string>
+    <string name="error_kilometres_msg" translatable="false">Kilometres should not more than 50</string>
+    <string name="error_booking_time_msg" translatable="false">Booking time should not more than 120 minutes</string>
+    <string name="error_kilometres_invalid_msg" translatable="false">Please enter valid kilometres</string>
+    <string name="error_booking_time_invalid_msg" translatable="false">please provide a valid booking time</string>
+    <string name="error_complain_pay_amount_invalid_msg" translatable="false">please provide a valid paid amount</string>
+    <string name="error_complain_pay_amount_msg" translatable="false">Paid amount should not more than 35000</string>
+    <string name="passenger_has_cancelled_the_trip" translatable="false">Passenger has cancelled the Trip</string>
+    <string name="drop_off_update_by_passenger" translatable="false">Drop Off has been Updated by Passenger.</string>
 </resources>

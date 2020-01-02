@@ -11,7 +11,10 @@ import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
+import com.bykea.pk.partner.dal.util.LANG_TYPE
+import com.bykea.pk.partner.dal.util.MESSAGE_TYPE
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
+import com.bykea.pk.partner.dal.util.USER_TYPE_DRIVER
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -81,6 +84,14 @@ class JobsRepository(
 
         // Or continue to fetch latest details
         if (jobInCache == null || !jobInCache.isComplete) getJobFromRemote(jobId, callback)
+    }
+
+    /**
+     * this method can be used to get all complain's reasons related with jobs
+     * [callback] get all complain reasons
+     */
+    override fun getJobComplainReasons(callback: JobsDataSource.ComplainReasonsCallback) {
+        jobsRemoteDataSource.getJobComplainReasons(USER_TYPE_DRIVER, MESSAGE_TYPE, LANG_TYPE, callback)
     }
 
     override fun saveJob(job: Job) {
