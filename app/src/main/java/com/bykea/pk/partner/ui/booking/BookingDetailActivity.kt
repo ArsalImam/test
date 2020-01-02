@@ -104,13 +104,7 @@ class BookingDetailActivity : BaseActivity() {
                     /**
                      * this method will update the span count to center columns horizontally
                      */
-                    (binding?.feedbackRecyclerView?.layoutManager as GridLayoutManager).spanCount =
-                            // even/odd logic to manage spans to make columns in center
-                            if (it.size % Constants.DIGIT_TWO == Constants.DIGIT_ZERO) {
-                                Constants.DIGIT_TWO
-                            } else {
-                                Constants.DIGIT_THREE
-                            }
+                    (binding?.feedbackRecyclerView?.layoutManager as GridLayoutManager).spanCount = Constants.DIGIT_THREE
                     feedbackAdapter.items = it
                 }
             }
