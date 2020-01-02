@@ -45,12 +45,14 @@ import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -66,6 +68,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -963,6 +966,17 @@ public class Utils {
         }
     }
 
+    /**
+     * Hide Keyboard
+     * @param view : View For Window Token
+     */
+    public static void hideKeyboard(View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     public static void shareWithWhatsApp(Context context, String promo) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -1298,6 +1312,26 @@ public class Utils {
 
         default void onFail() {
         }
+    }
+
+    public static void enableScroll(View view) {
+        if (view instanceof TextView) {
+            TextView textView = (TextView) view;
+            textView.setMovementMethod(new ScrollingMovementMethod());
+        }
+
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_UP:
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -3580,6 +3614,7 @@ public class Utils {
 
     /**
      * Set Scale Animation (Zoom In and Zoom Out Animation)
+     *
      * @param view : On Which Animation Has To Perform
      */
     public static void setScaleAnimation(View view) {

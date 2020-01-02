@@ -30,8 +30,8 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://192.168.3.50:3000\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://192.168.3.50:4000\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.xyz\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.xyz\""
             }
             develop {
                 dimension "env"
@@ -77,6 +77,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
+    implementation 'org.apache.commons:commons-lang3:3.7'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'org.apache.commons:commons-lang3:3.7'

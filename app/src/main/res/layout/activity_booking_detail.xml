@@ -10,12 +10,18 @@
 
         <import type="com.bykea.pk.partner.ui.helpers.AppPreferences" />
 
+        <import type="org.apache.commons.lang3.StringUtils" />
+
         <variable
             name="viewModel"
             type="com.bykea.pk.partner.ui.booking.BookingDetailViewModel" />
 
         <variable
             name="invoiceAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
+
+        <variable
+            name="feedbackAdapter"
             type="com.bykea.pk.partner.ui.common.LastAdapter" />
     </data>
 
@@ -53,9 +59,26 @@
                         android:paddingTop="@dimen/padding.tiny"
                         android:paddingBottom="@dimen/padding.tiny">
 
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
 
-                        <include layout="@layout/inline_pickup_dropoff_signs" />
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}">
 
+                                <include layout="@layout/inline_pickup_dropoff_signs" />
+                            </FrameLayout>
+
+                            <ImageView
+                                android:layout_width="@dimen/_10sdp"
+                                android:layout_height="@dimen/_10sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/green_circle_shape"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address != null ? View.GONE : View.VISIBLE}" />
+
+                        </FrameLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -81,7 +104,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/secondaryColorDark" />
+                                android:background="@color/secondaryColorDark"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}" />
 
                             <com.bykea.pk.partner.widgets.FontTextView
                                 android:id="@+id/endAddressTv"
@@ -96,6 +120,7 @@
                                 android:text="@{viewModel.bookingDetailData.dropoff.address}"
                                 android:textColor="@color/secondaryColorDark"
                                 android:textSize="@dimen/textsize.small.medium"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}"
                                 app:fontName="roboto_light.ttf" />
 
                         </LinearLayout>
@@ -212,10 +237,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height.large"
-                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}"
                         android:layout_marginLeft="@dimen/margin.small"
                         android:layout_marginRight="@dimen/margin.small"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}">
 
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:id="@+id/cancelTypeTv"
@@ -252,6 +277,15 @@
                     android:adapter="@{invoiceAdapter}"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <!--app:spanCount="@{viewModel.feedbackSpanCount}"-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/feedback_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{feedbackAdapter}"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/btnProblem"

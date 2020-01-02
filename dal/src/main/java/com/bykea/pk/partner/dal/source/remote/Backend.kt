@@ -262,6 +262,11 @@ interface Backend {
             @Path("trip_id") jobRequestId: String,
             @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
 
+    @GET("/api/v1/common/cancel/messages")
+    fun getJobComplainReasons(@Query("user_type") userType: String?,
+                              @Query("type") type: String?,
+                              @Query("lang") lang: String?): Call<ComplainReasonResponse>
+
     @GET
     fun getBookingDetailsById(@Url bookingUrl: String): Call<BookingDetailResponse>
 
