@@ -19,6 +19,10 @@
         <variable
             name="invoiceAdapter"
             type="com.bykea.pk.partner.ui.common.LastAdapter" />
+
+        <variable
+            name="feedbackAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -273,6 +277,15 @@
                     android:adapter="@{invoiceAdapter}"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <!--app:spanCount="@{viewModel.feedbackSpanCount}"-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/feedback_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{feedbackAdapter}"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/btnProblem"

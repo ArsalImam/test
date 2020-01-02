@@ -147,6 +147,7 @@ public class Constants {
     @NotNull
     public static final String COMMA = ",";
     public static final String NEAR_LBL = "Near ";
+    public static final int DIGIT_THREE = 3;
     @Nullable
     public static final int REQUEST_CODE_SUBMIT_COMPLAIN = 1001;
 
