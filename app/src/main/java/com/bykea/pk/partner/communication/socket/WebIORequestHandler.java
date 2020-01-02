@@ -618,14 +618,11 @@ public class WebIORequestHandler {
                 normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
             ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
         } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-            if (normalCallData.isSuccess() && AppPreferences.getAvailableStatus()) {
-
                 /*
                  * when Gps is off, we don't show Calling Screen so we don't need to show
                  * Cancel notification either if passenger cancels it before booking.
                  * If passenger has cancelled it after booking we will entertain this Cancel notification
                  * */
-
                 if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                     AppPreferences.removeReceivedMessageCount();
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
@@ -642,7 +639,6 @@ public class WebIORequestHandler {
                         Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
                     }
                     getInstance().unRegisterChatListener();
-                }
             } else {
                 Utils.appToastDebug(normalCallData.getMessage());
             }
