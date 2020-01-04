@@ -22,6 +22,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.DriverApp;
@@ -71,7 +72,6 @@ public class LocationService extends Service {
     private String STATUS = StringUtils.EMPTY;
     private Context mContext;
     private UserRepository mUserRepository;
-    private LocationRequest mLocationRequest;
     private boolean shouldCallLocApi = true;
     private int counter = 0;
     private int counterForMultiDelivery = 0;
@@ -204,7 +204,6 @@ public class LocationService extends Service {
         } else {
             Utils.redLogLocation(TAG, "onStartCommand (hasForeGroundNotification)");
         }
-        createLocationRequest();
         requestLocationUpdates();
         cancelTimer();
 
@@ -282,7 +281,7 @@ public class LocationService extends Service {
 
     /**
      * Makes a request for location updates.
-     * {@link SecurityException}.
+     * {@link }.
      */
     public void requestLocationUpdates() {
         Utils.redLogLocation(TAG, "Requesting location updates");
@@ -327,7 +326,7 @@ public class LocationService extends Service {
             Utils.redLog(TAG, "------- Custom location update ON TRIP -------");
             long updateInterval = intent.getLongExtra(Constants.Extras.ON_TRIP_LOCATION_UPDATE_CUSTOM_INTERVAL,
                     Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS_DEFAULT);
-            createLocationRequestForOnTrip(updateInterval);
+//            createLocationRequestForOnTrip(updateInterval);
             requestLocationUpdates();
             cancelTimer();
             mCountDownLocationTimer.start();
@@ -492,39 +491,6 @@ public class LocationService extends Service {
                 EventBus.getDefault().post(Keys.MOCK_LOCATION);
             }
         }
-    }
-
-    /**
-     * Create location request with update interval and fastest update interval values.
-     * We always request location Priority as High Accuracy and has smallest displacement value as well for locations.
-     */
-    protected void createLocationRequest() {
-        //int UPDATE_INTERVAL = 10000;
-        //int FASTEST_INTERVAL = 5000;
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(Constants.UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setFastestInterval(Constants.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        if (AppPreferences.isOnTrip()) {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        } else {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        }
-
-        /*if (Utils.hasLocationCoordinates()) {
-            mLocationRequest.setSmallestDisplacement(Constants.LOCATION_SMALLEST_DISPLACEMENT);
-        }*/
-    }
-
-    /**
-     * Create location update request with custom when ON TRIP
-     *
-     * @param updateInterval custom interval in millis
-     */
-    protected void createLocationRequestForOnTrip(long updateInterval) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(updateInterval);
-        mLocationRequest.setFastestInterval(updateInterval / Constants.ON_TRIP_UPDATE_INTERVAL_DIVISIBLE);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     protected void stopLocationUpdates() {
