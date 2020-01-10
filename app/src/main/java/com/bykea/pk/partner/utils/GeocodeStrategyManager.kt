@@ -55,7 +55,7 @@ class GeocodeStrategyManager
      * @param latitude  obtained from gps
      * @param longitude obtained from gps
      */
-    fun fetchLocation(latitude: Double, longitude: Double) {
+    fun fetchLocation(latitude: Double, longitude: Double, isObtainFromGoogleApi: Boolean = true) {
         currentLatLng = LatLng(latitude, longitude)
 
         if (!StringUtils.isEmpty(lastReceivedLocation) && Utils.calculateDistance(currentLatLng?.latitude!!, currentLatLng?.longitude!!,
@@ -65,7 +65,7 @@ class GeocodeStrategyManager
             else
                 performCallback(prefix + lastReceivedLocation!!)
         } else {
-            obtainLocationByApi()
+            obtainLocationByApi(isObtainFromGoogleApi)
             lastLatLng = currentLatLng
         }
     }
@@ -78,7 +78,7 @@ class GeocodeStrategyManager
      *     <li>[PlacesRepository] will make a network call to Google Geocode API, more expensive solution</li>
      * </ul>
      */
-    private fun obtainLocationByApi() {
+    private fun obtainLocationByApi(isObtainFromGoogleApi: Boolean) {
         var address = StringUtils.EMPTY
         Observable.fromCallable {
             try {
@@ -132,7 +132,11 @@ class GeocodeStrategyManager
                             Log.e(TAG, "location obtained from android.location.GeoCoder -> $address")
                             performCallback(address.trim().replace(Constants.COMMA, StringUtils.SPACE))
                         } else {
-                            obtainFromGoogleApi()
+                            if (isObtainFromGoogleApi) {
+                                obtainFromGoogleApi()
+                            } else {
+                                performCallback(null)
+                            }
                         }
                     }
 
@@ -143,7 +147,7 @@ class GeocodeStrategyManager
     }
 
 
-    private fun performCallback(strAddress: String) {
+    private fun performCallback(strAddress: String?) {
         lastReceivedLocation = strAddress
         val placeObject = PlacesResult(StringUtils.EMPTY, strAddress,
                 currentLatLng?.latitude!!, currentLatLng?.longitude!!)

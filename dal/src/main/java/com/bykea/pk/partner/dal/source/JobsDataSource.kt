@@ -111,7 +111,7 @@ interface JobsDataSource {
      * @param route Route taken for job
      * @param callback Response callback
      */
-    fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: FinishJobCallback)
+    fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, endAddress: String, callback: FinishJobCallback)
 
     /**
      * Requests to conclude job

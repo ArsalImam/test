@@ -952,7 +952,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), true);
     }
 
     /***

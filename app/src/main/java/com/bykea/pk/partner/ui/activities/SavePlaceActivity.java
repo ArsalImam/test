@@ -204,7 +204,7 @@ public class SavePlaceActivity extends BaseActivity {
     };
 
     private void reverseGeoCoding(double targetLat, double targetLng) {
-        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng, true);
     }
 
     private IPlacesDataHandler mPlacesDataHandler = new PlacesDataHandler() {

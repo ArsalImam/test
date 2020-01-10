@@ -52,6 +52,8 @@ import com.bykea.pk.partner.models.response.TopUpPassWalletResponse;
 import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.tracking.AbstractRouting;
 import com.bykea.pk.partner.tracking.Route;
 import com.bykea.pk.partner.tracking.RouteException;
@@ -65,6 +67,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.MapUtil;
 import com.bykea.pk.partner.utils.NetworkChangeListener;
@@ -241,6 +244,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     BykeaCashFormFragment bykeaCashFormFragment;
     private boolean isMapLoaded = false;
     private boolean isDirectionApiTimeResetRequired = true;
+    private GeocodeStrategyManager geocodeStrategyManager;
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -579,6 +583,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
 
         EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+        geocodeStrategyManager = new GeocodeStrategyManager(this, placesDataHandler, Constants.NEAR_LBL);
     }
 
     @Override
@@ -2296,18 +2301,25 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logEvent(TripStatus.ON_FINISH_TRIP);
-
-        if (Utils.isModernService(callData.getServiceCode())) {
-            finishJobRestApi();
-        } else {
-            dataRepository.requestEndRide(mCurrentActivity, driversDataHandler);
-        }
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), true);
     }
+
+    private IPlacesDataHandler placesDataHandler = new PlacesDataHandler() {
+        @Override
+        public void onPlacesResponse(String response) {
+            super.onPlacesResponse(response);
+            if (Utils.isModernService(callData.getServiceCode())) {
+                finishJobRestApi(response);
+            } else {
+                dataRepository.requestEndRide(mCurrentActivity, response, driversDataHandler);
+            }
+        }
+    };
 
     /**
      * Request finish job on Rest API
      */
-    private void finishJobRestApi() {
+    private void finishJobRestApi(String endAddress) {
         AppPreferences.removeReceivedMessageCount();
         String endLatString = AppPreferences.getLatitude() + "";
         String endLngString = AppPreferences.getLongitude() + "";
@@ -2337,7 +2349,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
         latLngList.add(endLatLng);
 
-        jobsRepo.finishJob(callData.getTripId(), latLngList, new JobsDataSource.FinishJobCallback() {
+        jobsRepo.finishJob(callData.getTripId(), latLngList, endAddress, new JobsDataSource.FinishJobCallback() {
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data, @NotNull String request, @NotNull String resp) {
                 AppPreferences.removeReceivedMessageCount();
@@ -2345,7 +2357,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 Crashlytics.setString("Finish Job Request Trip ID", callData.getTripId());
                 Crashlytics.setString("Finish Job Response", resp);
 
-                onFinished(data);
+                onFinished(data, endAddress);
             }
 
             @Override
@@ -2502,10 +2514,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      *
      * @param data response data
      */
-    private void onFinished(FinishJobResponseData data) {
+    private void onFinished(FinishJobResponseData data, String endAddress) {
         if (data == null && !isFinishedRetried) {
             isFinishedRetried = true;
-            finishJobRestApi(); // retry to finish job
+            finishJobRestApi(endAddress); // retry to finish job
         } else {
             Dialogs.INSTANCE.dismissDialog();
             logAnalyticsEvent(Constants.AnalyticsEvents.ON_RIDE_COMPLETE);

@@ -7,5 +7,6 @@ data class FinishJobRequest(
         val token_id: String,
         val lat: Double,
         val lng: Double,
+        val address: String?,
         val route: ArrayList<LocCoordinatesInTrip>
 )

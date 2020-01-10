@@ -293,7 +293,7 @@ public class PlacesSearchFragment extends Fragment {
     };
 
     private void reverseGeoCoding(double targetLat, double targetLng) {
-        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng, true);
     }
 
     private void setSearchAdapter() {
