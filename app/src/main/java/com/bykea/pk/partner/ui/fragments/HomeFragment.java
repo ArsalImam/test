@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1231,6 +1232,10 @@ public class HomeFragment extends Fragment {
         }
         if (mGoogleMap != null) {
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setOnMyLocationChangeListener(location -> {
+                Log.e("Location changed", "by google maps");
+                AppPreferences.saveLocation(location.getLatitude(), location.getLongitude());
+            });
         }
         return false;
     }
@@ -1408,6 +1413,7 @@ public class HomeFragment extends Fragment {
                 return true;
             }
             mGoogleMap.setMyLocationEnabled(false);
+            mGoogleMap.setOnMyLocationChangeListener(null);
             mGoogleMap.clear();
         }
         return false;
