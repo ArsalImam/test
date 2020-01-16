@@ -426,6 +426,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     isMapLoaded = true;
                     if (!TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))
                         Utils.setScaleAnimation(cvDirections);
+
+                    mGoogleMap.setMyLocationEnabled(true);
+                    mGoogleMap.setOnMyLocationChangeListener(location -> {
+                        Log.e("Location changed", "by google maps");
+                        AppPreferences.saveLocation(location.getLatitude(), location.getLongitude());
+                    });
                 }
             });
         }
