@@ -426,6 +426,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     isMapLoaded = true;
                     if (!TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))
                         Utils.setScaleAnimation(cvDirections);
+
+                    mGoogleMap.setMyLocationEnabled(true);
+                    mGoogleMap.setOnMyLocationChangeListener(location -> {
+                        Log.e("Location changed", "by google maps");
+                        AppPreferences.saveLocation(location.getLatitude(), location.getLongitude());
+                    });
                 }
             });
         }
@@ -2301,7 +2307,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logEvent(TripStatus.ON_FINISH_TRIP);
-        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), true);
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), false);
     }
 
     private IPlacesDataHandler placesDataHandler = new PlacesDataHandler() {
