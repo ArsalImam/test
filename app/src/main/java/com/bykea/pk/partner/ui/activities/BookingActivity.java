@@ -508,7 +508,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 } else {
                     updateMarkers(false);
                 }
-                //TODO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+                //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
                 /*drawRoutes();*/
                 showEstimatedDistTime();
             }
@@ -1458,7 +1458,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mRouteLatLng.clear();
         }
         if (isResume) {
-            //TODO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+            //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
             /*if (!Utils.isRideService(callData.getCallType())) drawRouteToDropOff();*/
             callerNameTv.setText(callData.getPassName());
         }
