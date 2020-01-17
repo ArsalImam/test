@@ -1223,9 +1223,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     protected void onDestroy() {
         AppPreferences.setMultiDeliveryJobActivityOnForeground(false);
         //unregister the location receiver to stop receiving location when activity has destroyed.
-        unregisterReceiver(locationReceiver);
+        if (locationReceiver != null) {
+            unregisterReceiver(locationReceiver);
+        }
         //unregister the network change receiver to stop receiving when activity has destroyed.
-        unregisterReceiver(networkChangeListener);
+        if (networkChangeListener != null) {
+            unregisterReceiver(networkChangeListener);
+        }
         mapView.onDestroy();
         super.onDestroy();
 
