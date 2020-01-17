@@ -257,7 +257,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
         //commented out because it continuously showing value 0 as the duration and getDistance() is 0
 //        setTimeDistance(duration, callDriverData.getPickup().getDistance());
-        drawRouteToPickup();
+        //TODO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+        /*drawRouteToPickup();*/
     }
 
     /***
@@ -480,12 +481,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     String.valueOf(mCurrentLocation.getLatitude()),
                     String.valueOf(mCurrentLocation.getLongitude())
             );
-            drawRouteOnChange(
+            //TODO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+            /*drawRouteOnChange(
                     new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()),
                     new LatLng(Double.valueOf(callDriverData.getPickup().getLat()),
                             Double.valueOf(callDriverData.getPickup().getLng()))
-            );
+            );*/
 
         } else {
             mCurrentLocation = new Location(LocationManager.GPS_PROVIDER);
@@ -632,7 +634,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setDuration(3000);
         valueAnimator.start();
-        drawRouteToPickup();
+        //TODO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+        /*drawRouteToPickup();*/
     }
 
     /**
