@@ -2307,7 +2307,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         Dialogs.INSTANCE.dismissDialog();
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         logEvent(TripStatus.ON_FINISH_TRIP);
-        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), true);
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), false);
     }
 
     private IPlacesDataHandler placesDataHandler = new PlacesDataHandler() {
