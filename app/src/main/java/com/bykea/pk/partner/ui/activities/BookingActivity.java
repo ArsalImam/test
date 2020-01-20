@@ -508,7 +508,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 } else {
                     updateMarkers(false);
                 }
-                drawRoutes();
+                //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+                /*drawRoutes();*/
                 showEstimatedDistTime();
             }
         }
@@ -1457,7 +1458,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mRouteLatLng.clear();
         }
         if (isResume) {
-            if (!Utils.isRideService(callData.getCallType())) drawRouteToDropOff();
+            //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+            /*if (!Utils.isRideService(callData.getCallType())) drawRouteToDropOff();*/
             callerNameTv.setText(callData.getPassName());
         }
 
@@ -1479,7 +1481,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 pickUpMarker = null;
                 if (mapPolylines != null) mapPolylines.remove();
             }
-        }else{
+        } else {
             updateMarkers(true);
         }
         shouldRefreshDropOffMarker = true;
@@ -1624,33 +1626,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         lastDropOffFlagOnLeft = showOnLeft;
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        View mCustomMarkerView;
-        boolean isTripStatusStarted = TripStatus.ON_START_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus());
+        View mCustomMarkerView = MapUtil.getDropoffMarkerWithoutDistanceAndTime(mCurrentActivity);
+        TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
+        Stop dropOffStop = callData.getDropoffStop();
 
-        if (isTripStatusStarted && Utils.isRideService(callData.getCallType())) {
-            mCustomMarkerView = MapUtil.getDropOffMarkerLayoutForStartedState(mCurrentActivity, showOnLeft);
-            TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
-            Stop dropOffStop = callData.getDropoffStop();
-            if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty())
-                tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
-            else tvRegionName.setText(getString(R.string.drop_ur));
+        if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty()) {
+            tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
         } else {
-            mCustomMarkerView = MapUtil.getDropOffMarkerLayout(mCurrentActivity, showOnLeft);
-            TextView tvDistance = mCustomMarkerView.findViewById(R.id.tvDistance);
-            TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
-            TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
-
-            Stop dropOffStop = callData.getDropoffStop();
-            if (dropOffStop.getDistance() != NEGATIVE_DIGIT_ONE)
-                tvDistance.setText(Utils.formatDecimalPlaces((dropOffStop.getDistance() / 1000F) + "", 1));
-            else tvDistance.setText(R.string.dash);
-            if (dropOffStop.getDuration() != null)
-                tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(dropOffStop.getDuration())));
-            else tvDuration.setText(R.string.dash);
-            if (dropOffStop.getZoneNameUr() != null && !dropOffStop.getZoneNameUr().isEmpty())
-                tvRegionName.setText(getString(R.string.pick_drop_name_ur, dropOffStop.getZoneNameUr()));
-            else tvRegionName.setText(getString(R.string.drop_ur));
+            tvRegionName.setText(getString(R.string.drop_ur));
         }
+
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
     }
@@ -1666,22 +1651,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         lastPickUpFlagOnLeft = showOnLeft;
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        View mCustomMarkerView = MapUtil.getPickupMarkerLayout(mCurrentActivity, showOnLeft);
-
-        TextView tvDistance = mCustomMarkerView.findViewById(R.id.tvDistance);
-        TextView tvDuration = mCustomMarkerView.findViewById(R.id.tvDuration);
+        View mCustomMarkerView = MapUtil.getPickupMarkerWithoutDistanceAndTime(mCurrentActivity);
         TextView tvRegionName = mCustomMarkerView.findViewById(R.id.tvRegionName);
-
         Stop pickupStop = callData.getPickupStop();
-        if (pickupStop.getDistance() != NEGATIVE_DIGIT_ONE)
-            tvDistance.setText(Utils.formatDecimalPlaces((pickupStop.getDistance() / 1000F) + "", 1));
-        else tvDistance.setText(R.string.dash);
-        if (pickupStop.getDuration() != null)
-            tvDuration.setText(String.valueOf(TimeUnit.SECONDS.toMinutes(pickupStop.getDuration())));
-        else tvDuration.setText(R.string.dash);
-        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty())
+
+        if (pickupStop.getZoneNameUr() != null && !pickupStop.getZoneNameUr().isEmpty()) {
             tvRegionName.setText(getString(R.string.pick_drop_name_ur, pickupStop.getZoneNameUr()));
-        else tvRegionName.setText(getString(R.string.pick_ur));
+        } else {
+            tvRegionName.setText(getString(R.string.pick_ur));
+        }
 
         markerOptions.icon(MapUtil.getMarkerBitmapDescriptorFromView(mCustomMarkerView));
         return markerOptions;
