@@ -652,10 +652,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         AppPreferences.setJobActivityOnForeground(false);
         AppPreferences.setLastDirectionsApiCallTime(0);
         // Unregister here due to some reasons.
-        unregisterReceiver(locationReceiver);
 //        unregisterReceiver(cancelRideReceiver);
-        unregisterReceiver(networkChangeListener);
-        unregisterReceiver(mMessageNotificationBadgeReceiver);
+        if (locationReceiver != null) {
+            unregisterReceiver(locationReceiver);
+        }
+        if (networkChangeListener != null) {
+            unregisterReceiver(networkChangeListener);
+        }
+        if (mMessageNotificationBadgeReceiver != null) {
+            unregisterReceiver(mMessageNotificationBadgeReceiver);
+        }
         mapView.onDestroy();
         super.onDestroy();
     }
