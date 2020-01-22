@@ -144,8 +144,8 @@ class JobsRepository(
         jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
     }
 
-    override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
-        val body = FinishJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), route)
+    override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, endAddress: String?, callback: JobsDataSource.FinishJobCallback) {
+        val body = FinishJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), endAddress, route)
         jobsRemoteDataSource.finishJob(jobId, body, callback)
     }
 
