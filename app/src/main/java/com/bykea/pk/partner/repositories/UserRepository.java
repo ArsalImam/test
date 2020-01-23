@@ -698,7 +698,7 @@ public class UserRepository {
 
     }
 
-    public void requestEndRide(Context context, IUserDataHandler handler) {
+    public void requestEndRide(Context context, String endAddress, IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         mContext = context;
@@ -711,6 +711,10 @@ public class UserRepository {
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("tid", AppPreferences.getCallData().getTripId());
             jsonObject.put("token_id", AppPreferences.getAccessToken());
+
+            if (StringUtils.isNotEmpty(endAddress)) {
+                jsonObject.put("address", endAddress);
+            }
 
             String endLatString = AppPreferences.getLatitude() + "";
             String endLngString = AppPreferences.getLongitude() + "";
@@ -937,8 +941,8 @@ public class UserRepository {
      * Emit Driver Started data.
      *
      * @param activity context of the activity
-     * @param handler The Callback that will be invoked when driver started response received.
-     * @param address address received
+     * @param handler  The Callback that will be invoked when driver started response received.
+     * @param address  address received
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -957,12 +961,13 @@ public class UserRepository {
     /**
      * Emit Driver Finished data.
      *
-     * @param handler The Callback that will be invoked when driver finish event response received.
+     * @param handler               The Callback that will be invoked when driver finish event response received.
+     * @param reverseGeoCodeAddress
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
     public void requestMultiDeliveryDriverFinishRide(DirectionDropOffData data,
-                                                     IUserDataHandler handler) {
+                                                     IUserDataHandler handler, String reverseGeoCodeAddress) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
@@ -970,6 +975,11 @@ public class UserRepository {
             jsonObject.put("trip_id", data.getTripID());
             jsonObject.put("route", new Gson()
                     .toJson(AppPreferences.getLocCoordinatesInTrip()));
+
+            if (StringUtils.isNotEmpty(reverseGeoCodeAddress)) {
+                jsonObject.put("address", reverseGeoCodeAddress);
+            }
+
             directionDropOffData = data;
             AppPreferences.clearTripDistanceData();
 

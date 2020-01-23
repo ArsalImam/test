@@ -52,14 +52,25 @@ public class MapUtil {
     }
 
     /**
-     * Get Marker Layout For Trip Started State
-     * @param context : Calling context
-     * @param showOnLeft : Decide to show left or right, mirror layout
+     * Get PickUp Marker Layout Without Distance and Time
+     *
+     * @param context    : Calling context
      * @return view : Marker To Display
      */
-    public static View getDropOffMarkerLayoutForStartedState(Context context, boolean showOnLeft) {
-        int layoutId = showOnLeft ? R.layout.info_window_drop_start_left : R.layout.info_window_drop_start_right;
-        return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(layoutId, null);
+    public static View getPickupMarkerWithoutDistanceAndTime(Context context) {
+        return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.info_window_pickup_right_without_distance_time, null);
+    }
+
+    /**
+     * Get DropOff Marker Layout Without Distance and Time
+     *
+     * @param context : Calling context
+     * @return view : Marker To Display
+     */
+    public static View getDropoffMarkerWithoutDistanceAndTime(Context context) {
+        return ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.info_window_drop_right_without_distance_time, null);
     }
 
     public static BitmapDescriptor getMarkerBitmapDescriptorFromView(View view) {

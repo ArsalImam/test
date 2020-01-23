@@ -366,7 +366,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
      */
     private void unRegisterSMSReceiver() {
         try {
-            if (mCurrentActivity != null) {
+            if (mCurrentActivity != null && smsBroadcastReceiver!=null) {
                 mCurrentActivity.unregisterReceiver(smsBroadcastReceiver);
             }
         } catch (Exception ex) {

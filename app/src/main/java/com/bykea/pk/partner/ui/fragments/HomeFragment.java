@@ -1357,7 +1357,9 @@ public class HomeFragment extends Fragment {
 
         isScreenInFront = false;
         isCalled = false;
-        mCurrentActivity.unregisterReceiver(myReceiver);
+        if (myReceiver != null) {
+            mCurrentActivity.unregisterReceiver(myReceiver);
+        }
 //        if (countDownTimer != null) {
 //            countDownTimer.cancel();
 //        }

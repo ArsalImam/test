@@ -292,7 +292,7 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
 //        PlacesRepository mPlacesRepository = new PlacesRepository();
 //        mPlacesRepository.getGoogleGeoCoder(mPlacesDataHandler, targetLat + "", "" + targetLng, mCurrentActivity);
 
-        geocodeStrategyManager.fetchLocation(targetLat, targetLng);
+        geocodeStrategyManager.fetchLocation(targetLat, targetLng, true);
 
         /*if (requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE) {
             String origin = AppPreferences.getPickUpLoc(mCurrentActivity).latitude + "," + AppPreferences.getPickUpLoc(mCurrentActivity).longitude;

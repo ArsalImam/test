@@ -1,11 +1,13 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +22,16 @@ import com.bykea.pk.partner.models.response.MultiDeliveryCompleteRideResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
+import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
+import com.bykea.pk.partner.ui.activities.MapDetailsActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.adapters.MultiDeliveryCompleteRideAdapter;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.GeocodeStrategyManager;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
@@ -54,6 +62,9 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     private UserRepository repository;
     private List<DirectionDropOffData> list = new ArrayList<>();
     private List<String> tripIDList = new ArrayList<>();
+    private GeocodeStrategyManager geocodeStrategyManager;
+    private MapDetailsActivity mCurrentActivity;
+    private DirectionDropOffData tripFinishedData;
 
     @Nullable
     @Override
@@ -62,6 +73,7 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
                 container,
                 false);
         unbinder = ButterKnife.bind(this, view);
+        mCurrentActivity = (MapDetailsActivity) getActivity();
         return view;
     }
 
@@ -91,6 +103,8 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
                     }
                 });
         mRecyclerView.setAdapter(adapter);
+
+        geocodeStrategyManager = new GeocodeStrategyManager(mCurrentActivity, placesDataHandler, Constants.NEAR_LBL);
     }
 
     /**
@@ -101,16 +115,14 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
     private void requestRideFinish(int position, String whichDelivery) {
         String title =
                 getContext().getString(R.string.multidelivery_complete_msg_one) +
-                        " " + whichDelivery+ " "+
-                getContext().getString(R.string.multidelivery_complete_msg_two) ;
+                        " " + whichDelivery + " " +
+                        getContext().getString(R.string.multidelivery_complete_msg_two);
         Dialogs.INSTANCE.showLoader(getActivity());
-        final DirectionDropOffData data = list.get(position);
         Dialogs.INSTANCE.showRideStatusDialog(getActivity(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialogs.INSTANCE.dismissDialog();
-                requestMultiDeliveryTripFinished(data);
-
+                tripFinishedData = list.get(position);
+                geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), true);
             }
         }, new View.OnClickListener() {
             @Override
@@ -120,15 +132,25 @@ public class MultiDeliveryRideCompleteFragment extends Fragment {
         }, title);
     }
 
+    private IPlacesDataHandler placesDataHandler = new PlacesDataHandler() {
+        @Override
+        public void onPlacesResponse(String response) {
+            super.onPlacesResponse(response);
+            Dialogs.INSTANCE.dismissDialog();
+            requestMultiDeliveryTripFinished(tripFinishedData, response);
+        }
+    };
+
     /**
      * Invoked this method when multi delivery trip is going to finish
      *
-     * @param data The data id trip that is going to be finished.
+     * @param data                  The data id trip that is going to be finished.
+     * @param reverseGeoCodeAddress
      */
-    private void requestMultiDeliveryTripFinished(DirectionDropOffData data) {
+    private void requestMultiDeliveryTripFinished(DirectionDropOffData data, String reverseGeoCodeAddress) {
         Dialogs.INSTANCE.showLoader(getActivity());
         repository.requestMultiDeliveryDriverFinishRide(
-                data, handler);
+                data, handler, reverseGeoCodeAddress);
     }
 
     /**

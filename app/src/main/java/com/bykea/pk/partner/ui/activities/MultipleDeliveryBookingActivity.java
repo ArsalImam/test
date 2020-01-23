@@ -257,7 +257,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
 
         //commented out because it continuously showing value 0 as the duration and getDistance() is 0
 //        setTimeDistance(duration, callDriverData.getPickup().getDistance());
-        drawRouteToPickup();
+        //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+        /*drawRouteToPickup();*/
     }
 
     /***
@@ -480,12 +481,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     String.valueOf(mCurrentLocation.getLatitude()),
                     String.valueOf(mCurrentLocation.getLongitude())
             );
-            drawRouteOnChange(
+            //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+            /*drawRouteOnChange(
                     new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()),
                     new LatLng(Double.valueOf(callDriverData.getPickup().getLat()),
                             Double.valueOf(callDriverData.getPickup().getLng()))
-            );
+            );*/
 
         } else {
             mCurrentLocation = new Location(LocationManager.GPS_PROVIDER);
@@ -632,7 +634,8 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setDuration(3000);
         valueAnimator.start();
-        drawRouteToPickup();
+        //INFO : UNCOMMENT IF REQUIRE TO CALL DIRECTIONS API
+        /*drawRouteToPickup();*/
     }
 
     /**
@@ -952,7 +955,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      */
     private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
-        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), false);
     }
 
     /***
@@ -1223,9 +1226,13 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     protected void onDestroy() {
         AppPreferences.setMultiDeliveryJobActivityOnForeground(false);
         //unregister the location receiver to stop receiving location when activity has destroyed.
-        unregisterReceiver(locationReceiver);
+        if (locationReceiver != null) {
+            unregisterReceiver(locationReceiver);
+        }
         //unregister the network change receiver to stop receiving when activity has destroyed.
-        unregisterReceiver(networkChangeListener);
+        if (networkChangeListener != null) {
+            unregisterReceiver(networkChangeListener);
+        }
         mapView.onDestroy();
         super.onDestroy();
 
