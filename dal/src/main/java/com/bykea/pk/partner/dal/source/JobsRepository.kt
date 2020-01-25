@@ -174,6 +174,7 @@ class JobsRepository(
     override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
         jobsRemoteDataSource.createTrip(rideCreateRequestObject, callback)
     }
+
     /**
      * Get Booking Details By Id
      *
@@ -234,6 +235,10 @@ class JobsRepository(
         requestObjBykeaCash._id = AppPref.getDriverId(pref)
         requestObjBykeaCash.token_id = AppPref.getAccessToken(pref)
         jobsRemoteDataSource.updateBookingDetails(tripId, requestObjBykeaCash, callbackBykeaCash)
+    }
+
+    override fun skipJob(jobId: String, callback: JobsDataSource.SkipJobCallback) {
+        jobsRemoteDataSource.skipJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
 
