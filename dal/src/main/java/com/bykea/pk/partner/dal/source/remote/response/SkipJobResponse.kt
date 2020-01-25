@@ -6,7 +6,4 @@ class SkipJobResponse : BaseResponse() {
 
     @SerializedName("is_available")
     private val available: String? = null
-
-    val isAvailable: Boolean
-        get() = available!!.isEmpty() || java.lang.Boolean.parseBoolean(available)
 }
