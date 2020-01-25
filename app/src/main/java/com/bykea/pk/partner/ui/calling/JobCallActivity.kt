@@ -218,8 +218,8 @@ class JobCallActivity : BaseActivity() {
      * @return Displayable time in minutes
      */
     private fun getArrivalTime(pickup: Stop?): String {
-        return if (pickup != null && pickup.duration > 0)
-            (pickup.duration / 60).toString() + StringUtils.SPACE + getString(R.string.min)
+        return if (pickup != null && pickup.duration > DIGIT_ZERO)
+            (pickup.duration / DIGIT_SIXTY).toString() + StringUtils.SPACE + getString(R.string.min)
         else
             "$DIGIT_ONE"
     }
@@ -247,8 +247,8 @@ class JobCallActivity : BaseActivity() {
      * @return Displayable distance in kilometer
      */
     private fun getPickUpDistance(pickup: Stop?): String {
-        return if (pickup != null && pickup.distance != 0)
-            (pickup.distance / 1000).toString() + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
+        return if (pickup != null && pickup.distance != DIGIT_ZERO)
+            (pickup.distance / DIGIT_THOUSAND).toString() + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
         else
             getString(R.string.question_mark) + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
     }
@@ -260,8 +260,8 @@ class JobCallActivity : BaseActivity() {
      * @return Displayable distance in kilometer
      */
     private fun getDropOffDistance(dropoff: Stop?): String {
-        return if (dropoff != null && dropoff.distance != 0)
-            (dropoff.distance / 1000).toString() + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
+        return if (dropoff != null && dropoff.distance != DIGIT_ZERO)
+            (dropoff.distance / DIGIT_THOUSAND).toString() + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
         else
             getString(R.string.question_mark) + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
     }
