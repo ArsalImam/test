@@ -114,6 +114,8 @@
                 android:gravity="center"
                 android:textColor="@color/secondaryColorLight"
                 android:textSize="@dimen/_14sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:maxLines="3"
                 android:ellipsize="end"
                 tools:text="@string/dropoff_address" />
