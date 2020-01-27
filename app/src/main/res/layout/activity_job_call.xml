@@ -46,8 +46,7 @@
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_40sdp"
-                android:textStyle="bold"
-                app:fontName="open_sans_regular.ttf"
+                app:fontName="open_sans_semi_bold.ttf"
                 tools:text="0 min" />
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -58,7 +57,7 @@
                 android:textColor="@color/secondaryColorLight"
                 android:textSize="@dimen/_25sdp"
                 android:textStyle="bold"
-                app:fontName="open_sans_regular.ttf"
+                app:fontName="open_sans_semi_bold.ttf"
                 tools:text="@string/distanceUnit" />
 
         </LinearLayout>
@@ -129,8 +128,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="@dimen/_20sdp"
-        android:layout_marginRight="@dimen/_20sdp"
+        android:layout_marginLeft="@dimen/_12sdp"
+        android:layout_marginRight="@dimen/_12sdp"
         android:layout_marginBottom="@dimen/_25sdp"
         android:background="@drawable/btn_green_round_selected">
 
