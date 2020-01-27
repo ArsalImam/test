@@ -968,6 +968,7 @@ public class Utils {
 
     /**
      * Hide Keyboard
+     *
      * @param view : View For Window Token
      */
     public static void hideKeyboard(View view) {
@@ -2124,18 +2125,9 @@ public class Utils {
      * @return Either modern service or not
      */
     public static boolean isModernService(Integer serviceCode) {
-        return serviceCode != null
-                && (serviceCode == Constants.ServiceCode.SEND
-                || serviceCode == Constants.ServiceCode.SEND_COD
-                || serviceCode == Constants.ServiceCode.RIDE
-                || serviceCode == Constants.ServiceCode.OFFLINE_RIDE
-                || serviceCode == Constants.ServiceCode.OFFLINE_DELIVERY
-                || serviceCode == MART
-                || serviceCode == MOBILE_TOP_UP
-                || serviceCode == MOBILE_WALLET
-                || serviceCode == BANK_TRANSFER
-                || serviceCode == UTILITY
-        );
+        return serviceCode != null &&
+                (serviceCode >= Constants.ServiceCode.MIN_SERVICE_CODE_FOR_API
+                        && serviceCode != Constants.ServiceCode.COURIER);
     }
 
     public static boolean isRideService(String callType) {
