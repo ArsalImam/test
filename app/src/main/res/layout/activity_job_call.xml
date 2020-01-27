@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_20sdp"
         android:layout_marginRight="@dimen/_20sdp"
         app:srcCompat="@drawable/ic_cancel" />
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginLeft="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_90sdp"
+            android:layout_marginTop="@dimen/_70sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:layout_marginRight="@dimen/_15sdp"
             android:layout_marginBottom="@dimen/_4sdp"
@@ -66,8 +66,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:layout_marginBottom="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_15sdp"
             app:srcCompat="@drawable/ic_down_arrow" />
 
         <LinearLayout
@@ -91,7 +91,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_30sdp"
+                android:textSize="@dimen/_32sdp"
                 android:textStyle="bold"
                 app:fontName="jameel_noori_nastaleeq.ttf"
                 tools:text=" کلو میٹر" />
@@ -102,18 +102,20 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/distanceUnit"
+                android:layout_marginTop="@dimen/_minus5sdp"
                 android:textColor="@color/secondaryColorLight"
                 android:textSize="@dimen/_25sdp"
                 app:fontName="open_sans_regular.ttf" />
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/dropAddressTV"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="center"
                 android:textColor="@color/secondaryColorLight"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_14sdp"
+                android:maxLines="3"
+                android:ellipsize="end"
                 tools:text="@string/dropoff_address" />
 
         </LinearLayout>
