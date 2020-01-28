@@ -875,6 +875,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                         mCurrentActivity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
+                                                AppPreferences.setTopUpPassengerWalletAllowed(false);
+                                                ivTopUp.setVisibility(View.INVISIBLE);
                                                 Dialogs.INSTANCE.dismissDialog();
                                                 Utils.appToast(response.getMessage());
                                                 if (response.getData() != null) {
@@ -1360,7 +1362,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void showWalletAmount() {
         tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
         if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
-                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus()) &&
+                AppPreferences.isTopUpPassengerWalletAllowed()) {
             ivTopUp.setVisibility(View.VISIBLE);
         } else {
             ivTopUp.setVisibility(View.INVISIBLE);

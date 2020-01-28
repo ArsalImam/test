@@ -81,12 +81,13 @@
 
                     <ImageView
                         android:id="@+id/ivTopUp"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
                         android:layout_gravity="left"
-                        android:paddingLeft="-5dp"
-                        android:paddingBottom="@dimen/_4sdp"
-                        android:src="@drawable/circle_plus" />
+                        android:paddingLeft="@dimen/_minus3sdp"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:src="@drawable/circle_plus"
+                        android:paddingStart="@dimen/_minus3sdp" />
                 </FrameLayout>
 
                 <RelativeLayout
