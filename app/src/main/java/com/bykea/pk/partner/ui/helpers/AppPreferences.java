@@ -1597,4 +1597,20 @@ public class AppPreferences {
                 .remove(Keys.CONVERSATION_BADGE_COUNT)
                 .apply();
     }
+
+    /**
+     * @Boolean Is Top Up Passenger Wallet Allowed
+     */
+    public static boolean isTopUpPassengerWalletAllowed() {
+        return mSharedPreferences.getBoolean(Keys.TOP_UP_PASSENGER, true);
+    }
+
+    /**
+     * Set Top Up Allowed
+     */
+    public static void setTopUpPassengerWalletAllowed(boolean topUpAllowed) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.putBoolean(Keys.TOP_UP_PASSENGER, topUpAllowed);
+        ed.commit();
+    }
 }
