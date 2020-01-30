@@ -238,7 +238,7 @@ public class FeedbackActivity extends BaseActivity {
         callData = AppPreferences.getCallData();
         isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
-        isOfflineDeliveryType = callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
+        isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
         isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
