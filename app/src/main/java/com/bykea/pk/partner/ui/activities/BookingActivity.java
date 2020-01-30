@@ -875,6 +875,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                         mCurrentActivity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
+                                                AppPreferences.setTopUpPassengerWalletAllowed(false);
+                                                ivTopUp.setVisibility(View.INVISIBLE);
                                                 Dialogs.INSTANCE.dismissDialog();
                                                 Utils.appToast(response.getMessage());
                                                 if (response.getData() != null) {
@@ -1084,41 +1086,27 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     private void hideButtonOnArrived() {
-//        callbtn.setVisibility(View.GONE);
-//        chatBtn.setVisibility(View.GONE);
         cancelBtn.setVisibility(View.GONE);
     }
 
     private void startGoogleDirectionsApp() {
         if (callData != null) {
-            String start, end = StringUtils.EMPTY;
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-                start = Utils.getCurrentLocation();
+            String end = StringUtils.EMPTY;
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 if (StringUtils.isNotBlank(callData.getStartLat()) && StringUtils.isNotBlank(callData.getStartLng())) {
                     end = callData.getStartLat() + "," + callData.getStartLng();
                 }
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
-                start = Utils.getCurrentLocation();
-//                end = callData.getStartLat() + "," + callData.getStartLng();
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
                     end = callData.getEndLat() + "," + callData.getEndLng();
                 }
             } else {
-                start = Utils.getCurrentLocation();
                 if (StringUtils.isNotBlank(callData.getEndLat()) && StringUtils.isNotBlank(callData.getEndLng())) {
-//                    end = callData.getEndLat() + "," + callData.getEndLng();
                     end = callData.getStartLat() + "," + callData.getStartLng();
                 }
             }
-
-//            String uri = "http://maps.google.com/maps?saddr=" + start + "&daddr=" + end;
-//            String uri = "https://www.google.com/maps/dir/?api=1&origin=" + start + "&destination=" + end + "&travelmode=driving";
             try {
-//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-//                intent.setPackage("com.google.android.apps.maps");
-//                Utils.redLog("Google Route Link ", uri);
-//                startActivity(intent);
-
                 Uri gmmIntentUri = Uri.parse("google.navigation:q=" + end + "&mode=d");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -1243,6 +1231,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setAddressDetailsVisible();
             }
 
+            cvDirections.setVisibility(View.VISIBLE);
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
             } else {
@@ -1321,7 +1310,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         jobBtn.setText(getString(R.string.button_text_start));
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
-        cvDirections.setVisibility(View.INVISIBLE);
         setOnArrivedData();
 
         if (isBykeaCashJob) setAddressDetailsVisible();
@@ -1331,11 +1319,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Set and Configure Accordingly For The Started State
      */
     private void setStartedState() {
+        if (isMapLoaded) Utils.setScaleAnimation(cvDirections);
         jobBtn.setText(getString(R.string.button_text_finish));
         llStartAddress.setVisibility(View.GONE);
         showDropOffAddress();
-        cvDirections.setVisibility(View.VISIBLE);
-        if (isMapLoaded) Utils.setScaleAnimation(cvDirections);
         setOnStartData();
 
         if (isBykeaCashJob) setAddressDetailsVisible();
@@ -1360,7 +1347,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void showWalletAmount() {
         tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
         if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
-                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus())) {
+                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus()) &&
+                AppPreferences.isTopUpPassengerWalletAllowed()) {
             ivTopUp.setVisibility(View.VISIBLE);
         } else {
             ivTopUp.setVisibility(View.INVISIBLE);
@@ -1444,7 +1432,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
 
         jobBtn.setText(getString(R.string.button_text_start));
-        cvDirections.setVisibility(View.INVISIBLE);
         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
     }
 

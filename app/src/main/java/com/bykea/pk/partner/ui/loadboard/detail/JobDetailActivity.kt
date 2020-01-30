@@ -67,6 +67,7 @@ class JobDetailActivity : BaseActivity() {
             })
 
             acceptBookingCommand.observe(this@JobDetailActivity, Observer {
+                AppPreferences.setTopUpPassengerWalletAllowed(true)
                 Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
                         AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value))
