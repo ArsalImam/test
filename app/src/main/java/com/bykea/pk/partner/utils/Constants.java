@@ -415,6 +415,7 @@ public class Constants {
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
         public static final int OFFLINE_DELIVERY = 31;
+        public static final int DISPATCH_RIDE = 35;
     }
 
     /**
