@@ -229,7 +229,7 @@ public class FeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean isBykeaCashType, isDeliveryType, isPurchaseType;
+    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
     private NormalCallData callData;
 
     private void initViews() {
@@ -238,6 +238,7 @@ public class FeedbackActivity extends BaseActivity {
         callData = AppPreferences.getCallData();
         isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
+        isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
         isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
@@ -275,7 +276,7 @@ public class FeedbackActivity extends BaseActivity {
 
         if (isBykeaCashType) {
             updateUIBykeaCash();
-        } else if (isDeliveryType) {
+        } else if (isDeliveryType || isOfflineDeliveryType) {
             updateUIICODelivery();
         } else if (isPurchaseType) {
             updateUIforPurcahseService();
@@ -493,7 +494,7 @@ public class FeedbackActivity extends BaseActivity {
                             etReceiverName.getText().toString(),
                             etReceiverMobileNo.getText().toString()
                     );
-            } else if (isDeliveryType) {
+            } else if (isDeliveryType || isOfflineDeliveryType) {
                 if (isLoadboardJob)
                     repo.concludeJob(
                             callData.getTripId(),
@@ -625,15 +626,15 @@ public class FeedbackActivity extends BaseActivity {
         } else if (StringUtils.isBlank(receivedAmountEt.getText().toString())) {
             setEtError(getString(R.string.enter_received_amount));
             return false;
-        } else if (isDeliveryType && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverName.getText().toString())) {
+        } else if ((isDeliveryType || isOfflineDeliveryType) && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverName.getText().toString())) {
             etReceiverName.setError(getString(R.string.error_field_empty));
             etReceiverName.requestFocus();
             return false;
-        } else if (isDeliveryType && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverMobileNo.getText().toString())) {
+        } else if ((isDeliveryType || isOfflineDeliveryType) && selectedMsgPosition == Constants.KAMYAB_DELIVERY && StringUtils.isBlank(etReceiverMobileNo.getText().toString())) {
             etReceiverMobileNo.setError(getString(R.string.error_field_empty));
             etReceiverMobileNo.requestFocus();
             return false;
-        } else if ((isDeliveryType || isPurchaseType) && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
+        } else if ((isDeliveryType || isOfflineDeliveryType || isPurchaseType) && StringUtils.isNotBlank(etReceiverMobileNo.getText().toString())
                 && !Utils.isValidNumber(mCurrentActivity, etReceiverMobileNo)) {
             return false;
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {

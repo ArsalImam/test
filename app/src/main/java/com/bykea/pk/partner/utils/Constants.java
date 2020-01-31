@@ -402,6 +402,9 @@ public class Constants {
      * Service Codes
      */
     public static class ServiceCode {
+        public static final int MIN_SERVICE_CODE_FOR_API = 20;
+        public static final int COURIER = 26;
+
         public static final int SEND = 21;
         public static final int SEND_COD = 22;
         public static final int RIDE = 23;
@@ -412,6 +415,7 @@ public class Constants {
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
         public static final int OFFLINE_DELIVERY = 31;
+        public static final int DISPATCH_RIDE = 35;
     }
 
     /**

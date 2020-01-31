@@ -466,7 +466,7 @@
                         android:hint="Receiver Name"
                         android:inputType="text"
                         android:maxWidth="@dimen/_220sdp"
-                        android:maxLength="20"
+                        android:maxLength="50"
                         android:nextFocusDown="@+id/etReceiverMobileNo"
                         android:padding="@dimen/_7sdp"
                         android:textColor="@color/textColorPrimary"
