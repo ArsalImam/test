@@ -319,4 +319,19 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
         })
     }
+
+
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param driverId String
+     * @param token String
+     * @param callback CancelJobCallback
+     */
+    fun skipJob(jobId: String, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
+        Backend.talos.skipJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
+            override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
+            override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
 }

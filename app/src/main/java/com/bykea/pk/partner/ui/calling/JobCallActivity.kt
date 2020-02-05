@@ -1,15 +1,18 @@
 package com.bykea.pk.partner.ui.calling
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.Aog
 import com.bykea.pk.partner.dal.Stop
 import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.AcceptCallResponse
@@ -22,9 +25,11 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
+import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_job_call.*
+import org.apache.commons.lang3.StringUtils
 import org.greenrobot.eventbus.Subscribe
 
 /**
@@ -40,13 +45,15 @@ class JobCallActivity : BaseActivity() {
 
     private val DEFAULT_CALL_TIMEOUT = 20 //seconds
     private var callTimeOut = DEFAULT_CALL_TIMEOUT
-    private var secondsEclipsed = 0
+    private var secondsEclipsed: Float = DIGIT_ZERO.toFloat()
     private var isCancelledByPassenger: Boolean = false
+    private lateinit var jobsRepo: JobsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_job_call)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        jobsRepo = Injection.provideJobsRepository(application.applicationContext)
 
         intent?.let {
             jobCall = intent.getSerializableExtra(KEY_CALL_DATA) as JobCall
@@ -123,24 +130,25 @@ class JobCallActivity : BaseActivity() {
         _mpSound = MediaPlayer.create(this, R.raw.ringtone)
         _mpSound.start()
 
-        donut_progress.max = callTimeOut
-        donut_progress.progress = 0f
-
-        timer = object : CountDownTimer((callTimeOut * 1000).toLong(), 1000) {
+        donut_progress.max = callTimeOut * DIGIT_TEN
+        donut_progress.progress = callTimeOut * DIGIT_TEN
+        secondsEclipsed = callTimeOut.toFloat()
+        timer = object : CountDownTimer((callTimeOut * DIGIT_THOUSAND).toLong(), DIGIT_HUNDRED.toLong()) {
 
             override fun onTick(millisUntilFinished: Long) {
-                secondsEclipsed++
-                if (secondsEclipsed < callTimeOut) {
-                    donut_progress.progress = secondsEclipsed.toFloat()
-                    counterTv.text = (callTimeOut - secondsEclipsed).toString()
+                if (secondsEclipsed.toInt() > DIGIT_ZERO) {
+                    donut_progress.progress = (millisUntilFinished / (DIGIT_HUNDRED)).toInt()
+                    counterTv.text = secondsEclipsed.toInt().toString()
+                    secondsEclipsed -= 0.1f
                 } else {
                     timer.onFinish()
+
                 }
             }
 
             override fun onFinish() {
-                donut_progress.progress = 0f
-                counterTv.text = "0"
+                donut_progress.progress = DIGIT_ZERO
+                counterTv.text = "$DIGIT_ZERO"
                 acceptCallBtn.isEnabled = false
                 stopSound()
                 Utils.setCallIncomingStateWithoutRestartingService()
@@ -164,13 +172,22 @@ class JobCallActivity : BaseActivity() {
      */
     private fun init() {
         Utils.redLog(TAG, "Call Data: " + Gson().toJson(jobCall))
-        Aog.onJobCallAndJobAccept(jobCall, false, secondsEclipsed)
+        Aog.onJobCallAndJobAccept(jobCall, false, secondsEclipsed.toInt())
         counterTv.text = callTimeOut.toString()
 
-        ivCallType.setImageDrawable(ContextCompat.getDrawable(this, getJobImage(jobCall.service_code)))
+        /*ivCallType.setImageDrawable(ContextCompat.getDrawable(this, getJobImage(jobCall.service_code)))*/
         estArrivalTimeTV.text = getArrivalTime(jobCall.pickup)
+        estArrivalDistanceTV.text = getPickUpDistance(jobCall.pickup)
         dropZoneNameTV.text = getDropOffZoneName(jobCall.dropoff)
         estDistanceTV.text = getDropOffDistance(jobCall.dropoff)
+        dropAddressTV.text = getDropOffAddress(jobCall.dropoff)
+
+        skipJobiV.setOnClickListener {
+            stopSound()
+            skipJob()
+            timer.cancel()
+            finishActivity()
+        }
 
         acceptCallBtn.setOnClickListener {
             stopSound()
@@ -202,10 +219,10 @@ class JobCallActivity : BaseActivity() {
      * @return Displayable time in minutes
      */
     private fun getArrivalTime(pickup: Stop?): String {
-        return if (pickup != null && pickup.duration > 0)
-            (pickup.duration / 60).toString()
+        return if (pickup != null && pickup.duration > DIGIT_ZERO)
+            (pickup.duration / DIGIT_SIXTY).toString() + StringUtils.SPACE + getString(R.string.min)
         else
-            "1"
+            "$DIGIT_ONE"
     }
 
     /**
@@ -217,11 +234,24 @@ class JobCallActivity : BaseActivity() {
     private fun getDropOffZoneName(dropoff: Stop?): String {
         return if (dropoff != null)
             when {
-                dropoff.zone_ur != null && dropoff.zone_ur!!.isNotEmpty() -> dropoff.zone_ur!!
-                dropoff.zone_en != null && dropoff.zone_en!!.isNotEmpty() -> dropoff.zone_en!!
-                dropoff.address != null && dropoff.address!!.isNotEmpty() -> dropoff.address!!
+                !dropoff.zone_ur.isNullOrEmpty() -> dropoff.zone_ur!!
+                !dropoff.zone_en.isNullOrEmpty() -> dropoff.zone_en!!
+                !dropoff.address.isNullOrEmpty() -> dropoff.address!!
                 else -> getString(R.string.customer_btayega)
             } else getString(R.string.customer_btayega)
+    }
+
+    /**
+     * Get the pickup distance from partner current location
+     *
+     * @param pickup Drop-off stop
+     * @return Displayable distance in kilometer
+     */
+    private fun getPickUpDistance(pickup: Stop?): String {
+        return if (pickup != null && pickup.distance != DIGIT_ZERO)
+            (pickup.distance / DIGIT_THOUSAND).toString() + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
+        else
+            getString(R.string.question_mark) + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
     }
 
     /**
@@ -231,18 +261,30 @@ class JobCallActivity : BaseActivity() {
      * @return Displayable distance in kilometer
      */
     private fun getDropOffDistance(dropoff: Stop?): String {
-        return if (dropoff != null && dropoff.distance != 0)
-            (dropoff.distance / 1000).toString()
+        return if (dropoff != null && dropoff.distance != DIGIT_ZERO)
+            (dropoff.distance / DIGIT_THOUSAND).toString() + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
         else
-            getString(R.string.question_mark)
+            getString(R.string.question_mark) + StringUtils.SPACE + getString(R.string.distanceUnit).toString().toLowerCase()
+    }
+
+    /**
+     * Get the drop-off address
+     *
+     * @param dropoff Drop-off stop
+     * @return Displayable drop off address
+     */
+    private fun getDropOffAddress(dropoff: Stop?): String {
+        return if (dropoff != null && !dropoff.address.isNullOrEmpty())
+            return dropoff.address.toString();
+        else
+            StringUtils.EMPTY
     }
 
     /**
      * Inform server to accept the job request
      */
     private fun acceptJob() {
-        val jobsRepo = Injection.provideJobsRepository(application.applicationContext)
-        jobsRepo.acceptJob(jobCall.trip_id, secondsEclipsed, object : JobsDataSource.AcceptJobCallback {
+        jobsRepo.acceptJob(jobCall.trip_id, secondsEclipsed.toInt(), object : JobsDataSource.AcceptJobCallback {
             override fun onJobAccepted() {
                 Dialogs.INSTANCE.dismissDialog()
                 if (!isCancelledByPassenger) {
@@ -255,6 +297,21 @@ class JobCallActivity : BaseActivity() {
             override fun onJobAcceptFailed() {
                 Dialogs.INSTANCE.dismissDialog()
                 onAcceptFailed("Job Accept Failed")
+            }
+        })
+    }
+
+    /**
+     * Acknowledge server to skip the job request
+     */
+    private fun skipJob() {
+        jobsRepo.skipJob(jobCall.trip_id, object : JobsDataSource.SkipJobCallback {
+            override fun onJobSkip() {
+                //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
+            }
+
+            override fun onJobSkipFailed() {
+                //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
             }
         })
     }
@@ -273,7 +330,7 @@ class JobCallActivity : BaseActivity() {
                     AppPreferences.clearTripDistanceData()
                     AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
                     AppPreferences.setTripAcceptTime(System.currentTimeMillis())
-                    Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed)
+                    Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed.toInt())
                     AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                     AppPreferences.setIsOnTrip(true)
                     AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
