@@ -336,7 +336,7 @@ public class ActivityStackManager {
     public void startCallingActivity(JobCall jobCall, boolean isFromGcm, Context mContext) {
         if (AppPreferences.getAvailableStatus() && AppPreferences.getTripStatus().equalsIgnoreCase(TripStatus.ON_FREE)) {
             Intent callIntent = new Intent(DriverApp.getContext(), JobCallActivity.class);
-            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK /*| Intent.FLAG_ACTIVITY_CLEAR_TASK*/);
             callIntent.setAction(Intent.ACTION_MAIN);
             callIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             callIntent.putExtra(JobCallActivity.Companion.getKEY_CALL_DATA(), jobCall);

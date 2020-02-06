@@ -407,4 +407,18 @@ interface JobsDataSource {
         fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
+    /**
+     * Requests to skip job
+     * @param jobId String
+     * @param callback CancelJobCallback
+     */
+    fun skipJob(jobId: String, callback: SkipJobCallback)
+
+    /**
+     * Callback interface for cancel job
+     */
+    interface SkipJobCallback {
+        fun onJobSkip()
+        fun onJobSkipFailed()
+    }
 }

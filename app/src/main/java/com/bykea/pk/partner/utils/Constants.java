@@ -9,6 +9,10 @@ public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
+    public static final int DIGIT_TEN = 10;
+    public static final int DIGIT_SIXTY = 60;
+    public static final int DIGIT_HUNDRED = 100;
+    public static final int DIGIT_THOUSAND = 1000;
     public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final String APP = "APP";

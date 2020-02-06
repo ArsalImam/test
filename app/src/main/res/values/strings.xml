@@ -555,4 +555,5 @@
     <string name="error_complain_pay_amount_msg" translatable="false">Paid amount should not more than 35000</string>
     <string name="passenger_has_cancelled_the_trip" translatable="false">Passenger has cancelled the Trip</string>
     <string name="drop_off_update_by_passenger" translatable="false">Drop Off has been Updated by Passenger.</string>
+    <string name="min">min</string>
 </resources>
