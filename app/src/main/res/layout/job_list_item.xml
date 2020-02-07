@@ -53,34 +53,43 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:text="@{booking.fare_est == 0 ? `?` : `Rs. `+(int)booking.fare_est}"
-                    android:textSize="@dimen/_14sdp"
+                    android:textSize="@dimen/_13sdp"
                     app:fontName="open_sans_regular.ttf" />
             </LinearLayout>
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_3sdp"
                 android:layout_weight="2.5"
-                android:paddingStart="@dimen/_3sdp"
-                android:paddingLeft="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:paddingRight="@dimen/_3sdp">
+                android:background="@drawable/gray_bordered_bg">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_flag"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone"
+                    android:layout_marginStart="@dimen/_minus8sdp"
+                    android:layout_marginTop="@dimen/_minus2sdp"
+                    android:layout_marginLeft="@dimen/_minus8sdp"
+                    android:src="@drawable/ic_flag" />
 
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/tv_booking_no"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/gray_bordered_bg"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:paddingStart="@dimen/_6sdp"
-                    android:paddingEnd="@dimen/_6sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_10sdp"
                     android:text="@{booking.booking_no == null ? `?` : booking.booking_no}"
-                    android:textSize="@dimen/_14sdp"
+                    android:textSize="@dimen/_13sdp"
                     app:fontName="open_sans_regular.ttf"
-                    tools:text="KHI" />
+                    tools:text="KHIR1JM" />
 
-            </LinearLayout>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
