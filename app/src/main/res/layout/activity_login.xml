@@ -33,7 +33,6 @@
                 android:gravity="end">
 
                 <ImageView
-                    android:id="@+id/ivMobileNumber"
                     android:layout_width="@dimen/_60sdp"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
