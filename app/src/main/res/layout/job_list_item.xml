@@ -9,6 +9,9 @@
 
         <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
 
+        <import type="com.bykea.pk.partner.utils.Util" />
+
+
         <variable
             name="booking"
             type="com.bykea.pk.partner.dal.Job" />
@@ -109,7 +112,7 @@
                     android:maxLines="1"
                     android:paddingStart="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_6sdp"
-                    android:text='@{booking.service_code == ServiceCode.MOBILE_TOP_UP || booking.service_code == ServiceCode.MOBILE_WALLET || booking.service_code == ServiceCode.BANK_TRANSFER || booking.service_code == ServiceCode.UTILITY ? ` ` + booking.pickup.zone_ur : booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
+                    android:text='@{Util.INSTANCE.isBykeaCashJob(booking.service_code) ? ` ` + booking.pickup.zone_ur : booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
