@@ -36,43 +36,80 @@
             android:paddingTop="@dimen/_12sdp"
             android:paddingBottom="@dimen/_12sdp">
 
-            <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                android:id="@+id/tv_fare"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_weight="3"
-                android:background="@drawable/gray_bordered_bg"
-                android:gravity="center"
-                android:maxLines="1"
-                android:text="@{booking.fare_est == 0 ? `?` : `Rs. `+(int)booking.fare_est}"
-                android:textSize="@dimen/_14sdp"
-                app:fontName="open_sans_regular.ttf" />
-
-            <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                android:id="@+id/li_LoadboardDropOffTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginLeft="@dimen/_6sdp"
-                android:layout_weight="5"
-                android:background="@drawable/gray_bordered_bg"
-                android:gravity="start|center_vertical"
-                android:maxLines="1"
+                android:layout_weight="2"
                 android:paddingStart="@dimen/_6sdp"
-                android:paddingEnd="@dimen/_6sdp"
-                android:text='@{booking.service_code == ServiceCode.MOBILE_TOP_UP || booking.service_code == ServiceCode.MOBILE_WALLET || booking.service_code == ServiceCode.BANK_TRANSFER || booking.service_code == ServiceCode.UTILITY ? ` ` + booking.pickup.zone_ur : booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
-                android:textSize="@dimen/_14sdp"
-                app:fontName="jameel_noori_nastaleeq.ttf" />
+                android:paddingLeft="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:paddingRight="@dimen/_3sdp">
+
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/tv_fare"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gray_bordered_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@{booking.fare_est == 0 ? `?` : `Rs. `+(int)booking.fare_est}"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="open_sans_regular.ttf" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2.5"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingLeft="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:paddingRight="@dimen/_3sdp">
+
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/tv_booking_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gray_bordered_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/_6sdp"
+                    android:paddingEnd="@dimen/_6sdp"
+                    android:text="@{booking.booking_no == null ? `?` : booking.booking_no}"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="open_sans_regular.ttf"
+                    tools:text="KHI" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingLeft="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:paddingRight="@dimen/_3sdp">
+
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/li_LoadboardDropOffTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gray_bordered_bg"
+                    android:gravity="start|center_vertical"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/_6sdp"
+                    android:paddingEnd="@dimen/_6sdp"
+                    android:text='@{booking.service_code == ServiceCode.MOBILE_TOP_UP || booking.service_code == ServiceCode.MOBILE_WALLET || booking.service_code == ServiceCode.BANK_TRANSFER || booking.service_code == ServiceCode.UTILITY ? ` ` + booking.pickup.zone_ur : booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+            </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivServiceIcon"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 app:serviceCode="@{booking.service_code}"
                 tools:src="@drawable/bhejdo_no_caption" />
 

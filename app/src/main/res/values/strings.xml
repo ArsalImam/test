@@ -556,4 +556,5 @@
     <string name="passenger_has_cancelled_the_trip" translatable="false">Passenger has cancelled the Trip</string>
     <string name="drop_off_update_by_passenger" translatable="false">Drop Off has been Updated by Passenger.</string>
     <string name="min">min</string>
+    <string name="booking_ur">\u0020بکنگ\u0020</string>
 </resources>
