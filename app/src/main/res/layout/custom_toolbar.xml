@@ -73,7 +73,6 @@
 
 
     <RelativeLayout
-        android:id="@+id/rlVehicleName"
         android:layout_width="@dimen/_240sdp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -93,7 +92,6 @@
             app:fontName="roboto_regular.ttf" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tvVehicleUrduText_1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -107,7 +105,6 @@
 
 
     <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/tvRight"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="right"

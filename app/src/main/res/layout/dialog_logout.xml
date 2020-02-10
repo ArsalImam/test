@@ -32,7 +32,6 @@
             app:fontName="MuseoSans_1.otf" />
 
         <View
-            android:id="@+id/mid"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/textColorSecondary" />

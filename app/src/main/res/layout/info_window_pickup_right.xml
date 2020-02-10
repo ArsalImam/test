@@ -2,7 +2,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/custom_marker_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -34,7 +33,6 @@
                 tools:visibility="visible">
 
                 <LinearLayout
-                    android:id="@+id/rlAddress"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/address_box_bg_pre_21"
@@ -42,7 +40,6 @@
                     tools:visibility="visible">
 
                     <LinearLayout
-                        android:id="@+id/chooseDropoff"
                         android:layout_width="@dimen/box_height"
                         android:layout_height="@dimen/box_height"
                         android:gravity="center"
@@ -94,7 +91,6 @@
                         android:paddingTop="2dp">
 
                         <com.bykea.pk.partner.ui.helpers.FontTextView
-                            android:id="@+id/tvDuration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="-6dp"
@@ -122,7 +118,6 @@
         </FrameLayout>
 
         <ImageView
-            android:id="@+id/ivDropOffPin"
             android:layout_width="@dimen/box_drop_off_pin_size"
             android:layout_height="@dimen/box_drop_off_pin_size"
             android:layout_below="@+id/flBox"

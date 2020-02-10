@@ -75,7 +75,6 @@
             app:fontName="open_sans_regular.ttf"/>
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/selectedAmountUrduTV"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_32sdp"
             android:gravity="center"
@@ -269,7 +268,6 @@
             app:srcCompat="@drawable/forward_arrow" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
