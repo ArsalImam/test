@@ -81,6 +81,9 @@ public class Settings {
     @SerializedName("admin_fee")
     private String admin_fee;
 
+    /**
+     * List to get image source url according to priority.
+     */
     @SerializedName("priority_list")
     private HashMap<String,String> priorityList;
 
