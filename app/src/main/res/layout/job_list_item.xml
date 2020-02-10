@@ -70,14 +70,14 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_flag"
-                    android:layout_width="@dimen/_25sdp"
-                    android:layout_height="@dimen/_25sdp"
+                    android:layout_width="@dimen/_24sdp"
+                    app:priorityFlag="@{booking.priority}"
+                    android:layout_height="@dimen/_18sdp"
                     android:layout_gravity="center_vertical"
-                    android:visibility="gone"
-                    android:layout_marginStart="@dimen/_minus8sdp"
+                    android:layout_marginStart="@dimen/_minus6sdp"
                     android:layout_marginTop="@dimen/_minus2sdp"
-                    android:layout_marginLeft="@dimen/_minus8sdp"
-                    android:src="@drawable/ic_flag" />
+                    android:layout_marginLeft="@dimen/_minus6sdp"
+                    tools:srcCompat="@drawable/ic_flag_red" />
 
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/tv_booking_no"

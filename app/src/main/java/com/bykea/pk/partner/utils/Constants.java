@@ -15,6 +15,11 @@ public class Constants {
     public static final int DIGIT_THOUSAND = 1000;
     public static final int NEGATIVE_DIGIT_ONE = -1;
 
+    public static final int PRIORITY_ONE = 1;
+    public static final int PRIORITY_TWO = 2;
+    public static final int PRIORITY_THREE = 3;
+    public static final int PRIORITY_FOUR = 4;
+
     public static final String APP = "APP";
     public static final String GCM_PROJECT_NO = "764640458585";
     public static final String APP_NAME = "BYKEA PARTNER";

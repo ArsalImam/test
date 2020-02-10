@@ -3,21 +3,25 @@ package com.bykea.pk.partner.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.util.SEPERATOR
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
+import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.FontTextView
+import com.squareup.picasso.Picasso
 import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -136,6 +140,54 @@ object BindingAdapters {
             }
             UTILITY -> {
                 fontTextView.text = fontTextView.resources.getString(R.string.bykea_cash_utility_bill)
+            }
+        }
+    }
+
+    @BindingAdapter("app:priorityFlag")
+    @JvmStatic
+    fun setPriorityFlag(appCompatImageView: AppCompatImageView, priority: Int?) {
+        var priorityImageList: HashMap<String, String>? = null
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null &&
+                AppPreferences.getSettings().settings.priorityList != null) {
+            priorityImageList = AppPreferences.getSettings().settings.priorityList;
+        }
+
+        priority?.let {
+            // PRIORITIES FLAGS - RGBY - Red,Green,Blue and Yellow
+            when (it) {
+                PRIORITY_ONE -> {
+                    // PRIORITY ONE - RED FLAG
+                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_ONE.toString())) {
+                        Picasso.get().load(priorityImageList[PRIORITY_ONE.toString()]).into(appCompatImageView);
+                    } else {
+                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context, R.drawable.ic_flag_red));
+                    }
+                }
+                PRIORITY_TWO -> {
+                    // PRIORITY TWO - GREEN FLAG
+                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_TWO.toString())) {
+                        Picasso.get().load(priorityImageList[PRIORITY_TWO.toString()]).into(appCompatImageView);
+                    } else {
+                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context,R.drawable.ic_flag_green));
+                    }
+                }
+                PRIORITY_THREE -> {
+                    // PRIORITY THREE - BLUE FLAG
+                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_THREE.toString())) {
+                        Picasso.get().load(priorityImageList[PRIORITY_THREE.toString()]).into(appCompatImageView);
+                    } else {
+                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context,R.drawable.ic_flag_blue));
+                    }
+                }
+                PRIORITY_FOUR -> {
+                    // PRIORITY FOUR - YELLOW FLAG
+                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_FOUR.toString())) {
+                        Picasso.get().load(priorityImageList[PRIORITY_FOUR.toString()]).into(appCompatImageView);
+                    } else {
+                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context,R.drawable.ic_flag_yellow));
+                    }
+                }
             }
         }
     }
