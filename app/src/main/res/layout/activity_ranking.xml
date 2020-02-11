@@ -225,7 +225,6 @@
                     android:focusableInTouchMode="true" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/statsTypeTv"
                     android:layout_width="0dp"
                     android:layout_weight="1.8"
                     android:layout_height="match_parent"
@@ -309,7 +308,6 @@
                     android:focusableInTouchMode="true" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/statsTypeTv_comission"
                     android:layout_width="0dp"
                     android:layout_weight="1.8"
                     android:layout_height="match_parent"
@@ -393,7 +391,6 @@
                     android:focusableInTouchMode="true" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/statsTypeTv_booking"
                     android:layout_width="0dp"
                     android:layout_weight="1.8"
                     android:layout_height="match_parent"
@@ -477,7 +474,6 @@
                     android:focusableInTouchMode="true" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/statsTypeTv_insurance"
                     android:layout_width="0dp"
                     android:layout_weight="1.8"
                     android:layout_height="match_parent"

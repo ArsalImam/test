@@ -99,7 +99,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/pickLabelTv"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -164,7 +163,6 @@
             android:text="4" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/placesLabelTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/places_label"
@@ -176,7 +174,6 @@
             app:layout_constraintTop_toBottomOf="@+id/deliveryCountTv" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/deliveryLabelTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/delivery_multi_delivery_label"
@@ -215,7 +212,6 @@
             tools:text="14" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/dropUnitLabelTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/distanceUnit"
@@ -227,7 +223,6 @@
             app:layout_constraintTop_toBottomOf="@+id/dropDistanceTv" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/dropLabelTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/drop_multi_delivery_label"
@@ -280,7 +275,6 @@
             app:layout_constraintTop_toBottomOf="@+id/timeTv" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/TimeLabelTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/time_multi_delivery_label"

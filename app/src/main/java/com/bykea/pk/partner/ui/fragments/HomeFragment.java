@@ -689,11 +689,12 @@ public class HomeFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (null != intent && intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST)) {
+                        if (intent != null && intent.getAction() != null &&
+                                intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST)) {
                             if (intent.getExtras() != null) {
                                 Location location = intent.getParcelableExtra("location");
                                 //Move Map's Camera if there's significant change in Location
-                                if (mPrevLocToShow == null || location.distanceTo(mPrevLocToShow) > 30) {
+                                if (location != null && (mPrevLocToShow == null || location.distanceTo(mPrevLocToShow) > 30)) {
                                     mPrevLocToShow = location;
                                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude()
                                                     , location.getLongitude())

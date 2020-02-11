@@ -46,7 +46,6 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/llAgentName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/rlDirection"

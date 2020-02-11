@@ -11,7 +11,6 @@
     tools:context="com.bykea.pk.partner.ui.activities.ConfirmDropOffAddressActivity">
 
     <FrameLayout
-        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -26,7 +25,6 @@
             app:srcCompat="@drawable/ic_arrow_back_48px" />
 
         <com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/tv_elaqa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -170,7 +168,6 @@
 
 
     <FrameLayout
-        android:id="@+id/activity_confirm_destination"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -198,7 +195,6 @@
 
 
             <LinearLayout
-                android:id="@+id/pickUpLl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

@@ -85,7 +85,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout
-            android:id="@+id/activity_confirm_destination"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/llEditPlace"
@@ -114,14 +113,12 @@
                     android:background="@drawable/current_location_dialog_bg" />
 
                 <LinearLayout
-                    android:id="@+id/chooseDropoff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingRight="8dp">
 
                     <ImageView
-                        android:id="@+id/loaderIv"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_margin="@dimen/_1sdp"
@@ -146,7 +143,6 @@
                         android:visibility="gone" />
 
                     <LinearLayout
-                        android:id="@+id/pickUpLl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -185,7 +181,6 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/arrowLocationIv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
