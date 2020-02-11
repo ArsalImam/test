@@ -166,4 +166,9 @@
     <color name="color_ae2939">#ae2939</color>
     <color name="color_02AA31">#02aa31</color>
     <color name="greyBackground">#80000000</color>
+
+    <color name="color_red_fleet">#AC0404</color>
+    <color name="color_green_fleet">#02AA31</color>
+    <color name="color_blue_fleet">#1385DD</color>
+    <color name="color_yellow_fleet">#FCD40E</color>
 </resources>

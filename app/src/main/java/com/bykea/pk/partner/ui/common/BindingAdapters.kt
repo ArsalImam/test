@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.ListView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
@@ -16,6 +17,7 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
 import com.squareup.picasso.Picasso
 import org.apache.commons.lang3.StringUtils
@@ -144,51 +146,33 @@ object BindingAdapters {
         }
     }
 
-    @BindingAdapter("app:priorityFlag")
+    @BindingAdapter("app:priorityColor")
     @JvmStatic
-    fun setPriorityFlag(appCompatImageView: AppCompatImageView, priority: Int?) {
-        var priorityImageList: HashMap<String, String>? = null
-        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null &&
-                AppPreferences.getSettings().settings.priorityList != null) {
-            priorityImageList = AppPreferences.getSettings().settings.priorityList;
-        }
-
-        priority?.let {
-            // PRIORITIES FLAGS - RGBY - Red,Green,Blue and Yellow
-            when (it) {
+    fun setPriorityColor(autoFontTextView: AutoFitFontTextView, priority: Int?) {
+        if (priority != null) {
+            // PRIORITIES COLOR - RGBY - Red,Green,Blue and Yellow
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.white))
+            when (priority) {
                 PRIORITY_ONE -> {
-                    // PRIORITY ONE - RED FLAG
-                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_ONE.toString())) {
-                        Picasso.get().load(priorityImageList[PRIORITY_ONE.toString()]).into(appCompatImageView);
-                    } else {
-                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context, R.drawable.ic_flag_red));
-                    }
+                    // PRIORITY ONE - RED COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.red_left_top_bottom_bg)
                 }
                 PRIORITY_TWO -> {
-                    // PRIORITY TWO - GREEN FLAG
-                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_TWO.toString())) {
-                        Picasso.get().load(priorityImageList[PRIORITY_TWO.toString()]).into(appCompatImageView);
-                    } else {
-                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context,R.drawable.ic_flag_green));
-                    }
+                    // PRIORITY TWO - GREEN COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.green_left_top_bottom_bg)
                 }
                 PRIORITY_THREE -> {
-                    // PRIORITY THREE - BLUE FLAG
-                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_THREE.toString())) {
-                        Picasso.get().load(priorityImageList[PRIORITY_THREE.toString()]).into(appCompatImageView);
-                    } else {
-                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context,R.drawable.ic_flag_blue));
-                    }
+                    // PRIORITY THREE - BLUE COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.blue_left_top_bottom_bg)
                 }
                 PRIORITY_FOUR -> {
-                    // PRIORITY FOUR - YELLOW FLAG
-                    if (priorityImageList != null && priorityImageList.containsKey(PRIORITY_FOUR.toString())) {
-                        Picasso.get().load(priorityImageList[PRIORITY_FOUR.toString()]).into(appCompatImageView);
-                    } else {
-                        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(appCompatImageView.context,R.drawable.ic_flag_yellow));
-                    }
+                    // PRIORITY FOUR - YELLOW COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.yellow_left_top_bottom_bg)
                 }
             }
+        } else {
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context,  R.color.textColorPerformance))
+            autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }
 }

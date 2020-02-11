@@ -60,54 +60,40 @@
                     app:fontName="open_sans_regular.ttf" />
             </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/_3sdp"
-                android:layout_marginRight="@dimen/_3sdp"
-                android:layout_weight="2.5"
-                android:background="@drawable/gray_bordered_bg">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_flag"
-                    android:layout_width="@dimen/_24sdp"
-                    app:priorityFlag="@{booking.priority}"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/_minus6sdp"
-                    android:layout_marginTop="@dimen/_minus2sdp"
-                    android:layout_marginLeft="@dimen/_minus6sdp"
-                    tools:srcCompat="@drawable/ic_flag_red" />
-
-                <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                    android:id="@+id/tv_booking_no"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:paddingRight="@dimen/_10sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:text="@{booking.booking_no == null ? `?` : booking.booking_no}"
-                    android:textSize="@dimen/_13sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="KHIR1JM" />
-
-            </FrameLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:layout_weight="6.5"
+                android:orientation="horizontal"
                 android:paddingStart="@dimen/_3sdp"
                 android:paddingLeft="@dimen/_3sdp"
                 android:paddingEnd="@dimen/_3sdp"
-                android:paddingRight="@dimen/_3sdp">
+                android:paddingRight="@dimen/_3sdp"
+                android:weightSum="6.5">
+
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/tv_booking_no"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.5"
+                    android:background="@drawable/gray_left_top_bottom_bordered_bg"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:text="@{booking.booking_no == null ? `?` : booking.booking_no}"
+                    android:textColor="@color/textColorPerformance"
+                    android:textSize="@dimen/_13sdp"
+                    app:fontName="open_sans_regular.ttf"
+                    app:priorityColor="@{booking.priority}"
+                    tools:text="KHIR1JM" />
 
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView
                     android:id="@+id/li_LoadboardDropOffTV"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/gray_bordered_bg"
+                    android:layout_weight="4"
+                    android:background="@drawable/gray_right_top_bottom_bordered_bg"
                     android:gravity="start|center_vertical"
                     android:maxLines="1"
                     android:paddingStart="@dimen/_6sdp"
