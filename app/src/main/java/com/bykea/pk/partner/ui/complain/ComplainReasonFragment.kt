@@ -136,9 +136,9 @@ class ComplainReasonFragment : Fragment() {
     private fun checkIsEmailUpdatedFromRemoteDataSource() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity)
         jobsRepository?.checkEmailUpdate(object : JobsDataSource.EmailUpdateCheckCallback {
-            override fun onSuccess(isEmailUpdated: Boolean) {
+            override fun onSuccess(isEmailUpdated: Boolean?) {
                 Dialogs.INSTANCE.dismissDialog()
-                if (isEmailUpdated) {
+                if (isEmailUpdated != null && isEmailUpdated) {
                     AppPreferences.setEmailVerified()
                     ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity!!,
                             mCurrentActivity?.tripHistoryDate!!, mCurrentActivity?.selectedReason!!)

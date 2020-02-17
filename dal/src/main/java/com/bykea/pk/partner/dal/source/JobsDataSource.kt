@@ -348,7 +348,7 @@ interface JobsDataSource {
      * Callback interface to check if email is updated
      */
     interface EmailUpdateCheckCallback {
-        fun onSuccess(isEmailUpdated: Boolean)
+        fun onSuccess(isEmailUpdated: Boolean?)
 
         fun onFail(message: String?)
     }
