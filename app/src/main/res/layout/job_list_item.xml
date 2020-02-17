@@ -85,7 +85,7 @@
                     android:textColor="@color/textColorPerformance"
                     android:textSize="@dimen/_13sdp"
                     app:fontName="open_sans_regular.ttf"
-                    app:priorityColor="@{booking.priority}"
+                    app:priorityColor="@{booking.rules}"
                     tools:text="KHIR1JM" />
 
                 <com.bykea.pk.partner.widgets.AutoFitFontTextView

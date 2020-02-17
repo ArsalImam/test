@@ -10,6 +10,7 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
+import com.bykea.pk.partner.dal.Rules
 import com.bykea.pk.partner.dal.util.SEPERATOR
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
@@ -148,11 +149,11 @@ object BindingAdapters {
 
     @BindingAdapter("app:priorityColor")
     @JvmStatic
-    fun setPriorityColor(autoFontTextView: AutoFitFontTextView, priority: Int?) {
-        if (priority != null) {
+    fun setPriorityColor(autoFontTextView: AutoFitFontTextView, rules: Rules?) {
+        if (rules?.priority != null) {
             // PRIORITIES COLOR - RGBY - Red,Green,Blue and Yellow
             autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.white))
-            when (priority) {
+            when (rules.priority) {
                 PRIORITY_ONE -> {
                     // PRIORITY ONE - RED COLOR
                     autoFontTextView.setBackgroundResource(R.drawable.red_left_top_bottom_bg)
