@@ -16,7 +16,7 @@ import com.bykea.pk.partner.dal.Job
 
 const val DATABASE_NAME = "bykea-db"
 
-@Database(entities = [Job::class], version = 2, exportSchema = false)
+@Database(entities = [Job::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jobRequestsDao(): JobsDao
     abstract fun withdrawDao(): WithDrawDao
