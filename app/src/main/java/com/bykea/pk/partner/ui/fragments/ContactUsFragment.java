@@ -136,9 +136,9 @@ public class ContactUsFragment extends Fragment {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         jobsRepository.checkEmailUpdate(new JobsDataSource.EmailUpdateCheckCallback() {
             @Override
-            public void onSuccess(boolean isEmailUpdated) {
+            public void onSuccess(@org.jetbrains.annotations.Nullable Boolean isEmailUpdated) {
                 Dialogs.INSTANCE.dismissDialog();
-                if (isEmailUpdated)
+                if (isEmailUpdated!=null && isEmailUpdated)
                     AppPreferences.setEmailVerified();
                 ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
             }
