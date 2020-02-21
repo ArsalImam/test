@@ -27,6 +27,7 @@ import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
@@ -215,6 +216,7 @@ public interface IUserDataHandler {
 
     /**
      * callback for loadboard accept api call
+     *
      * @param response loadboard specific booking acceptance response
      */
     void onAcceptLoadboardBookingResponse(AcceptLoadboardBookingResponse response);
@@ -233,37 +235,33 @@ public interface IUserDataHandler {
     /**
      * This method will be invoked when multi delivery accept call response received
      *
-     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_ACCEPT_CALL
-     *
      * @param response The {@link MultiDeliveryAcceptCallResponse} object.
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_ACCEPT_CALL
      */
     void onMultiDeliveryAcceptCall(MultiDeliveryAcceptCallResponse response);
 
     /**
      * This method will be invoked when multi delivery arrived response received
      *
-     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED
-     *
      * @param response The {@link MultiDeliveryDriverArrivedResponse} object.
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_ARRIVED
      */
     void onMultiDeliveryDriverArrived(MultiDeliveryDriverArrivedResponse response);
 
     /**
      * This method will be invoked when multi delivery started response received
      *
-     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED
-     *
      * @param response The {@link MultiDeliveryDriverStartedResponse} object.
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_DRIVER_STARTED
      */
     void onMultiDeliveryDriverStarted(MultiDeliveryDriverStartedResponse response);
 
     /**
      * This method will be invoked when multi delivery finished response received
      *
-     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
-     *
      * @param response The {@link MultiDeliveryCompleteRideResponse} object.
-     * @param data The {@linkplain DirectionDropOffData} object.
+     * @param data     The {@linkplain DirectionDropOffData} object.
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FINISHED
      */
     void onMultiDeliveryDriverRideFinish(MultiDeliveryCompleteRideResponse response,
                                          DirectionDropOffData data);
@@ -271,19 +269,16 @@ public interface IUserDataHandler {
     /**
      * This method will be invoked when multi delivery feedback response received
      *
-     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER
-     *
      * @param response The {@link MultiDeliveryFeedbackResponse} object.
-     *
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER
      */
     void onMultiDeliveryDriverFeedback(MultiDeliveryFeedbackResponse response);
 
     /**
      * This method will be invoked when multi delivery batch request canceled response received
      *
-     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED
-     *
      * @param response The {@link MultiDeliveryCancelBatchResponse} object.
+     * @see com.bykea.pk.partner.utils.ApiTags#MULTI_DELIVERY_SOCKET_BATCH_CANCELED
      */
     void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response);
 
@@ -294,8 +289,16 @@ public interface IUserDataHandler {
     /**
      * this method will be invoked when booking listing received from kronos
      *
-     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
      * @param bookingListingResponse callback to send data to the controller on complete
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
      */
     void onBookingListingResponse(BookingListingResponse bookingListingResponse);
+
+    /**
+     * this method will be invoked when booking listing received from kronos
+     *
+     * @param bookingListingResponse callback to send data to the controller on complete
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
+     */
+    void onDriverVerifiedBookingResponse(DriverVerifiedBookingResponse driverVerifiedBookingResponse);
 }

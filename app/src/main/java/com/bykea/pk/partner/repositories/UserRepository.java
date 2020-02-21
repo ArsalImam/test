@@ -45,6 +45,7 @@ import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
@@ -1404,6 +1405,12 @@ public class UserRepository {
         mRestRequestHandler.requestPerformanceData(context, mDataCallback, weekStatus);
     }
 
+    public void requestDriverVerifiedBookingStats(Context context, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestDriverVerifiedBookingStats(context, mDataCallback);
+    }
+
     public void requestLoadBoard(Context context, UserDataHandler handler, String lat, String lng) {
         mContext = context;
         mUserCallback = handler;
@@ -1746,6 +1753,9 @@ public class UserRepository {
                         break;
                     case "BookingListingResponse":
                         mUserCallback.onBookingListingResponse((BookingListingResponse) object);
+                        break;
+                    case "DriverVerifiedBookingResponse":
+                        mUserCallback.onDriverVerifiedBookingResponse((DriverVerifiedBookingResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

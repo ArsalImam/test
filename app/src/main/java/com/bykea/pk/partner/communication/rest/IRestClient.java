@@ -25,6 +25,7 @@ import com.bykea.pk.partner.models.response.ContactNumbersResponse;
 import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
@@ -123,6 +124,12 @@ interface IRestClient {
                                              @Query(Fields.USER_TYPE) String userType,
                                              @Query(Fields.PAGE) String pageNo,
                                              @Query(Fields.TRIP_ID) String trip_id);
+
+
+    @GET
+    Call<DriverVerifiedBookingResponse> requestDriverVerifiedBookingStats(
+            @Url String url, @Header(Fields.HEADER_X_USER_ID) String id, @Header(Fields.HEADER_X_TOKEN) String accessToken); // 0 for current week data || -1 for previus week
+
 
     @GET
     Call<BookingListingResponse> getBookingListing(

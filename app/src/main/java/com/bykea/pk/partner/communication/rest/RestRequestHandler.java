@@ -33,6 +33,7 @@ import com.bykea.pk.partner.models.response.DeleteSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
 import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
@@ -444,10 +445,10 @@ public class RestRequestHandler {
     /**
      * this method can be used to get all booking listing by driver id from kronos
      *
-     * @param context context component which requires data
+     * @param context            context component which requires data
      * @param onResponseCallBack onResponseCallBack callback to receive data on task completed
-     * @param pageNo param needs to send for pagination
-     * @param limit number of records per page
+     * @param pageNo             param needs to send for pagination
+     * @param limit              number of records per page
      */
     public void requestBookingListing(Context context, final IResponseCallback onResponseCallBack, String pageNo, String limit) {
         mContext = context;
@@ -1241,6 +1242,18 @@ public class RestRequestHandler {
         Call<DriverPerformanceResponse> restCall = mRestClient.requestDriverPerformance(AppPreferences.getDriverId(), AppPreferences.getAccessToken(),
                 weekStatus);
         restCall.enqueue(new GenericRetrofitCallBack<DriverPerformanceResponse>(onResponseCallBack));
+    }
+
+    public void requestDriverVerifiedBookingStats(Context context, IResponseCallback onResponseCallBack) {
+        mContext = context;
+        mRestClient = RestClient.getClient(mContext);
+        Call<DriverVerifiedBookingResponse> restCall =
+                mRestClient.requestDriverVerifiedBookingStats(
+                        AppPreferences.getSettings().getSettings().getKronosPartnerSummary(),
+                        AppPreferences.getDriverId(),
+                        AppPreferences.getAccessToken());
+
+        restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
     }
 
     public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {

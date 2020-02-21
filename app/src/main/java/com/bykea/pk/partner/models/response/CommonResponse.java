@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CommonResponse {
 
-    private boolean success;
+    private boolean success = true;
     private String message;
     private int code;
     @SerializedName("subcode")

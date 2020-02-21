@@ -27,6 +27,7 @@ import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
@@ -412,6 +413,11 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onBookingListingResponse(BookingListingResponse bookingListingResponse) {
+
+    }
+
+    @Override
+    public void onDriverVerifiedBookingResponse(DriverVerifiedBookingResponse bookingListingResponse) {
 
     }
 

@@ -35,6 +35,9 @@ public class Settings {
 
     @SerializedName("terms_driver")
     private String terms;
+    @SerializedName("kronos_partner_summary")
+    private String kronosPartnerSummary;
+
     private String cih_range;
     private String partner_topup_limit;
     private String van_partner_topup_limit;
@@ -279,5 +282,13 @@ public class Settings {
 
     public void setBookingDetailByIdUrl(String bookingDetailByIdUrl) {
         this.bookingDetailByIdUrl = bookingDetailByIdUrl;
+    }
+
+    public String getKronosPartnerSummary() {
+        return kronosPartnerSummary;
+    }
+
+    public void setKronosPartnerSummary(String kronosPartnerSummary) {
+        this.kronosPartnerSummary = kronosPartnerSummary;
     }
 }
