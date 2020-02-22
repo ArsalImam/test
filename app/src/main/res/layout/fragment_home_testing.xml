@@ -480,41 +480,6 @@
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/weeklybookingTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/circle_booking"
-                    android:gravity="center"
-                    android:text="?"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_16sdp"
-                    app:fontName="open_sans_semi_bold.ttf" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text=" بکنگز "
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf" />
-
-            </LinearLayout>
-
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/takmeelTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -598,6 +563,42 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text=" ریٹنگ "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/weeklybookingTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_booking"
+                    android:gravity="center"
+                    android:text="?"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16sdp"
+                    app:fontName="open_sans_semi_bold.ttf" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=" بکنگز "
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
