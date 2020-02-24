@@ -142,4 +142,12 @@
     <color name="color_blue1f81a6">#1f81a6</color>
     <color name="color_ae2939">#ae2939</color>
     <color name="color_02AA31">#02aa31</color>
+    <color name="tasdeeq_circle_grey">#566f85</color>
+    <color name="circle_mukamal_booking">#36b3d7</color>
+    <color name="circle_kamai">#008a69</color>
+    <color name="circle_wqt">#be5e5f</color>
+    <color name="circle_takmeel">#d36b68</color>
+    <color name="circle_qabooliat">#ff9b3d</color>
+    <color name="circle_rating">#d69962</color>
+    <color name="circle_booking">#d98a3c</color>
 </resources>
