@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CommonResponse {
 
-    private boolean success = true;
+    private boolean success;
     private String message;
     private int code;
     @SerializedName("subcode")
@@ -24,6 +24,7 @@ public class CommonResponse {
     }
 
     public boolean isSuccess() {
+        if (code != 0 && (code > 200 && code < 299)) return true;
         return success;
     }
 

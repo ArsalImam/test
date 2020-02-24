@@ -323,7 +323,7 @@
                         <ImageView
                             android:layout_width="@dimen/_11sdp"
                             android:layout_height="@dimen/_11sdp"
-                            android:src="@drawable/group_242" />
+                            android:src="@drawable/ic_sync" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
                             android:id="@+id/authorizedbookingTimeTv"
