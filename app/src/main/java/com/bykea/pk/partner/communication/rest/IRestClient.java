@@ -128,7 +128,7 @@ interface IRestClient {
 
     @GET
     Call<DriverVerifiedBookingResponse> requestDriverVerifiedBookingStats(
-            @Url String url, @Header(Fields.HEADER_X_USER_ID) String id, @Header(Fields.HEADER_X_TOKEN) String accessToken); // 0 for current week data || -1 for previus week
+            @Url String url, @Header(Fields.HEADER_X_USER_ID) String id, @Header(Fields.HEADER_X_TOKEN) String accessToken);
 
 
     @GET

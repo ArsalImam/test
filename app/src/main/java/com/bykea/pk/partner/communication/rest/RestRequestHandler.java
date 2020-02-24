@@ -1244,6 +1244,12 @@ public class RestRequestHandler {
         restCall.enqueue(new GenericRetrofitCallBack<DriverPerformanceResponse>(onResponseCallBack));
     }
 
+    /**
+     * this method will execute api to get booking history stats from kronos
+     *
+     * @param context of the activity
+     * @param onResponseCallBack callback to send data back on the requested controllers
+     */
     public void requestDriverVerifiedBookingStats(Context context, IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);

@@ -1405,6 +1405,13 @@ public class UserRepository {
         mRestRequestHandler.requestPerformanceData(context, mDataCallback, weekStatus);
     }
 
+    /**
+     * this method can be invoked to get stats data from kronos
+     *
+     * @param context of the activity
+     * @param handler callback to get data
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
+     */
     public void requestDriverVerifiedBookingStats(Context context, UserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;

@@ -416,6 +416,12 @@ public class UserDataHandler implements IUserDataHandler {
 
     }
 
+    /**
+     * this method can be invoked to get stats data from kronos
+     *
+     * @param bookingListingResponse callback to send data to the controller on complete
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
+     */
     @Override
     public void onDriverVerifiedBookingResponse(DriverVerifiedBookingResponse bookingListingResponse) {
 

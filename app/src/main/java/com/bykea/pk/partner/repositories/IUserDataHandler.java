@@ -295,9 +295,9 @@ public interface IUserDataHandler {
     void onBookingListingResponse(BookingListingResponse bookingListingResponse);
 
     /**
-     * this method will be invoked when booking listing received from kronos
+     * this method can be invoked to get stats data from kronos
      *
-     * @param bookingListingResponse callback to send data to the controller on complete
+     * @param driverVerifiedBookingResponse callback to send data to the controller on complete
      * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
      */
     void onDriverVerifiedBookingResponse(DriverVerifiedBookingResponse driverVerifiedBookingResponse);

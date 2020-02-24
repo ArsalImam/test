@@ -202,18 +202,6 @@
                         android:layout_marginRight="@dimen/margin.small"
                         android:gravity="center_vertical">
 
-                        <!--<com.bykea.pk.partner.widgets.FontTextView
-                            android:id="@+id/serviceTypeTv"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5"
-                            android:background="@color/windowBackground"
-                            android:gravity="left|center_vertical"
-                            android:text="@{viewModel.bookingDetailData.service.name}"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="@dimen/textsize.normal"
-                            app:fontName="roboto_light.ttf" />-->
-
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"

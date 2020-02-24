@@ -521,4 +521,8 @@
     <string name="drop_off_update_by_passenger" translatable="false">Drop Off has been Updated by Passenger.</string>
     <string name="min">min</string>
     <string name="tasdeeq_shuda">تصدیق شدہ</string>
+    <string name="takmeel">تکمیل</string>
+    <string name="qabooliat">قبولیت</string>
+    <string name="rating_urdu">ریٹنگ</string>
+    <string name="booking_urdu">بکنگز</string>
 </resources>

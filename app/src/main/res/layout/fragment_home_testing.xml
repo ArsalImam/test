@@ -494,7 +494,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text=" تکمیل "
+                    android:text="@string/takmeel"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -528,7 +528,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="قبولیت"
+                    android:text="@string/qabooliat"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -562,7 +562,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text=" ریٹنگ "
+                    android:text="@string/rating_urdu"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -598,7 +598,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text=" بکنگز "
+                    android:text="@string/booking_urdu"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />

@@ -2,6 +2,11 @@ package com.bykea.pk.partner.models.response;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * model class for booking history stats api
+ *
+ * @author ArsalImam
+ */
 public class DriverVerifiedBookingData {
 
     @SerializedName("count")

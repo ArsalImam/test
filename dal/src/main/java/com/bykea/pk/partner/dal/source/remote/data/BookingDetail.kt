@@ -41,6 +41,9 @@ data class BookingDetail(
         @SerializedName("tags")
         val tags: ArrayList<Tag>?
 ) : Parcelable {
+    /**
+     * this property will share the latest tag by the basis of priority
+     */
     val priorTag: String
         get() {
             if (tags?.size!! > DIGIT_ZERO) {

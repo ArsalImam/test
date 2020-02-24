@@ -284,10 +284,16 @@ public class Settings {
         this.bookingDetailByIdUrl = bookingDetailByIdUrl;
     }
 
+    /**
+     * @return will return the summary api url of kronos
+     */
     public String getKronosPartnerSummary() {
         return kronosPartnerSummary;
     }
 
+    /**
+     * @return will set the summary api url of kronos
+     */
     public void setKronosPartnerSummary(String kronosPartnerSummary) {
         this.kronosPartnerSummary = kronosPartnerSummary;
     }

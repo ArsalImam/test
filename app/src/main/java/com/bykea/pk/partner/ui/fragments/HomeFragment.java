@@ -209,9 +209,6 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.wqtTv)
     FontTextView weeklyTimeTv;
 
-//    @BindView(R.id.cancelTv)
-//    FontTextView weeklyCancelTv;
-
     @BindView(R.id.takmeelTv)
     FontTextView weeklyTakmeelTv;
 
@@ -457,10 +454,11 @@ public class HomeFragment extends Fragment {
 
         initRangeBar();
         AppPreferences.setAvailableAPICalling(false);
-
-
     }
 
+    /**
+     * this can be call to get partner booking stats data from kronos
+     */
     private void updateVerifiedBookingStats() {
         repository.requestDriverVerifiedBookingStats(mCurrentActivity, handler);
     }
@@ -508,8 +506,6 @@ public class HomeFragment extends Fragment {
                 if (weeklyTimeTv != null)
                     weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-//                if (weeklyCancelTv != null)
-//                    weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
                 if (weeklyTakmeelTv != null)
                     weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
                 if (weeklyQaboliatTv != null)
