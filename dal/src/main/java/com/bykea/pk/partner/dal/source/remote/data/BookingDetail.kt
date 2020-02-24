@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.bykea.pk.partner.dal.util.*
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
+import org.apache.commons.lang3.StringUtils
 
 /**
  * response model for booking detail
@@ -38,8 +39,22 @@ data class BookingDetail(
         @SerializedName("status")
         val status: String?,
         @SerializedName("tags")
-        val tags: List<Tag>?
+        val tags: ArrayList<Tag>?
 ) : Parcelable {
+    /**
+     * this property will share the latest tag by the basis of priority
+     */
+    val priorTag: String
+        get() {
+            if (tags?.size!! > DIGIT_ZERO) {
+                tags?.sortByDescending { it.priority }
+                if (tags[DIGIT_ZERO]?.icon != null) {
+                    return tags[DIGIT_ZERO].icon!!
+                }
+            }
+            return StringUtils.EMPTY
+        }
+
     val formattedDate: String
         get() {
             return DateUtils.getFormattedDate(dt, BOOKING_CURRENT_DATE_FORMAT, BOOKING_LIST_REQUIRED_DATE_FORMAT)
