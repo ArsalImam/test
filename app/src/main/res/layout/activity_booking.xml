@@ -602,7 +602,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="@string/lb_bykea_call_center"
-                android:textColor="#676767"
+                android:textColor="@color/textColorPrimary676767"
                 android:textSize="@dimen/_12sdp"
                 app:fontName="open_sans_regular.ttf" />
 
