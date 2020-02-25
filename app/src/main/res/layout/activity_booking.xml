@@ -82,10 +82,10 @@
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_18sdp"
                         android:layout_gravity="left"
+                        android:paddingStart="@dimen/_minus3sdp"
                         android:paddingLeft="@dimen/_minus3sdp"
                         android:paddingBottom="@dimen/_3sdp"
-                        android:src="@drawable/circle_plus"
-                        android:paddingStart="@dimen/_minus3sdp" />
+                        android:src="@drawable/circle_plus" />
                 </FrameLayout>
 
                 <RelativeLayout
@@ -244,13 +244,34 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/callbtn"
-                    android:layout_width="@dimen/_36sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:layout_marginRight="@dimen/_2sdp"
-                    android:padding="@dimen/_3sdp"
-                    app:srcCompat="@drawable/ic_user" />
+                <RelativeLayout
+                    android:id="@+id/voiceNoteRl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:id="@+id/imgViewAudioPlay"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:layout_marginEnd="@dimen/_2sdp"
+                        android:layout_marginRight="@dimen/_2sdp"
+                        android:padding="@dimen/_4sdp"
+                        app:srcCompat="@drawable/ic_audio_play" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarForAudioPlay"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:indeterminate="false"
+                        android:max="100"
+                        android:padding="@dimen/_4sdp"
+                        android:progress="80"
+                        android:progressDrawable="@drawable/circular_progress_bar"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </RelativeLayout>
                 <!--app:srcCompat="@drawable/ic_call_icon"-->
                 <LinearLayout
                     android:layout_width="0dp"
@@ -536,11 +557,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/tvDetailsAddress"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:maxLines="2"
@@ -548,6 +569,18 @@
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
                     tools:text="House# 1, street # 34, block B, DHA" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvOrderNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="2"
+                    android:visibility="gone"
+                    android:textColor="#676767"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf"
+                    tools:text="Order # 12345" />
 
             </LinearLayout>
 
@@ -709,10 +742,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/_12sdp"
-            android:visibility="invisible"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:background="@color/white"
+            android:visibility="invisible"
             app:cardCornerRadius="@dimen/_2sdp"
             app:cardElevation="@dimen/_4sdp">
 
