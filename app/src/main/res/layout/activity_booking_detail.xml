@@ -216,12 +216,13 @@
                                 android:text="@{viewModel.bookingDetailData.service.name}"
                                 android:textColor="@color/textColorPrimary"
                                 android:textSize="@dimen/textsize.normal"
+                                android:gravity="center_vertical"
                                 app:fontName="roboto_light.ttf"
                                 tools:text="Abc" />
 
                             <ImageView
-                                android:layout_width="@dimen/_20sdp"
-                                android:layout_height="@dimen/_20sdp"
+                                android:layout_width="@dimen/_15sdp"
+                                android:layout_height="@dimen/_15sdp"
                                 android:layout_marginLeft="@dimen/_3sdp"
                                 app:loadUrl="@{viewModel.bookingDetailData.priorTag}" />
                         </LinearLayout>
