@@ -35,6 +35,9 @@ public class Settings {
 
     @SerializedName("terms_driver")
     private String terms;
+    @SerializedName("kronos_partner_summary")
+    private String kronosPartnerSummary;
+
     private String cih_range;
     private String partner_topup_limit;
     private String van_partner_topup_limit;
@@ -63,13 +66,13 @@ public class Settings {
     /**
      * kronos URL to get booking listings. if null, will starts the older trip flow
      */
-    @SerializedName("get_bookings_for_driver")
+    @SerializedName("kronos_get_bookings_for_driver")
     private String bookingLisitingForDriverUrl;
 
     /**
      * kronos URL to get booking details by id. if null, will starts the older trip flow
      */
-    @SerializedName("get_bookings_by_id")
+    @SerializedName("kronos_get_bookings_by_id")
     private String bookingDetailByIdUrl;
 
 
@@ -279,5 +282,19 @@ public class Settings {
 
     public void setBookingDetailByIdUrl(String bookingDetailByIdUrl) {
         this.bookingDetailByIdUrl = bookingDetailByIdUrl;
+    }
+
+    /**
+     * @return will return the summary api url of kronos
+     */
+    public String getKronosPartnerSummary() {
+        return kronosPartnerSummary;
+    }
+
+    /**
+     * @return will set the summary api url of kronos
+     */
+    public void setKronosPartnerSummary(String kronosPartnerSummary) {
+        this.kronosPartnerSummary = kronosPartnerSummary;
     }
 }

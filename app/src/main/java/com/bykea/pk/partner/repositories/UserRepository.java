@@ -45,6 +45,7 @@ import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
@@ -698,7 +699,7 @@ public class UserRepository {
 
     }
 
-    public void requestEndRide(Context context, IUserDataHandler handler) {
+    public void requestEndRide(Context context, String endAddress, IUserDataHandler handler) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         mContext = context;
@@ -711,6 +712,10 @@ public class UserRepository {
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("tid", AppPreferences.getCallData().getTripId());
             jsonObject.put("token_id", AppPreferences.getAccessToken());
+
+            if (StringUtils.isNotEmpty(endAddress)) {
+                jsonObject.put("address", endAddress);
+            }
 
             String endLatString = AppPreferences.getLatitude() + "";
             String endLngString = AppPreferences.getLongitude() + "";
@@ -937,8 +942,8 @@ public class UserRepository {
      * Emit Driver Started data.
      *
      * @param activity context of the activity
-     * @param handler The Callback that will be invoked when driver started response received.
-     * @param address address received
+     * @param handler  The Callback that will be invoked when driver started response received.
+     * @param address  address received
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
@@ -957,12 +962,13 @@ public class UserRepository {
     /**
      * Emit Driver Finished data.
      *
-     * @param handler The Callback that will be invoked when driver finish event response received.
+     * @param handler               The Callback that will be invoked when driver finish event response received.
+     * @param reverseGeoCodeAddress
      * @see IUserDataHandler
      * @see UserRepository#setMultiDeliveryData(JSONObject)
      */
     public void requestMultiDeliveryDriverFinishRide(DirectionDropOffData data,
-                                                     IUserDataHandler handler) {
+                                                     IUserDataHandler handler, String reverseGeoCodeAddress) {
         JSONObject jsonObject = new JSONObject();
         mUserCallback = handler;
         try {
@@ -970,6 +976,11 @@ public class UserRepository {
             jsonObject.put("trip_id", data.getTripID());
             jsonObject.put("route", new Gson()
                     .toJson(AppPreferences.getLocCoordinatesInTrip()));
+
+            if (StringUtils.isNotEmpty(reverseGeoCodeAddress)) {
+                jsonObject.put("address", reverseGeoCodeAddress);
+            }
+
             directionDropOffData = data;
             AppPreferences.clearTripDistanceData();
 
@@ -1394,6 +1405,19 @@ public class UserRepository {
         mRestRequestHandler.requestPerformanceData(context, mDataCallback, weekStatus);
     }
 
+    /**
+     * this method can be invoked to get stats data from kronos
+     *
+     * @param context of the activity
+     * @param handler callback to get data
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
+     */
+    public void requestDriverVerifiedBookingStats(Context context, UserDataHandler handler) {
+        mContext = context;
+        mUserCallback = handler;
+        mRestRequestHandler.requestDriverVerifiedBookingStats(context, mDataCallback);
+    }
+
     public void requestLoadBoard(Context context, UserDataHandler handler, String lat, String lng) {
         mContext = context;
         mUserCallback = handler;
@@ -1736,6 +1760,9 @@ public class UserRepository {
                         break;
                     case "BookingListingResponse":
                         mUserCallback.onBookingListingResponse((BookingListingResponse) object);
+                        break;
+                    case "DriverVerifiedBookingResponse":
+                        mUserCallback.onDriverVerifiedBookingResponse((DriverVerifiedBookingResponse) object);
                         break;
                     case "CommonResponse":
                         mUserCallback.onCommonResponse((CommonResponse) object);

@@ -19,7 +19,6 @@
         android:textSize="@dimen/textsize.tiny" />
 
     <LinearLayout
-        android:id="@+id/parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtDate"
@@ -64,7 +63,7 @@
                     android:id="@+id/txtMessageSecond"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
+                    android:layout_gravity="left|center_vertical"
                     android:layout_margin="@dimen/margin.small"
                     android:ellipsize="end"
                     android:textColor="@color/textColorPrimary"

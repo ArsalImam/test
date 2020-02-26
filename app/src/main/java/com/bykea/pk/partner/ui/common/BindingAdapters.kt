@@ -3,7 +3,6 @@ package com.bykea.pk.partner.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
@@ -48,8 +47,9 @@ object BindingAdapters {
      */
     @BindingAdapter("app:loadUrl")
     @JvmStatic
-    fun loadImageUrl(imageView: ImageView, url: String) {
-        Utils.loadImgPicasso(imageView, R.color.grey, url)
+    fun loadImageUrl(imageView: ImageView, url: String? = null) {
+        if (url == null) return
+        Utils.loadImgPicasso(imageView, R.color.white, url)
     }
 
     @BindingAdapter("app:serviceCode")
@@ -58,13 +58,13 @@ object BindingAdapters {
         when (serviceCode) {
             SEND -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
             SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
-            RIDE -> imageView.setImageResource(R.drawable.ride_right)
+            RIDE, DISPATCH_RIDE -> imageView.setImageResource(R.drawable.ride_right)
             MART -> imageView.setImageResource(R.drawable.ic_purchase)
             MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
             MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
             BANK_TRANSFER -> imageView.setImageResource(R.drawable.ic_pay)
             UTILITY -> imageView.setImageResource(R.drawable.ic_pay)
-            else -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            else -> imageView.setImageResource(R.drawable.ride_right)
         }
     }
 

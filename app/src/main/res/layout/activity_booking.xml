@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_job"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -28,7 +27,6 @@
                 android:visibility="visible">
 
                 <FrameLayout
-                    android:id="@+id/llTopLeft"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
@@ -81,12 +79,13 @@
 
                     <ImageView
                         android:id="@+id/ivTopUp"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
                         android:layout_gravity="left"
-                        android:paddingLeft="-5dp"
-                        android:paddingBottom="@dimen/_4sdp"
-                        android:src="@drawable/circle_plus" />
+                        android:paddingLeft="@dimen/_minus3sdp"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:src="@drawable/circle_plus"
+                        android:paddingStart="@dimen/_minus3sdp" />
                 </FrameLayout>
 
                 <RelativeLayout
@@ -167,7 +166,6 @@
                         tools:text="Rs. 120" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/tvFare"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -421,7 +419,6 @@
                 android:src="@drawable/ic_pencil_icon" />
 
             <View
-                android:id="@+id/separator"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/_10sdp"
@@ -442,7 +439,6 @@
         </LinearLayout>
 
         <com.bykea.pk.partner.widgets.AutoFitFontTextView
-            android:id="@+id/endAddressTvOld"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_28sdp"
             android:layout_gravity="center_horizontal"
@@ -621,7 +617,6 @@
             android:layout_height="match_parent" />
 
         <LinearLayout
-            android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -681,7 +676,6 @@
                 app:cardElevation="@dimen/_4sdp">
 
                 <ImageView
-                    android:id="@+id/currentLocIv"
                     android:layout_width="@dimen/_38sdp"
                     android:layout_height="@dimen/_38sdp"
                     android:padding="@dimen/_4sdp"
@@ -699,7 +693,6 @@
                 app:cardElevation="@dimen/_4sdp">
 
                 <ImageView
-                    android:id="@+id/ivRouteView"
                     android:layout_width="@dimen/_38sdp"
                     android:layout_height="@dimen/_38sdp"
                     android:padding="@dimen/_4sdp"
@@ -716,6 +709,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/_12sdp"
+            android:visibility="invisible"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:background="@color/white"

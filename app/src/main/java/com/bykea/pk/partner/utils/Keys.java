@@ -38,6 +38,7 @@ public class Keys {
     public static final String REG_ID = "regid";
 
     public static final String EMAIL_VERIFIED = "email_verified";
+    public static final String TOP_UP_PASSENGER = "top_up_passenger";
     public static final String ZENDESK_IDENTITY_SETUP_TIME = "zendesk_identity_setup_time";
     public static final String ZENDESK_SDK_READY = "zendesk_sdk_ready";
 

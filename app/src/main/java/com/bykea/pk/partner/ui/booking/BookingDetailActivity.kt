@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.data.Invoice
 import com.bykea.pk.partner.databinding.ActivityBookingDetailBinding
@@ -13,6 +14,7 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 
 
@@ -27,6 +29,11 @@ class BookingDetailActivity : BaseActivity() {
      * data source for invoice list
      */
     private lateinit var invoiceAdapter: LastAdapter<Invoice>
+
+    /**
+     * data source for customer feedback list
+     */
+    private lateinit var feedbackAdapter: LastAdapter<String>
     /**
      * Binding object between activity and xml file, it contains all objects
      * of UI components used by activity
@@ -89,10 +96,18 @@ class BookingDetailActivity : BaseActivity() {
         })
 
         viewModel?.bookingDetailData?.observe(this, Observer {
-            if (it == null) return@Observer
-            setToolbarTitle(it.bookingCode?.toUpperCase())
-            if (it.invoice != null)
-                invoiceAdapter.items = it.invoice!!
+            it?.let {
+                setToolbarTitle(it.bookingCode?.toUpperCase())
+                it.invoice?.let { invoiceAdapter.items = it }
+                it.rate?.driverFeedback?.let {
+
+                    /**
+                     * this method will update the span count to center columns horizontally
+                     */
+                    (binding?.feedbackRecyclerView?.layoutManager as GridLayoutManager).spanCount = Constants.DIGIT_THREE
+                    feedbackAdapter.items = it
+                }
+            }
         })
         viewModel?.updateBookingDetailById(intent.extras[EXTRA_BOOKING_DETAIL_ID].toString())
         invoiceAdapter = LastAdapter(R.layout.adapter_booking_detail_invoice, object : LastAdapter.OnItemClickListener<Invoice> {
@@ -100,7 +115,15 @@ class BookingDetailActivity : BaseActivity() {
 
             }
         })
+
+
+        feedbackAdapter = LastAdapter(R.layout.adapter_booking_detail_feedback, object : LastAdapter.OnItemClickListener<String> {
+            override fun onItemClick(item: String) {
+
+            }
+        })
         binding?.invoiceAdapter = invoiceAdapter
+        binding?.feedbackAdapter = feedbackAdapter
     }
 
     /**

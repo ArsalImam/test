@@ -299,6 +299,14 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, subCode: Int?, message: String?) = callbackBykeaCash.onFail(code, subCode, message)
         })
     }
+
+    fun getJobComplainReasons(userType: String, messageType: String, lang: String, callback: JobsDataSource.ComplainReasonsCallback) {
+        Backend.talos.getJobComplainReasons(userType, messageType, lang).enqueue(object : Callback<ComplainReasonResponse> {
+            override fun onSuccess(complainReasonResponse: ComplainReasonResponse) = callback.onSuccess(complainReasonResponse)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onFail(code, subCode, message)
+        })
+    }
+
     /**
      * Get Booking Details By Id
      *
@@ -309,6 +317,21 @@ class JobsRemoteDataSource {
         Backend.talos.getBookingDetailsById(bookingUrl).enqueue(object : Callback<BookingDetailResponse> {
             override fun onSuccess(responseBykeaCash: BookingDetailResponse) = callback.onSuccess(responseBykeaCash)
             override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
+        })
+    }
+
+
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param driverId String
+     * @param token String
+     * @param callback CancelJobCallback
+     */
+    fun skipJob(jobId: String, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
+        Backend.talos.skipJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
+            override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
+            override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
         })
     }
 }

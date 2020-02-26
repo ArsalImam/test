@@ -111,7 +111,7 @@ interface JobsDataSource {
      * @param route Route taken for job
      * @param callback Response callback
      */
-    fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: FinishJobCallback)
+    fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, endAddress: String?, callback: FinishJobCallback)
 
     /**
      * Requests to conclude job
@@ -146,6 +146,11 @@ interface JobsDataSource {
      * Check Email Update
      */
     fun checkEmailUpdate(callback: EmailUpdateCheckCallback)
+
+    /**
+     * Get Job Complain Reasons
+     */
+    fun getJobComplainReasons(callback: ComplainReasonsCallback)
 
     /**
      * Get fair estimation
@@ -343,9 +348,18 @@ interface JobsDataSource {
      * Callback interface to check if email is updated
      */
     interface EmailUpdateCheckCallback {
-        fun onSuccess(isEmailUpdated: Boolean)
+        fun onSuccess(isEmailUpdated: Boolean?)
 
         fun onFail(message: String?)
+    }
+
+    /**
+     * Callback interface to get fair estimation
+     */
+    interface ComplainReasonsCallback {
+        fun onSuccess(complainReasonResponse: ComplainReasonResponse)
+
+        fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
     /**
@@ -393,4 +407,18 @@ interface JobsDataSource {
         fun onFail(code: Int, subCode: Int?, message: String?) {}
     }
 
+    /**
+     * Requests to skip job
+     * @param jobId String
+     * @param callback CancelJobCallback
+     */
+    fun skipJob(jobId: String, callback: SkipJobCallback)
+
+    /**
+     * Callback interface for cancel job
+     */
+    interface SkipJobCallback {
+        fun onJobSkip()
+        fun onJobSkipFailed()
+    }
 }

@@ -7,7 +7,6 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cvSearch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_48sdp"
         android:background="@color/windowBackground"
@@ -133,7 +132,6 @@
 
 
     <FrameLayout
-        android:id="@+id/activity_confirm_destination"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

@@ -11,7 +11,10 @@ import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
+import com.bykea.pk.partner.dal.util.LANG_TYPE
+import com.bykea.pk.partner.dal.util.MESSAGE_TYPE
 import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
+import com.bykea.pk.partner.dal.util.USER_TYPE_DRIVER
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -83,6 +86,14 @@ class JobsRepository(
         if (jobInCache == null || !jobInCache.isComplete) getJobFromRemote(jobId, callback)
     }
 
+    /**
+     * this method can be used to get all complain's reasons related with jobs
+     * [callback] get all complain reasons
+     */
+    override fun getJobComplainReasons(callback: JobsDataSource.ComplainReasonsCallback) {
+        jobsRemoteDataSource.getJobComplainReasons(USER_TYPE_DRIVER, MESSAGE_TYPE, LANG_TYPE, callback)
+    }
+
     override fun saveJob(job: Job) {
         jobsLocalDataSource.saveJob(job)
     }
@@ -133,8 +144,8 @@ class JobsRepository(
         jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
     }
 
-    override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.FinishJobCallback) {
-        val body = FinishJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), route)
+    override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, endAddress: String?, callback: JobsDataSource.FinishJobCallback) {
+        val body = FinishJobRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), endAddress, route)
         jobsRemoteDataSource.finishJob(jobId, body, callback)
     }
 
@@ -163,6 +174,7 @@ class JobsRepository(
     override fun createTrip(rideCreateRequestObject: RideCreateRequestObject, callback: JobsDataSource.CreateTripCallback) {
         jobsRemoteDataSource.createTrip(rideCreateRequestObject, callback)
     }
+
     /**
      * Get Booking Details By Id
      *
@@ -223,6 +235,10 @@ class JobsRepository(
         requestObjBykeaCash._id = AppPref.getDriverId(pref)
         requestObjBykeaCash.token_id = AppPref.getAccessToken(pref)
         jobsRemoteDataSource.updateBookingDetails(tripId, requestObjBykeaCash, callbackBykeaCash)
+    }
+
+    override fun skipJob(jobId: String, callback: JobsDataSource.SkipJobCallback) {
+        jobsRemoteDataSource.skipJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
 

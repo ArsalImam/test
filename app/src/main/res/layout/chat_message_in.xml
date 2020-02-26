@@ -20,7 +20,6 @@
         android:textSize="@dimen/textsize.tiny" />
 
     <LinearLayout
-        android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtDate">
@@ -50,7 +49,7 @@
                     android:id="@+id/txtMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
+                    android:layout_gravity="right"
                     android:layout_margin="@dimen/padding.small"
                     android:ellipsize="end"
                     android:textColor="@color/buttonTextColor"

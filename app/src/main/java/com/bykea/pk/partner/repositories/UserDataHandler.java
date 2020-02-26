@@ -27,6 +27,7 @@ import com.bykea.pk.partner.models.response.DownloadAudioFileResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.EndRideResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
@@ -412,6 +413,17 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public void onBookingListingResponse(BookingListingResponse bookingListingResponse) {
+
+    }
+
+    /**
+     * this method can be invoked to get stats data from kronos
+     *
+     * @param bookingListingResponse callback to send data to the controller on complete
+     * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
+     */
+    @Override
+    public void onDriverVerifiedBookingResponse(DriverVerifiedBookingResponse bookingListingResponse) {
 
     }
 

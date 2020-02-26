@@ -276,16 +276,22 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.booking.BookingDetailActivity" />
         <activity
+            android:name=".ui.complain.ComplainAddActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.loadboard.detail.JobDetailActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.complain.ComplaintSubmissionActivity"
             android:label="@string/title_activity_problem_final"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".ui.complain.ComplaintListActivity"
             android:label="@string/title_complain_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize" />
+
         <activity android:name=".ui.complain.ComplainZendeskIdentityActivity" />
 
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">

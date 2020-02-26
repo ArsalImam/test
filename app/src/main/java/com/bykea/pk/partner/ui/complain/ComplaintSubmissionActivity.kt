@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.complain
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.source.remote.data.ComplainReason
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.ActivityProblemBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
@@ -17,6 +19,7 @@ import com.bykea.pk.partner.models.response.TripHistoryResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants
@@ -32,9 +35,17 @@ import kotlinx.android.synthetic.main.activity_problem.*
 import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 
-
+/**
+ * This class will responsible to manage the complain submission process (zendesk)
+ *
+ * @author Arsal Imam
+ */
 class ComplaintSubmissionActivity : BaseActivity() {
 
+    /**
+     * Binding object between activity and xml file, it contains all objects
+     * of UI components used by activity
+     */
     private lateinit var binding: ActivityProblemBinding
     private lateinit var mCurrentActivity: ComplaintSubmissionActivity
     private var fragmentManager: FragmentManager? = null
@@ -46,9 +57,18 @@ class ComplaintSubmissionActivity : BaseActivity() {
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private val RC_SIGN_IN = 9001
 
-    var selectedReason: String? = null
+    var selectedReason: ComplainReason? = null
     var tripHistoryId: String? = null
 
+    /**
+     * {@inheritDoc}
+     *
+     *
+     * This will calls on every new initialization of this activity,
+     * It can be used for any initializations or on start executions
+     *
+     * @param savedInstanceState to get data on activity state changed
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_problem)
@@ -136,6 +156,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
         }
     }
 
+
     /**
      * Create GoogleSignInClient, Dialog For Account Selection
      */
@@ -157,6 +178,11 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 }
             } catch (e: ApiException) {
             }
+        } else if (requestCode == Constants.REQUEST_CODE_SUBMIT_COMPLAIN) {
+            if (resultCode == Activity.RESULT_OK) {
+                isTicketSubmitted = true
+                changeFragment(ComplainSubmittedFragment())
+            }
         }
     }
 
@@ -171,7 +197,7 @@ class ComplaintSubmissionActivity : BaseActivity() {
                 AppPreferences.setDriverEmail(emailId)
                 AppPreferences.setEmailVerified()
                 mGoogleSignInClient?.signOut()
-                changeFragment(ComplainDetailFragment())
+                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity, tripHistoryDate, selectedReason)
             }
 
             override fun onFail(message: String?) {

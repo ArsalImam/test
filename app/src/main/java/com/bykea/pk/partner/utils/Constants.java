@@ -2,13 +2,17 @@ package com.bykea.pk.partner.utils;
 
 import com.bykea.pk.partner.BuildConfig;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
+    public static final int DIGIT_TEN = 10;
+    public static final int DIGIT_SIXTY = 60;
+    public static final int DIGIT_HUNDRED = 100;
+    public static final int DIGIT_THOUSAND = 1000;
     public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final String APP = "APP";
@@ -85,6 +89,8 @@ public class Constants {
     public static final String S3_DD_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_driver_destination.png";
     public static final String S3_OFFLINE_RIDE_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline.png";
     public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline_delivery.png";
+    public static final String CREATOR_PASSENGER = "PASSENGER_ANDROID";
+    public static final String ANDROID = "ANDROID";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
@@ -138,13 +144,18 @@ public class Constants {
 
     public static final int TRIP_STATUS_CODE_DELIVERY = 10;
     public static final int TRIP_STATUS_CODE_RIDE = 7;
+    public static final int MAX_COMPLAIN_KILOMETRES_TRAVELLED = 50;
+    public static final int MAX_COMPLAIN_MINIUTES_TRAVELLED = 120;
+    public static final int MAX_COMPLAIN_PAY_AMOUNT = 35000;
     public static final String SEPERATOR_ABOVE = "above";
     @Nullable
     public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
     @NotNull
     public static final String COMMA = ",";
-    @NotNull
     public static final String NEAR_LBL = "Near ";
+    public static final int DIGIT_THREE = 3;
+    @Nullable
+    public static final int REQUEST_CODE_SUBMIT_COMPLAIN = 1001;
 
     public static class CallType {
         public static final String SINGLE = "single";
@@ -397,6 +408,9 @@ public class Constants {
      * Service Codes
      */
     public static class ServiceCode {
+        public static final int MIN_SERVICE_CODE_FOR_API = 20;
+        public static final int COURIER = 26;
+
         public static final int SEND = 21;
         public static final int SEND_COD = 22;
         public static final int RIDE = 23;
@@ -407,6 +421,7 @@ public class Constants {
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
         public static final int OFFLINE_DELIVERY = 31;
+        public static final int DISPATCH_RIDE = 35;
     }
 
     /**
@@ -647,6 +662,13 @@ public class Constants {
         public static long Type = 360020675514L;
         public static long Wait_Time = 360023230974L;
         public static long Wallet_Deduction = 360023253753L;
+
+        public static long Wrong_Fare_Pick_Up_Address = 360029983133L;
+        public static long Wrong_Fare_Drop_Off_Address = 360029983153L;
+        public static long Wrong_Fare_Stops = 360029983173L;
+        public static long Wrong_Fare_Kilometers_Travelled = 360029993514L;
+        public static long Wrong_Fare_Booking_Time = 360029983193L;
+        public static long Wrong_Fare_Paid_Amount = 360029983213L;
     }
 
     public static class ZendeskTicketStatus {

@@ -14,11 +14,10 @@ import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObje
 import com.bykea.pk.partner.dal.source.remote.response.RideCreateResponse
 import com.bykea.pk.partner.dal.util.*
 import com.bykea.pk.partner.databinding.ActivityRideCodeVerificationBinding
+import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
-import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod
-import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.widgets.FontTextView
 import com.bykea.pk.partner.widgets.FontUtils
 import kotlinx.android.synthetic.main.activity_complain_zendesk_identity.counterTv
@@ -246,6 +245,18 @@ class RideCodeVerificationActivity : BaseActivity() {
         jobsRepository.createTrip(rideCreateRequestObject, object : JobsDataSource.CreateTripCallback {
             override fun onSuccess(rideCreateResponse: RideCreateResponse) {
                 Dialogs.INSTANCE.dismissDialog()
+
+                AppPreferences.clearTripDistanceData()
+                AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP)
+                AppPreferences.setTripAcceptTime(System.currentTimeMillis())
+                AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
+                AppPreferences.setIsOnTrip(true)
+                AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
+                val callData = NormalCallData()
+                callData.status = TripStatus.ON_ARRIVED_TRIP
+                callData.tripNo = rideCreateResponse.data?.trip_no
+                AppPreferences.setCallData(callData)
+
                 ActivityStackManager.getInstance().startJobActivity(this@RideCodeVerificationActivity);
             }
 
