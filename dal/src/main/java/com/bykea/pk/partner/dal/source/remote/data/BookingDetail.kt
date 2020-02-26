@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.bykea.pk.partner.dal.util.*
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
+import org.apache.commons.lang3.StringUtils
 
 /**
  * response model for booking detail
@@ -37,25 +38,41 @@ data class BookingDetail(
         val service: Service?,
         @SerializedName("status")
         val status: String?,
+        @SerializedName("cancel_by")
+        val cancelBy: String?,
         @SerializedName("tags")
-        val tags: List<Tag>?
+        val tags: ArrayList<Tag>?
 ) : Parcelable {
+    /**
+     * this property will share the latest tag by the basis of priority
+     */
+    val priorTag: String
+        get() {
+            if (tags?.size!! > DIGIT_ZERO) {
+                tags?.sortByDescending { it.priority }
+                if (tags[DIGIT_ZERO]?.icon != null) {
+                    return tags[DIGIT_ZERO].icon!!
+                }
+            }
+            return StringUtils.EMPTY
+        }
+
     val formattedDate: String
         get() {
             return DateUtils.getFormattedDate(dt, BOOKING_CURRENT_DATE_FORMAT, BOOKING_LIST_REQUIRED_DATE_FORMAT)
         }
 
-    val cancelBy: String
-        get() {
-            tags?.forEach {
-                when {
-                    it?.name == CancelByStatus.CANCEL_BY_ADMIN -> return RolesByName.CANCEL_BY_ADMIN
-                    it?.name == CancelByStatus.CANCEL_BY_PARTNER -> return RolesByName.CANCEL_BY_PARTNER
-                    it?.name == CancelByStatus.CANCEL_BY_CUSTOMER -> return RolesByName.CANCEL_BY_CUSTOMER
-                }
-            }
-            return org.apache.commons.lang3.StringUtils.EMPTY
-        }
+//    val cancelBy: String
+//        get() {
+//            tags?.forEach {
+//                when {
+//                    it?.name == CancelByStatus.CANCEL_BY_ADMIN -> return RolesByName.CANCEL_BY_ADMIN
+//                    it?.name == CancelByStatus.CANCEL_BY_PARTNER -> return RolesByName.CANCEL_BY_PARTNER
+//                    it?.name == CancelByStatus.CANCEL_BY_CUSTOMER -> return RolesByName.CANCEL_BY_CUSTOMER
+//                }
+//            }
+//            return org.apache.commons.lang3.StringUtils.EMPTY
+//        }
 }
 
 @Parcelize
@@ -144,7 +161,9 @@ data class Rate(
         @SerializedName("customer")
         val customer: Double?,
         @SerializedName("partner")
-        val partner: Double?
+        val partner: Double?,
+        @SerializedName("driver_feedback")
+        val driverFeedback: ArrayList<String>?
 ) : Parcelable
 
 @Parcelize
