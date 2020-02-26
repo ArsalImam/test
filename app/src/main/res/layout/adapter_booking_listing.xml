@@ -4,7 +4,8 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="androidx.core.content.ContextCompat"/>
+
+        <import type="androidx.core.content.ContextCompat" />
 
         <variable
             name="item"
@@ -119,12 +120,6 @@
                 android:visibility="@{item.priorTag == `` ? View.GONE : View.VISIBLE}"
                 android:weightSum="2">
 
-                <ImageView
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    app:loadUrl="@{item.priorTag}" />
-
-                <!--android:text="@{item.priorTagName}"-->
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -143,11 +138,13 @@
             android:id="@+id/ivDriverDestination"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
+            android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/_25sdp"
-            android:layout_marginRight="@dimen/_20sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:layout_toLeftOf="@id/ivRight"
-            android:src="@drawable/ic_driver_destination"
-            android:visibility="gone" />
+            android:src="@null"
+            android:visibility="@{item.priorTag == `` ? View.GONE : View.VISIBLE}"
+            app:loadUrl="@{item.priorTag}" />
 
         <ImageView
             android:id="@+id/ivRight"

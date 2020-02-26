@@ -3,7 +3,6 @@ package com.bykea.pk.partner.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
@@ -48,8 +47,9 @@ object BindingAdapters {
      */
     @BindingAdapter("app:loadUrl")
     @JvmStatic
-    fun loadImageUrl(imageView: ImageView, url: String) {
-        Utils.loadImgPicasso(imageView, R.color.grey, url)
+    fun loadImageUrl(imageView: ImageView, url: String? = null) {
+        if (url == null) return
+        Utils.loadImgPicasso(imageView, R.color.white, url)
     }
 
     @BindingAdapter("app:serviceCode")
