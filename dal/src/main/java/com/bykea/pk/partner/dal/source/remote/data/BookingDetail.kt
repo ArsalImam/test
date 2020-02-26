@@ -61,18 +61,6 @@ data class BookingDetail(
         get() {
             return DateUtils.getFormattedDate(dt, BOOKING_CURRENT_DATE_FORMAT, BOOKING_LIST_REQUIRED_DATE_FORMAT)
         }
-
-//    val cancelBy: String
-//        get() {
-//            tags?.forEach {
-//                when {
-//                    it?.name == CancelByStatus.CANCEL_BY_ADMIN -> return RolesByName.CANCEL_BY_ADMIN
-//                    it?.name == CancelByStatus.CANCEL_BY_PARTNER -> return RolesByName.CANCEL_BY_PARTNER
-//                    it?.name == CancelByStatus.CANCEL_BY_CUSTOMER -> return RolesByName.CANCEL_BY_CUSTOMER
-//                }
-//            }
-//            return org.apache.commons.lang3.StringUtils.EMPTY
-//        }
 }
 
 @Parcelize
