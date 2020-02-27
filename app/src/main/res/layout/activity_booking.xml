@@ -245,15 +245,14 @@
                 </LinearLayout>
 
                 <RelativeLayout
-                    android:id="@+id/voiceNoteRl"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:id="@+id/imgViewAudioPlay"
                         android:layout_width="@dimen/_38sdp"
                         android:layout_height="@dimen/_38sdp"
+                        android:visibility="gone"
                         android:layout_marginEnd="@dimen/_2sdp"
                         android:layout_marginRight="@dimen/_2sdp"
                         android:padding="@dimen/_4sdp"
@@ -271,6 +270,16 @@
                         android:progressDrawable="@drawable/circular_progress_bar"
                         android:visibility="gone"
                         tools:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/imgViewUser"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:layout_marginEnd="@dimen/_2sdp"
+                        android:visibility="visible"
+                        android:layout_marginRight="@dimen/_2sdp"
+                        android:padding="@dimen/_4sdp"
+                        app:srcCompat="@drawable/ic_user" />
                 </RelativeLayout>
                 <!--app:srcCompat="@drawable/ic_call_icon"-->
                 <LinearLayout
