@@ -42,6 +42,7 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverStatsResponse;
+import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
@@ -150,6 +151,9 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.selectedAmountRL)
     LinearLayout selectedAmountRL;
 
+    @BindView(R.id.weeklybookingTv)
+    FontTextView weeklyBookingTv;
+
     @BindView(R.id.homeMapFragment)
     MapView mapView;
 
@@ -196,9 +200,6 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.muntakhibTv1)
     FontTextView muntakhibTv1;
 
-    @BindView(R.id.weeklybookingTv)
-    FontTextView weeklyBookingTv;
-
     @BindView(R.id.mukamalBookingTv)
     FontTextView weeklyMukamalBookingTv;
 
@@ -207,9 +208,6 @@ public class HomeFragment extends Fragment {
 
     @BindView(R.id.wqtTv)
     FontTextView weeklyTimeTv;
-
-    @BindView(R.id.cancelTv)
-    FontTextView weeklyCancelTv;
 
     @BindView(R.id.takmeelTv)
     FontTextView weeklyTakmeelTv;
@@ -231,6 +229,12 @@ public class HomeFragment extends Fragment {
 
     @BindView(R.id.muntakhibTvUrdu)
     FontTextView muntakhibTvUrdu;
+
+    @BindView(R.id.authorizedbookingTimeTv)
+    FontTextView authorizedbookingTimeTv;
+
+    @BindView(R.id.authorizedbookingTv)
+    FontTextView authorizedbookingTv;
 
     public static int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
@@ -258,6 +262,7 @@ public class HomeFragment extends Fragment {
         setInactiveStatusClick();
 
         setActiveStatusClick();
+
 
         mCurrentActivity.setDemandButtonForBismilla("ڈیمانڈ", new View.OnClickListener() {
             @Override
@@ -449,13 +454,21 @@ public class HomeFragment extends Fragment {
 
         initRangeBar();
         AppPreferences.setAvailableAPICalling(false);
+    }
 
-
+    /**
+     * this can be call to get partner booking stats data from kronos
+     */
+    private void updateVerifiedBookingStats() {
+        repository.requestDriverVerifiedBookingStats(mCurrentActivity, handler);
     }
 
     private void getDriverPerformanceData() {
         try {
             if (!isCalled) {
+
+                updateVerifiedBookingStats();
+
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 isCalled = true;
@@ -493,8 +506,6 @@ public class HomeFragment extends Fragment {
                 if (weeklyTimeTv != null)
                     weeklyTimeTv.setText(String.valueOf(response.getData().getDriverOnTime()));
 
-                if (weeklyCancelTv != null)
-                    weeklyCancelTv.setText(response.getData().getCancelPercentage() + getString(R.string.percentage_sign));
                 if (weeklyTakmeelTv != null)
                     weeklyTakmeelTv.setText(response.getData().getCompletedPercentage() + getString(R.string.percentage_sign));
                 if (weeklyQaboliatTv != null)
@@ -689,11 +700,12 @@ public class HomeFragment extends Fragment {
                 mCurrentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (null != intent && intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST)) {
+                        if (intent != null && intent.getAction() != null &&
+                                intent.getAction().equalsIgnoreCase(Keys.LOCATION_UPDATE_BROADCAST)) {
                             if (intent.getExtras() != null) {
                                 Location location = intent.getParcelableExtra("location");
                                 //Move Map's Camera if there's significant change in Location
-                                if (mPrevLocToShow == null || location.distanceTo(mPrevLocToShow) > 30) {
+                                if (location != null && (mPrevLocToShow == null || location.distanceTo(mPrevLocToShow) > 30)) {
                                     mPrevLocToShow = location;
                                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude()
                                                     , location.getLongitude())
@@ -757,6 +769,17 @@ public class HomeFragment extends Fragment {
     }
 
     private UserDataHandler handler = new UserDataHandler() {
+
+        @Override
+        public void onDriverVerifiedBookingResponse(DriverVerifiedBookingResponse driverVerifiedBookingResponse) {
+            super.onDriverVerifiedBookingResponse(driverVerifiedBookingResponse);
+            if (mCurrentActivity == null || getView() == null
+                    || !driverVerifiedBookingResponse.isSuccess() || driverVerifiedBookingResponse.getData() == null)
+                return;
+            authorizedbookingTimeTv.setText(Utils.getFormattedDate("dd MMM",
+                    Utils.getTimeInMiles(driverVerifiedBookingResponse.getData().getBookingsTime())));
+            authorizedbookingTv.setText(String.valueOf(driverVerifiedBookingResponse.getData().getBookingsCount()));
+        }
 
         @Override
         public void onDriverStatsResponse(final DriverStatsResponse response) {

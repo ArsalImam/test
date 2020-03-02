@@ -182,6 +182,7 @@ public class Keys {
     public static final String CASH_IN_HANDS_INDEX = "CASH_IN_HANDS_INDEX";
     public static final String TRIP_DELAY = "TRIP_DELAY";
     public static final String CASH = "CASH";
+    public static final String BOOKING_VOICE_NOTE_URL = "BOOKING_VOICE_NOTE_URL";
 
     /***********************************************************************************************
      * Driver drop off tags

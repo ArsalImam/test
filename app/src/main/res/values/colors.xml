@@ -10,7 +10,6 @@
     <color name="kelly_green">#03a033</color>
     <color name="textColorPrimary">#302d2d</color>
     <color name="textColorPrimary676767">#676767</color>
-    <color name="textColorPrimary1">#4e4e4e</color>
     <color name="textColorPrimary2">#333333</color>
     <color name="textColorSecondary">#b4b2b2</color>
     <color name="textColorSecondaryDark">#a1a1a1</color>
@@ -35,7 +34,6 @@
 
     <color name="divider">#cecece</color>
 
-    <color name="color.fair_connection">#ff8400</color>
     <color name="color.error">#f51c1c</color>
     <color name="color.success">#30ca1f</color>
     <color name="color.warning">#ffac11</color>
@@ -47,7 +45,6 @@
     <color name="black_404040">#404040</color>
     <color name="color_138f39">#138f39</color>
     <color name="color_6b6b6b">#6b6b6b</color>
-    <color name="black.transparent.inactive">#D8000000</color>
     <color name="grey">#a4a1a1</color>
     <color name="color_c8c8c8">#c8c8c8</color>
     <color name="blue_lightest">#0295bf</color>
@@ -56,8 +53,6 @@
     <color name="blue_0194be">#0194be</color>
     <color name="blue_light">#ADEAFF</color>
     <color name="white">#FFFFFF</color>
-    <color name="yellow_dd">#fdfd96</color>
-    <color name="yellow_fcfcc3">#fcfcc3</color>
     <color name="yellow">#FAFFAD</color>
     <color name="secondaryColorUltraLight">#e5e5e5</color>
     <color name="secondaryColor4">#c2c2c2</color>
@@ -81,32 +76,24 @@
     <color name="last_item_color">#f2f2f2</color>
 
     <color name="dark_gray">#6c6c6c</color>
-    <color name="dark_grayRedish">#6b5d5d</color>
     <color name="dark_gray656565">#656565</color>
-    <color name="dark_blue3179c5">#3179c5</color>
-    <color name="Color_DarkRed">#d80027</color>
     <color name="color_manzil_bg">#8eb2fd</color>
 
     <color name="shadow_gray">#59000000</color>
 
-    <color name="color_191919">#191919</color>
     <color name="color_5a5a5a">#5a5a5a</color>
     <color name="color_e8e8e8">#e8e8e8</color>
-    <color name="color_cc1311">#cc1311</color>
 
     <color name="color_282828">#282828</color>
     <color name="color_e73836">#e73836</color>
     <color name="color_A7A7A7">#a7a7a7</color>
     <color name="color_AE2939">#AE2939</color>
 
-    <color name="color_128c7e">#128c7e</color>
     <color name="color_red">#de0200</color>
     <color name="color_red_light">#F41714</color>
 
-    <color name="color_grayf8f8f8">#f8f8f8</color>
     <color name="color_graydcdcdc">#dcdcdc</color>
     <color name="color_graya5a5a5">#dcdcdc</color>
-    <color name="color_grayd3d3d3">#d3d3d3</color>
     <color name="color_gray373737">#373737</color>
     <color name="color_gray636363">#636363</color>
     <color name="color_grayf3f3f3">#f3f3f3</color>
@@ -137,27 +124,17 @@
     <color name="color_CB8618">#CB8618</color>
 
     <!--ic_bill_top vector colors-->
-    <color name="color_535353">#535353</color>
-    <color name="color_8C8C8C">#8C8C8C</color>
-    <color name="color_686868">#686868</color>
-    <color name="color_BBF0F0">#BBF0F0</color>
     <color name="color_FAFAFA">#FAFAFA</color>
     <color name="color_F4F4F4">#F4F4F4</color>
-    <color name="color_505757">#505757</color>
-    <color name="color_FCFEFE">#FCFEFE</color>
-    <color name="color_0BCBC9">#0BCBC9</color>
 
     <!--ic_ride vector colors-->
     <color name="color_06A833">#06A833</color>
-    <color name="color_00000000">#00000000</color>
 
     <!--ic_courier vector colors-->
-    <color name="color_0ACCCB">#0ACCCB</color>
 
     <!--ic_purchase vector colors-->
     <color name="color_3B98D3">#3B98D3</color>
     <color name="color_FDFEFF">#FDFEFF</color>
-    <color name="color_374752">#374752</color>
     <color name="color_3F9FDD">#3F9FDD</color>
 
 
@@ -165,6 +142,14 @@
     <color name="color_blue1f81a6">#1f81a6</color>
     <color name="color_ae2939">#ae2939</color>
     <color name="color_02AA31">#02aa31</color>
+    <color name="tasdeeq_circle_grey">#566f85</color>
+    <color name="circle_mukamal_booking">#36b3d7</color>
+    <color name="circle_kamai">#008a69</color>
+    <color name="circle_wqt">#be5e5f</color>
+    <color name="circle_takmeel">#d36b68</color>
+    <color name="circle_qabooliat">#ff9b3d</color>
+    <color name="circle_rating">#d69962</color>
+    <color name="circle_booking">#d98a3c</color>
     <color name="greyBackground">#80000000</color>
 
     <color name="color_red_fleet">#AC0404</color>

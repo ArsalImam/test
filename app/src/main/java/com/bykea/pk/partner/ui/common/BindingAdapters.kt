@@ -55,8 +55,9 @@ object BindingAdapters {
      */
     @BindingAdapter("app:loadUrl")
     @JvmStatic
-    fun loadImageUrl(imageView: ImageView, url: String) {
-        Utils.loadImgPicasso(imageView, R.color.grey, url)
+    fun loadImageUrl(imageView: ImageView, url: String? = null) {
+        if (url == null) return
+        Utils.loadImgPicasso(imageView, R.color.white, url)
     }
 
     @BindingAdapter("app:serviceCode")

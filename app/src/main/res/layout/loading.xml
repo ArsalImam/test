@@ -13,7 +13,6 @@
          android:scaleType="fitXY" />-->
 
     <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/avloadingIndicatorView"
         android:layout_width="@dimen/_50sdp"
         android:layout_height="@dimen/_50sdp"
         android:layout_gravity="center"

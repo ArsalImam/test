@@ -21,6 +21,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -75,6 +76,7 @@ import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.crashlytics.android.Crashlytics;
@@ -109,6 +111,10 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -120,9 +126,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
-import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
@@ -157,8 +164,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     RelativeLayout llTopMiddle;
     @BindView(R.id.llTopRight)
     RelativeLayout llTopRight;
-    @BindView(R.id.callbtn)
-    ImageView callbtn;
     @BindView(R.id.cancelBtn)
     FontTextView cancelBtn;
     @BindView(R.id.chatBtn)
@@ -203,6 +208,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvDetailsAddress;
     @BindView(R.id.cartBadge)
     TextView cartBadge;
+    @BindView(R.id.imgViewAudioPlay)
+    ImageView imgViewAudioPlay;
+    @BindView(R.id.imgViewUser)
+    ImageView imgViewUser;
+    @BindView(R.id.progressBarForAudioPlay)
+    ProgressBar progressBarForAudioPlay;
+    @BindView(R.id.tvOrderNumber)
+    FontTextView tvOrderNumber;
 
     public static boolean isJobActivityLive = false;
 
@@ -245,6 +258,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private boolean isMapLoaded = false;
     private boolean isDirectionApiTimeResetRequired = true;
     private GeocodeStrategyManager geocodeStrategyManager;
+    private String voiceNoteUrl;
+    private MediaPlayer mediaPlayer;
+    private Handler voiceNoteHandler = new Handler();
 
     private UserDataHandler handler = new UserDataHandler() {
         @Override
@@ -286,10 +302,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
-                                if (callData != null && callData.getServiceCode() != null &&
-                                        (callData.getServiceCode() == OFFLINE_RIDE ||
-                                                callData.getServiceCode() == OFFLINE_DELIVERY)) {
-                                    chatBtn.setVisibility(View.GONE);
+                                if (callData != null && callData.getServiceCode() != null) {
+                                    if(callData.getServiceCode() == OFFLINE_RIDE ||
+                                            callData.getServiceCode() == OFFLINE_DELIVERY) {
+                                        chatBtn.setVisibility(View.GONE);
+                                    }
+                                    if(Utils.isVoiceNoteRequired(callData.getServiceCode())){
+                                        voiceNoteUrl = AppPreferences.getBookingVoiceNoteUrlAvailable();
+                                        if(StringUtils.isNotEmpty(voiceNoteUrl)){
+                                            imgViewAudioPlay.setVisibility(View.VISIBLE);
+                                            imgViewUser.setVisibility(View.GONE);
+                                        }
+                                    }
                                 }
                                 updateDropOff(isDirectionApiTimeResetRequired);
                                 isDirectionApiTimeResetRequired = false;
@@ -633,6 +657,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override
     protected void onPause() {
         mapView.onPause();
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+            startPlayProgressUpdater();
+        }
         super.onPause();
     }
 
@@ -722,18 +750,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
-            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber})
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber,
+            R.id.imgViewAudioPlay, R.id.progressBarForAudioPlay})
     public void onClick(View view) {
 
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
                 if (callData != null) {
-                    if (callData.isDispatcher() || "IOS".equalsIgnoreCase(callData.getCreator_type())) {
-                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
-                    } else {
+                    if (callData.getCreator_type() != null &&
+                            (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.APP) ||
+                                    callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.CREATOR_PASSENGER) ||
+                                    callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.ANDROID))) {
                         ActivityStackManager.getInstance()
                                 .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
+                    } else {
+                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                     }
                 }
                 break;
@@ -904,6 +936,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
                 bykeaCashFormFragment.setCancelable(false);
                 bykeaCashFormFragment.show(getSupportFragmentManager(), BykeaCashFormFragment.class.getSimpleName());
+                break;
+            case R.id.imgViewAudioPlay:
+                if (StringUtils.isNotEmpty(voiceNoteUrl)) {
+                    voiceClipPlayDownload(voiceNoteUrl);
+                } else {
+                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
+                }
+                break;
+            case R.id.progressBarForAudioPlay:
+                if (mediaPlayer != null) {
+                    imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+                    imgViewAudioPlay.setEnabled(true);
+                    progressBarForAudioPlay.setVisibility(View.GONE);
+                    mediaPlayer.pause();
+                }
                 break;
         }
     }
@@ -2626,6 +2673,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
             }
         }
+
+        if (StringUtils.isNotEmpty(callData.getOrder_no())) {
+            tvOrderNumber.setVisibility(View.VISIBLE);
+            String orderNumber = getString(R.string.order_number) + StringUtils.SPACE + callData.getOrder_no();
+            tvOrderNumber.setText(orderNumber);
+        }
     }
 
     /**
@@ -2653,5 +2706,71 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         int cashKiWasooliValue = callData.getCashKiWasooli();
         cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
         tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
+    }
+
+    /**
+     * Download audio resource via Amazon SDK
+     *
+     * @param url Url to download from
+     */
+    private void voiceClipPlayDownload(String url) {
+        if (mediaPlayer != null) {
+            imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_audio_stop));
+            imgViewAudioPlay.setEnabled(false);
+            progressBarForAudioPlay.setVisibility(View.VISIBLE);
+            mediaPlayer.start();
+            startPlayProgressUpdater();
+        } else {
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            BykeaAmazonClient.INSTANCE.getFileObject(url, new com.bykea.pk.partner.utils.audio.Callback<File>() {
+                @Override
+                public void success(File obj) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity,R.drawable.ic_audio_stop));
+                    imgViewAudioPlay.setEnabled(false);
+                    progressBarForAudioPlay.setVisibility(View.VISIBLE);
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(new FileInputStream(obj).getFD());
+                        mediaPlayer.prepare();
+                        progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
+                        mediaPlayer.start();
+                        startPlayProgressUpdater();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void fail(int errorCode, @NotNull String errorMsg) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
+                }
+            });
+        }
+    }
+
+
+    /**
+     * Handle to maintain the status for progress bar
+     */
+    public void startPlayProgressUpdater() {
+        if(mediaPlayer!=null) {
+            progressBarForAudioPlay.setProgress(mediaPlayer.getCurrentPosition());
+            if (mediaPlayer.isPlaying()) {
+                Runnable notification = this::startPlayProgressUpdater;
+                voiceNoteHandler.postDelayed(notification, DIGIT_THOUSAND);
+            } else {
+                mediaPlayer.pause();
+                imgViewAudioPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play));
+                imgViewAudioPlay.setEnabled(true);
+                progressBarForAudioPlay.setVisibility(View.GONE);
+                progressBarForAudioPlay.setProgress(DIGIT_ZERO);
+            }
+        }
     }
 }

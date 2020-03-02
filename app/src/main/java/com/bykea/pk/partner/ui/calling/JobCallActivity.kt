@@ -183,10 +183,14 @@ class JobCallActivity : BaseActivity() {
         dropAddressTV.text = getDropOffAddress(jobCall.dropoff)
 
         skipJobiV.setOnClickListener {
-            stopSound()
-            skipJob()
-            timer.cancel()
-            finishActivity()
+            runOnUiThread {
+                AppPreferences.setIncomingCall(false)
+                AppPreferences.setTripStatus(TripStatus.ON_FREE)
+                stopSound()
+                skipJob()
+                timer.cancel()
+                finishActivity()
+            }
         }
 
         acceptCallBtn.setOnClickListener {

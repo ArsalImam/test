@@ -1613,4 +1613,30 @@ public class AppPreferences {
         ed.putBoolean(Keys.TOP_UP_PASSENGER, topUpAllowed);
         ed.commit();
     }
+
+    /**
+     * @String Get Booking Voice Note Url Available
+     */
+    public static String getBookingVoiceNoteUrlAvailable() {
+        return mSharedPreferences.getString(Keys.BOOKING_VOICE_NOTE_URL, StringUtils.EMPTY);
+    }
+
+    /**
+     * Set Booking Voice Note Url Available
+     * @param voiceNoteUrl : Voice Note Url
+     */
+    public static void setBookingVoiceNoteUrlAvailable(String voiceNoteUrl) {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.putString(Keys.BOOKING_VOICE_NOTE_URL, voiceNoteUrl);
+        ed.commit();
+    }
+
+    /**
+     * Remove Booking Voice Note Url
+     */
+    public static void removeBookingVoiceNoteUrl() {
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
+        ed.remove(Keys.BOOKING_VOICE_NOTE_URL);
+        ed.commit();
+    }
 }

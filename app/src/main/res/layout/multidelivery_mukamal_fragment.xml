@@ -8,7 +8,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.bykea.pk.partner.widgets.FontTextView
-        android:id="@+id/wasoolKrneyWalaTv"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
         android:layout_gravity="center"
