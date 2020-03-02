@@ -3636,4 +3636,18 @@ public class Utils {
         });
         view.setAnimation(scaleAnimation);
     }
+
+
+    public static boolean isVoiceNoteRequired(Integer serviceCode) {
+        if (serviceCode == null)
+            return false;
+        else
+            return serviceCode == Constants.ServiceCode.SEND
+                    || serviceCode == Constants.ServiceCode.SEND_COD
+                    || serviceCode == Constants.ServiceCode.MART
+                    || serviceCode == Constants.ServiceCode.MOBILE_TOP_UP
+                    || serviceCode == Constants.ServiceCode.MOBILE_WALLET
+                    || serviceCode == Constants.ServiceCode.BANK_TRANSFER
+                    || serviceCode == Constants.ServiceCode.UTILITY;
+    }
 }

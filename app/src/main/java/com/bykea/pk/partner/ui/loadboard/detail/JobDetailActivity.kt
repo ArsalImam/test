@@ -71,6 +71,11 @@ class JobDetailActivity : BaseActivity() {
                 Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
                         Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT,
                         AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_BOOKING_ACCEPT, job.value))
+                if (!binding.viewmodel?.job?.value?.voice_note.isNullOrEmpty()) {
+                    AppPreferences.setBookingVoiceNoteUrlAvailable(binding.viewmodel?.job?.value?.voice_note)
+                } else {
+                    AppPreferences.removeBookingVoiceNoteUrl()
+                }
                 ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
             })
 
