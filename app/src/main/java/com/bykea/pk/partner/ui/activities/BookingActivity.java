@@ -208,10 +208,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvDetailsAddress;
     @BindView(R.id.cartBadge)
     TextView cartBadge;
+
+    @BindView(R.id.voiceNoteRl)
+    RelativeLayout voiceNoteRl;
     @BindView(R.id.imgViewAudioPlay)
     ImageView imgViewAudioPlay;
-    @BindView(R.id.imgViewUser)
-    ImageView imgViewUser;
     @BindView(R.id.progressBarForAudioPlay)
     ProgressBar progressBarForAudioPlay;
     @BindView(R.id.tvOrderNumber)
@@ -310,8 +311,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                     if(Utils.isVoiceNoteRequired(callData.getServiceCode())){
                                         voiceNoteUrl = AppPreferences.getBookingVoiceNoteUrlAvailable();
                                         if(StringUtils.isNotEmpty(voiceNoteUrl)){
-                                            imgViewAudioPlay.setVisibility(View.VISIBLE);
-                                            imgViewUser.setVisibility(View.GONE);
+                                            voiceNoteRl.setVisibility(View.VISIBLE);
                                         }
                                     }
                                 }
