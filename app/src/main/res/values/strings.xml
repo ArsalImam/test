@@ -526,4 +526,5 @@
     <string name="rating_urdu">ریٹنگ</string>
     <string name="booking_urdu">بکنگز</string>
     <string name="order_number">Order #</string>
+    <string name="booking_ur">\u0020بکنگ\u0020</string>
 </resources>

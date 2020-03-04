@@ -3,20 +3,28 @@ package com.bykea.pk.partner.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
+import com.bykea.pk.partner.dal.Rules
 import com.bykea.pk.partner.dal.util.SEPERATOR
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Constants.REQUIRED_DATE_FORMAT
+import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Utils
+import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
+import com.squareup.picasso.Picasso
 import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -137,6 +145,36 @@ object BindingAdapters {
             UTILITY -> {
                 fontTextView.text = fontTextView.resources.getString(R.string.bykea_cash_utility_bill)
             }
+        }
+    }
+
+    @BindingAdapter("app:priorityColor")
+    @JvmStatic
+    fun setPriorityColor(autoFontTextView: AutoFitFontTextView, rules: Rules?) {
+        if (rules?.priority != null) {
+            // PRIORITIES COLOR - RGBY - Red,Green,Blue and Yellow
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.white))
+            when (rules.priority) {
+                PRIORITY_ONE -> {
+                    // PRIORITY ONE - RED COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.red_left_top_bottom_bg)
+                }
+                PRIORITY_TWO -> {
+                    // PRIORITY TWO - GREEN COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.green_left_top_bottom_bg)
+                }
+                PRIORITY_THREE -> {
+                    // PRIORITY THREE - BLUE COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.blue_left_top_bottom_bg)
+                }
+                PRIORITY_FOUR -> {
+                    // PRIORITY FOUR - YELLOW COLOR
+                    autoFontTextView.setBackgroundResource(R.drawable.yellow_left_top_bottom_bg)
+                }
+            }
+        } else {
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context,  R.color.textColorPerformance))
+            autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }
 }

@@ -25,6 +25,7 @@ data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                val amount: Int?,
                val voice_note: String?,
                val dt: String?,
+               @Embedded(prefix = "rules_") val rules: Rules?,
                @Embedded(prefix = "pick_") val pickup: Stop?,
                @Embedded(prefix = "drop_") val dropoff: Stop?,
                @Embedded(prefix = "receiver_") val receiver: Contact?,
@@ -39,4 +40,7 @@ data class Contact(
         val name: String?,
         val phone: String?,
         val address: String?
+)
+data class Rules(
+    val priority:Int?
 )

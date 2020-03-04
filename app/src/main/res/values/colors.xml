@@ -150,4 +150,10 @@
     <color name="circle_qabooliat">#ff9b3d</color>
     <color name="circle_rating">#d69962</color>
     <color name="circle_booking">#d98a3c</color>
+    <color name="greyBackground">#80000000</color>
+
+    <color name="color_red_fleet">#AC0404</color>
+    <color name="color_green_fleet">#02AA31</color>
+    <color name="color_blue_fleet">#1385DD</color>
+    <color name="color_yellow_fleet">#FCD40E</color>
 </resources>

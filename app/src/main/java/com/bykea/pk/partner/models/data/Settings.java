@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
+
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
@@ -81,6 +83,16 @@ public class Settings {
      */
     @SerializedName("admin_fee")
     private String admin_fee;
+
+    /**
+     * List to get image source url according to priority.
+     */
+    @SerializedName("priority_list")
+    private HashMap<String,String> priorityList;
+
+    public HashMap<String, String> getPriorityList() {
+        return priorityList;
+    }
 
     public boolean isOfflineDeliveryEnable() {
         return offlineDeliveryEnable;
