@@ -128,7 +128,8 @@ interface IRestClient {
 
     @GET
     Call<DriverVerifiedBookingResponse> requestDriverVerifiedBookingStats(
-            @Url String url, @Header(Fields.HEADER_X_USER_ID) String id, @Header(Fields.HEADER_X_TOKEN) String accessToken);
+            @Url String url, @Header(Fields.HEADER_X_USER_ID) String id, @Header(Fields.HEADER_X_TOKEN) String accessToken,
+            @Query("bonus_cycle") int bonusCycle);
 
 
     @GET

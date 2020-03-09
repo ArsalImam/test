@@ -1250,14 +1250,15 @@ public class RestRequestHandler {
      * @param context of the activity
      * @param onResponseCallBack callback to send data back on the requested controllers
      */
-    public void requestDriverVerifiedBookingStats(Context context, IResponseCallback onResponseCallBack) {
+    public void requestDriverVerifiedBookingStats(Context context, int weekStatus, IResponseCallback onResponseCallBack) {
         mContext = context;
         mRestClient = RestClient.getClient(mContext);
         Call<DriverVerifiedBookingResponse> restCall =
                 mRestClient.requestDriverVerifiedBookingStats(
                         AppPreferences.getSettings().getSettings().getKronosPartnerSummary(),
                         AppPreferences.getDriverId(),
-                        AppPreferences.getAccessToken());
+                        AppPreferences.getAccessToken(),
+                        weekStatus);
 
         restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
     }

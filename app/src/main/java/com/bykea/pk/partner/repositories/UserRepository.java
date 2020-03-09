@@ -1412,10 +1412,10 @@ public class UserRepository {
      * @param handler callback to get data
      * @see com.bykea.pk.partner.models.data.SettingsData for kronos URLs
      */
-    public void requestDriverVerifiedBookingStats(Context context, UserDataHandler handler) {
+    public void requestDriverVerifiedBookingStats(Context context, int weekStatus, UserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestDriverVerifiedBookingStats(context, mDataCallback);
+        mRestRequestHandler.requestDriverVerifiedBookingStats(context, weekStatus, mDataCallback);
     }
 
     public void requestLoadBoard(Context context, UserDataHandler handler, String lat, String lng) {
