@@ -465,9 +465,9 @@ public class HomeFragment extends Fragment {
 
     private void getDriverPerformanceData() {
         try {
+            updateVerifiedBookingStats();
             if (!isCalled) {
 
-                updateVerifiedBookingStats();
 
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
