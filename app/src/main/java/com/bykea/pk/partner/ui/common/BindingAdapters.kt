@@ -3,16 +3,13 @@ package com.bykea.pk.partner.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
 import com.bykea.pk.partner.dal.util.SEPERATOR
-import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.*
@@ -20,11 +17,9 @@ import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
-import com.squareup.picasso.Picasso
 import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 
 /**
