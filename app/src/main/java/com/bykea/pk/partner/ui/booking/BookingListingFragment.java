@@ -183,7 +183,7 @@ public class BookingListingFragment extends Fragment {
 
                             if (CollectionUtils.isNotEmpty(bookingListingResponse.getData().getResult())) {
                                 pages = Utils.getMaxPageSize(Constants.MAX_RECORDS_PER_PAGE,
-                                        bookingListingResponse.getData().getPagination().getTotal_records());
+                                        bookingListingResponse.getPagination().getTotal_records());
                                 noDataIv.setVisibility(View.GONE);
                                 mHistoryList.addAll(bookingListingResponse.getData().getResult());
 
