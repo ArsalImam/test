@@ -236,7 +236,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.authorizedbookingTv)
     FontTextView authorizedbookingTv;
 
-    public static int WEEK_STATUS = 0;
+    private int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
 
 
@@ -326,7 +326,6 @@ public class HomeFragment extends Fragment {
                             public void onClick(View v) {
                                 isOfflineDialogVisible = false;
                                 makeDriverOffline = true;
-                                WEEK_STATUS = 0;
                                 getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
@@ -460,19 +459,19 @@ public class HomeFragment extends Fragment {
      * this can be call to get partner booking stats data from kronos
      */
     private void updateVerifiedBookingStats() {
-        repository.requestDriverVerifiedBookingStats(mCurrentActivity, handler);
+        repository.requestDriverVerifiedBookingStats(mCurrentActivity, WEEK_STATUS, handler);
     }
 
     private void getDriverPerformanceData() {
         try {
-            if (!isCalled) {
+            updateVerifiedBookingStats();
+//            if (!isCalled) {
 
-                updateVerifiedBookingStats();
 
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 isCalled = true;
-            }
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -688,7 +687,7 @@ public class HomeFragment extends Fragment {
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
-        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
+//        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
         if (enableLocation()) return;
         super.onResume();
     }
@@ -1274,8 +1273,7 @@ public class HomeFragment extends Fragment {
                 durationBtn.setVisibility(View.VISIBLE);
                 previusDurationBtn.setVisibility(View.GONE);
                 WEEK_STATUS = -1;
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+                getDriverPerformanceData();
                 break;
             }
 
@@ -1289,8 +1287,7 @@ public class HomeFragment extends Fragment {
                 durationBtn.setVisibility(View.GONE);
                 previusDurationBtn.setVisibility(View.VISIBLE);
                 WEEK_STATUS = 0;
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+                getDriverPerformanceData();
                 break;
             }
 
