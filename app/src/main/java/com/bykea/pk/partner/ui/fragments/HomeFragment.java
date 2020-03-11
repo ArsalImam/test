@@ -236,7 +236,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.authorizedbookingTv)
     FontTextView authorizedbookingTv;
 
-    public static int WEEK_STATUS = 0;
+    private int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
 
 
@@ -326,7 +326,6 @@ public class HomeFragment extends Fragment {
                             public void onClick(View v) {
                                 isOfflineDialogVisible = false;
                                 makeDriverOffline = true;
-                                WEEK_STATUS = 0;
                                 getDriverPerformanceData();
                                 Dialogs.INSTANCE.dismissDialog();
                                 callAvailableStatusAPI(false);
@@ -466,13 +465,13 @@ public class HomeFragment extends Fragment {
     private void getDriverPerformanceData() {
         try {
             updateVerifiedBookingStats();
-            if (!isCalled) {
+//            if (!isCalled) {
 
 
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
                 repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
                 isCalled = true;
-            }
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -688,7 +687,7 @@ public class HomeFragment extends Fragment {
             }
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
-        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
+//        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
         if (enableLocation()) return;
         super.onResume();
     }
