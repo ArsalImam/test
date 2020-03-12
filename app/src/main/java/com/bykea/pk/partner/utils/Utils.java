@@ -61,7 +61,6 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -171,11 +170,7 @@ import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
-import static com.bykea.pk.partner.utils.Constants.ServiceCode.BANK_TRANSFER;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
-import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_TOP_UP;
-import static com.bykea.pk.partner.utils.Constants.ServiceCode.MOBILE_WALLET;
-import static com.bykea.pk.partner.utils.Constants.ServiceCode.UTILITY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
@@ -2127,7 +2122,7 @@ public class Utils {
     public static boolean isModernService(Integer serviceCode) {
         return serviceCode != null &&
                 (serviceCode >= Constants.ServiceCode.MIN_SERVICE_CODE_FOR_API
-                        && serviceCode != Constants.ServiceCode.COURIER);
+                        && serviceCode != Constants.ServiceCode.OLD_COURIER);
     }
 
     public static boolean isRideService(String callType) {
