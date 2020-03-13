@@ -366,7 +366,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
      */
     private void unRegisterSMSReceiver() {
         try {
-            if (mCurrentActivity != null && smsBroadcastReceiver!=null) {
+            if (mCurrentActivity != null && smsBroadcastReceiver != null) {
                 mCurrentActivity.unregisterReceiver(smsBroadcastReceiver);
             }
         } catch (Exception ex) {
@@ -506,8 +506,9 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
     private void handleDriverErrorCase(LoginResponse loginResponse) {
         if (loginResponse != null) {
             String errorMessage;
-            if (StringUtils.containsIgnoreCase(loginResponse.getMessage(),
-                    getString(R.string.invalid_code_error_message))) {
+            String invalidErrorMessage = DriverApp.getContext().getString(R.string.invalid_code_error_message);
+            if (StringUtils.isNotEmpty(loginResponse.getMessage()) &&
+                    StringUtils.containsIgnoreCase(loginResponse.getMessage(), invalidErrorMessage)) {
                 errorMessage = getString(R.string.invalid_phone_urdu);
             } else {
                 errorMessage = loginResponse.getMessage();
