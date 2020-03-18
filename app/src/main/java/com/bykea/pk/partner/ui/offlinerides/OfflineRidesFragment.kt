@@ -77,6 +77,7 @@ class OfflineRidesFragment : Fragment() {
             override fun onReceiveCodeClicked() {
                 if ((rBSawari.isChecked && validateMobileNumber()) ||
                         (rBDelivery.isChecked && validateMobileNumber() && validateCustomerName())) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 }
             }
@@ -323,7 +324,6 @@ class OfflineRidesFragment : Fragment() {
      * Navigate To Verify Code Screen
      */
     private fun navigateToVerifyCode(requestBody: RideCreateRequestObject) {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity)
         jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
                 object : JobsDataSource.OtpGenerateCallback {
                     override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
