@@ -164,7 +164,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     }
 
     /**
-     *
+     * Update Current Fragment With The Requested One
      * @param fragment : Replace Previous Fragment With The Fragment
      * @param pos : Handle Toggle Icon Two Show Or Not
      */
@@ -188,6 +188,9 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         }
     }
 
+    /**
+     * Replace current fragment with the offline fragment
+     */
     public void updateCurrentFragmentWithOffline(){
         updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES_S);
         notifyDataSetChanged();
