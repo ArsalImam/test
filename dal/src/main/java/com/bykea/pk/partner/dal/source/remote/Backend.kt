@@ -262,6 +262,15 @@ interface Backend {
             @Path("trip_id") jobRequestId: String,
             @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
 
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     */
+    @GET
+    fun getInvoiceDetails(@Url invoiceUrl: String): Call<FeedbackInvoiceResponse>
+
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,
                               @Query("type") type: String?,

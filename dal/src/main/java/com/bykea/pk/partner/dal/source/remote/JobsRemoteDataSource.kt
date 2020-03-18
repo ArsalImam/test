@@ -334,4 +334,17 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
         })
     }
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [callback] this will response back on data/error received
+     */
+    fun getInvoiceDetails(invoiceUrl: String, callback: JobsDataSource.GetInvoiceCallback) {
+        Backend.talos.getInvoiceDetails(invoiceUrl).enqueue(object : Callback<FeedbackInvoiceResponse> {
+            override fun onSuccess(response: FeedbackInvoiceResponse) = callback.onInvoiceDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
+        })
+    }
 }

@@ -31,6 +31,11 @@ interface JobsDataSource {
     fun getJob(jobId: Long, callback: GetJobRequestCallback)
 
     /**
+     * callback Callback to executed
+     */
+    fun getInvoiceDetails(invoiceUrl: String, bookingId: String, callback: GetInvoiceCallback)
+
+    /**
      * Save JobRequest to data source
      *
      * @param job
@@ -205,6 +210,23 @@ interface JobsDataSource {
          * @param errorMsg
          */
         fun onDataNotAvailable(errorMsg: String? = "Data Not Available")
+    }
+
+    interface GetInvoiceCallback {
+        /**
+         * On successfully Invoice detail loaded
+         *
+         * @param feedbackInvoiceResponse data on received
+         */
+        fun onInvoiceDataLoaded(feedbackInvoiceResponse: FeedbackInvoiceResponse)
+
+        /**
+         * On successfully Invoice detail loaded
+         *
+         * @param errorMessage
+         */
+        fun onInvoiceDataFailed(errorMessage: String?)
+
     }
 
     /**
