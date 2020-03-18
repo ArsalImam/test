@@ -149,6 +149,8 @@ class OfflineRidesFragment : Fragment() {
             override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                 when (checkedId) {
                     rBSawari.id -> {
+                        if (linLayoutSenderName.visibility == View.VISIBLE)
+                            linLayoutSenderName.visibility = View.GONE
                         eTCustomerName.error = null
                         eTCustomerName.clearFocus()
                         if (Utils.isValidNumber(eTMobileNumber)) {
@@ -158,6 +160,9 @@ class OfflineRidesFragment : Fragment() {
                         }
                     }
                     rBDelivery.id -> {
+                        if (linLayoutSenderName.visibility == View.GONE)
+                            linLayoutSenderName.visibility = View.VISIBLE
+
                         if (Utils.isValidNumber(eTMobileNumber) && validateCustomerName(false)) {
                             setBackgroundColor(R.color.colorAccent)
                         } else {
@@ -287,16 +292,16 @@ class OfflineRidesFragment : Fragment() {
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
 
-            if (eTCustomerName.text.toString().trim().isNotEmpty())
-                customer_name = eTCustomerName.text?.trim().toString()
-
             trip = RideCreateTripData()
             trip.creator = APP
 
-            if (rBSawari.isChecked)
+            if (rBSawari.isChecked) {
                 trip.service_code = OFFLINE_RIDE
-            else
+            } else {
                 trip.service_code = OFFLINE_DELIVERY
+                if (eTCustomerName.text.toString().trim().isNotEmpty())
+                    customer_name = eTCustomerName.text?.trim().toString()
+            }
 
             trip.lat = AppPreferences.getLatitude().toString()
             trip.lng = AppPreferences.getLongitude().toString()
