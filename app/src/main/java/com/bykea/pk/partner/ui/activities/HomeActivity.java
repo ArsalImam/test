@@ -74,7 +74,7 @@ public class HomeActivity extends BaseActivity {
     View toolbarLine;
     @BindView(R.id.containerView)
     FrameLayout containerView;
-    public @BindView(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.drawerMainActivity)
     public DrawerLayout drawerLayout;
