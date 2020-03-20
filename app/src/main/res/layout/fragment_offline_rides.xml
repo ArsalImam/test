@@ -225,7 +225,7 @@
                             android:id="@+id/text_input_layout_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/enter_customer_name"
+                            android:hint="@string/enter_sender_name_hint"
                             android:paddingBottom="@dimen/_10sdp"
                             android:textColorHint="@drawable/hint_color_selected"
                             android:theme="@style/TextInputLayoutAppearance">
