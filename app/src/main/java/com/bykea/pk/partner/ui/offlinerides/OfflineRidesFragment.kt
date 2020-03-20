@@ -15,6 +15,7 @@ import android.widget.RadioGroup
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
@@ -80,6 +81,9 @@ class OfflineRidesFragment : Fragment() {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 }
+            }
+            override fun onOfflineKamaiClicked() {
+                Utils.startCustomWebViewActivity(mCurrentActivity, Constants.OFFLINE_KAMAI_WEB_URL, DriverApp.getContext().getString(R.string.offline_kamai));
             }
         }
         return binding.root

@@ -270,6 +270,7 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginStart="@dimen/_5sdp"
                                     android:layout_marginLeft="@dimen/_5sdp"
+                                    android:onClick="@{() -> listener.onOfflineKamaiClicked()}"
                                     android:paddingTop="@dimen/_2sdp"
                                     android:paddingBottom="@dimen/_2sdp"
                                     app:srcCompat="@drawable/ic_youtube" />
@@ -310,6 +311,7 @@
                                     <androidx.appcompat.widget.AppCompatImageView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:onClick="@{() -> listener.onOfflineKamaiClicked()}"
                                         app:srcCompat="@drawable/ic_clock" />
                                 </LinearLayout>
 
@@ -330,6 +332,7 @@
                                     <androidx.appcompat.widget.AppCompatImageView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:onClick="@{() -> listener.onOfflineKamaiClicked()}"
                                         app:srcCompat="@drawable/ic_petrol_stand" />
                                 </LinearLayout>
 
@@ -350,6 +353,7 @@
                                     <androidx.appcompat.widget.AppCompatImageView
                                         android:layout_width="@dimen/_60sdp"
                                         android:layout_height="@dimen/_40sdp"
+                                        android:onClick="@{() -> listener.onOfflineKamaiClicked()}"
                                         app:srcCompat="@drawable/ic_currency" />
                                 </LinearLayout>
 
