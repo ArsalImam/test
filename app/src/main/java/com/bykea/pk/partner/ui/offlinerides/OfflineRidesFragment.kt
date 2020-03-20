@@ -15,6 +15,7 @@ import android.widget.RadioGroup
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
@@ -77,8 +78,12 @@ class OfflineRidesFragment : Fragment() {
             override fun onReceiveCodeClicked() {
                 if ((rBSawari.isChecked && validateMobileNumber()) ||
                         (rBDelivery.isChecked && validateMobileNumber() && validateCustomerName())) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 }
+            }
+            override fun onOfflineKamaiClicked() {
+                Utils.startCustomWebViewActivity(mCurrentActivity, Constants.OFFLINE_KAMAI_WEB_URL, DriverApp.getContext().getString(R.string.offline_kamai));
             }
         }
         return binding.root
@@ -149,6 +154,8 @@ class OfflineRidesFragment : Fragment() {
             override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                 when (checkedId) {
                     rBSawari.id -> {
+                        if (linLayoutSenderName.visibility == View.VISIBLE)
+                            linLayoutSenderName.visibility = View.GONE
                         eTCustomerName.error = null
                         eTCustomerName.clearFocus()
                         if (Utils.isValidNumber(eTMobileNumber)) {
@@ -158,6 +165,9 @@ class OfflineRidesFragment : Fragment() {
                         }
                     }
                     rBDelivery.id -> {
+                        if (linLayoutSenderName.visibility == View.GONE)
+                            linLayoutSenderName.visibility = View.VISIBLE
+
                         if (Utils.isValidNumber(eTMobileNumber) && validateCustomerName(false)) {
                             setBackgroundColor(R.color.colorAccent)
                         } else {
@@ -287,16 +297,16 @@ class OfflineRidesFragment : Fragment() {
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
 
-            if (eTCustomerName.text.toString().trim().isNotEmpty())
-                customer_name = eTCustomerName.text?.trim().toString()
-
             trip = RideCreateTripData()
             trip.creator = APP
 
-            if (rBSawari.isChecked)
+            if (rBSawari.isChecked) {
                 trip.service_code = OFFLINE_RIDE
-            else
+            } else {
                 trip.service_code = OFFLINE_DELIVERY
+                if (eTCustomerName.text.toString().trim().isNotEmpty())
+                    customer_name = eTCustomerName.text?.trim().toString()
+            }
 
             trip.lat = AppPreferences.getLatitude().toString()
             trip.lng = AppPreferences.getLongitude().toString()
@@ -318,7 +328,6 @@ class OfflineRidesFragment : Fragment() {
      * Navigate To Verify Code Screen
      */
     private fun navigateToVerifyCode(requestBody: RideCreateRequestObject) {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity)
         jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
                 object : JobsDataSource.OtpGenerateCallback {
                     override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {

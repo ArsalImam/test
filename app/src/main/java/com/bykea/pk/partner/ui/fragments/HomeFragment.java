@@ -145,10 +145,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.mapPinIv)
     FrameLayout mapPinIv;
 
-    @BindView(R.id.selectedAmountTV)
-    FontTextView selectedAmountTV;
-
-    @BindView(R.id.selectedAmountRL)
+    @BindView(R.id.offlineRideNavigationRL)
     LinearLayout selectedAmountRL;
 
     @BindView(R.id.weeklybookingTv)
@@ -238,6 +235,7 @@ public class HomeFragment extends Fragment {
 
     private int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
+    private boolean isNavigateToOfflineRideRequired = false;
 
 
     private HeatmapTileProvider mProvider;
@@ -468,9 +466,9 @@ public class HomeFragment extends Fragment {
 //            if (!isCalled) {
 
 
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
-                isCalled = true;
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+            isCalled = true;
 //            }
 
         } catch (Exception e) {
@@ -633,16 +631,9 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
-            if (AppPreferences.getIsCash()) {
-                //Cash in hand visibility VISIBLE
-                selectedAmountRL.setVisibility(View.VISIBLE);
-                selectedAmountTV.setText(getString(R.string.seleted_amount_rs, AppPreferences.getCashInHands()));
-            } else {
-                //Cash in hand visibility GONE and reposition google logo to bottom
-                selectedAmountRL.setVisibility(View.GONE);
-                if (mGoogleMap != null)
-                    mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
-            }
+            selectedAmountRL.setVisibility(View.VISIBLE);
+            if (mGoogleMap != null)
+                mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
@@ -888,19 +879,18 @@ public class HomeFragment extends Fragment {
                                 }
                                 if (AppPreferences.getIsCash()) {
                                     mCurrentActivity.showLoadBoardBottomSheet();
-                                    /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
-                                            (int) getResources().getDimension(R.dimen._110sdp));*/
-                                    //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
-                                    /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
-                                            (int) getResources().getDimension(R.dimen._50sdp));*/
                                 }
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                                 //todo reset slider to 1000 amount when CIH amount is less then 1000
                                 resetCashSliderToDefault();
+                                if (isNavigateToOfflineRideRequired) {
+                                    isNavigateToOfflineRideRequired = false;
+                                    mCurrentActivity.recyclerViewAdapter.updateCurrentFragmentWithOffline();
+                                }
                                 mCurrentActivity.hideLoadBoardBottomSheet();
                             }
                             setStatusBtn();
@@ -1264,7 +1254,7 @@ public class HomeFragment extends Fragment {
 
 
     @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn,
-            R.id.mapPinIv, R.id.walletRL})
+            R.id.mapPinIv, R.id.walletRL, R.id.offlineRideNavigationRL})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -1312,11 +1302,31 @@ public class HomeFragment extends Fragment {
                 setHomeLocation();
                 break;
             }
-
             //open wallet screen
-            case R.id.walletRL:
+            case R.id.walletRL: {
                 showWalletFragment();
                 break;
+            }
+            // Open Offline Ride Navigation Acknowledgment Dialog
+            case R.id.offlineRideNavigationRL: {
+                AppPreferences.setAvailableStatus(false);
+                isOfflineDialogVisible = true;
+                Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.you_are_going_to_offline),
+                        tickView -> {
+                            isOfflineDialogVisible = false;
+                            makeDriverOffline = true;
+                            getDriverPerformanceData();
+                            Dialogs.INSTANCE.dismissDialog();
+                            callAvailableStatusAPI(false);
+                            isNavigateToOfflineRideRequired = true;
+                        },
+                        crossView -> {
+                            isOfflineDialogVisible = false;
+                            Dialogs.INSTANCE.dismissDialog();
+                            AppPreferences.setAvailableStatus(true);
+                        });
+                break;
+            }
         }
     }
 
