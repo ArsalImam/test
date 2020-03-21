@@ -5,6 +5,7 @@ import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.RequestParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -30,7 +31,7 @@ interface Backend {
     /**
      * Get Driver Email Update
      * @param email Driver email
-     * @param _id Driver id 
+     * @param _id Driver id
      * @param token_id Driver access token
      * @return Email is successfully update or not
      */
@@ -269,7 +270,8 @@ interface Backend {
      * [invoiceUrl] url of the api, will be received from settings
      */
     @GET
-    fun getInvoiceDetails(@Url invoiceUrl: String): Call<FeedbackInvoiceResponse>
+    fun getInvoiceDetails(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String,
+                          @Query(RequestParams.STATE) state: String): Call<FeedbackInvoiceResponse>
 
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,
