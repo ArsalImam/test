@@ -1,8 +1,11 @@
 package com.bykea.pk.partner.ui.common
 
+import android.graphics.Paint
+import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +45,16 @@ object BindingAdapters {
     fun setItems(listView: ListView, items: List<Job>) {
         with(listView.adapter as JobListAdapter) {
             replaceData(items)
+        }
+    }
+
+    @BindingAdapter("app:showLineOverText")
+    @JvmStatic
+    fun showStrikeLine(textView: TextView, enable: Boolean) {
+        textView.paintFlags = if (enable) {
+            textView.paintFlags or STRIKE_THRU_TEXT_FLAG
+        } else {
+            textView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
         }
     }
 
@@ -169,7 +182,7 @@ object BindingAdapters {
                 }
             }
         } else {
-            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context,  R.color.textColorPerformance))
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.textColorPerformance))
             autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }

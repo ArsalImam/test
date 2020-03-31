@@ -6,7 +6,9 @@
         <variable
             name="item"
             type="com.bykea.pk.partner.dal.source.remote.data.Invoice" />
+
         <import type="com.bykea.pk.partner.utils.Constants" />
+
         <import type="android.view.View" />
     </data>
 
@@ -30,8 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin.small"
             android:layout_marginRight="@dimen/margin.small"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingLeft="@dimen/_5sdp"
             android:paddingTop="@dimen/_4sdp">
 
@@ -45,6 +47,7 @@
                 android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
                 android:visibility="@{item.viewType == Constants.BOOKING_DETAIL_VIEW_TYPE_RATING ? View.GONE : View.VISIBLE}"
                 app:fontName="roboto_light.ttf"
+                app:showLineOverText="@{item.strike}"
                 tools:text="1.5"
                 tools:visibility="gone" />
 
@@ -52,11 +55,11 @@
                 android:id="@+id/driverRb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_7sdp"
                 android:clickable="false"
                 android:focusableInTouchMode="true"
                 android:isIndicator="true"
                 android:max="5"
-                android:layout_marginTop="@dimen/_7sdp"
                 android:numStars="5"
                 android:progressDrawable="@drawable/custom_rating_bar"
                 android:rating="@{Float.valueOf(item.value)}"
@@ -75,6 +78,7 @@
                 android:textColor="@color/textColorPrimary"
                 android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
                 app:fontName="jameel_noori_nastaleeq.ttf"
+                app:showLineOverText="@{item.strike}"
                 tools:text="@string/waiting_charges_urdu" />
 
         </LinearLayout>

@@ -117,6 +117,10 @@ data class Invoice(
         val titleUr: String?,
         @SerializedName("value")
         val value: String?,
+        @SerializedName("delivery_status")
+        var deliveryStatus: Int?  = null,
+        @SerializedName("strike")
+        var strike: Boolean?  = false,
         var viewType: String? = null
 ) : Parcelable
 

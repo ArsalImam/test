@@ -54,6 +54,8 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -102,6 +104,7 @@ public class FeedbackActivity extends BaseActivity {
     @BindView(R.id.scrollView)
     ScrollView scrollView;
 
+    private ArrayList<Invoice> invoiceData = new ArrayList<>();
 
     private FeedbackActivity mCurrentActivity;
     private String totalCharges = StringUtils.EMPTY, lastKhareedariAmount = StringUtils.EMPTY;
@@ -134,6 +137,7 @@ public class FeedbackActivity extends BaseActivity {
         updateScroll();
         updateInvoice();
     }
+
     /**
      * this method will update the invoice details of the current booking,
      * will populate the recycler view's adapter
@@ -141,9 +145,11 @@ public class FeedbackActivity extends BaseActivity {
     private void updateInvoice() {
         repo.getInvoiceDetails(AppPreferences.getSettings()
                 .getSettings().getFeedbackInvoiceListingUrl(), callData.getTripId(), new JobsDataSource.GetInvoiceCallback() {
+
             @Override
             public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse bookingDetailResponse) {
-                invoiceAdapter.setItems(bookingDetailResponse.getData());
+                FeedbackActivity.this.invoiceData = bookingDetailResponse.getData();
+                updateAdapter();
             }
 
             @Override
@@ -151,6 +157,20 @@ public class FeedbackActivity extends BaseActivity {
                 Utils.appToast(errorMessage);
             }
         });
+    }
+
+    private void updateAdapter() {
+        ArrayList<Invoice> filtered = new ArrayList<>();
+        for (Invoice invoice : invoiceData) {
+            if (invoice.getDeliveryStatus() == null) {
+                filtered.add(invoice);
+            } else if (selectedMsgPosition == 0 && invoice.getDeliveryStatus() == 1) {
+                filtered.add(invoice);
+            } else if (selectedMsgPosition != 0 && invoice.getDeliveryStatus() != 1) {
+                filtered.add(invoice);
+            }
+        }
+        invoiceAdapter.setItems(filtered);
     }
 
     /**
@@ -345,6 +365,11 @@ public class FeedbackActivity extends BaseActivity {
                     });
                 }
                 selectedMsgPosition = position;
+
+                if (!isBykeaCashType) {
+                    updateAdapter();
+                }
+
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
