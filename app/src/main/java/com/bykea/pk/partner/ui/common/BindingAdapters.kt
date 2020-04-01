@@ -68,6 +68,13 @@ object BindingAdapters {
         Utils.loadImgPicasso(imageView, R.color.white, url)
     }
 
+    @BindingAdapter("app:urduWrappingText")
+    @JvmStatic
+    fun urduWrappingText(textView: TextView, url: String? = null) {
+        if (url == null) return
+        textView.text = String.format(textView.resources.getString(R.string.empty_string_sandwich_placeholder), url)
+    }
+
     @BindingAdapter("app:serviceCode")
     @JvmStatic
     fun setServiceCode(imageView: ImageView, serviceCode: Int) {

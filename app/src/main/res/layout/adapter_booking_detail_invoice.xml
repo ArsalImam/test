@@ -74,7 +74,7 @@
                 android:background="@color/windowBackground"
                 android:gravity="right|center_vertical"
                 android:paddingRight="@dimen/_4sdp"
-                android:text="@{item.titleUr}"
+                app:urduWrappingText="@{item.titleUr}"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
                 app:fontName="jameel_noori_nastaleeq.ttf"
