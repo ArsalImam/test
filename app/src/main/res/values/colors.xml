@@ -154,6 +154,8 @@
 
     <color name="color_red_fleet">#AC0404</color>
     <color name="color_green_fleet">#02AA31</color>
+    <color name="green_03a83b">#03a83b</color>
+    <color name="blue_2d6afb">#2d6afb</color>
     <color name="color_blue_fleet">#1385DD</color>
     <color name="color_yellow_fleet">#FCD40E</color>
 </resources>

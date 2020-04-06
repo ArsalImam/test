@@ -18,6 +18,7 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
+import org.apache.commons.lang3.StringUtils
 
 /**
  * The ViewModel used in [JobDetailActivity].
@@ -25,6 +26,11 @@ import com.google.android.gms.maps.model.LatLng
  * @Author: Yousuf Sohail
  */
 class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel(), JobsDataSource.GetJobRequestCallback, JobsDataSource.AcceptJobRequestCallback {
+
+
+    private val _formattedSenderName = MutableLiveData<String>().apply { value = StringUtils.EMPTY }
+    val formattedSenderName: LiveData<String>
+        get() = _formattedSenderName
 
     private val _currentLatLng = MutableLiveData<LatLng>()
     val currentLatLng: LiveData<LatLng>
@@ -101,6 +107,16 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     private fun renderDetails(job: Job?) {
         this._job.value = job
         _isDataAvailable.value = job != null
+        var formattedName = ""
+        job?.sender?.name?.let {
+            formattedName = it
+            job.customer_name?.let {
+                if (!job.customer_name.equals(job.sender?.name, ignoreCase = true)) {
+                    formattedName = String.format("%s (%s)", job.sender?.name, job.customer_name)
+                }
+            }
+        }
+        this._formattedSenderName.value = formattedName
     }
 
     override fun onJobLoaded(job: Job) {
