@@ -365,6 +365,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     };
 
+    /**
+     * this will show pickup details window only if trip is in accept or arrived state
+     * and call type is delivery
+     */
     private void updateCustomerPickUp() {
         if (Utils.isDeliveryService(callData.getCallType()) && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
@@ -376,7 +380,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 ivPickUpCustomerPhone.setVisibility(View.VISIBLE);
             } else
                 ivPickUpCustomerPhone.setVisibility(View.GONE);
-            if (!StringUtils.isEmpty(callData.getSenderAddress())){
+            if (!StringUtils.isEmpty(callData.getSenderAddress())) {
                 tvPickUpDetailsAddress.setText(String.format("Street # %s", callData.getSenderAddress()));
                 tvPickUpDetailsAddress.setVisibility(View.VISIBLE);
             }
@@ -2750,6 +2754,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param textField     : Widget Reference
      * @param senderField   : Sender Value (Name, Address or Phone)
      * @param receiverField : Receiver Value (Name, Address or Phone)
+     * @param format        : format to display text in fields
      */
     public void setAddressDetailEitherSenderOrReceiver(FontTextView textField, String senderField, String receiverField, String format) {
         if (StringUtils.isNotBlank(receiverField)) {

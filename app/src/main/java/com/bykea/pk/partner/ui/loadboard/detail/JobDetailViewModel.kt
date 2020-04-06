@@ -27,7 +27,10 @@ import org.apache.commons.lang3.StringUtils
  */
 class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel(), JobsDataSource.GetJobRequestCallback, JobsDataSource.AcceptJobRequestCallback {
 
-
+    /**
+     * this property will contain the formatted name
+     * {including sender name + customer name (who created the booking)}
+     */
     private val _formattedSenderName = MutableLiveData<String>().apply { value = StringUtils.EMPTY }
     val formattedSenderName: LiveData<String>
         get() = _formattedSenderName
@@ -107,10 +110,11 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     private fun renderDetails(job: Job?) {
         this._job.value = job
         _isDataAvailable.value = job != null
-        var formattedName = ""
+        var formattedName = StringUtils.EMPTY
         job?.sender?.name?.let {
             formattedName = it
             job.customer_name?.let {
+                //only show both when they are not same
                 if (!job.customer_name.equals(job.sender?.name, ignoreCase = true)) {
                     formattedName = String.format("%s (%s)", job.sender?.name, job.customer_name)
                 }
