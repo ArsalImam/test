@@ -366,9 +366,9 @@ public class FeedbackActivity extends BaseActivity {
                 }
                 selectedMsgPosition = position;
 
-                if (!isBykeaCashType) {
+//                if (!isBykeaCashType) {
                     updateAdapter();
-                }
+//                }
 
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
