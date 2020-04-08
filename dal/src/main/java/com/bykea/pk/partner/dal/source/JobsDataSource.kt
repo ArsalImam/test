@@ -162,7 +162,7 @@ interface JobsDataSource {
      * @param callback to get results in case of failure or success
      */
     fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String,
-                          type: String, rideType: String, callback: FareEstimationCallback)
+                          serviceCode: Int, callback: FareEstimationCallback)
 
     /**
      * Generate OTP

@@ -250,9 +250,9 @@ class JobsRemoteDataSource {
      * @param rideType Ride Type
      * @param callback to get results in case of failure or success
      */
-    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, serviceCode: Int, callback: JobsDataSource.FareEstimationCallback) {
         Backend.talos.requestFareEstimation(driverId, accessToken,
-                startLat, startLng, endLat, endLng, type, rideType).enqueue(object : Callback<FareEstimationResponse> {
+                startLat, startLng, endLat, endLng, serviceCode).enqueue(object : Callback<FareEstimationResponse> {
             override fun onSuccess(response: FareEstimationResponse) {
                 callback.onSuccess(response)
             }

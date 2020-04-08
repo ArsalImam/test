@@ -42,14 +42,17 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private String[] icons;
     private String[] newLabel;
     private Context context;
+    private HomeActivity mainActivity;
+    private FragmentManager fragmentManager;
 
     // The default constructor to receive titles,icons and context from MainActivity.
     public NavDrawerAdapter(String[] titles, String[] icons, String[] newLabel, Context context) {
-
         this.titles = titles;
         this.icons = icons;
         this.newLabel = newLabel;
         this.context = context;
+        mainActivity = (HomeActivity) context;
+        fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
     /**
@@ -71,17 +74,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         FontTextView newLabel;
 
         Context context;
-        HomeActivity mainActivity;
-        FragmentManager fragmentManager;
-
         ViewHolder(View drawerItem, int itemType, Context context) {
 
             super(drawerItem);
             this.context = context;
             drawerItem.setOnClickListener(this);
 
-            mainActivity = (HomeActivity) context;
-            fragmentManager = mainActivity.getSupportFragmentManager();
             if (itemType == 1) {
                 navTitle = (FontTextView) itemView.findViewById(R.id.tv_NavTitle);
                 navIcon = (FontTextView) itemView.findViewById(R.id.iv_NavIcon);
@@ -162,25 +160,40 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
         }
 
-        private void updateCurrentFragment(Fragment fragment, String pos) {
-            fragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.containerView, fragment)
-                    .commit();
-            HomeActivity.visibleFragmentNumber = pos;
-            /**
-             * when navigation in on home screen, show bottom sheet and connection status
-             * otherwise hide both
-             */
-            if (pos.equals(HOME_SCREEN_S)) {
-                ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
-                //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
-            } else {
-                ((HomeActivity) context).toggleAchaConnection(View.GONE);
-                ((HomeActivity) context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
-            }
+
+    }
+
+    /**
+     * Update Current Fragment With The Requested One
+     * @param fragment : Replace Previous Fragment With The Fragment
+     * @param pos : Handle Toggle Icon Two Show Or Not
+     */
+    private void updateCurrentFragment(Fragment fragment, String pos) {
+        fragmentManager
+                .beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.containerView, fragment)
+                .commit();
+        HomeActivity.visibleFragmentNumber = pos;
+        /**
+         * when navigation in on home screen, show bottom sheet and connection status
+         * otherwise hide both
+         */
+        if (pos.equals(HOME_SCREEN_S)) {
+            ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
+            //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
+        } else {
+            ((HomeActivity) context).toggleAchaConnection(View.GONE);
+            ((HomeActivity) context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
         }
+    }
+
+    /**
+     * Replace current fragment with the offline fragment
+     */
+    public void updateCurrentFragmentWithOffline(){
+        updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES_S);
+        notifyDataSetChanged();
     }
 
     /**

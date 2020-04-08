@@ -339,6 +339,7 @@
     <!--Testing verified commit-->
 
     <string name="how_it_works">How it Works</string>
+    <string name="offline_kamai">Offline Kamai</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
 
     <string name="booking_already_taken_title">معذرت!</string>
@@ -500,6 +501,7 @@
     <string name="customer_name">\u0020کسٹمر کا نام\u0020</string>
     <string name="enter_customer_name">Customer Name</string>
     <string name="enter_customer_name_hint">Customer Name</string>
+    <string name="enter_sender_name_hint">Sender\'s Name</string>
     <string name="enter_correct_customer_name">Please enter correct customer name</string>
     <string name="muntakhib_manzil">منزل</string>
     <string name="commission_text_urdu">بائیکیاکمیشن</string>
@@ -528,4 +530,7 @@
     <string name="order_number">Order #</string>
     <string name="booking_ur">\u0020بکنگ\u0020</string>
     <string name="empty_string_sandwich_placeholder">\u0020%1$s\u0020</string>
+    <string name="advantages">\u0020فوائد\u0020</string>
+    <string name="you_are_going_to_offline">\u0020آپ آف لائن ہورہے ہیں۔\u0020</string>
+    <string name="manzil">Manzil</string>
 </resources>
