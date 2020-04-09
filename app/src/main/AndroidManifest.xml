@@ -40,14 +40,15 @@
         tools:node="merge"
         tools:replace="android:allowBackup">
 
+        <activity android:name=".ui.nodataentry.DeliveryDetailsActivity" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity
             android:name=".ui.activities.RideCodeVerificationActivity"
-            android:launchMode="singleTop" />
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
+            android:launchMode="singleTop" /> <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -291,7 +292,6 @@
             android:label="@string/title_complain_list"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|adjustResize" />
-
         <activity android:name=".ui.complain.ComplainZendeskIdentityActivity" />
 
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">

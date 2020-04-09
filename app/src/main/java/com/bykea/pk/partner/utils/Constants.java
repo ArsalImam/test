@@ -259,6 +259,9 @@ public class Constants {
         public static final String FROM = "from";
         public static final String FLOW_FOR = "FLOW_FOR";
         public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
+        public static final int ADD_DELIVERY_DETAILS = DIGIT_ONE;
+        public static final int EDIT_DELIVERY_DETAILS = DIGIT_TWO;
+
     }
 
     public static class Broadcast {
