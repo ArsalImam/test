@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
@@ -60,10 +61,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.List;
 
@@ -174,23 +178,33 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Set data according to tripInfo states
      */
     private void setInitialData() {
-        setProgressDialog();
 
+        setProgressDialog();
         //call once on resume app to display last saved time and distance
         callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
-        setTimeDistanceOnResume();
-        ActivityStackManager.getInstance().restartLocationServiceWithCustomIntervals(mCurrentActivity, Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS);
+        isResume = true;
+        if (callDriverData == null) {
+            new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+            return;
+        }
+        updateDataOnReceive();
+    }
+
+    private void updateDataOnReceive() {
         mLocBearing = (float) AppPreferences.getBearing();
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
-        isResume = true;
         AppPreferences.setIsOnTrip(true);
+
+        setTimeDistanceOnResume();
+        ActivityStackManager.getInstance().restartLocationServiceWithCustomIntervals(mCurrentActivity, Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS);
         checkGps();
         setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
         AppPreferences.setMultiDeliveryJobActivityOnForeground(true);
         Utils.loadImgURL(serviceImageView, callDriverData.getImageURL());
+
     }
 
     /***
@@ -1086,6 +1100,19 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * i.e arrived, started & complete.
      */
     private IUserDataHandler handler = new UserDataHandler() {
+
+        @Override
+        public void onRunningTrips(CheckDriverStatusResponse response) {
+            super.onRunningTrips(response);
+            Gson gson = new Gson();
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
+            callDriverData = deliveryCallDriverData;
+            updateDataOnReceive();
+        }
 
         @Override
         public void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response) {
