@@ -226,6 +226,17 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /***
+     * Start MultiDelivery Booking activity using activity context
+     * @param mContext hold the reference of an activity.
+     */
+    public void startMultiDeliveryBookingActivity(Context mContext, boolean isFetchRequired) {
+        Intent intent = new Intent(mContext, MultipleDeliveryBookingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, isFetchRequired);
+        mContext.startActivity(intent);
+    }
+
     public void startFeedbackActivity(Context mContext) {
         Intent intent = new Intent(mContext, FeedbackActivity.class);
         mContext.startActivity(intent);

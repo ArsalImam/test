@@ -76,7 +76,13 @@ class JobDetailActivity : BaseActivity() {
                 } else {
                     AppPreferences.removeBookingVoiceNoteUrl()
                 }
-                ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
+                AppPreferences.setDeliveryType(Constants.CallType.BATCH)
+
+                if (!binding.viewmodel?.job?.value?.trip_type?.equals(Constants.TripTypes.BATCH_TYPE)!!)
+                    ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
+                else {
+                    ActivityStackManager.getInstance().startMultiDeliveryBookingActivity(this@JobDetailActivity, true)
+                }
             })
 
             bookingTakenCommand.observe(this@JobDetailActivity, Observer {
