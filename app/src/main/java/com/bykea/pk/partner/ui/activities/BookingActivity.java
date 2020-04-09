@@ -374,7 +374,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
-            tvPickUpCustomerName.setText(callData.getSenderName());
+            if (!StringUtils.isEmpty(callData.getSenderName())) {
+                tvPickUpCustomerName.setVisibility(View.GONE);
+            } else {
+                tvPickUpCustomerName.setVisibility(View.VISIBLE);
+                tvPickUpCustomerName.setText(callData.getSenderName());
+            }
             if (!StringUtils.isEmpty(callData.getSenderPhone())) {
                 ivPickUpCustomerPhone.setTag(callData.getSenderPhone());
                 ivPickUpCustomerPhone.setVisibility(View.VISIBLE);
@@ -387,6 +392,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!StringUtils.isEmpty(callData.getOrder_no())) {
                 tvPickUpOrderNumber.setText(String.format("Order # %s", callData.getOrder_no()));
                 tvPickUpOrderNumber.setVisibility(View.VISIBLE);
+            }
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                vAddressDivider.setVisibility(View.GONE);
             }
         } else {
             vAddressDivider.setVisibility(View.GONE);
