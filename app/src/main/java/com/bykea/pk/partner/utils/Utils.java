@@ -3645,4 +3645,15 @@ public class Utils {
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
                     || serviceCode == Constants.ServiceCode.UTILITY;
     }
+
+    /**
+     * Converts DP to Pixel
+     *
+     * @param dp value to be converted
+     * @return converted value in Px
+     */
+    public static float toPixel(float dp) {
+        DisplayMetrics metrics = DriverApp.getContext().getResources().getDisplayMetrics();
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
 }

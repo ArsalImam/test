@@ -163,6 +163,18 @@ public class Constants {
     @Nullable
     public static final int REQUEST_CODE_SUBMIT_COMPLAIN = 1001;
 
+    public static final int MIC_BLINK_ANIMATION_DURATION = 500;
+    public static final float ANIMATION_SCALE_XY = 0.0f;
+    public static final float ANIMATION_SCALE_TO_XY = 1.0f;
+    public static final float ANIMATION_PIVOT_XY = 0.5f;
+
+    public static int BASKET_DELTA_TO_Y_DIFF = 90;
+    public static int BASKET_DELTA_FROM_Y_DIFF = 130;
+    public static int SHOW_VIEW_ANIMATION_DELAY = 250;
+    public static int HIDE_VIEW_ANIMATION_DELAY = 350;
+    public static int SHOW_VIEW_HANDLER_DELAY = 350;
+    public static int HIDE_VIEW_HANDLER_DELAY = 550;
+
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";

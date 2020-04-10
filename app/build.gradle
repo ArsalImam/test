@@ -226,6 +226,7 @@ dependencies {
     //Amazon client sdk to upload file
     implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
     implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
+    implementation 'io.supercharge:shimmerlayout:2.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

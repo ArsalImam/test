@@ -532,4 +532,14 @@
     <string name="advantages">\u0020فوائد\u0020</string>
     <string name="you_are_going_to_offline">\u0020آپ آف لائن ہورہے ہیں۔\u0020</string>
     <string name="manzil">Manzil</string>
+    <string name="mobile_number_mendatory">Mobile Number*</string>
+    <string name="receiver_name_hint">Receiver Name</string>
+    <string name="complete_address">Complete Address</string>
+    <string name="parcel_details">پارسل کی تفصیلات</string>
+    <string name="parcel_value">Parcel Value*</string>
+    <string name="order_number_hint">Order Number</string>
+    <string name="cod_amount">COD Amount</string>
+    <string name="record_voice_message">وائیس میسیج ریکورڈ کریں</string>
+    <string name="gps_address_hint">GPS Address*</string>
+    <string name="consignee_name">Consignee Name</string>
 </resources>
