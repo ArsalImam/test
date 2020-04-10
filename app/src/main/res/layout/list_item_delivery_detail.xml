@@ -15,8 +15,10 @@
         android:background="@color/white"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="@{() -> listener.onBookingClicked(booking)}"
+
         android:orientation="vertical">
+
+        <!--android:onClick="@{() -> listener.onBookingClicked(booking)}"-->
 
         <LinearLayout
             android:layout_width="match_parent"
