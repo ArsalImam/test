@@ -533,9 +533,10 @@
                 android:layout_height="wrap_content"
                 android:background="#f5f5f5"
                 android:orientation="horizontal"
-                android:paddingLeft="@dimen/_8sdp">
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingTop="@dimen/_4sdp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -543,12 +544,36 @@
                     <ImageView
                         android:id="@+id/green_dot"
                         android:layout_width="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_2sdp"
                         android:layout_height="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
                         android:src="@drawable/circle_booking"
                         android:tint="@color/green_03a83b" />
 
-                </LinearLayout>
+
+                    <com.bykea.pk.partner.widgets.DashedLine
+                        android:id="@+id/dottedLine"
+                        android:layout_width="@dimen/_2sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_below="@id/green_dot"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center_horizontal"
+                        android:layerType="software"
+                        android:visibility="visible"
+                        app:dashColor="@color/grey"
+                        app:dashGap="@dimen/_1sdp"
+                        app:dashLength="@dimen/_2sdp"
+                        app:dashThickness="@dimen/_2sdp"
+                        app:orientation="vertical" />
+
+                    <ImageView
+                        android:id="@+id/blueDot"
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_below="@id/dottedLine"
+                        android:src="@drawable/circle_booking"
+                        android:tint="@color/blue_1f81a4" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -639,6 +664,7 @@
                         android:id="@+id/vAddressDivider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:layout_marginBottom="@dimen/_5sdp"
                         android:layout_marginLeft="@dimen/_25sdp"
                         android:alpha="0.2"
                         android:background="@color/textColorPrimary676767" />
@@ -650,7 +676,6 @@
                         android:background="#f5f5f5"
                         android:orientation="horizontal"
                         android:paddingLeft="@dimen/_8sdp"
-                        android:paddingTop="@dimen/_5sdp"
                         android:paddingRight="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_5sdp"
                         android:visibility="gone"
@@ -661,18 +686,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <!--<ImageView-->
-                            <!--android:id="@+id/blue_line"-->
-                            <!--android:layout_width="@dimen/_10sdp"-->
-                            <!--android:layout_height="@dimen/_10sdp"-->
-                            <!--android:layout_marginTop="@dimen/_3sdp"-->
-                            <!--android:src="@drawable/circle_booking"-->
-                            <!--android:tint="@color/blue_1f81a4" />-->
-
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/_5sdp"
                                 android:orientation="vertical">
 
                                 <com.bykea.pk.partner.widgets.FontTextView
@@ -751,7 +767,7 @@
             android:layout_height="wrap_content"
             android:background="#f5f5f5"
             android:orientation="horizontal"
-            android:padding="@dimen/_8sdp"
+            android:padding="@dimen/_5sdp"
             android:visibility="gone">
 
             <com.bykea.pk.partner.widgets.FontTextView

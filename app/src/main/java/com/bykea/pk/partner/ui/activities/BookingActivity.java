@@ -78,6 +78,7 @@ import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.DashedLine;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -138,6 +139,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
+    @BindView(R.id.blueDot)
+    ImageView blueDot;
+    @BindView(R.id.green_dot)
+    ImageView greenDot;
+    @BindView(R.id.dottedLine)
+    DashedLine dottedLine;
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
     @BindView(R.id.startAddressTv)
@@ -374,11 +381,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
-            if (!StringUtils.isEmpty(callData.getSenderName())) {
-                tvPickUpCustomerName.setVisibility(View.GONE);
+            greenDot.setVisibility(View.VISIBLE);
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                dottedLine.setVisibility(View.VISIBLE);
+                blueDot.setVisibility(View.VISIBLE);
+                if (callData.isCod() && StringUtils.isNotEmpty(callData.getOrder_no())) {
+                    dottedLine.getLayoutParams().height  = dottedLine.getLayoutParams().height + 5;
+                }
             } else {
+                dottedLine.setVisibility(View.GONE);
+                blueDot.setVisibility(View.GONE);
+            }
+            if (!StringUtils.isEmpty(callData.getSenderName())) {
                 tvPickUpCustomerName.setVisibility(View.VISIBLE);
                 tvPickUpCustomerName.setText(callData.getSenderName());
+            } else {
+                tvPickUpCustomerName.setVisibility(View.GONE);
             }
             if (!StringUtils.isEmpty(callData.getSenderPhone())) {
                 ivPickUpCustomerPhone.setTag(callData.getSenderPhone());
@@ -397,6 +415,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 vAddressDivider.setVisibility(View.GONE);
             }
         } else {
+            greenDot.setVisibility(View.GONE);
+            dottedLine.setVisibility(View.GONE);
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
         }
