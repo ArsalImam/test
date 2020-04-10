@@ -116,7 +116,7 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
             job.customer_name?.let {
                 //only show both when they are not same
                 if (!job.customer_name.equals(job.sender?.name, ignoreCase = true)) {
-                    formattedName = String.format("%s (%s)", job.sender?.name, job.customer_name)
+                    formattedName = String.format(DriverApp.getContext().getString(R.string.formatted_name), job.sender?.name, job.customer_name)
                 }
             }
         }

@@ -105,6 +105,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -382,12 +383,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
             greenDot.setVisibility(View.VISIBLE);
-            int dotsHeightOffset = 0;
+            int dotsHeightOffset = NumberUtils.INTEGER_ZERO;
             if (!StringUtils.isEmpty(callData.getSenderName())) {
                 tvPickUpCustomerName.setVisibility(View.VISIBLE);
                 tvPickUpCustomerName.setText(callData.getSenderName());
-                if (callData.getSenderName().length() > 40) {
-                    dotsHeightOffset += 37;
+                if (callData.getSenderName().length() > Constants.NUMBER_OF_CHARS_IN_LINE) {
+                    dotsHeightOffset += Constants.OFFSET_FOR_SINGLE_LINE;
                 }
             } else {
                 tvPickUpCustomerName.setVisibility(View.GONE);
@@ -398,14 +399,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             } else
                 ivPickUpCustomerPhone.setVisibility(View.GONE);
             if (!StringUtils.isEmpty(callData.getSenderAddress())) {
-                tvPickUpDetailsAddress.setText(String.format("Street # %s", callData.getSenderAddress()));
+                tvPickUpDetailsAddress.setText(String.format(getString(R.string.formatting_with_street), callData.getSenderAddress()));
                 tvPickUpDetailsAddress.setVisibility(View.VISIBLE);
-                if (callData.getSenderAddress().length() > 40) {
-                    dotsHeightOffset += 30;
+                if (callData.getSenderAddress().length() > Constants.NUMBER_OF_CHARS_IN_LINE) {
+                    dotsHeightOffset += Constants.OFFSET_FOR_SINGLE_LINE;
                 }
             }
             if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) && !StringUtils.isEmpty(callData.getOrder_no())) {
-                tvPickUpOrderNumber.setText(String.format("Order # %s", callData.getOrder_no()));
+                tvPickUpOrderNumber.setText(String.format(getString(R.string.formatting_with_order), callData.getOrder_no()));
                 tvPickUpOrderNumber.setVisibility(View.VISIBLE);
             } else {
                 tvPickUpOrderNumber.setVisibility(View.GONE);
@@ -425,7 +426,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         } else {
             greenDot.setVisibility(View.GONE);
-//            blueDot.setVisibility(View.GONE);
             dottedLine.setVisibility(View.GONE);
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);

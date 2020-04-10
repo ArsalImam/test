@@ -534,4 +534,6 @@
     <string name="manzil">Manzil</string>
     <string name="empty_formatting">%s</string>
     <string name="formatting_with_street">Street # %s</string>
+    <string name="formatting_with_order">Order # %s</string>
+    <string name="formatted_name">%s (%s)</string>
 </resources>
