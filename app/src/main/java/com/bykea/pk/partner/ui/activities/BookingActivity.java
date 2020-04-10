@@ -382,19 +382,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
             greenDot.setVisibility(View.VISIBLE);
-            if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                dottedLine.setVisibility(View.VISIBLE);
-                blueDot.setVisibility(View.VISIBLE);
-                if (callData.isCod() && StringUtils.isNotEmpty(callData.getOrder_no())) {
-                    dottedLine.getLayoutParams().height  = dottedLine.getLayoutParams().height + 5;
-                }
-            } else {
-                dottedLine.setVisibility(View.GONE);
-                blueDot.setVisibility(View.GONE);
-            }
+            int dotsHeightOffset = 0;
             if (!StringUtils.isEmpty(callData.getSenderName())) {
                 tvPickUpCustomerName.setVisibility(View.VISIBLE);
                 tvPickUpCustomerName.setText(callData.getSenderName());
+                if (callData.getSenderName().length() > 40) {
+                    dotsHeightOffset += 37;
+                }
             } else {
                 tvPickUpCustomerName.setVisibility(View.GONE);
             }
@@ -406,16 +400,32 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!StringUtils.isEmpty(callData.getSenderAddress())) {
                 tvPickUpDetailsAddress.setText(String.format("Street # %s", callData.getSenderAddress()));
                 tvPickUpDetailsAddress.setVisibility(View.VISIBLE);
+                if (callData.getSenderAddress().length() > 40) {
+                    dotsHeightOffset += 30;
+                }
             }
-            if (!StringUtils.isEmpty(callData.getOrder_no())) {
+            if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) && !StringUtils.isEmpty(callData.getOrder_no())) {
                 tvPickUpOrderNumber.setText(String.format("Order # %s", callData.getOrder_no()));
                 tvPickUpOrderNumber.setVisibility(View.VISIBLE);
+            } else {
+                tvPickUpOrderNumber.setVisibility(View.GONE);
             }
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 vAddressDivider.setVisibility(View.GONE);
             }
+
+            if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                dottedLine.setVisibility(View.VISIBLE);
+                blueDot.setVisibility(View.VISIBLE);
+                dottedLine.getLayoutParams().height  = dottedLine.getLayoutParams().height + dotsHeightOffset;
+                dottedLine.requestLayout();
+            } else {
+                dottedLine.setVisibility(View.GONE);
+                blueDot.setVisibility(View.GONE);
+            }
         } else {
             greenDot.setVisibility(View.GONE);
+//            blueDot.setVisibility(View.GONE);
             dottedLine.setVisibility(View.GONE);
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
@@ -2730,7 +2740,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
-
+        blueDot.setVisibility(View.VISIBLE);
         setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress(), getString(R.string.formatting_with_street));
         setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName(), getString(R.string.empty_formatting));
         if (!StringUtils.isEmpty(callData.getReceiverPhone())) {
