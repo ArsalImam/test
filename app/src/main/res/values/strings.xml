@@ -532,4 +532,8 @@
     <string name="advantages">\u0020فوائد\u0020</string>
     <string name="you_are_going_to_offline">\u0020آپ آف لائن ہورہے ہیں۔\u0020</string>
     <string name="manzil">Manzil</string>
+    <string name="empty_formatting">%s</string>
+    <string name="formatting_with_street">Street # %s</string>
+    <string name="formatting_with_order">Order # %s</string>
+    <string name="formatted_name">%s (%s)</string>
 </resources>
