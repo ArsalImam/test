@@ -377,12 +377,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * and call type is delivery
      */
     private void updateCustomerPickUp() {
-        if (Utils.isDeliveryService(callData.getCallType()) && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
+        if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || Utils.isDeliveryService(callData.getCallType())) && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
             greenDot.setVisibility(View.VISIBLE);
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+            if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 dottedLine.setVisibility(View.VISIBLE);
                 blueDot.setVisibility(View.VISIBLE);
                 if (callData.isCod() && StringUtils.isNotEmpty(callData.getOrder_no())) {
@@ -2722,6 +2722,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Entered by user for creation of booking
      */
     private void setAddressDetailsVisible() {
+        if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) return;
+
         String senderAddress = callData.getSenderAddress() != null ? callData.getSenderAddress() : "";
         String senderName = callData.getSenderName() != null ? callData.getSenderName() : "";
         String senderPhone = Utils.phoneNumberToShow(callData.getSenderPhone());
@@ -2774,6 +2776,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             String orderNumber = getString(R.string.order_number) + StringUtils.SPACE + callData.getOrder_no();
             tvOrderNumber.setText(orderNumber);
         }
+
     }
 
     /**

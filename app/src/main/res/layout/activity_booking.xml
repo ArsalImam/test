@@ -597,14 +597,6 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <!--<ImageView-->
-                            <!--android:id="@+id/green_dot"-->
-                            <!--android:layout_width="@dimen/_10sdp"-->
-                            <!--android:layout_height="@dimen/_10sdp"-->
-                            <!--android:layout_marginTop="@dimen/_3sdp"-->
-                            <!--android:src="@drawable/circle_booking"-->
-                            <!--android:tint="@color/green_03a83b" />-->
-
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -744,20 +736,6 @@
 
                 </LinearLayout>
             </LinearLayout>
-            <!--green_dot
-            blue_line
-            <com.bykea.pk.partner.widgets.DashedLine
-                android:id="@+id/dotted_line"
-                android:layout_width="@dimen/_1sdp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_below="@id/green_dot"
-                android:layerType="software"
-                app:dashColor="@color/Color_Gray"
-                app:dashGap="@dimen/_1sdp"
-                app:dashLength="@dimen/_2sdp"
-                app:dashThickness="@dimen/_1sdp"
-                app:orientation="vertical" />-->
 
         </RelativeLayout>
 
