@@ -420,10 +420,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 vAddressDivider.setVisibility(View.GONE);
             }
 
-            if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+            if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                    && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 dottedLine.setVisibility(View.VISIBLE);
                 blueDot.setVisibility(View.VISIBLE);
-                dottedLine.getLayoutParams().height = /*dottedLine.getLayoutParams().height + */dotsHeightOffset;
+                dottedLine.getLayoutParams().height = dotsHeightOffset;
                 dottedLine.requestLayout();
             } else {
                 dottedLine.setVisibility(View.GONE);
@@ -434,11 +435,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             dottedLine.setVisibility(View.GONE);
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
-            if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
+            if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                    || callData.getServiceCode() == OFFLINE_DELIVERY || Utils.isRideService(callData.getCallType())
+                    || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
                 blueDot.setVisibility(View.GONE);
             }
         }
-        rlAddressMainLayout.setVisibility(greenDot.getVisibility() == View.VISIBLE || blueDot.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
+        rlAddressMainLayout.setVisibility(greenDot.getVisibility() == View.VISIBLE
+                || blueDot.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
 
     }
 
