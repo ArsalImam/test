@@ -429,9 +429,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             dottedLine.setVisibility(View.GONE);
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
+            if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
+                blueDot.setVisibility(View.GONE);
+            }
+//            blueDot.setVisibility(Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ? View.GONE : View.VISIBLE);
         }
-        blueDot.setVisibility(Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ? View.GONE : View.VISIBLE);
-
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
