@@ -801,7 +801,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    void setTitleCustomToolbarUrdu(String urdu) {
+    protected void setTitleCustomToolbarUrdu(String urdu) {
         FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
         FontTextView tvTitle = (FontTextView) findViewById(R.id.tvTitle);
 
