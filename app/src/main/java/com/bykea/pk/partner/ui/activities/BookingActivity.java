@@ -430,7 +430,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
         }
-        blueDot.setVisibility(callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ? View.GONE : View.VISIBLE);
+        blueDot.setVisibility(Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ? View.GONE : View.VISIBLE);
 
     }
 
