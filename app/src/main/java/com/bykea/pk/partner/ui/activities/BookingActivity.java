@@ -387,7 +387,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
             greenDot.setVisibility(View.VISIBLE);
-            int dotsHeightOffset = NumberUtils.INTEGER_ZERO;
+            int dotsHeightOffset = getResources().getDimensionPixelOffset(R.dimen._28sdp);
             if (!StringUtils.isEmpty(callData.getSenderName())) {
                 tvPickUpCustomerName.setVisibility(View.VISIBLE);
                 tvPickUpCustomerName.setText(callData.getSenderName());
@@ -396,7 +396,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
             } else {
                 tvPickUpCustomerName.setVisibility(View.GONE);
-                dotsHeightOffset = dotsHeightOffset - 15;
+                dotsHeightOffset = dotsHeightOffset - 32;
             }
             if (!StringUtils.isEmpty(callData.getSenderPhone())) {
                 ivPickUpCustomerPhone.setTag(callData.getSenderPhone());
@@ -423,7 +423,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 dottedLine.setVisibility(View.VISIBLE);
                 blueDot.setVisibility(View.VISIBLE);
-                dottedLine.getLayoutParams().height = dottedLine.getLayoutParams().height + dotsHeightOffset;
+                dottedLine.getLayoutParams().height = /*dottedLine.getLayoutParams().height + */dotsHeightOffset;
                 dottedLine.requestLayout();
             } else {
                 dottedLine.setVisibility(View.GONE);
