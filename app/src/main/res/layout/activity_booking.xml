@@ -525,6 +525,7 @@
             tools:visibility="visible" />
 
         <RelativeLayout
+            android:id="@+id/rlAddressMainLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

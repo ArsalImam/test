@@ -142,6 +142,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @BindView(R.id.blueDot)
     ImageView blueDot;
+    @BindView(R.id.rlAddressMainLayout)
+    RelativeLayout rlAddressMainLayout;
     @BindView(R.id.green_dot)
     ImageView greenDot;
     @BindView(R.id.dottedLine)
@@ -378,7 +380,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * and call type is delivery
      */
     private void updateCustomerPickUp() {
-        if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || Utils.isDeliveryService(callData.getCallType())) && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
+        if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                || (Utils.isDeliveryService(callData.getCallType()) && callData.getServiceCode() != OFFLINE_DELIVERY))
+                && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
             llPickUpDetails.setVisibility(View.VISIBLE);
             vAddressDivider.setVisibility(View.VISIBLE);
@@ -392,6 +396,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
             } else {
                 tvPickUpCustomerName.setVisibility(View.GONE);
+                dotsHeightOffset = dotsHeightOffset - 15;
             }
             if (!StringUtils.isEmpty(callData.getSenderPhone())) {
                 ivPickUpCustomerPhone.setTag(callData.getSenderPhone());
@@ -432,8 +437,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
                 blueDot.setVisibility(View.GONE);
             }
-//            blueDot.setVisibility(Utils.isRideService(callData.getCallType()) || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ? View.GONE : View.VISIBLE);
         }
+        rlAddressMainLayout.setVisibility(greenDot.getVisibility() == View.VISIBLE || blueDot.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
+
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -849,7 +855,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         ActivityStackManager.getInstance()
                                 .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
                     } else {
-                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                        if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.IOS))
+                            Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                        else
+                            Utils.sendSms(mCurrentActivity, callData.getSenderPhone());
                     }
                 }
                 break;
