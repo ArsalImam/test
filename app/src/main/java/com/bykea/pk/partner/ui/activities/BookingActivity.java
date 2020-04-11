@@ -392,11 +392,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 tvPickUpCustomerName.setVisibility(View.VISIBLE);
                 tvPickUpCustomerName.setText(callData.getSenderName());
                 if (callData.getSenderName().length() > Constants.NUMBER_OF_CHARS_IN_LINE) {
-                    dotsHeightOffset += Constants.OFFSET_FOR_SINGLE_LINE;
+                    dotsHeightOffset += getResources().getDimensionPixelOffset(R.dimen._17sdp);
                 }
             } else {
                 tvPickUpCustomerName.setVisibility(View.GONE);
-                dotsHeightOffset = dotsHeightOffset - 32;
+                dotsHeightOffset -= getResources().getDimensionPixelOffset(R.dimen._17sdp);
+//                dotsHeightOffset = dotsHeightOffset - 32;
             }
             if (!StringUtils.isEmpty(callData.getSenderPhone())) {
                 ivPickUpCustomerPhone.setTag(callData.getSenderPhone());
@@ -407,7 +408,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 tvPickUpDetailsAddress.setText(String.format(getString(R.string.formatting_with_street), callData.getSenderAddress()));
                 tvPickUpDetailsAddress.setVisibility(View.VISIBLE);
                 if (callData.getSenderAddress().length() > Constants.NUMBER_OF_CHARS_IN_LINE) {
-                    dotsHeightOffset += Constants.OFFSET_FOR_SINGLE_LINE;
+                    dotsHeightOffset += getResources().getDimensionPixelOffset(R.dimen._17sdp);
                 }
             }
             if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) && !StringUtils.isEmpty(callData.getOrder_no())) {
