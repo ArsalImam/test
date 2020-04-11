@@ -39,7 +39,8 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"/>
+        <activity android:name=".ui.nodataentry.ViewDeliveryDetailsActivity"></activity>
+        <activity android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity" />
         <activity android:name=".ui.nodataentry.DeliveryDetailsActivity" />
 
         <uses-library
