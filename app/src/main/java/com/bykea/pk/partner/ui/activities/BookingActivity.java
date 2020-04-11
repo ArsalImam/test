@@ -418,7 +418,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 dottedLine.setVisibility(View.VISIBLE);
                 blueDot.setVisibility(View.VISIBLE);
-                dottedLine.getLayoutParams().height  = dottedLine.getLayoutParams().height + dotsHeightOffset;
+                dottedLine.getLayoutParams().height = dottedLine.getLayoutParams().height + dotsHeightOffset;
                 dottedLine.requestLayout();
             } else {
                 dottedLine.setVisibility(View.GONE);
@@ -430,6 +430,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
         }
+        blueDot.setVisibility(callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ? View.GONE : View.VISIBLE);
+
     }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
@@ -2768,6 +2770,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (senderAddress.equalsIgnoreCase(callData.getStartAddress()) && senderName.equalsIgnoreCase(callData.getPassName()) && senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
                     llDetails.setVisibility(View.GONE);
                     tvDetailsNotEntered.setVisibility(View.GONE);
+                    blueDot.setVisibility(View.GONE);
                 }
                 if (senderAddress.equalsIgnoreCase(callData.getStartAddress())) {
                     tvDetailsAddress.setVisibility(View.GONE);
