@@ -11,6 +11,7 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT
 import com.bykea.pk.partner.utils.Constants.Extras.ADD_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
+import com.bykea.pk.partner.utils.GenericListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 
@@ -21,6 +22,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_delivery_details)
+        binding.listener = object : GenericListener {
+            override fun addOrEditDeliveryDetails() {
+                if (isValidate()) {
+
+                }
+            }
+        }
 
         setTitleCustomToolbarUrdu(getString(R.string.parcel_details))
         fLLocation.visibility = View.VISIBLE
