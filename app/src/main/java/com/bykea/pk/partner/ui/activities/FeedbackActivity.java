@@ -137,7 +137,7 @@ public class FeedbackActivity extends BaseActivity {
         updateScroll();
         updateInvoice();
     }
-
+  
     /**
      * this method will update the invoice details of the current booking,
      * will populate the recycler view's adapter
@@ -145,7 +145,6 @@ public class FeedbackActivity extends BaseActivity {
     private void updateInvoice() {
         repo.getInvoiceDetails(AppPreferences.getSettings()
                 .getSettings().getFeedbackInvoiceListingUrl(), callData.getTripId(), new JobsDataSource.GetInvoiceCallback() {
-
             @Override
             public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse bookingDetailResponse) {
                 FeedbackActivity.this.invoiceData = bookingDetailResponse.getData();

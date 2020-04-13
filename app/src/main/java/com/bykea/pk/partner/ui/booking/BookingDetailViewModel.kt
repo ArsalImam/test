@@ -89,6 +89,7 @@ class BookingDetailViewModel
                     StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
                     DriverApp.getContext().getString(R.string.partner_ki_taraf_se_rating),
                     data.rate?.customer?.toString(), null, false, Constants.BOOKING_DETAIL_VIEW_TYPE_RATING))
+
         }
 
         if (data.rate?.customer != null) {
