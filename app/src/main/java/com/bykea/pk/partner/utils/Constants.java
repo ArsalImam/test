@@ -96,6 +96,9 @@ public class Constants {
     public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline_delivery.png";
     public static final String CREATOR_PASSENGER = "PASSENGER_ANDROID";
     public static final String ANDROID = "ANDROID";
+    public static final int NUMBER_OF_CHARS_IN_LINE = 40;
+    public static final int OFFSET_FOR_SINGLE_LINE = 37;
+    public static final String IOS = "IOS";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
