@@ -380,8 +380,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void updateCustomerPickUp() {
         if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
-                || (Utils.isDeliveryService(callData.getCallType()) && callData.getServiceCode() != OFFLINE_DELIVERY
-                                        && !callData.isDispatcher()))
+                || (Utils.isDeliveryService(callData.getCallType()) && callData.getServiceCode() != OFFLINE_DELIVERY))
                 && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
             llPickUpDetails.setVisibility(View.VISIBLE);
@@ -742,6 +741,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 dataRepository.requestRunningTrip(mCurrentActivity, handler);
             }
         }
+
         super.onResume();
     }
 
@@ -1390,6 +1390,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setAddressDetailsVisible();
             }
 
+            if (callData.isDispatcher()) {
+                rlAddressMainLayout.setVisibility(View.GONE);
+            }
             cvDirections.setVisibility(View.VISIBLE);
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
