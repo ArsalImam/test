@@ -42,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/windowBackground"
                 android:gravity="left|center_vertical"
-                android:text="@{String.valueOf(item.value)}"
+                android:text="@{item.value}"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
                 android:visibility="@{item.viewType == Constants.BOOKING_DETAIL_VIEW_TYPE_RATING ? View.GONE : View.VISIBLE}"
@@ -62,7 +62,7 @@
                 android:max="5"
                 android:numStars="5"
                 android:progressDrawable="@drawable/custom_rating_bar"
-                android:rating="@{Float.valueOf(item.value)}"
+                android:rating="@{item.rateValue}"
                 android:stepSize="0.1"
                 android:visibility="@{item.viewType != Constants.BOOKING_DETAIL_VIEW_TYPE_RATING ? View.GONE : View.VISIBLE}"
                 tools:visibility="gone" />

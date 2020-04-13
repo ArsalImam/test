@@ -124,7 +124,9 @@ data class Invoice(
         var deliveryStatus: Int? = null,
         @SerializedName("strike")
         var strike: Boolean? = false,
-        var viewType: String? = null
+        var viewType: String? = null,
+        @SerializedName("rateValue")
+        val rateValue: Float = 0f
 ) : Parcelable
 
 @Parcelize
