@@ -5,6 +5,8 @@ import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.AvailableTripStatus
+import com.bykea.pk.partner.dal.util.RolesByName
 import retrofit2.Call
 import retrofit2.Response
 
@@ -332,6 +334,20 @@ class JobsRemoteDataSource {
         Backend.talos.skipJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
             override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
             override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [callback] this will response back on data/error received
+     */
+    fun getInvoiceDetails(invoiceUrl: String, callback: JobsDataSource.GetInvoiceCallback) {
+        Backend.talos.getInvoiceDetails(invoiceUrl, RolesByName.CANCEL_BY_PARTNER.toLowerCase(),
+                AvailableTripStatus.STATUS_FINISH).enqueue(object : Callback<FeedbackInvoiceResponse> {
+            override fun onSuccess(response: FeedbackInvoiceResponse) = callback.onInvoiceDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
         })
     }
 }

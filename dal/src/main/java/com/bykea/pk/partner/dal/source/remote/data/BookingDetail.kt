@@ -116,7 +116,7 @@ data class Invoice(
         @SerializedName("title_ur")
         val titleUr: String?,
         @SerializedName("value")
-        val value: Float?,
+        val value: String?,
         var viewType: String? = null
 ) : Parcelable
 

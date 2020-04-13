@@ -45,11 +45,17 @@ val LABEL_NOT_AVAILABLE = "N/A"
 val DIGIT_ZERO = 0
 
 
+object RequestParams {
+    const val STATE: String = "state"
+    const val TYPE: String = "type"
+}
+
 object AvailableTripStatus {
     val STATUS_COMPLETED: String = "completed"
     val STATUS_MISSED: String = "missed"
     val STATUS_CANCELLED: String = "cancelled"
     val STATUS_FEEDBACK: String = "feedback"
+    val STATUS_FINISH: String = "finished"
 }
 
 object CancelByStatus {
