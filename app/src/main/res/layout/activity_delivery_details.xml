@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical"
         tools:context=".ui.nodataentry.DeliveryDetailsActivity">
 
@@ -175,43 +176,48 @@
         </LinearLayout>
 
         <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
+            android:layout_below="@id/rlWallet"
             android:layout_marginTop="@dimen/_3sdp"
             android:background="@color/color_grayc7c7c7" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_above="@id/imgViewButton"
+            android:layout_below="@+id/view"
+            android:gravity="center"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recViewDeliveries"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:itemCount="5"
-                    tools:listitem="@layout/list_item_delivery_detail" />
-            </LinearLayout>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:itemCount="10"
+                tools:listitem="@layout/list_item_delivery_detail" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageViewView"
+                android:id="@+id/imgViewAddDelivery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_20sdp"
+                android:minWidth="@dimen/_100sdp"
+                android:minHeight="@dimen/_100sdp"
                 app:srcCompat="@drawable/ic_add_delivery_detail" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgViewButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height.xlarge"
+            android:layout_alignParentBottom="true"
             android:layout_gravity="center"
             android:background="@drawable/button_green_square"
             android:padding="@dimen/_6sdp"
             android:src="@drawable/check_mark" />
 
-    </LinearLayout>
+    </RelativeLayout>
 </layout>
