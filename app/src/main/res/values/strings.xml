@@ -529,6 +529,7 @@
     <string name="booking_urdu">بکنگز</string>
     <string name="order_number">Order #</string>
     <string name="booking_ur">\u0020بکنگ\u0020</string>
+    <string name="empty_string_sandwich_placeholder">\u0020%1$s\u0020</string>
     <string name="advantages">\u0020فوائد\u0020</string>
     <string name="you_are_going_to_offline">\u0020آپ آف لائن ہورہے ہیں۔\u0020</string>
     <string name="manzil">Manzil</string>

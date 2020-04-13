@@ -1,7 +1,10 @@
 package com.bykea.pk.partner.dal.source.remote.data
 
 import android.os.Parcelable
-import com.bykea.pk.partner.dal.util.*
+import com.bykea.pk.partner.dal.util.BOOKING_CURRENT_DATE_FORMAT
+import com.bykea.pk.partner.dal.util.BOOKING_LIST_REQUIRED_DATE_FORMAT
+import com.bykea.pk.partner.dal.util.DIGIT_ZERO
+import com.bykea.pk.partner.dal.util.DateUtils
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import org.apache.commons.lang3.StringUtils
@@ -117,6 +120,10 @@ data class Invoice(
         val titleUr: String?,
         @SerializedName("value")
         val value: String?,
+        @SerializedName("delivery_status")
+        var deliveryStatus: Int? = null,
+        @SerializedName("strike")
+        var strike: Boolean? = false,
         var viewType: String? = null
 ) : Parcelable
 

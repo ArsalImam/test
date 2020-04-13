@@ -184,7 +184,7 @@
                     android:gravity="center"
                     android:text="خریداری"
                     android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_10sdp"
+                    android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontEditText
@@ -288,7 +288,7 @@
                     android:gravity="center"
                     android:text="ٹوٹل رقم"
                     android:textColor="@color/textColorPrimary"
-                    android:textSize="@dimen/_10sdp"
+                    android:textSize="@dimen/_12sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 <com.bykea.pk.partner.widgets.FontEditText
