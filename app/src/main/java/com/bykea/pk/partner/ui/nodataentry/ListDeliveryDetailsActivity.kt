@@ -4,13 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.databinding.ActivityDeliveryDetailsBinding
+import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
 
-class DeliveryDetailsActivity : AppCompatActivity() {
-    lateinit var binding: ActivityDeliveryDetailsBinding
+class ListDeliveryDetailsActivity : AppCompatActivity() {
+    lateinit var binding: ActivityListDeliveryDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_delivery_details)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_list_delivery_details)
     }
 }
