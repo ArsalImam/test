@@ -40,7 +40,7 @@
         tools:node="merge"
         tools:replace="android:allowBackup">
 
-        <activity android:name=".ui.nodataentry.ListDeliveryDetailsActivity" />
+        <!--<activity android:name=".ui.nodataentry.ListDeliveryDetailsActivity" />-->
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -68,7 +68,7 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ui.activities.SplashActivity">
+        <activity android:name=".ui.nodataentry.ListDeliveryDetailsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
