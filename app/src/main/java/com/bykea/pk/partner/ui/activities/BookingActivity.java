@@ -105,7 +105,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -346,7 +345,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             if (normalCallData.getStatus() != null && normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
-                                ActivityStackManager.getInstance().startFeedbackFromResume(mCurrentActivity);
+                                ActivityStackManager.getInstance().startFeedbackActivity(mCurrentActivity);
                             } else {
                                 setInitialData();
                             }
@@ -2668,6 +2667,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
             callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
             callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
+            callData.setRuleIds(data.getTrip().getRule_ids());
             if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
                 callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
             }
