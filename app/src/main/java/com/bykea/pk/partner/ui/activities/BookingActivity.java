@@ -380,7 +380,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void updateCustomerPickUp() {
         if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
-                || (Utils.isDeliveryService(callData.getCallType()) && callData.getServiceCode() != OFFLINE_DELIVERY))
+                || (Utils.isDeliveryService(callData.getCallType()) && callData.getServiceCode() != OFFLINE_DELIVERY
+                                        && !callData.isDispatcher()))
                 && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                 callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
             llPickUpDetails.setVisibility(View.VISIBLE);
