@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -782,6 +781,25 @@ public enum Dialogs {
         });
         mDialog.setCancelable(false);
         showDialog();
+    }
+
+
+    public void showChangeImageDialog(Context context, Uri uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            mDialog.setContentView(R.layout.dialog_change_image);
+            ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
+            ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+            View cancelIv = mDialog.findViewById(R.id.llChangeImage);
+            ivPicture.setImageURI(uri);
+            if (negativeClickListener == null)
+                cancelIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                cancelIv.setOnClickListener(negativeClickListener);
+            okIv.setOnClickListener(positiveClickListener);
+            showDialog();
+        }
     }
 
     /**

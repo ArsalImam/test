@@ -2,9 +2,11 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -20,6 +22,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
@@ -32,6 +37,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryMsgsSpinnerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -60,12 +66,15 @@ import butterknife.OnTextChanged;
 
 public class FeedbackActivity extends BaseActivity {
 
+    private final String PERMISSION = "android.permission.CAMERA";
     /* @BindView(R.id.logo)
      ImageView logo;*/
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
     @BindView(R.id.ivTakeImage)
     ImageView ivTakeImage;
+    @BindView(R.id.ivEyeView)
+    ImageView ivEyeView;
     @BindView(R.id.startAddressTv)
     FontTextView startAddressTv;
     @BindView(R.id.invoiceMsgTv)
@@ -428,7 +437,7 @@ public class FeedbackActivity extends BaseActivity {
 
     private long mLastClickTime;
 
-    @OnClick({R.id.ivTakeImage, R.id.feedbackBtn})
+    @OnClick({R.id.ivTakeImage, R.id.feedbackBtn, R.id.ivEyeView})
     public void onClick(View v) {
         if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
             return;
@@ -438,6 +447,9 @@ public class FeedbackActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.ivTakeImage:
                 takePicture();
+                break;
+            case R.id.ivEyeView:
+                previewImage();
                 break;
             case R.id.feedbackBtn:
                 if (valid()) {
@@ -737,15 +749,84 @@ public class FeedbackActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         } else if (requestCode == Constants.REQUEST_CAMERA) {
-
+            previewImage();
         }
+    }
+
+    private void previewImage() {
+        ivEyeView.setVisibility(View.VISIBLE);
+        ivTakeImage.setVisibility(View.GONE);
+        Dialogs.INSTANCE.showChangeImageDialog(FeedbackActivity.this, imageUri, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, view -> {
+            Dialogs.INSTANCE.dismissDialog();
+            takePicture();
+        });
     }
 
     private void takePicture() {
         try {
-            imageUri = Utils.startCameraByIntent(mCurrentActivity, Utils.createImageFile(FeedbackActivity.this, "doc"));
+            if (checkPermissions()) {
+                imageUri = Utils.startCameraByIntent(mCurrentActivity, Utils.createImageFile(FeedbackActivity.this, "doc"));
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private boolean checkPermissions() {
+        boolean hasPermission = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int location = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION);
+            if (location != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{PERMISSION}, 1011);
+            } else {
+                hasPermission = true;
+            }
+        } else {
+            hasPermission = true;
+        }
+        return hasPermission;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull String[] permissions, @NonNull final int[] grantResults) {
+        if (mCurrentActivity != null) {
+            switch (requestCode) {
+                case 1011:
+                    if (grantResults.length > 0) {
+                        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                            onPermissionResult();
+                        } else {
+                            checkPermissions();
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+
+    private void onPermissionResult() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(PERMISSION)) {
+                Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                        new StringCallBack() {
+                            @Override
+                            public void onCallBack(String msg) {
+                                checkPermissions();
+                            }
+                        }, null, getString(R.string.camera_permission)
+                        , getString(R.string.permissions_docs));
+            } else {
+                Dialogs.INSTANCE.showPermissionSettings(mCurrentActivity,
+                        1011, getString(R.string.permissions_required),
+                        getString(R.string.java_camera_permission_msg));
+            }
         }
     }
 }
