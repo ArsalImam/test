@@ -11,10 +11,7 @@ import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
-import com.bykea.pk.partner.dal.util.LANG_TYPE
-import com.bykea.pk.partner.dal.util.MESSAGE_TYPE
-import com.bykea.pk.partner.dal.util.SERVICE_CODE_SEND
-import com.bykea.pk.partner.dal.util.USER_TYPE_DRIVER
+import com.bykea.pk.partner.dal.util.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -162,9 +159,9 @@ class JobsRepository(
         jobsRemoteDataSource.getEmailUpdateRequest(emailId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
-    override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+    override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, serviceCode: Int, callback: JobsDataSource.FareEstimationCallback) {
         jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
-                startLat, startLng, endLat, endLng, type, rideType, callback)
+                startLat, startLng, endLat, endLng, serviceCode, callback)
     }
 
     override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
@@ -183,6 +180,17 @@ class JobsRepository(
      */
     override fun getBookingDetailsById(bookingId: String, callback: JobsDataSource.GetBookingDetailCallback) {
         jobsRemoteDataSource.getBookingDetailsById(bookingId, callback)
+    }
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [bookingId] id of the booking of which the data is required
+     * [callback] this will response back on data/error received
+     */
+    override fun getInvoiceDetails(invoiceUrl: String, bookingId: String, callback: JobsDataSource.GetInvoiceCallback) {
+        jobsRemoteDataSource.getInvoiceDetails(invoiceUrl.replace(BOOKING_ID_TO_REPLACE, bookingId), callback)
     }
 
     private fun getJobFromRemote(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {

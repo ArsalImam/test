@@ -105,7 +105,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -346,7 +345,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             if (normalCallData.getStatus() != null && normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
-                                ActivityStackManager.getInstance().startFeedbackFromResume(mCurrentActivity);
+                                ActivityStackManager.getInstance().startFeedbackActivity(mCurrentActivity);
                             } else {
                                 setInitialData();
                             }
@@ -437,7 +436,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
             if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
-                    || callData.getServiceCode() == OFFLINE_DELIVERY || Utils.isRideService(callData.getCallType())
+                    || (callData.getServiceCode() != null && callData.getServiceCode() == OFFLINE_DELIVERY) || Utils.isRideService(callData.getCallType())
                     || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
                 blueDot.setVisibility(View.GONE);
             }
@@ -742,6 +741,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 dataRepository.requestRunningTrip(mCurrentActivity, handler);
             }
         }
+
         super.onResume();
     }
 
@@ -1390,6 +1390,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setAddressDetailsVisible();
             }
 
+            if (callData.isDispatcher()) {
+                rlAddressMainLayout.setVisibility(View.GONE);
+            }
             cvDirections.setVisibility(View.VISIBLE);
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
@@ -2668,6 +2671,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
             callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
             callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
+            callData.setRuleIds(data.getTrip().getRule_ids());
             if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
                 callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
             }
@@ -2759,8 +2763,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
         blueDot.setVisibility(View.VISIBLE);
-        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress(), getString(R.string.formatting_with_street));
-        setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName(), getString(R.string.empty_formatting));
+        if (Utils.isDeliveryService(callData.getCallType())) {
+            setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, StringUtils.EMPTY,
+                    callData.getReceiverAddress(), getString(R.string.formatting_with_street));
+            setAddressDetailEitherSenderOrReceiver(tvCustomerName, StringUtils.EMPTY,
+                    callData.getReceiverName(), getString(R.string.empty_formatting));
+        } else {
+            setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress(), getString(R.string.formatting_with_street));
+            setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName(), getString(R.string.empty_formatting));
+        }
         if (!StringUtils.isEmpty(callData.getReceiverPhone())) {
             ivCustomerPhone.setTag(Utils.phoneNumberToShow(callData.getReceiverPhone()));
             ivCustomerPhone.setVisibility(View.VISIBLE);

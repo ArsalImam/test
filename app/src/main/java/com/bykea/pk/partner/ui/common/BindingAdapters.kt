@@ -1,8 +1,11 @@
 package com.bykea.pk.partner.ui.common
 
+import android.graphics.Paint
+import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -45,6 +48,16 @@ object BindingAdapters {
         }
     }
 
+    @BindingAdapter("app:showLineOverText")
+    @JvmStatic
+    fun showStrikeLine(textView: TextView, enable: Boolean) {
+        textView.paintFlags = if (enable) {
+            textView.paintFlags or STRIKE_THRU_TEXT_FLAG
+        } else {
+            textView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
+    }
+
     /**
      * this binding adapter can be used to load image from url directly from xml
      */
@@ -53,6 +66,13 @@ object BindingAdapters {
     fun loadImageUrl(imageView: ImageView, url: String? = null) {
         if (url == null) return
         Utils.loadImgPicasso(imageView, R.color.white, url)
+    }
+
+    @BindingAdapter("app:urduWrappingText")
+    @JvmStatic
+    fun urduWrappingText(textView: TextView, url: String? = null) {
+        if (url == null) return
+        textView.text = String.format(textView.resources.getString(R.string.empty_string_sandwich_placeholder), url)
     }
 
     @BindingAdapter("app:serviceCode")
@@ -169,7 +189,7 @@ object BindingAdapters {
                 }
             }
         } else {
-            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context,  R.color.textColorPerformance))
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.textColorPerformance))
             autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }

@@ -441,7 +441,7 @@ public class SplashActivity extends BaseActivity {
 
             } else {
                 ActivityStackManager.getInstance()
-                        .startFeedbackFromResume(mCurrentActivity);
+                        .startFeedbackActivity(mCurrentActivity);
             }
         } else {
             String trip = gson.toJson(response.getData().getTrip());
