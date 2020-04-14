@@ -436,7 +436,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
             if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
-                    || callData.getServiceCode() == OFFLINE_DELIVERY || Utils.isRideService(callData.getCallType())
+                    || (callData.getServiceCode() != null && callData.getServiceCode() == OFFLINE_DELIVERY) || Utils.isRideService(callData.getCallType())
                     || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
                 blueDot.setVisibility(View.GONE);
             }
