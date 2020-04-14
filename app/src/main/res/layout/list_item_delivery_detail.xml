@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.bykea.pk.partner.dal.source.remote.response.DeliveryDetails" />
+            type="com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails" />
 
         <variable
             name="listener"
