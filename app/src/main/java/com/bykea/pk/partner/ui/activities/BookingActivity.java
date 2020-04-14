@@ -2763,8 +2763,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
         blueDot.setVisibility(View.VISIBLE);
-        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress(), getString(R.string.formatting_with_street));
-        setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName(), getString(R.string.empty_formatting));
+        if (Utils.isDeliveryService(callData.getCallType())) {
+            setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, StringUtils.EMPTY,
+                    callData.getReceiverAddress(), getString(R.string.formatting_with_street));
+            setAddressDetailEitherSenderOrReceiver(tvCustomerName, StringUtils.EMPTY,
+                    callData.getReceiverName(), getString(R.string.empty_formatting));
+        } else {
+            setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress(), getString(R.string.formatting_with_street));
+            setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName(), getString(R.string.empty_formatting));
+        }
         if (!StringUtils.isEmpty(callData.getReceiverPhone())) {
             ivCustomerPhone.setTag(Utils.phoneNumberToShow(callData.getReceiverPhone()));
             ivCustomerPhone.setVisibility(View.VISIBLE);
