@@ -5,6 +5,14 @@
 
     <data>
 
+        <variable
+            name="item"
+            type="com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.common.LastAdapter.OnItemClickListener" />
+
         <import type="android.view.View.OnClickListener" />
 
     </data>
@@ -41,6 +49,7 @@
                     android:id="@+id/imageViewCancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{()->listener.onSubItemOneClick(item)}"
                     app:srcCompat="@drawable/ic_view" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -49,12 +58,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_6sdp"
                     android:layout_marginRight="@dimen/_6sdp"
+                    android:onClick="@{()->listener.onSubItemTwoClick(item)}"
                     app:srcCompat="@drawable/ic_edit" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imageViewView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{()->listener.onSubItemThreeClick(item)}"
                     app:srcCompat="@drawable/ic_cancel_red" />
             </LinearLayout>
 
@@ -72,6 +83,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="@dimen/_3sdp"
+                    android:text="@{item.bookingNo}"
                     android:textSize="@dimen/_13sdp"
                     app:fontName="open_sans_regular.ttf"
                     tools:text="KHILHQY7" />
@@ -92,8 +104,9 @@
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     android:padding="@dimen/_3sdp"
+                    android:text="@{item.dropZoneNameUr}"
                     android:textSize="@dimen/_13sdp"
-                    app:fontName="open_sans_regular.ttf"
+                    app:fontName="jameel_noori_nastaleeq.ttf"
                     tools:text="@string/booking_ur" />
             </LinearLayout>
 
@@ -112,6 +125,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:paddingBottom="@dimen/_10sdp"
+                    android:text="@{item.deliverySequence}"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
                     tools:text="A" />

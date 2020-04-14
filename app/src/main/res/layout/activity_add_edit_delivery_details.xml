@@ -9,6 +9,10 @@
             name="listener"
             type="com.bykea.pk.partner.utils.GenericListener" />
 
+        <variable
+            name="viewModel"
+            type="com.bykea.pk.partner.ui.nodataentry.AddEditDeliveryDetailsViewModel" />
+
     </data>
 
     <LinearLayout

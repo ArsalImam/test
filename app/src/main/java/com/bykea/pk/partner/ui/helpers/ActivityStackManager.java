@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.source.remote.data.ComplainReason;
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
 import com.bykea.pk.partner.models.data.DeliveryScheduleModel;
@@ -55,6 +56,7 @@ import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
+import com.bykea.pk.partner.ui.nodataentry.AddEditDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -64,6 +66,8 @@ import com.bykea.pk.partner.utils.Utils;
 
 import org.jetbrains.annotations.Nullable;
 
+import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
+import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_ID;
 
@@ -454,7 +458,7 @@ public class ActivityStackManager {
     /**
      * this method will open the booking detail screen by id
      *
-     * @param mContext from which activity needs to open
+     * @param mContext  from which activity needs to open
      * @param bookingId of the trip for which the data required
      */
     public void startBookingDetail(Activity mContext, String bookingId) {
@@ -604,12 +608,28 @@ public class ActivityStackManager {
     /**
      * this method can be used to open complain addition activity with/without trip details, complain reason
      *
-     * @param activity context from which this needs to open
-     * @param requestCode to identify data after completion in [Activity.onActivityResult]
-     * @param tripDetails on which trip complain is registered
+     * @param activity       context from which this needs to open
+     * @param requestCode    to identify data after completion in [Activity.onActivityResult]
+     * @param tripDetails    on which trip complain is registered
      * @param selectedReason reason, why submitting request if user select any?
      */
     public void startComplainAddActivity(@NonNull Activity activity, @Nullable TripHistoryData tripDetails, @Nullable ComplainReason selectedReason) {
         ComplainAddActivity.Companion.openActivity(activity, Constants.REQUEST_CODE_SUBMIT_COMPLAIN, tripDetails, selectedReason);
+    }
+
+    /**
+     * Use to navigate to add edit delivery details activity.
+     *
+     * @param activity        : Context from which this needs to open
+     * @param flowFor         : Flow for is to handle add or edit
+     * @param deliveryDetails : Delivery Detail Object
+     */
+    public void startAddEditDeliveryDetails(Activity activity, int flowFor, DeliveryDetails deliveryDetails) {
+        Intent intent = new Intent(activity, AddEditDeliveryDetailsActivity.class);
+        intent.putExtra(FLOW_FOR, flowFor);
+        if (deliveryDetails != null) {
+            intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
+        }
+        activity.startActivity(intent);
     }
 }
