@@ -22,6 +22,12 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
 
     interface OnItemClickListener<T> {
         fun onItemClick(item: T)
+        @JvmDefault
+        fun onSubItemOneClick(item: T) {}
+        @JvmDefault
+        fun onSubItemTwoClick(item: T) {}
+        @JvmDefault
+        fun onSubItemThreeClick(item: T) {}
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -48,6 +54,7 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
 
         fun bind(item: T) {
             binding.setVariable(BR.item, item)
+            binding.setVariable(BR.listener, itemClickListener)
             binding.executePendingBindings()
         }
     }
