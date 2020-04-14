@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -240,6 +241,18 @@ public class Utils {
     public static int getMaxPageSize(int maxRecordsPerPage, Integer totalRecords) {
         return (int) Math.ceil((double) totalRecords / maxRecordsPerPage);
     }
+
+    public static File createImageFile(Context context, String type) throws IOException {
+        String imageFileName = "BykeaDocument" + type;
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                Constants.UPLOAD_IMG_EXT,         /* suffix */
+                storageDir      /* directory */
+        );
+        return image;
+    }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

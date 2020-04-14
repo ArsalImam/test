@@ -7,23 +7,31 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_48sdp"
-        android:visibility="visible">
+        android:layout_height="@dimen/_48sdp">
 
         <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/tvTripId"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:text=""
             android:textAllCaps="true"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/_20sdp" />
 
-    </FrameLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:id="@+id/ivTakeImage"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="@dimen/_10sdp"
+            android:tint="#ea0000"
+            app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
 
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
