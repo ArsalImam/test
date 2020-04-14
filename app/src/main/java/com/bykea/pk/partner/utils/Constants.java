@@ -273,7 +273,7 @@ public class Constants {
         public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
         public static final int ADD_DELIVERY_DETAILS = DIGIT_ONE;
         public static final int EDIT_DELIVERY_DETAILS = DIGIT_TWO;
-
+        public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
     }
 
     public static class Broadcast {

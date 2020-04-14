@@ -3,7 +3,7 @@ package com.bykea.pk.partner.ui.nodataentry
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetails
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import org.apache.commons.lang3.StringUtils
 
 
