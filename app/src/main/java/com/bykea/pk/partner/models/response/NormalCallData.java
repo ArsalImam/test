@@ -544,6 +544,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         this.trip_charges = trip_charges;
     }
 
+    public int getActualPassWallet() {
+        return passWallet ;
+    }
     public String getPassWallet() {
         return passWallet < 200 ? "" + passWallet : "200+";
     }

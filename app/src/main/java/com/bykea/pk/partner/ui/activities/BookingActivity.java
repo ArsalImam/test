@@ -105,7 +105,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -1524,6 +1523,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
+                if (callData.getServiceCode() != null && callData.getServiceCode() == 28 && callData.getActualPassWallet() > 0) {
+                    if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
+                        cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
+                    } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
+                        cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                    }
+                }
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }
