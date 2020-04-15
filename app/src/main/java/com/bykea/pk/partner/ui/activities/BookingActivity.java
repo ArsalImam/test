@@ -105,6 +105,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -1527,26 +1528,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
+                if (callData.getServiceCode() != null &&
+                        callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
+                        callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
+                    if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
+                        cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
+                    } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
+                        cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                    }
+                }
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }
-
-        /*if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
-            if (Utils.isPurchaseService(callData.getCallType())) {
-                tvCashWasooliLabel.setText(R.string.kharidari_label);
-            }
-        } else {
-            tvCodAmount.setText(R.string.dash);
-        }
-
-        if (Utils.isDeliveryService(callData.getCallType())) {
-            if (!callData.isCod()) {
-                llTopMiddle.setVisibility(View.INVISIBLE);
-            } else {
-                llTopMiddle.setVisibility(View.VISIBLE);
-            }
-        }*/
         if (callData.getKraiKiKamai() != 0) {
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), callData.getKraiKiKamai()));
         } else if (AppPreferences.getEstimatedFare() != 0) {
