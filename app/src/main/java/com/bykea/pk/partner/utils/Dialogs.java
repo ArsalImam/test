@@ -9,7 +9,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -42,6 +44,7 @@ import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.bykea.pk.partner.widgets.Fonts;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -52,6 +55,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 
 //import com.thefinestartist.Base;
 
@@ -1137,5 +1145,65 @@ public enum Dialogs {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param context     : Calling context
+     * @param dataHandler : Use for the callback of strings.
+     */
+    public Dialog showTemperatureDialog(Context context, StringCallBack dataHandler) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
+            mDialog.setContentView(R.layout.dialog_enter_temperature);
+            mDialog.setCancelable(false);
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> mDialog.dismiss());
+            TextView titleTv = mDialog.findViewById(R.id.titleTv);
+            EditText mEditTextTemperature = mDialog.findViewById(R.id.editTextTemperature);
+
+            titleTv.setText(new SpannableStringBuilder(StringUtils.SPACE)
+                    .append(FontUtils.getStyledTitle(context, context.getString(R.string.fahrenheit),
+                            Fonts.Roboto_Medium.getName()))
+                    .append(FontUtils.getStyledTitle(context, StringUtils.SPACE,
+                            Fonts.Roboto_Medium.getName()))
+                    .append(FontUtils.getStyledTitle(context, context.getString(R.string.enter_your_temperature),
+                            Fonts.Jameel_Noori_Nastaleeq.getName()))
+                    .append(StringUtils.SPACE));
+
+            mEditTextTemperature.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(DIGIT_FIVE, DIGIT_ONE)});
+            ImageView mPositiveButton = mDialog.findViewById(R.id.positiveBtn);
+
+            mEditTextTemperature.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mEditTextTemperature.setError(null);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+
+            mDialog.setOnShowListener(dialog -> mPositiveButton.setOnClickListener(v -> {
+                if (StringUtils.isEmpty(mEditTextTemperature.getText())) {
+                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error));
+                    mEditTextTemperature.requestFocus();
+                    return;
+                } else if (Double.parseDouble(mEditTextTemperature.getText().toString()) < MIN_FAHRENHEIT_VALUE ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) > MAX_FAHRENHEIT_VALUE) {
+                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error));
+                    mEditTextTemperature.requestFocus();
+                    return;
+                }
+                /*mDialog.dismiss();*/
+                dataHandler.onCallBack(mEditTextTemperature.getText().toString());
+            }));
+            return mDialog;
+        }
+        return null;
     }
 }

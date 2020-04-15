@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -110,134 +111,89 @@ import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREE
  * Home landing screen which holds all the options for driver
  */
 public class HomeFragment extends Fragment {
-
+    //region Variables and Widgets
     private Unbinder unbinder;
-
     private HomeActivity mCurrentActivity;
-
     private long mLastClickTime;
-
     private GoogleMap mGoogleMap;
-
     private UserRepository repository;
-
     private boolean isScreenInFront;
-
     private Location mPrevLocToShow;
-
     private int[] cashInHand;
-
     @BindView(R.id.previusDurationBtn)
     ImageView previusDurationBtn;
-
     @BindView(R.id.durationBtn)
     ImageView durationBtn;
-
     @BindView(R.id.myRangeBar)
     MyRangeBarRupay myRangeBar;
-
     @BindView(R.id.llBottom)
     FrameLayout myRangeBarLayout;
-
     @BindView(R.id.line)
     View myRangeBarTopLine;
-
     @BindView(R.id.mapPinIv)
     FrameLayout mapPinIv;
-
     @BindView(R.id.offlineRideNavigationRL)
     LinearLayout selectedAmountRL;
-
     @BindView(R.id.weeklybookingTv)
     FontTextView weeklyBookingTv;
-
     @BindView(R.id.homeMapFragment)
     MapView mapView;
-
     @BindView(R.id.muntakhibTv)
     FontTextView muntakhibTv;
-
     @BindView(R.id.tvFenceError)
     TextView tvFenceError;
-
     @BindView(R.id.durationTv)
     TextView durationTv;
-
     @BindView(R.id.llTopActive)
     RelativeLayout headerTopActiveLayout;
-
     @BindView(R.id.llTop)
     RelativeLayout headerTopUnActiveLayout;
-
     @BindView(R.id.layoutupper)
     LinearLayout layoutUpper;
-
     @BindView(R.id.layoutDuration)
     RelativeLayout layoutDuration;
-
     @BindView(R.id.driverStatsLayout)
     LinearLayout driverStatsLayout;
-
-
     @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
-
     @BindView(R.id.tvCihIndex2)
     FontTextView tvCihIndex2;
-
     @BindView(R.id.tvCihIndex3)
     FontTextView tvCihIndex3;
-
     @BindView(R.id.tvCihIndex4)
     FontTextView tvCihIndex4;
-
     @BindView(R.id.tvCihIndex5)
     FontTextView tvCihIndex5;
-
     @BindView(R.id.muntakhibTv1)
     FontTextView muntakhibTv1;
-
     @BindView(R.id.mukamalBookingTv)
     FontTextView weeklyMukamalBookingTv;
-
     @BindView(R.id.kamaiTv)
     FontTextView weeklyKamaiTv;
-
     @BindView(R.id.wqtTv)
     FontTextView weeklyTimeTv;
-
     @BindView(R.id.takmeelTv)
     FontTextView weeklyTakmeelTv;
-
     @BindView(R.id.qboliyatTv)
     FontTextView weeklyQaboliatTv;
-
     @BindView(R.id.ratingTv)
     FontTextView weeklyratingTv;
-
     @BindView(R.id.totalScoreTv)
     FontTextView totalScoreTv;
-
     @BindView(R.id.totalBalanceTv)
     FontTextView totalBalanceTv;
-
     @BindView(R.id.driverImageView)
     ImageView driverImageView;
-
     @BindView(R.id.muntakhibTvUrdu)
     FontTextView muntakhibTvUrdu;
-
     @BindView(R.id.authorizedbookingTimeTv)
     FontTextView authorizedbookingTimeTv;
-
     @BindView(R.id.authorizedbookingTv)
     FontTextView authorizedbookingTv;
 
     private int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
     private boolean isNavigateToOfflineRideRequired = false;
-
-
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean isCalled;
@@ -246,6 +202,8 @@ public class HomeFragment extends Fragment {
     private View view;
     private String currentVersion, latestVersion;
     private boolean isOfflineDialogVisible = false;
+    private Dialog temperatureDialog;
+    //endregion
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -364,43 +322,57 @@ public class HomeFragment extends Fragment {
      * This method sets Click onLoadBoardListFragmentInteractionListener on Bismillah Logo/Active Button
      */
     private void setActiveStatusClick() {
-        mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.isGpsEnable()) {
-                    if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                        if (AppPreferences.getAvailableStatus()) {
-                            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
+        mCurrentActivity.setToolbarLogoBismilla(v -> {
+            if (Utils.isGpsEnable()) {
+                if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                    if (true) {
+                        if (temperatureDialog == null) {
+                            temperatureDialog = Dialogs.INSTANCE.showTemperatureDialog(mCurrentActivity, new StringCallBack() {
                                 @Override
-                                public void onClick(View v) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                    callAvailableStatusAPI(false);
-                                }
-                            }, null);
-                        } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                // TODO call battery optimization
-                                boolean calledOptimize = Utils.disableBatteryOptimization(
-                                        mCurrentActivity, HomeFragment.this);
-                                if (!calledOptimize) {
-                                    handleActivationStatusForBattery(false);
-                                }
-                            } else {
-                                handleUIChangeForInActive = false;
-                                handleActivationStatusForBattery(false);
-                            }
-                        }
+                                public void onCallBack(String msg) {
 
+                                }
+                            });
+                        }
+                        /* Null Handling Because If Context Of The Activity Is Going To Finish
+                           Then The Dialog Creation Function Will Return Null, Local Instance
+                           Is Created Because If Temperature Dialog Has To Be Dismiss On Server Response*/
+                        if (temperatureDialog != null && !temperatureDialog.isShowing()) {
+                            temperatureDialog.show();
+                        }
                     } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity
-                                , mapPinIv, getString(R.string.error_internet_connectivity));
+                        setDriverStatusActive();
                     }
                 } else {
-                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
-                            Permissions.LOCATION_PERMISSION);
+                    Dialogs.INSTANCE.showError(mCurrentActivity
+                            , mapPinIv, getString(R.string.error_internet_connectivity));
                 }
+            } else {
+                Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
+                        Permissions.LOCATION_PERMISSION);
             }
         });
+    }
+
+    private void setDriverStatusActive() {
+        if (AppPreferences.getAvailableStatus()) {
+            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), v -> {
+                Dialogs.INSTANCE.dismissDialog();
+                callAvailableStatusAPI(false);
+            }, null);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // TODO call battery optimization
+                boolean calledOptimize = Utils.disableBatteryOptimization(
+                        mCurrentActivity, HomeFragment.this);
+                if (!calledOptimize) {
+                    handleActivationStatusForBattery(false);
+                }
+            } else {
+                handleUIChangeForInActive = false;
+                handleActivationStatusForBattery(false);
+            }
+        }
     }
 
     private void callAvailableStatusAPI(boolean status) {
