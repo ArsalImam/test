@@ -46,6 +46,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -784,7 +785,7 @@ public enum Dialogs {
     }
 
 
-    public void showChangeImageDialog(Context context, Uri uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+    public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
@@ -792,7 +793,7 @@ public enum Dialogs {
             ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
             ImageView okIv = mDialog.findViewById(R.id.ivPositive);
             View cancelIv = mDialog.findViewById(R.id.llChangeImage);
-            ivPicture.setImageURI(uri);
+            ivPicture.setImageURI(Uri.fromFile(uri));
             if (negativeClickListener == null)
                 cancelIv.setOnClickListener(v -> mDialog.dismiss());
             else

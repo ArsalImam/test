@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -47,6 +46,7 @@ import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -57,6 +57,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import butterknife.BindView;
@@ -162,7 +163,7 @@ public class FeedbackActivity extends BaseActivity {
 
     int driverWallet;
     private boolean isJobSuccessful = true;
-    private Uri imageUri;
+    private File imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -466,7 +467,36 @@ public class FeedbackActivity extends BaseActivity {
     }
 
     private void uploadProofOfDelivery() {
+
+            repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+//            String path = imageUri.toString();
+//            File file = new File(new URI("file:/" + path));
+
         //TODO need to handle image uploading here
+        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+            @Override
+            public void success(String obj) {
+                repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                    @Override
+                    public void onSuccess() {
+                        finishTrip();
+                    }
+
+                    @Override
+                    public void onFail(int code, @Nullable String message) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Dialogs.INSTANCE.showToast(message);
+                    }
+                });
+            }
+
+            @Override
+            public void fail(int errorCode, @NotNull String errorMsg) {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+            }
+        });
+
     }
 
     private void finishTrip() {
@@ -787,7 +817,8 @@ public class FeedbackActivity extends BaseActivity {
     private void takePicture() {
         try {
             if (checkPermissions()) {
-                imageUri = Utils.startCameraByIntent(mCurrentActivity, Utils.createImageFile(FeedbackActivity.this, "doc"));
+                imageUri = Utils.createImageFile(FeedbackActivity.this, "doc");
+                Utils.startCameraByIntent(mCurrentActivity, imageUri);
             }
         } catch (IOException e) {
             e.printStackTrace();

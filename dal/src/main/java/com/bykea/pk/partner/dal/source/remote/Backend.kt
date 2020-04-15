@@ -273,6 +273,9 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/skip")
     fun skipJobRequest(@Path("job_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
 
+    @PUT("/api/v1/trips/{job_id}/details")
+    fun pushTripDetails(@Path("job_id") jobId: String, @Body bodyObject: PushJobDetailsRequest): Call<BaseResponse>
+
     companion object {
 
         var FLAVOR_URL_TELOS: String = ""
