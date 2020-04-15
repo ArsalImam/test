@@ -1536,23 +1536,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }
-
-        /*if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
-            if (Utils.isPurchaseService(callData.getCallType())) {
-                tvCashWasooliLabel.setText(R.string.kharidari_label);
-            }
-        } else {
-            tvCodAmount.setText(R.string.dash);
-        }
-
-        if (Utils.isDeliveryService(callData.getCallType())) {
-            if (!callData.isCod()) {
-                llTopMiddle.setVisibility(View.INVISIBLE);
-            } else {
-                llTopMiddle.setVisibility(View.VISIBLE);
-            }
-        }*/
         if (callData.getKraiKiKamai() != 0) {
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), callData.getKraiKiKamai()));
         } else if (AppPreferences.getEstimatedFare() != 0) {
