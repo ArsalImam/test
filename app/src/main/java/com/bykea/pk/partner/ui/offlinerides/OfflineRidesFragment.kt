@@ -263,13 +263,13 @@ class OfflineRidesFragment : Fragment() {
         jobsRepository.getFairEstimation(
                 AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(),
                 placesResult.latLng.latitude.toString(), placesResult.latLng.longitude.toString(),
-                APP, Constants.ServiceType.OFFLINE_RIDE_STRING,
+                if (rBSawari.isChecked) OFFLINE_RIDE else OFFLINE_DELIVERY,
                 object : JobsDataSource.FareEstimationCallback {
                     override fun onSuccess(fareEstimationResponse: FareEstimationResponse) {
                         try {
-                            if (fareEstimationResponse.callData != null) {
+                            if (fareEstimationResponse.fareEstimateData != null) {
                                 tVDropOffAddress.text = mDropOffResult?.name
-                                setFare(fareEstimationResponse.callData?.maxLimitPrice?.toInt().toString())
+                                setFare(fareEstimationResponse.fareEstimateData?.maxLimitPrice?.toInt().toString())
                             }
                             Dialogs.INSTANCE.dismissDialog()
                         } catch (e: Exception) {

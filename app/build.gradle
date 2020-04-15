@@ -82,6 +82,10 @@ android {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.xyz\""
             }
+            jenkinsUrl {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"$rootProject.ext.jenkinsTalosUrl\""
+            }
             livetesting {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
