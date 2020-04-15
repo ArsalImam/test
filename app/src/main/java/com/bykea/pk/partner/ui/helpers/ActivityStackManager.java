@@ -57,6 +57,7 @@ import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
 import com.bykea.pk.partner.ui.nodataentry.AddEditDeliveryDetailsActivity;
+import com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -627,6 +628,20 @@ public class ActivityStackManager {
     public void startAddEditDeliveryDetails(Activity activity, int flowFor, DeliveryDetails deliveryDetails) {
         Intent intent = new Intent(activity, AddEditDeliveryDetailsActivity.class);
         intent.putExtra(FLOW_FOR, flowFor);
+        if (deliveryDetails != null) {
+            intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
+        }
+        activity.startActivity(intent);
+    }
+
+    /**
+     * Use to navigate to view delivery details activity.
+     *
+     * @param activity        : Context from which this needs to open
+     * @param deliveryDetails : Delivery Detail Object
+     */
+    public void startViewDeliveryDetails(Activity activity, DeliveryDetails deliveryDetails) {
+        Intent intent = new Intent(activity, ViewDeliveryDetailsActivity.class);
         if (deliveryDetails != null) {
             intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
         }

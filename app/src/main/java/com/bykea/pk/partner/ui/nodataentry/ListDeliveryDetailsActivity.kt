@@ -40,7 +40,8 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
 
             override fun onSubItemOneClick(item: DeliveryDetails) {
                 // VIEW DELIVERY DETAILS
-                Dialogs.INSTANCE.showToast("View Delivery Details")
+                ActivityStackManager.getInstance()
+                        .startViewDeliveryDetails(this@ListDeliveryDetailsActivity, item)
             }
 
             override fun onSubItemTwoClick(item: DeliveryDetails) {
