@@ -538,7 +538,7 @@
     <string name="formatting_with_order">Order # %s</string>
     <string name="formatted_name">%s (%s)</string>
     <string name="enter_your_temperature">اپنا درجہ حرارت درج کریں</string>
-    <string name="temperature_value_hint">98.2°F</string>
+    <string name="temperature_value_hint">98.2</string>
     <string name="fahrenheit">(°F)</string>
     <string name="numbers_with_decimal">0123456789.</string>
     <string name="temperature_value_error">Durust darja–e-harrarat darj karein (95 - 104°F kay darmiyan)</string>
