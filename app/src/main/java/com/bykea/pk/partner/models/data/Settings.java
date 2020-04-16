@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ public class Settings {
     private String kronosPartnerSummary;
 
     @SerializedName("proof_of_delivery_service_codes")
-    private List<Integer> podServiceCodes;
+    private String podServiceCodes;
 
     private String cih_range;
     private String partner_topup_limit;
@@ -320,13 +321,13 @@ public class Settings {
         this.kronosPartnerSummary = kronosPartnerSummary;
     }
 
-    public List<Integer> getPodServiceCodes() {
-        return podServiceCodes == null ?
-                Arrays.asList(Constants.ServiceCode.SEND, Constants.ServiceCode.SEND_COD,
-                        Constants.ServiceCode.OFFLINE_DELIVERY) : podServiceCodes;
+    public List<String> getPodServiceCodes() {
+        return StringUtils.isEmpty(podServiceCodes) ?
+                Arrays.asList(String.valueOf(Constants.ServiceCode.SEND), String.valueOf(Constants.ServiceCode.SEND_COD),
+                        String.valueOf(Constants.ServiceCode.OFFLINE_DELIVERY)) : Arrays.asList(podServiceCodes.split("\\s*,\\s*"));
     }
 
-    public void setPodServiceCodes(List<Integer> podServiceCodes) {
+    public void setPodServiceCodes(String podServiceCodes) {
         this.podServiceCodes = podServiceCodes;
     }
 
