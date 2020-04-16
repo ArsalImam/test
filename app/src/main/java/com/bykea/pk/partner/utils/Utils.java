@@ -36,7 +36,6 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -244,7 +243,13 @@ public class Utils {
 
     public static File createImageFile(Context context, String type) throws IOException {
         String imageFileName = "BykeaDocument" + type;
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File storageDir = new File(context.getExternalFilesDir(null), ".bykea");
+        if (!storageDir.exists()) storageDir.mkdir();
+
+        File noMediaFile = new File(storageDir, ".nomedia");
+        if (!noMediaFile.exists()) noMediaFile.createNewFile();
+
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 Constants.UPLOAD_IMG_EXT,         /* suffix */

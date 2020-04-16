@@ -603,6 +603,7 @@ public class Constants {
     public static class Amazon {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
+        public static String BUCKET_NAME_POD = "proof-of-delivery";
     }
 
     /**

@@ -165,6 +165,7 @@ public class FeedbackActivity extends BaseActivity {
     int driverWallet;
     private boolean isJobSuccessful = true;
     private File imageUri;
+    private File tempUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -471,15 +472,12 @@ public class FeedbackActivity extends BaseActivity {
     }
 
     private void uploadProofOfDelivery() {
-
         repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-//            String path = imageUri.toString();
-//            File file = new File(new URI("file:/" + path));
-
         //TODO need to handle image uploading here
         BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
             @Override
             public void success(String obj) {
+                imageUri.delete();
                 repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
                     @Override
                     public void onSuccess() {
@@ -499,7 +497,7 @@ public class FeedbackActivity extends BaseActivity {
                 Dialogs.INSTANCE.dismissDialog();
                 Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
             }
-        });
+        }, Constants.Amazon.BUCKET_NAME_POD);
 
     }
 
@@ -807,7 +805,8 @@ public class FeedbackActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         } else if (requestCode == Constants.REQUEST_CAMERA) {
-            if (resultCode == RESULT_OK && imageUri != null && imageUri.exists()) {
+            if (resultCode == RESULT_OK && tempUri != null && tempUri.exists()) {
+                imageUri = tempUri;
                 previewImage();
             }
         }
@@ -830,8 +829,8 @@ public class FeedbackActivity extends BaseActivity {
     private void takePicture() {
         try {
             if (checkPermissions()) {
-                imageUri = Utils.createImageFile(FeedbackActivity.this, "doc");
-                Utils.startCameraByIntent(mCurrentActivity, imageUri);
+                tempUri = Utils.createImageFile(FeedbackActivity.this, "doc");
+                Utils.startCameraByIntent(mCurrentActivity, tempUri);
             }
         } catch (IOException e) {
             e.printStackTrace();
