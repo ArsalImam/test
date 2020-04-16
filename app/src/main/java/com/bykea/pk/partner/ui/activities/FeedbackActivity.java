@@ -859,10 +859,10 @@ public class FeedbackActivity extends BaseActivity {
             switch (requestCode) {
                 case 1011:
                     if (grantResults.length > 0) {
-                        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                            onPermissionResult();
+                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                            ivTakeImage.performClick();
                         } else {
-                            checkPermissions();
+                            onPermissionResult();
                         }
                     }
                     break;
