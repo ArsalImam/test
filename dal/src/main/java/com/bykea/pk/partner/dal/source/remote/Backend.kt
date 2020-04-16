@@ -5,6 +5,7 @@ import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.RequestParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -30,7 +31,7 @@ interface Backend {
     /**
      * Get Driver Email Update
      * @param email Driver email
-     * @param _id Driver id 
+     * @param _id Driver id
      * @param token_id Driver access token
      * @return Email is successfully update or not
      */
@@ -236,15 +237,14 @@ interface Backend {
     //endregion
 
 
-    @GET("/api/v1/users/getFareEstimation")
+    @GET("/api/v1/fare/estimate/partner")
     fun requestFareEstimation(@Query(Fields.FareEstimation.ID) id: String,
                               @Query(Fields.FareEstimation.TOKEN_ID) tokenId: String,
                               @Query(Fields.FareEstimation.START_LAT) startLat: String,
                               @Query(Fields.FareEstimation.START_LNG) startLng: String,
                               @Query(Fields.FareEstimation.END_LAT) endLat: String,
                               @Query(Fields.FareEstimation.END_LNG) endLng: String,
-                              @Query(Fields.FareEstimation.TYPE) type: String,
-                              @Query(Fields.FareEstimation.RIDE_TYPE) rideType: String): Call<FareEstimationResponse>
+                              @Query(Fields.FareEstimation.SERVICE_CODE) serviceCode: Int): Call<FareEstimationResponse>
 
     @FormUrlEncoded
     @POST("/api/v1/driver/offline/ride/otp")
@@ -261,6 +261,16 @@ interface Backend {
     fun updateBookingDetails(
             @Path("trip_id") jobRequestId: String,
             @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
+
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     */
+    @GET
+    fun getInvoiceDetails(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String,
+                          @Query(RequestParams.STATE) state: String): Call<FeedbackInvoiceResponse>
 
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,

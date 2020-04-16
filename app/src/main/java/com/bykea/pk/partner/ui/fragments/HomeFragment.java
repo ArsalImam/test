@@ -1560,7 +1560,7 @@ public class HomeFragment extends Fragment {
             } else {
                 ActivityStackManager
                         .getInstance()
-                        .startFeedbackFromResume(mCurrentActivity);
+                        .startFeedbackActivity(mCurrentActivity);
             }
         } else {
             AppPreferences.setDeliveryType(Constants.CallType.BATCH);

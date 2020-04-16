@@ -75,6 +75,11 @@ public class Settings {
      */
     @SerializedName("kronos_get_bookings_for_driver")
     private String bookingLisitingForDriverUrl;
+    /**
+     * kronos URL to get invoice details on feedback
+     */
+    @SerializedName("kronos_partner_invoice")
+    private String feedbackInvoiceListingUrl;
 
     /**
      * kronos URL to get booking details by id. if null, will starts the older trip flow
@@ -323,5 +328,19 @@ public class Settings {
 
     public void setPodServiceCodes(List<Integer> podServiceCodes) {
         this.podServiceCodes = podServiceCodes;
+    }
+
+    /**
+     * kronos URL to get invoice details on feedback
+     */
+    public String getFeedbackInvoiceListingUrl() {
+        return feedbackInvoiceListingUrl;
+    }
+
+    /**
+     * kronos URL to get invoice details on feedback
+     */
+    public void setFeedbackInvoiceListingUrl(String feedbackInvoiceListingUrl) {
+        this.feedbackInvoiceListingUrl = feedbackInvoiceListingUrl;
     }
 }

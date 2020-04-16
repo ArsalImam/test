@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+
 public class NormalCallData extends CommonResponse implements Parcelable {
 
     private String status;
@@ -168,6 +170,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     @SerializedName("pickup")
     private Stop pickupStop;
+
+    @SerializedName("rule_ids")
+    private ArrayList<String> ruleIds;
 
     @SerializedName("dropoff")
     private Stop dropoffStop;
@@ -542,6 +547,15 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     public void setTrip_charges(String trip_charges) {
         this.trip_charges = trip_charges;
+    }
+
+    /**
+     * this will return the unformatted customer wallet
+     *
+     * @return wallet of customer
+     */
+    public int getActualPassWallet() {
+        return passWallet;
     }
 
     public String getPassWallet() {
@@ -933,5 +947,13 @@ public class NormalCallData extends CommonResponse implements Parcelable {
             dest.writeInt(serviceCode);
         }
         dest.writeParcelable(extraParams, flags);
+    }
+
+    public ArrayList<String> getRuleIds() {
+        return ruleIds;
+    }
+
+    public void setRuleIds(ArrayList<String> ruleIds) {
+        this.ruleIds = ruleIds;
     }
 }

@@ -13,6 +13,7 @@ data class Trip(
         val end_lat: String,
         val end_lng: String,
         val ended_at: String,
+        val rule_ids: ArrayList<String>,
         val eta: String,
         val invoice_id: String,
         val status: String,
