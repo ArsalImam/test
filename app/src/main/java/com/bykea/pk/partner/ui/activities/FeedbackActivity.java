@@ -807,7 +807,7 @@ public class FeedbackActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         } else if (requestCode == Constants.REQUEST_CAMERA) {
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && imageUri != null && imageUri.exists()) {
                 previewImage();
             }
         }
