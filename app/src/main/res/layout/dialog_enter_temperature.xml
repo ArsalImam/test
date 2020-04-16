@@ -7,29 +7,30 @@
     android:background="@drawable/country_dialog_bg"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+        android:id="@+id/titleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/margin.normal"
+        android:maxLines="1"
+        android:text="@string/enter_your_temperature"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/_20sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
 
-        <com.bykea.pk.partner.widgets.AutoFitFontTextView
-            android:id="@+id/titleTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/margin.normal"
-            android:maxLines="1"
-            android:text="@string/enter_your_temperature"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/_20sdp"
-            app:fontName="jameel_noori_nastaleeq.ttf" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin.normal"
+        android:orientation="vertical">
 
         <com.bykea.pk.partner.widgets.FontEditText
             android:id="@+id/editTextTemperature"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/margin.normal"
+            android:background="@color/transparent"
             android:digits="@string/numbers_with_decimal"
             android:gravity="center"
             android:hint="@string/temperature_value_hint"
@@ -37,12 +38,16 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_16sdp" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/grey_light" />
+
     </LinearLayout>
 
     <com.bykea.pk.partner.widgets.AutoFitFontTextView
         android:id="@+id/textViewError"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_minus16sdp"
@@ -51,6 +56,7 @@
         android:text="@string/temperature_error"
         android:textColor="@color/color_red"
         android:textSize="@dimen/_16sdp"
+        android:visibility="gone"
         app:fontName="jameel_noori_nastaleeq.ttf" />
 
     <RelativeLayout

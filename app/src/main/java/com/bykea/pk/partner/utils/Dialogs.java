@@ -1174,6 +1174,7 @@ public enum Dialogs {
                     .append(StringUtils.SPACE));
 
             mEditTextTemperature.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(DIGIT_FIVE, DIGIT_ONE)});
+            mEditTextTemperature.requestFocus();
             ImageView mPositiveButton = mDialog.findViewById(R.id.positiveBtn);
 
             mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> {
@@ -1212,6 +1213,7 @@ public enum Dialogs {
                 }
                 /*mDialog.dismiss();*/
                 dataHandler.onCallBack(mEditTextTemperature.getText().toString());
+                mEditTextTemperature.setText(StringUtils.EMPTY);
             }));
             return mDialog;
         }
