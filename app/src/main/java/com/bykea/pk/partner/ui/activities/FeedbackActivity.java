@@ -59,6 +59,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -299,6 +301,9 @@ public class FeedbackActivity extends BaseActivity {
         } else {
             receivedAmountEt.requestFocus();
         }
+
+        //updating the visibility of camera icon
+        ivTakeImage.setVisibility(isProofRequired() ? View.VISIBLE : View.GONE);
     }
 
     private void updateUIforPurcahseService() {
@@ -468,7 +473,7 @@ public class FeedbackActivity extends BaseActivity {
 
     private void uploadProofOfDelivery() {
 
-            repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 //            String path = imageUri.toString();
 //            File file = new File(new URI("file:/" + path));
 
@@ -522,7 +527,6 @@ public class FeedbackActivity extends BaseActivity {
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
                 }
-
             }
         };
 
@@ -755,7 +759,15 @@ public class FeedbackActivity extends BaseActivity {
     }
 
     private boolean isProofRequired() {
-        return Utils.isDeliveryService(callData.getCallType()) && selectedMsgPosition == 0;
+        List<Integer> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
+        boolean isRequired = false;
+        for (int code: codes) {
+            if (callData.getServiceCode() != null && code == callData.getServiceCode()) {
+                isRequired = true;
+                break;
+            }
+        }
+        return isRequired && selectedMsgPosition == 0;
     }
 
     private void setEtError(String error) {
