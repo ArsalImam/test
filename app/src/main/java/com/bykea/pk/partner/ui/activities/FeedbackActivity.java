@@ -59,7 +59,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -761,7 +760,7 @@ public class FeedbackActivity extends BaseActivity {
     private boolean isProofRequired() {
         List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
         boolean isRequired = false;
-        for (String code: codes) {
+        for (String code : codes) {
             if (callData.getServiceCode() != null && code.equalsIgnoreCase(String.valueOf(callData.getServiceCode()))) {
                 isRequired = true;
                 break;
@@ -808,7 +807,9 @@ public class FeedbackActivity extends BaseActivity {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
         } else if (requestCode == Constants.REQUEST_CAMERA) {
-            previewImage();
+            if (resultCode == RESULT_OK) {
+                previewImage();
+            }
         }
     }
 
