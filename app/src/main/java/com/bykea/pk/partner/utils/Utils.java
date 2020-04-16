@@ -167,6 +167,8 @@ import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
@@ -3662,5 +3664,15 @@ public class Utils {
         return temperatureShowToggle &&
                 ((System.currentTimeMillis() - AppPreferences.getLastPartnerTemperatureSubmitTime()) >=
                         TimeUnit.SECONDS.toMillis(temperatureShowDialogInterval));
+    }
+
+    public static Pair<Double, Double> getMinMaxFahrenheitLimit() {
+        double minFahretheitLimit = MIN_FAHRENHEIT_VALUE;
+        double maxFahretheitLimit = MAX_FAHRENHEIT_VALUE;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            minFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMinLimit();
+            maxFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMaxLimit();
+        }
+        return new Pair<>(minFahretheitLimit, maxFahretheitLimit);
     }
 }

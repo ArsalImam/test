@@ -14,6 +14,7 @@ import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,6 +59,7 @@ import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 
@@ -1159,7 +1161,9 @@ public enum Dialogs {
             mDialog.setCancelable(false);
             TextView titleTv = mDialog.findViewById(R.id.titleTv);
             EditText mEditTextTemperature = mDialog.findViewById(R.id.editTextTemperature);
+            TextView textViewError = mDialog.findViewById(R.id.textViewError);
 
+            Pair<Double, Double> fahrenheitMinMaxLimit = Utils.getMinMaxFahrenheitLimit();
             titleTv.setText(new SpannableStringBuilder(StringUtils.SPACE)
                     .append(FontUtils.getStyledTitle(context, context.getString(R.string.fahrenheit),
                             Fonts.Roboto_Medium.getName()))
@@ -1185,6 +1189,11 @@ public enum Dialogs {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     mEditTextTemperature.setError(null);
+                    if (s.toString().length() > DIGIT_ZERO && Double.parseDouble(s.toString()) > fahrenheitMinMaxLimit.second) {
+                        textViewError.setVisibility(View.VISIBLE);
+                    } else {
+                        textViewError.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override
@@ -1193,13 +1202,11 @@ public enum Dialogs {
             });
 
             mDialog.setOnShowListener(dialog -> mPositiveButton.setOnClickListener(v -> {
-                if (StringUtils.isEmpty(mEditTextTemperature.getText())) {
-                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error));
-                    mEditTextTemperature.requestFocus();
-                    return;
-                } else if (Double.parseDouble(mEditTextTemperature.getText().toString()) < MIN_FAHRENHEIT_VALUE ||
-                        Double.parseDouble(mEditTextTemperature.getText().toString()) > MAX_FAHRENHEIT_VALUE) {
-                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error));
+                if (StringUtils.isEmpty(mEditTextTemperature.getText()) ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) < fahrenheitMinMaxLimit.first ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) > fahrenheitMinMaxLimit.second) {
+                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error,
+                            String.valueOf(fahrenheitMinMaxLimit.first), String.valueOf(fahrenheitMinMaxLimit.second)));
                     mEditTextTemperature.requestFocus();
                     return;
                 }

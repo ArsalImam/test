@@ -1652,7 +1652,7 @@ public class AppPreferences {
 
     /**
      * Set last partner submit time.
-     * @param  long : Time in milliseconds
+     * @param value : Time in milliseconds
      */
     public static void setLastPartnerTemperatureSubmitTime(long value) {
         mSharedPreferences

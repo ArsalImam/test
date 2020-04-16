@@ -737,6 +737,6 @@ public class Constants {
     public static final long SET_SCALE_DELAY_ZERO = 0;
     public static final String ANDROID_RESOURCE_URI = "android.resource://";
 
-    public static final int MIN_FAHRENHEIT_VALUE = 95;
-    public static final int MAX_FAHRENHEIT_VALUE = 104;
+    public static final double MIN_FAHRENHEIT_VALUE = 95;
+    public static final double MAX_FAHRENHEIT_VALUE = 99.4;
 }

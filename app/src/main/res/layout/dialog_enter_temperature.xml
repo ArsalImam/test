@@ -39,6 +39,20 @@
 
     </LinearLayout>
 
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+        android:id="@+id/textViewError"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_minus16sdp"
+        android:layout_marginBottom="@dimen/margin.normal"
+        android:maxLines="1"
+        android:text="@string/temperature_error"
+        android:textColor="@color/color_red"
+        android:textSize="@dimen/_16sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
