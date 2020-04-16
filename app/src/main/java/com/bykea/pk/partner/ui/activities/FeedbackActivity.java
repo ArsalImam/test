@@ -759,10 +759,10 @@ public class FeedbackActivity extends BaseActivity {
     }
 
     private boolean isProofRequired() {
-        List<Integer> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
+        List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
         boolean isRequired = false;
-        for (int code: codes) {
-            if (callData.getServiceCode() != null && code == callData.getServiceCode()) {
+        for (String code: codes) {
+            if (callData.getServiceCode() != null && code.equalsIgnoreCase(String.valueOf(callData.getServiceCode()))) {
                 isRequired = true;
                 break;
             }
