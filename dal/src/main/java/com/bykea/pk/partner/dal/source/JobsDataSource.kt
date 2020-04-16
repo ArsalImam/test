@@ -443,4 +443,16 @@ interface JobsDataSource {
         fun onJobSkip()
         fun onJobSkipFailed()
     }
+
+    fun submitTemperature(temperature: Float, callback: LoadDataCallback<TemperatureSubmitResponse>)
+
+    interface LoadDataCallback<T> {
+        fun onDataLoaded(response: T) {
+        }
+
+        fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+
+        }
+    }
+
 }

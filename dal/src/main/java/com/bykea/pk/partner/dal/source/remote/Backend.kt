@@ -283,6 +283,9 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/skip")
     fun skipJobRequest(@Path("job_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
 
+    @POST("/api/v1/partner/temperature")
+    fun submitTemperature(@Body bodyObject: TemperatureSubmitRequest): Call<TemperatureSubmitResponse>
+
     companion object {
 
         var FLAVOR_URL_TELOS: String = ""

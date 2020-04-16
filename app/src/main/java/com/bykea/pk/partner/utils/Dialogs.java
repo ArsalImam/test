@@ -1157,7 +1157,6 @@ public enum Dialogs {
             Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_enter_temperature);
             mDialog.setCancelable(false);
-            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> mDialog.dismiss());
             TextView titleTv = mDialog.findViewById(R.id.titleTv);
             EditText mEditTextTemperature = mDialog.findViewById(R.id.editTextTemperature);
 
@@ -1172,6 +1171,11 @@ public enum Dialogs {
 
             mEditTextTemperature.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(DIGIT_FIVE, DIGIT_ONE)});
             ImageView mPositiveButton = mDialog.findViewById(R.id.positiveBtn);
+
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> {
+                mEditTextTemperature.setText(StringUtils.EMPTY);
+                mDialog.dismiss();
+            });
 
             mEditTextTemperature.addTextChangedListener(new TextWatcher() {
                 @Override

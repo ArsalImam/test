@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+
 public class AppPreferences {
 
     private static SharedPreferences mSharedPreferences = DriverApp.getApplication().getBasicComponent().getSharedPref();
@@ -1638,5 +1640,24 @@ public class AppPreferences {
         SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.remove(Keys.BOOKING_VOICE_NOTE_URL);
         ed.commit();
+    }
+
+    /**
+     * Get last partner submit time.
+     * @return long : Time in milliseconds
+     */
+    public static long getLastPartnerTemperatureSubmitTime() {
+        return mSharedPreferences.getLong(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT, DIGIT_ZERO);
+    }
+
+    /**
+     * Set last partner submit time.
+     * @param  long : Time in milliseconds
+     */
+    public static void setLastPartnerTemperatureSubmitTime(long value) {
+        mSharedPreferences
+                .edit()
+                .putLong(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT, value)
+                .apply();
     }
 }

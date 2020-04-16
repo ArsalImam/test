@@ -3645,4 +3645,22 @@ public class Utils {
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
                     || serviceCode == Constants.ServiceCode.UTILITY;
     }
+
+
+    /***
+     * Validate to show partner temperature dialog or not
+     * @return Returns true if to ask temperature from partner considering the toggle and time interval
+     */
+    public static boolean isPartnerTemperatureRequired() {
+        boolean temperatureShowToggle = false;
+        long temperatureShowDialogInterval = DIGIT_ZERO;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            temperatureShowToggle = AppPreferences.getSettings().getSettings().isPartnerTemperatureInputToggle();
+            temperatureShowDialogInterval = AppPreferences.getSettings().getSettings().getPartnerTemperatureInputInterval();
+        }
+
+        return temperatureShowToggle &&
+                ((System.currentTimeMillis() - AppPreferences.getLastPartnerTemperatureSubmitTime()) >=
+                        TimeUnit.SECONDS.toMillis(temperatureShowDialogInterval));
+    }
 }

@@ -36,6 +36,10 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
@@ -91,6 +95,7 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -202,6 +207,7 @@ public class HomeFragment extends Fragment {
     private View view;
     private String currentVersion, latestVersion;
     private boolean isOfflineDialogVisible = false;
+    private JobsRepository jobsRepo;
     private Dialog temperatureDialog;
     //endregion
 
@@ -325,12 +331,25 @@ public class HomeFragment extends Fragment {
         mCurrentActivity.setToolbarLogoBismilla(v -> {
             if (Utils.isGpsEnable()) {
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                    if (true) {
+                    if (Utils.isPartnerTemperatureRequired()) {
                         if (temperatureDialog == null) {
                             temperatureDialog = Dialogs.INSTANCE.showTemperatureDialog(mCurrentActivity, new StringCallBack() {
                                 @Override
                                 public void onCallBack(String msg) {
+                                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                    jobsRepo.submitTemperature(Float.parseFloat(msg), new JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>() {
+                                        @Override
+                                        public void onDataLoaded(TemperatureSubmitResponse response) {
+                                            temperatureDialog.dismiss();
+                                            AppPreferences.setLastPartnerTemperatureSubmitTime(System.currentTimeMillis());
+                                            setDriverStatusActive();
+                                        }
 
+                                        @Override
+                                        public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+                                            Dialogs.INSTANCE.showToast(reasonMsg);
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -415,6 +434,8 @@ public class HomeFragment extends Fragment {
         //mCurrentActivity.hideToolbarTitle();
 
         repository = new UserRepository();
+        jobsRepo = Injection.INSTANCE.provideJobsRepository(DriverApp.getContext());
+
 
         checkGooglePlayService();
 
@@ -1393,6 +1414,7 @@ public class HomeFragment extends Fragment {
         //Utils.unbindDrawables(rlMain);
 //        mCurrentActivity.showToolbar();
         unbinder.unbind();
+        temperatureDialog = null;
     }
 
     @Override
