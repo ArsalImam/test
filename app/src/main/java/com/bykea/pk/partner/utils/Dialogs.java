@@ -17,6 +17,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -1158,6 +1160,11 @@ public enum Dialogs {
             dismissDialog();
             Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_enter_temperature);
+            try {
+                mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             mDialog.setCancelable(false);
             TextView titleTv = mDialog.findViewById(R.id.titleTv);
             EditText mEditTextTemperature = mDialog.findViewById(R.id.editTextTemperature);
@@ -1174,7 +1181,11 @@ public enum Dialogs {
                     .append(StringUtils.SPACE));
 
             mEditTextTemperature.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(DIGIT_FIVE, DIGIT_ONE)});
+            mEditTextTemperature.setFocusable(true);
             mEditTextTemperature.requestFocus();
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(mEditTextTemperature, InputMethodManager.SHOW_FORCED);
+
             ImageView mPositiveButton = mDialog.findViewById(R.id.positiveBtn);
 
             mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> {
