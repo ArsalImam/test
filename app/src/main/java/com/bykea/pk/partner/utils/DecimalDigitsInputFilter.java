@@ -3,6 +3,8 @@ package com.bykea.pk.partner.utils;
 import android.text.InputFilter;
 import android.text.Spanned;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,17 +23,17 @@ public class DecimalDigitsInputFilter implements InputFilter {
         String txt = getAllText(source, dest, dstart);
         Matcher matcher = mPattern.matcher(txt);
         if (!matcher.matches())
-            return "";
+            return StringUtils.EMPTY;
         else {
             if (dest.length() == digitsBeforeZero)
-                return "";
+                return StringUtils.EMPTY;
         }
         return null;
     }
 
 
     private String getAllText(CharSequence source, Spanned dest, int dstart) {
-        String allText = "";
+        String allText = StringUtils.EMPTY;
         if (!dest.toString().isEmpty()) {
             if (source.toString().isEmpty()) {
                 allText = deleteCharAtIndex(dest, dstart);
