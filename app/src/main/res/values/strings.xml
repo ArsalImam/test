@@ -541,6 +541,6 @@
     <string name="temperature_value_hint">98.2</string>
     <string name="fahrenheit">(°F)</string>
     <string name="numbers_with_decimal">0123456789.</string>
-    <string name="temperature_value_error">Durust darja–e-harrarat darj karein (%s - %s°F kay darmiyan)</string>
+    <string name="temperature_value_error">Durust darja–e–harrarat darj karein (%s - %s°F kay darmiyan)</string>
     <string name="temperature_error">\u0020آپ کو بخار ہے ، براہ مہربانی  ٹیسٹ کروائیں۔\u0020</string>
 </resources>
