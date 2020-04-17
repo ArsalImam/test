@@ -1162,7 +1162,7 @@ public enum Dialogs {
             mDialog.setContentView(R.layout.dialog_enter_temperature);
             try {
                 mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             mDialog.setCancelable(false);
@@ -1193,11 +1193,7 @@ public enum Dialogs {
                 mDialog.dismiss();
             });
 
-            mEditTextTemperature.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
+            mEditTextTemperature.addTextChangedListener(new TextWatcherUtil() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     mEditTextTemperature.setError(null);
@@ -1206,10 +1202,6 @@ public enum Dialogs {
                     } else {
                         textViewError.setVisibility(View.GONE);
                     }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
                 }
             });
 
@@ -1222,7 +1214,6 @@ public enum Dialogs {
                     mEditTextTemperature.requestFocus();
                     return;
                 }
-                /*mDialog.dismiss();*/
                 dataHandler.onCallBack(mEditTextTemperature.getText().toString());
                 mEditTextTemperature.setText(StringUtils.EMPTY);
             }));

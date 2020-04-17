@@ -375,26 +375,18 @@ public class Settings {
     }
 
     public double getPartnerTemperatureMinLimit() {
-        if (StringUtils.isEmpty(partnerTemperatureMinLimit)) {
+        try {
+            return Double.parseDouble(partnerTemperatureMinLimit);
+        } catch (Exception e) {
             return MIN_FAHRENHEIT_VALUE;
-        } else {
-            try {
-                return Double.parseDouble(partnerTemperatureMinLimit);
-            } catch (Exception e) {
-                return MIN_FAHRENHEIT_VALUE;
-            }
         }
     }
 
     public double getPartnerTemperatureMaxLimit() {
-        if (StringUtils.isEmpty(partnerTemperatureMaxLimit)) {
+        try {
+            return Double.parseDouble(partnerTemperatureMaxLimit);
+        } catch (Exception e) {
             return MAX_FAHRENHEIT_VALUE;
-        } else {
-            try {
-                return Double.parseDouble(partnerTemperatureMaxLimit);
-            } catch (Exception e) {
-                return MAX_FAHRENHEIT_VALUE;
-            }
         }
     }
 }
