@@ -45,10 +45,10 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 if (isValidate()) {
                     when (flowForAddOrEdit) {
                         ADD_DELIVERY_DETAILS -> {
-                            viewModel.requestAddDeliveryDetails()
+                            binding.viewModel?.requestAddDeliveryDetails()
                         }
                         EDIT_DELIVERY_DETAILS -> {
-                            viewModel.requestEditDeliveryDetail()
+                            binding.viewModel?.requestEditDeliveryDetail()
                         }
                     }
                 }
