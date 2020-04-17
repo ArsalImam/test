@@ -1215,7 +1215,6 @@ public enum Dialogs {
                     return;
                 }
                 dataHandler.onCallBack(mEditTextTemperature.getText().toString());
-                mEditTextTemperature.setText(StringUtils.EMPTY);
             }));
             return mDialog;
         }

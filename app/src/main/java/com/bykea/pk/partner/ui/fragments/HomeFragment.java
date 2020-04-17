@@ -341,12 +341,14 @@ public class HomeFragment extends Fragment {
                                         @Override
                                         public void onDataLoaded(TemperatureSubmitResponse response) {
                                             temperatureDialog.dismiss();
+                                            temperatureDialog = null;
                                             AppPreferences.setLastPartnerTemperatureSubmitTime(System.currentTimeMillis());
                                             setDriverStatusActive();
                                         }
 
                                         @Override
                                         public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+                                            Dialogs.INSTANCE.dismissDialog();
                                             Dialogs.INSTANCE.showToast(reasonMsg);
                                         }
                                     });
