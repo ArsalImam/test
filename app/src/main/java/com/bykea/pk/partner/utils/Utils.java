@@ -248,7 +248,9 @@ public class Utils {
         if (!storageDir.exists()) storageDir.mkdir();
 
         File noMediaFile = new File(storageDir, ".nomedia");
-        if (!noMediaFile.exists()) noMediaFile.createNewFile();
+        if (!noMediaFile.exists()) {
+            noMediaFile.createNewFile();
+        }
 
         File image = File.createTempFile(
                 imageFileName,  /* prefix */

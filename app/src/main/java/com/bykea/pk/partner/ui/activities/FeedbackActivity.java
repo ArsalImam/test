@@ -497,7 +497,7 @@ public class FeedbackActivity extends BaseActivity {
                 Dialogs.INSTANCE.dismissDialog();
                 Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
             }
-        }, Constants.Amazon.BUCKET_NAME_POD);
+        }, Constants.Amazon.BUCKET_NAME);
 
     }
 
