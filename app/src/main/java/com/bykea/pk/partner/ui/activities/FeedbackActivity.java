@@ -430,6 +430,13 @@ public class FeedbackActivity extends BaseActivity {
                     }
                     tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
+
+                if (isProofRequired() && selectedMsgPosition == 0) {
+                    ivTakeImage.setVisibility(View.VISIBLE);
+                } else {
+                    ivTakeImage.setVisibility(View.GONE);
+                }
+
             }
 
             @Override
@@ -808,6 +815,11 @@ public class FeedbackActivity extends BaseActivity {
             if (resultCode == RESULT_OK && tempUri != null && tempUri.exists()) {
                 imageUri = tempUri;
                 previewImage();
+                try {
+                    Utils.deleteLastPhotoFromGallery(FeedbackActivity.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

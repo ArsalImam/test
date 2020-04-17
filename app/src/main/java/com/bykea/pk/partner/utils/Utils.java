@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -146,7 +147,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -2673,7 +2676,25 @@ public class Utils {
         fragment.startActivityForResult(intent1, Constants.REQUEST_GALLERY);
     }
 
+    public static void deleteLastPhotoFromGallery(Context context) {
+        File f = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
+        File[] files = f.listFiles();
+        Arrays.sort(files, new Comparator< Object >() {
+            public int compare(Object o1, Object o2) {
+
+                if (((File) o1).lastModified() > ((File) o2).lastModified()) {
+                    return -1;
+                } else if (((File) o1).lastModified() < ((File) o2).lastModified()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+        });
+        files[0].delete();
+    }
     public static Uri startCameraByIntent(Activity act, File photoFile) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
