@@ -33,7 +33,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
             if (intent?.extras!!.containsKey(DELIVERY_DETAILS_OBJECT)) {
                 deliveryDetails = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
-                viewModel.deliveryDetails.value = deliveryDetails
+                binding.viewModel?.deliveryDetails.value = deliveryDetails
             }
         }
 
