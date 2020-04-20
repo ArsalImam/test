@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -66,6 +67,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -970,6 +972,40 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
     private void requestDriverStarted() {
         Dialogs.INSTANCE.showLoader(mCurrentActivity);
         geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), false);
+    }
+
+
+    @Subscribe
+    public void onEvent(final Intent intent) {
+        if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BATCH)) {
+                        cancelByPassenger();
+                    }
+                }
+            });
+        }
+    }
+
+
+    private void cancelByPassenger() {
+        AppPreferences.removeReceivedMessageCount();
+        playNotificationSound();
+        Utils.setCallIncomingState();
+        AppPreferences.setTripStatus(TripStatus.ON_FREE);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+        mCurrentActivity.finish();
+    }
+
+
+    private void playNotificationSound() {
+        if (AppPreferences.isCallingActivityOnForeground()) {
+            MediaPlayer
+                    .create(mCurrentActivity, R.raw.notification_sound)
+                    .start();
+        }
     }
 
     /***

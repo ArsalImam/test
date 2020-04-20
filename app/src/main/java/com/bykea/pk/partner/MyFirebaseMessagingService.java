@@ -5,7 +5,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -26,7 +25,6 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
@@ -221,6 +219,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
                     intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
+                    intent.putExtra("msg", callData.getMessage());
+                    Utils.setCallIncomingState();
+                    if (AppPreferences.isJobActivityOnForeground() ||
+                            AppPreferences.isCallingActivityOnForeground()) {
+//                                mContext.sendBroadcast(intent);
+                        EventBus.getDefault().post(intent);
+                    } else {
+                        EventBus.getDefault().post(intent);
+                        Notifications.createCancelNotification(mContext, callData.getMessage());
+                    }
+                }
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_BATCH_BOOKING_CANCELLED)) {
+                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    AppPreferences.removeReceivedMessageCount();
+                    Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
+                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
+                    intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
                     intent.putExtra("msg", callData.getMessage());
                     Utils.setCallIncomingState();
                     if (AppPreferences.isJobActivityOnForeground() ||

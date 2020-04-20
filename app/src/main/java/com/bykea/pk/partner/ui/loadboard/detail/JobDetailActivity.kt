@@ -13,6 +13,9 @@ import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.databinding.JobDetailActBinding
+import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse
+import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.common.setupSnackbar
@@ -31,6 +34,8 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
 import kotlinx.android.synthetic.main.job_detail_act.*
 import java.io.File
@@ -79,7 +84,24 @@ class JobDetailActivity : BaseActivity() {
                 if (!binding.viewmodel?.job?.value?.trip_type?.equals(Constants.TripTypes.BATCH_TYPE, true)!!)
                     ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
                 else {
-                    ActivityStackManager.getInstance().startMultiDeliveryBookingActivity(this@JobDetailActivity)
+                    Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
+                    Handler().postDelayed({
+                        binding.viewmodel?.getTripDetails(object : UserDataHandler() {
+                            override fun onRunningTrips(response: CheckDriverStatusResponse?) {
+                                super.onRunningTrips(response)
+                                Dialogs.INSTANCE.dismissDialog()
+                                if (response?.isSuccess()!!) {
+                                    val trip = Gson().toJson(response.data.trip)
+                                    val type = object : TypeToken<MultiDeliveryCallDriverData>() {
+                                    }.type
+                                    AppPreferences.setDeliveryType(Constants.CallType.BATCH)
+                                    val deliveryCallDriverData: MultiDeliveryCallDriverData = Gson().fromJson(trip, type)
+                                    AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData)
+                                    ActivityStackManager.getInstance().startMultiDeliveryBookingActivity(this@JobDetailActivity)
+                                }
+                            }
+                        })
+                    }, 3000)
                 }
             })
 

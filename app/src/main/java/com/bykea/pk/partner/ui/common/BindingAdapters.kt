@@ -63,7 +63,7 @@ object BindingAdapters {
             SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
             RIDE, DISPATCH_RIDE -> imageView.setImageResource(R.drawable.ride_right)
             MART -> imageView.setImageResource(R.drawable.ic_purchase)
-            COURIER -> imageView.setImageResource(R.drawable.courier_no_caption)
+            COURIER, MULTI_DELIVERY -> imageView.setImageResource(R.drawable.courier_no_caption)
             MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
             MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
             BANK_TRANSFER -> imageView.setImageResource(R.drawable.ic_pay)
@@ -169,7 +169,7 @@ object BindingAdapters {
                 }
             }
         } else {
-            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context,  R.color.textColorPerformance))
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.textColorPerformance))
             autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }
