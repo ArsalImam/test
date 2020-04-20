@@ -3,6 +3,8 @@ package com.bykea.pk.partner.ui.nodataentry
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
@@ -13,6 +15,7 @@ import com.bykea.pk.partner.utils.Constants.Extras.ADD_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Constants.Extras.EDIT_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.GenericListeners
+import com.bykea.pk.partner.utils.RecyclerItemTouchHelper
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 
 class ListDeliveryDetailsActivity : AppCompatActivity() {
@@ -59,5 +62,23 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
 
         recViewDeliveries.adapter = lastAdapter
         binding.viewModel?.requestDeliveryDetails()
+
+        /*val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(90, ItemTouchHelper.LEFT){
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                Dialogs.INSTANCE.showToast("On Swiped")
+            }
+
+        }*/
+        val itemTouchHelperCallback = RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
+                RecyclerItemTouchHelper.RecyclerItemTouchHelperListener { viewHolder, direction, position ->
+                    Dialogs.INSTANCE.showToast("On Swiped")
+                    /*lastAdapter.notifyItemChanged(viewHolder.adapterPosition)*/
+
+                })
+        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recViewDeliveries)
     }
 }

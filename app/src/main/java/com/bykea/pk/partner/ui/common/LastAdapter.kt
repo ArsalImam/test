@@ -2,10 +2,13 @@ package com.bykea.pk.partner.ui.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
 import androidx.recyclerview.widget.RecyclerView
+import com.bykea.pk.partner.databinding.ListItemDeliveryDetailBinding
 
 /**
  * Generic RecyclerView Adapter to be utilize with single item RecyclerView
@@ -15,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 class LastAdapter<T> internal constructor(private val layout: Int, private val itemClickListener: OnItemClickListener<T>) : RecyclerView.Adapter<LastAdapter<T>.MyViewHolder>() {
 
     var items: List<T> = emptyList()
-        set (value) {
+        set(value) {
             field = value
             notifyDataSetChanged()
         }
@@ -23,11 +26,16 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
     interface OnItemClickListener<T> {
         fun onItemClick(item: T)
         @JvmDefault
-        fun onSubItemOneClick(item: T) {}
+        fun onSubItemOneClick(item: T) {
+        }
+
         @JvmDefault
-        fun onSubItemTwoClick(item: T) {}
+        fun onSubItemTwoClick(item: T) {
+        }
+
         @JvmDefault
-        fun onSubItemThreeClick(item: T) {}
+        fun onSubItemThreeClick(item: T) {
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -51,8 +59,11 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
     }
 
     inner class MyViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
-
+        lateinit var viewForeground: LinearLayout
         fun bind(item: T) {
+            if (binding is ListItemDeliveryDetailBinding) {
+                viewForeground = binding.viewForeground
+            }
             binding.setVariable(BR.item, item)
             binding.setVariable(BR.listener, itemClickListener)
             binding.executePendingBindings()

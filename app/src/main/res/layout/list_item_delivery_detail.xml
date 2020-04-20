@@ -17,127 +17,145 @@
 
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:clickable="true"
-        android:focusable="true"
+        android:focusable="true">
 
-        android:orientation="vertical">
-
-        <!--android:onClick="@{() -> listener.onBookingClicked(booking)}"-->
-
-        <LinearLayout
+        <!--View Background-->
+        <RelativeLayout
+            android:id="@+id/view_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:baselineAligned="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/_6sdp"
-            android:paddingTop="@dimen/_15sdp"
-            android:paddingRight="@dimen/_6sdp"
-            android:paddingBottom="@dimen/_15sdp">
+            android:background="#CF0000"
+            tools:ignore="RtlHardcoded">
 
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imageViewCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="@{()->listener.onSubItemOneClick(item)}"
-                    app:srcCompat="@drawable/ic_view" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imageViewEdit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_6sdp"
-                    android:layout_marginRight="@dimen/_6sdp"
-                    android:onClick="@{()->listener.onSubItemTwoClick(item)}"
-                    app:srcCompat="@drawable/ic_edit" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imageViewView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="@{()->listener.onSubItemThreeClick(item)}"
-                    app:srcCompat="@drawable/ic_cancel_red" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_weight="2">
-
-                <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                    android:id="@+id/tVBookingNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:padding="@dimen/_3sdp"
-                    android:text="@{item.bookingNo}"
-                    android:textSize="@dimen/_13sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="KHILHQY7" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_weight="3">
-
-                <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                    android:id="@+id/tVFare"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/gray_bordered_bg"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:padding="@dimen/_3sdp"
-                    android:text="@{item.dropZoneNameUr}"
-                    android:textSize="@dimen/_13sdp"
-                    app:fontName="jameel_noori_nastaleeq.ttf"
-                    tools:text="@string/booking_ur" />
-            </LinearLayout>
-
-            <FrameLayout
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:layout_marginLeft="@dimen/_5sdp">
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10sdp"
+                app:srcCompat="@drawable/ic_cancel_red" />
 
-                <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                    android:id="@+id/tVLocationAlphabet"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/ic_location_without_alphabet"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:paddingBottom="@dimen/_10sdp"
-                    android:text="@{item.deliverySequence}"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="A" />
-            </FrameLayout>
+            <!--<View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/color_grayc7c7c7" />-->
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <View
+        <!--View Foreground-->
+        <LinearLayout
+            android:id="@+id/view_foreground"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/color_grayc7c7c7" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@color/white"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:paddingRight="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_15sdp">
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageViewCancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{()->listener.onSubItemOneClick(item)}"
+                        app:srcCompat="@drawable/ic_view" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageViewEdit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_15sdp"
+                        android:layout_marginRight="@dimen/_15sdp"
+                        android:onClick="@{()->listener.onSubItemTwoClick(item)}"
+                        app:srcCompat="@drawable/ic_edit" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_weight="2">
+
+                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                        android:id="@+id/tVBookingNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:padding="@dimen/_3sdp"
+                        android:text="@{item.bookingNo}"
+                        android:textSize="@dimen/_13sdp"
+                        app:fontName="open_sans_regular.ttf"
+                        tools:text="KHILHQY7" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_weight="3">
+
+                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                        android:id="@+id/tVFare"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gray_bordered_bg"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:padding="@dimen/_3sdp"
+                        android:text="@{item.dropZoneNameUr}"
+                        android:textSize="@dimen/_13sdp"
+                        app:fontName="jameel_noori_nastaleeq.ttf"
+                        tools:text="@string/booking_ur" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                        android:id="@+id/tVLocationAlphabet"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/ic_location_without_alphabet"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:paddingBottom="@dimen/_10sdp"
+                        android:text="@{item.deliverySequence}"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf"
+                        tools:text="A" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/color_grayc7c7c7" />
+        </LinearLayout>
+    </FrameLayout>
 </layout>
