@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
@@ -1130,6 +1131,39 @@ public enum Dialogs {
                     mDialog.dismiss();
                     dataHandler.onCallBack(mEditTextIP.getText().toString(), mEditTextLoadBoardIP.getText().toString());
                 }));
+
+                mDialog.setCancelable(false);
+                showDialog();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showCancelDialog(Activity activity, String message, View.OnClickListener onTickClick, View.OnClickListener onCrossClick) {
+        try {
+            if (activity instanceof AppCompatActivity && !activity.isFinishing()) {
+                dismissDialog();
+                mDialog = new Dialog(activity, R.style.actionSheetTheme);
+                mDialog.setContentView(R.layout.dialog_alert_cancel);
+
+                FontTextView textViewMessage = mDialog.findViewById(R.id.textViewMessage);
+                textViewMessage.setText(message);
+
+                ImageView negativeBtn = mDialog.findViewById(R.id.negativeBtn);
+                ImageView positiveBtn = mDialog.findViewById(R.id.positiveBtn);
+
+                if (onTickClick != null) {
+                    negativeBtn.setOnClickListener(onCrossClick);
+                } else {
+                    negativeBtn.setOnClickListener(v -> dismissDialog());
+                }
+
+                if (onTickClick != null) {
+                    positiveBtn.setOnClickListener(onTickClick);
+                } else {
+                    positiveBtn.setOnClickListener(v -> dismissDialog());
+                }
 
                 mDialog.setCancelable(false);
                 showDialog();

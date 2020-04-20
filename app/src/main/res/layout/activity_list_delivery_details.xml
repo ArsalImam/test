@@ -209,6 +209,7 @@
                 android:layout_weight="1"
                 app:items="@{viewModel.items}"
                 tools:itemCount="10"
+                app:goneUnless= "@{viewModel.items.size() > 0}"
                 app:layoutManager="LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/list_item_delivery_detail" />

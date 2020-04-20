@@ -17,7 +17,7 @@ import com.bykea.pk.partner.databinding.ListItemDeliveryDetailBinding
  */
 class LastAdapter<T> internal constructor(private val layout: Int, private val itemClickListener: OnItemClickListener<T>) : RecyclerView.Adapter<LastAdapter<T>.MyViewHolder>() {
 
-    var items: List<T> = emptyList()
+    var items: ArrayList<T> = ArrayList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -68,5 +68,12 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
             binding.setVariable(BR.listener, itemClickListener)
             binding.executePendingBindings()
         }
+    }
+
+    fun removeItem(itemPosition: Int) {
+        if (!items.isNullOrEmpty()) {
+            items.removeAt(itemPosition)
+        }
+        notifyItemRemoved(itemPosition)
     }
 }

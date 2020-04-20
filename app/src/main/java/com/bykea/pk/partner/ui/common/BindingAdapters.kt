@@ -20,6 +20,7 @@ import com.bykea.pk.partner.widgets.FontTextView
 import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -33,7 +34,7 @@ object BindingAdapters {
     @JvmStatic
     fun setItems(recyclerView: RecyclerView, list: List<Any>) {
         with(recyclerView.adapter as LastAdapter<Any>) {
-            items = list
+            items = ArrayList(list)
         }
     }
 
@@ -169,7 +170,7 @@ object BindingAdapters {
                 }
             }
         } else {
-            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context,  R.color.textColorPerformance))
+            autoFontTextView.setTextColor(ContextCompat.getColor(autoFontTextView.context, R.color.textColorPerformance))
             autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }

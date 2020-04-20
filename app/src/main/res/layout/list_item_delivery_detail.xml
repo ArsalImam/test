@@ -34,14 +34,11 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
                 app:srcCompat="@drawable/ic_cancel_red" />
 
-            <!--<View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:background="@color/color_grayc7c7c7" />-->
         </RelativeLayout>
 
         <!--View Foreground-->
