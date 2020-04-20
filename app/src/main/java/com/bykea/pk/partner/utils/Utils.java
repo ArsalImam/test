@@ -2253,6 +2253,8 @@ public class Utils {
                 return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
+            case "fooddelivery":
+                return R.drawable.ic_food;
             case "courier":
             case "goods":
                 return R.drawable.courier_no_caption;
