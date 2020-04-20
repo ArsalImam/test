@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
+import com.bykea.pk.partner.ui.activities.FSImplFeedbackActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.ForgotPasswordActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
@@ -62,6 +63,7 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
@@ -238,8 +240,12 @@ public class ActivityStackManager {
     }
 
     public void startFeedbackActivity(Context mContext) {
-        Intent intent = new Intent(mContext, FeedbackActivity.class);
-        mContext.startActivity(intent);
+        NormalCallData callData = AppPreferences.getCallData();
+        if (callData != null && CollectionUtils.isNotEmpty(callData.getRuleIds())) {
+            startFeedbackFromResume(mContext, FSImplFeedbackActivity.class);
+            return;
+        }
+        startFeedbackFromResume(mContext, FeedbackActivity.class);
     }
 
     /**
@@ -258,8 +264,8 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startFeedbackFromResume(Context mContext) {
-        Intent intent = new Intent(mContext, FeedbackActivity.class);
+    private void startFeedbackFromResume(Context mContext, Class<? extends Activity> activity) {
+        Intent intent = new Intent(mContext, activity);
         mContext.startActivity(intent);
     }
 
@@ -465,7 +471,7 @@ public class ActivityStackManager {
     /**
      * this method will open the booking detail screen by id
      *
-     * @param mContext from which activity needs to open
+     * @param mContext  from which activity needs to open
      * @param bookingId of the trip for which the data required
      */
     public void startBookingDetail(Activity mContext, String bookingId) {
@@ -615,9 +621,9 @@ public class ActivityStackManager {
     /**
      * this method can be used to open complain addition activity with/without trip details, complain reason
      *
-     * @param activity context from which this needs to open
-     * @param requestCode to identify data after completion in [Activity.onActivityResult]
-     * @param tripDetails on which trip complain is registered
+     * @param activity       context from which this needs to open
+     * @param requestCode    to identify data after completion in [Activity.onActivityResult]
+     * @param tripDetails    on which trip complain is registered
      * @param selectedReason reason, why submitting request if user select any?
      */
     public void startComplainAddActivity(@NonNull Activity activity, @Nullable TripHistoryData tripDetails, @Nullable ComplainReason selectedReason) {

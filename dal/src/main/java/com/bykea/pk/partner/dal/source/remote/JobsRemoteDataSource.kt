@@ -5,6 +5,8 @@ import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.AvailableTripStatus
+import com.bykea.pk.partner.dal.util.RolesByName
 import retrofit2.Call
 import retrofit2.Response
 
@@ -248,9 +250,9 @@ class JobsRemoteDataSource {
      * @param rideType Ride Type
      * @param callback to get results in case of failure or success
      */
-    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, serviceCode: Int, callback: JobsDataSource.FareEstimationCallback) {
         Backend.talos.requestFareEstimation(driverId, accessToken,
-                startLat, startLng, endLat, endLng, type, rideType).enqueue(object : Callback<FareEstimationResponse> {
+                startLat, startLng, endLat, endLng, serviceCode).enqueue(object : Callback<FareEstimationResponse> {
             override fun onSuccess(response: FareEstimationResponse) {
                 callback.onSuccess(response)
             }
@@ -332,6 +334,28 @@ class JobsRemoteDataSource {
         Backend.talos.skipJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
             override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
             override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [callback] this will response back on data/error received
+     */
+    fun getInvoiceDetails(invoiceUrl: String, callback: JobsDataSource.GetInvoiceCallback) {
+        Backend.talos.getInvoiceDetails(invoiceUrl, RolesByName.CANCEL_BY_PARTNER.toLowerCase(),
+                AvailableTripStatus.STATUS_FINISH).enqueue(object : Callback<FeedbackInvoiceResponse> {
+            override fun onSuccess(response: FeedbackInvoiceResponse) = callback.onInvoiceDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
+        })
+    }
+
+    fun submitTemperature(submitTemperatureSubmitRequest: TemperatureSubmitRequest, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
+        Backend.talos.submitTemperature(submitTemperatureSubmitRequest).enqueue(object : Callback<TemperatureSubmitResponse> {
+            override fun onSuccess(response: TemperatureSubmitResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+
         })
     }
 }

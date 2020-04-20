@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 77
-        versionName "7.44"
+        versionCode 80
+        versionName "7.47"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -81,6 +81,10 @@ android {
             staging {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.xyz\""
+            }
+            jenkinsUrl {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"$rootProject.ext.jenkinsTalosUrl\""
             }
             livetesting {
                 dimension "env"

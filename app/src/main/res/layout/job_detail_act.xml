@@ -278,7 +278,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="@{viewmodel.job.sender.name}"
+                            android:text="@{viewmodel.formattedSenderName}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:goneUnless="@{viewmodel.job.sender.name != null}"
