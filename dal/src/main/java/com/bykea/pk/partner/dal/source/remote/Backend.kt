@@ -286,6 +286,9 @@ interface Backend {
     @PUT("/api/v1/trips/{job_id}/details")
     fun pushTripDetails(@Path("job_id") jobId: String, @Body bodyObject: PushJobDetailsRequest): Call<BaseResponse>
 
+    @POST("/api/v1/partner/temperature")
+    fun submitTemperature(@Body bodyObject: TemperatureSubmitRequest): Call<TemperatureSubmitResponse>
+
     companion object {
 
         var FLAVOR_URL_TELOS: String = ""

@@ -12,6 +12,9 @@ import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
 
@@ -100,6 +103,30 @@ public class Settings {
      */
     @SerializedName("priority_list")
     private HashMap<String, String> priorityList;
+
+    /**
+     * Toggle for ask temperature from partner
+     */
+    @SerializedName("partner_temperature_input_toggle")
+    private boolean partnerTemperatureInputToggle;
+
+    /**
+     * Interval for ask temperature from partner
+     */
+    @SerializedName("partner_temperature_input_interval")
+    private long partnerTemperatureInputInterval;
+
+    /**
+     * Min limit for temperature
+     */
+    @SerializedName("partner_temperature_min_limit")
+    private String partnerTemperatureMinLimit;
+
+    /**
+     * Max limit for temperature
+     */
+    @SerializedName("partner_temperature_max_limit")
+    private String partnerTemperatureMaxLimit;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -343,5 +370,39 @@ public class Settings {
      */
     public void setFeedbackInvoiceListingUrl(String feedbackInvoiceListingUrl) {
         this.feedbackInvoiceListingUrl = feedbackInvoiceListingUrl;
+    }
+
+    /**
+     * Check whether partner temperature feature is enable or not
+     *
+     * @return true, if ask temperature else false
+     */
+    public boolean isPartnerTemperatureInputToggle() {
+        return partnerTemperatureInputToggle;
+    }
+
+    /**
+     * Getter for time interval (seconds) to ask input for temperature after this interval
+     *
+     * @return long: Time interval in seconds
+     */
+    public long getPartnerTemperatureInputInterval() {
+        return partnerTemperatureInputInterval;
+    }
+
+    public double getPartnerTemperatureMinLimit() {
+        try {
+            return Double.parseDouble(partnerTemperatureMinLimit);
+        } catch (Exception e) {
+            return MIN_FAHRENHEIT_VALUE;
+        }
+    }
+
+    public double getPartnerTemperatureMaxLimit() {
+        try {
+            return Double.parseDouble(partnerTemperatureMaxLimit);
+        } catch (Exception e) {
+            return MAX_FAHRENHEIT_VALUE;
+        }
     }
 }

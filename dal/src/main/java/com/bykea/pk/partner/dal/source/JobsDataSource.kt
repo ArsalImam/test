@@ -454,4 +454,16 @@ interface JobsDataSource {
     }
 
     fun pushTripDetails(jobId: String, filePath: String, callback: PushTripDetailCallback)
+
+    fun submitTemperature(temperature: Float, callback: LoadDataCallback<TemperatureSubmitResponse>)
+
+    interface LoadDataCallback<T> {
+        fun onDataLoaded(response: T) {
+        }
+
+        fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+
+        }
+    }
+
 }

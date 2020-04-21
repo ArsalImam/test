@@ -170,6 +170,8 @@ import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
@@ -2274,6 +2276,8 @@ public class Utils {
                 return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
+            case "fooddelivery":
+                return R.drawable.ic_food;
             case "courier":
             case "goods":
                 return R.drawable.courier_no_caption;
@@ -3685,5 +3689,33 @@ public class Utils {
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
                     || serviceCode == Constants.ServiceCode.UTILITY;
+    }
+
+
+    /***
+     * Validate to show partner temperature dialog or not
+     * @return Returns true if to ask temperature from partner considering the toggle and time interval
+     */
+    public static boolean isPartnerTemperatureRequired() {
+        boolean temperatureShowToggle = false;
+        long temperatureShowDialogInterval = DIGIT_ZERO;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            temperatureShowToggle = AppPreferences.getSettings().getSettings().isPartnerTemperatureInputToggle();
+            temperatureShowDialogInterval = AppPreferences.getSettings().getSettings().getPartnerTemperatureInputInterval();
+        }
+
+        return temperatureShowToggle &&
+                ((System.currentTimeMillis() - AppPreferences.getLastPartnerTemperatureSubmitTime()) >=
+                        TimeUnit.SECONDS.toMillis(temperatureShowDialogInterval));
+    }
+
+    public static Pair<Double, Double> getMinMaxFahrenheitLimit() {
+        double minFahretheitLimit = MIN_FAHRENHEIT_VALUE;
+        double maxFahretheitLimit = MAX_FAHRENHEIT_VALUE;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            minFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMinLimit();
+            maxFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMaxLimit();
+        }
+        return new Pair<>(minFahretheitLimit, maxFahretheitLimit);
     }
 }

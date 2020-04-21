@@ -6,11 +6,9 @@ import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
-import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
-import com.bykea.pk.partner.dal.source.remote.request.ConcludeJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.FinishJobRequest
-import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
+import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
+import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse
 import com.bykea.pk.partner.dal.util.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -251,6 +249,11 @@ class JobsRepository(
 
     override fun pushTripDetails(jobId: String, filePath: String, callback: JobsDataSource.PushTripDetailCallback) {
         jobsRemoteDataSource.pushTripDetails(jobId, filePath, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
+    override fun submitTemperature(temperature: Float, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
+        val temperatureSubmitRequest = TemperatureSubmitRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), temperature)
+        jobsRemoteDataSource.submitTemperature(temperatureSubmitRequest, callback)
     }
 
     companion object {

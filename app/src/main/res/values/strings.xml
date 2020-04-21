@@ -540,4 +540,10 @@
     <string name="formatted_name">%s (%s)</string>
     <string name="change_it">تبدیل کریں</string>
     <string name="valid_image_required">وصول کردہ کا نام، موبائل نمبر، اور شناختی کارڈ یا دستخط کی تصویر درج کریں</string>
+    <string name="enter_your_temperature">اپنا درجہ حرارت درج کریں</string>
+    <string name="temperature_value_hint">98.2</string>
+    <string name="fahrenheit">(°F)</string>
+    <string name="numbers_with_decimal">0123456789.</string>
+    <string name="temperature_value_error">Durust darja–e–harrarat darj karein (%s - %s°F kay darmiyan)</string>
+    <string name="temperature_error">\u0020آپ کو بخار ہے ، براہ مہربانی  ٹیسٹ کروائیں۔\u0020</string>
 </resources>

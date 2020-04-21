@@ -86,6 +86,7 @@ object BindingAdapters {
             COURIER -> imageView.setImageResource(R.drawable.courier_no_caption)
             MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
             MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
+            FOOD -> imageView.setImageResource(R.drawable.ic_food)
             BANK_TRANSFER -> imageView.setImageResource(R.drawable.ic_pay)
             UTILITY -> imageView.setImageResource(R.drawable.ic_pay)
             else -> imageView.setImageResource(R.drawable.ride_right)

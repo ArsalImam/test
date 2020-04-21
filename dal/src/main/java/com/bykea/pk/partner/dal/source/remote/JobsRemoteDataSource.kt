@@ -357,4 +357,12 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
         })
     }
+
+    fun submitTemperature(submitTemperatureSubmitRequest: TemperatureSubmitRequest, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
+        Backend.talos.submitTemperature(submitTemperatureSubmitRequest).enqueue(object : Callback<TemperatureSubmitResponse> {
+            override fun onSuccess(response: TemperatureSubmitResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+
+        })
+    }
 }
