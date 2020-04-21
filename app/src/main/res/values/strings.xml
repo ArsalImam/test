@@ -345,6 +345,7 @@
     <string name="booking_already_taken_title">معذرت!</string>
     <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
     <string name="no_voice_note_available">No voice note available</string>
+    <string name="no_file_available">No file attached</string>
     <string name="enter_your_ip">enter your ip</string>
     <string name="enter_valid_ip">enter valid url</string>
     <string name="enter_your_loadboard_ip">enter your loadboard ip</string>
@@ -537,6 +538,8 @@
     <string name="formatting_with_street">Street # %s</string>
     <string name="formatting_with_order">Order # %s</string>
     <string name="formatted_name">%s (%s)</string>
+    <string name="change_it">تبدیل کریں</string>
+    <string name="valid_image_required">وصول کردہ کا نام، موبائل نمبر، اور شناختی کارڈ یا دستخط کی تصویر درج کریں</string>
     <string name="enter_your_temperature">اپنا درجہ حرارت درج کریں</string>
     <string name="temperature_value_hint">98.2</string>
     <string name="fahrenheit">(°F)</string>

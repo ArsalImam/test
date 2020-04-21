@@ -2,8 +2,10 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -19,6 +21,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
@@ -31,6 +36,7 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryMsgsSpinnerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -40,6 +46,7 @@ import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -50,6 +57,10 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,10 +68,15 @@ import butterknife.OnTextChanged;
 
 public class FeedbackActivity extends BaseActivity {
 
+    private final String PERMISSION = "android.permission.CAMERA";
     /* @BindView(R.id.logo)
      ImageView logo;*/
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
+    @BindView(R.id.ivTakeImage)
+    ImageView ivTakeImage;
+    @BindView(R.id.ivEyeView)
+    ImageView ivEyeView;
     @BindView(R.id.startAddressTv)
     FontTextView startAddressTv;
     @BindView(R.id.invoiceMsgTv)
@@ -148,6 +164,8 @@ public class FeedbackActivity extends BaseActivity {
 
     int driverWallet;
     private boolean isJobSuccessful = true;
+    private File imageUri;
+    private File tempUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -283,6 +301,9 @@ public class FeedbackActivity extends BaseActivity {
         } else {
             receivedAmountEt.requestFocus();
         }
+
+        //updating the visibility of camera icon
+        ivTakeImage.setVisibility(isProofRequired() ? View.VISIBLE : View.GONE);
     }
 
     private void updateUIforPurcahseService() {
@@ -409,6 +430,13 @@ public class FeedbackActivity extends BaseActivity {
                     }
                     tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
+
+                if (isProofRequired() && selectedMsgPosition == 0) {
+                    ivTakeImage.setVisibility(View.VISIBLE);
+                } else {
+                    ivTakeImage.setVisibility(View.GONE);
+                }
+
             }
 
             @Override
@@ -422,113 +450,156 @@ public class FeedbackActivity extends BaseActivity {
 
     private long mLastClickTime;
 
-    @OnClick(R.id.feedbackBtn)
-    public void onClick() {
+    @OnClick({R.id.ivTakeImage, R.id.feedbackBtn, R.id.ivEyeView})
+    public void onClick(View v) {
         if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
-        /*if (isPurchaseType && llTotal.getVisibility() != View.VISIBLE && StringUtils.isNotBlank(kharedariAmountEt.getText().toString())) {
-            llTotal.setVisibility(View.VISIBLE);
-        } else */
-        if (valid()) {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            logMPEvent();
 
-            JobsDataSource.ConcludeJobCallback jobCallback = new JobsDataSource.ConcludeJobCallback() {
-
-                @Override
-                public void onJobConcluded(@NotNull ConcludeJobBadResponse response) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(response.getMessage());
-                    Utils.setCallIncomingState();
-//                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
-//                    AppPreferences.setAvailableStatus(response.isAvailable());
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    mCurrentActivity.finish();
-                }
-
-
-                @Override
-                public void onJobConcludeFailed(@Nullable String message, @Nullable Integer code) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (code != null && code == HTTPStatus.UNAUTHORIZED) {
-                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+        switch (v.getId()) {
+            case R.id.ivTakeImage:
+                takePicture();
+                break;
+            case R.id.ivEyeView:
+                previewImage();
+                break;
+            case R.id.feedbackBtn:
+                if (valid()) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    logMPEvent();
+                    if (isProofRequired()) {
+                        uploadProofOfDelivery();
                     } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
+                        finishTrip();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void uploadProofOfDelivery() {
+        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+        //TODO need to handle image uploading here
+        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+            @Override
+            public void success(String obj) {
+                imageUri.delete();
+                repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                    @Override
+                    public void onSuccess() {
+                        finishTrip();
                     }
 
-                }
-            };
-
-            boolean isLoadboardJob = Utils.isModernService(callData.getServiceCode());
-            if (isLoadboardJob)
-                repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-
-            if (isBykeaCashType) {
-                if (isLoadboardJob) {
-                    String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
-                    String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
-
-
-                    repo.concludeJob(
-                            callData.getTripId(),
-                            (int) callerRb.getRating(),
-                            Integer.parseInt(receivedAmountEt.getText().toString()),
-                            jobCallback,
-                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
-                            selectedMsgPosition == 0,
-                            null,
-                            name,
-                            number
-                    );
-                } else
-                    new UserRepository().requestFeedback(
-                            mCurrentActivity,
-                            handler,
-                            "",
-                            callerRb.getRating() + "",
-                            receivedAmountEt.getText().toString(),
-                            selectedMsgPosition == 0,
-                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
-                            etReceiverName.getText().toString(),
-                            etReceiverMobileNo.getText().toString()
-                    );
-            } else if (isDeliveryType || isOfflineDeliveryType) {
-                if (isLoadboardJob)
-                    repo.concludeJob(
-                            callData.getTripId(),
-                            (int) callerRb.getRating(),
-                            Integer.valueOf(receivedAmountEt.getText().toString()),
-                            jobCallback,
-                            Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
-                            selectedMsgPosition == 0,
-                            null,
-                            etReceiverName.getText().toString(),
-                            etReceiverMobileNo.getText().toString()
-                    );
-                else
-                    new UserRepository().requestFeedback(mCurrentActivity, handler,
-                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
-                            , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
-                            etReceiverMobileNo.getText().toString());
-            } else if (isPurchaseType) {
-                if (isLoadboardJob)
-                    repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()),
-                            jobCallback, null, null,
-                            Integer.valueOf(kharedariAmountEt.getText().toString()), null, null);
-                else
-                    new UserRepository().requestFeedback(mCurrentActivity, handler,
-                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
-                            kharedariAmountEt.getText().toString());
-            } else {
-                if (isLoadboardJob)
-                    repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()), jobCallback, null, null, null, null, null);
-                else
-                    new UserRepository().requestFeedback(mCurrentActivity, handler,
-                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
+                    @Override
+                    public void onFail(int code, @Nullable String message) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Dialogs.INSTANCE.showToast(message);
+                    }
+                });
             }
 
+            @Override
+            public void fail(int errorCode, @NotNull String errorMsg) {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+            }
+        }, Constants.Amazon.BUCKET_NAME);
+
+    }
+
+    private void finishTrip() {
+        JobsDataSource.ConcludeJobCallback jobCallback = new JobsDataSource.ConcludeJobCallback() {
+
+            @Override
+            public void onJobConcluded(@NotNull ConcludeJobBadResponse response) {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(response.getMessage());
+                Utils.setCallIncomingState();
+//                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
+//                    AppPreferences.setAvailableStatus(response.isAvailable());
+                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                mCurrentActivity.finish();
+            }
+
+
+            @Override
+            public void onJobConcludeFailed(@Nullable String message, @Nullable Integer code) {
+                Dialogs.INSTANCE.dismissDialog();
+                if (code != null && code == HTTPStatus.UNAUTHORIZED) {
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
+                }
+            }
+        };
+
+        boolean isLoadboardJob = Utils.isModernService(callData.getServiceCode());
+        if (isLoadboardJob)
+            repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+
+        if (isBykeaCashType) {
+            if (isLoadboardJob) {
+                String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
+                String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
+
+
+                repo.concludeJob(
+                        callData.getTripId(),
+                        (int) callerRb.getRating(),
+                        Integer.parseInt(receivedAmountEt.getText().toString()),
+                        jobCallback,
+                        Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                        selectedMsgPosition == 0,
+                        null,
+                        name,
+                        number
+                );
+            } else
+                new UserRepository().requestFeedback(
+                        mCurrentActivity,
+                        handler,
+                        "",
+                        callerRb.getRating() + "",
+                        receivedAmountEt.getText().toString(),
+                        selectedMsgPosition == 0,
+                        Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                        etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString()
+                );
+        } else if (isDeliveryType || isOfflineDeliveryType) {
+            if (isLoadboardJob)
+                repo.concludeJob(
+                        callData.getTripId(),
+                        (int) callerRb.getRating(),
+                        Integer.valueOf(receivedAmountEt.getText().toString()),
+                        jobCallback,
+                        Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                        selectedMsgPosition == 0,
+                        null,
+                        etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString()
+                );
+            else
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
+                        , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString());
+        } else if (isPurchaseType) {
+            if (isLoadboardJob)
+                repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()),
+                        jobCallback, null, null,
+                        Integer.valueOf(kharedariAmountEt.getText().toString()), null, null);
+            else
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
+                        kharedariAmountEt.getText().toString());
+        } else {
+            if (isLoadboardJob)
+                repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()), jobCallback, null, null, null, null, null);
+            else
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
         }
     }
 
@@ -673,6 +744,9 @@ public class FeedbackActivity extends BaseActivity {
         } else if (callerRb.getRating() <= 0.0) {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, getString(R.string.passenger_rating));
             return false;
+        } else if (isProofRequired() && imageUri == null) {
+            Dialogs.INSTANCE.showAlertDialogTick(FeedbackActivity.this, null, getString(R.string.valid_image_required), view -> Dialogs.INSTANCE.dismissDialog());
+            return false;
         } else if (StringUtils.isNotBlank(receivedAmountEt.getText().toString())) {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
@@ -686,6 +760,18 @@ public class FeedbackActivity extends BaseActivity {
             }
         }
         return true;
+    }
+
+    private boolean isProofRequired() {
+        List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
+        boolean isRequired = false;
+        for (String code : codes) {
+            if (callData.getServiceCode() != null && code.equalsIgnoreCase(String.valueOf(callData.getServiceCode()))) {
+                isRequired = true;
+                break;
+            }
+        }
+        return isRequired && selectedMsgPosition == 0;
     }
 
     private void setEtError(String error) {
@@ -724,6 +810,94 @@ public class FeedbackActivity extends BaseActivity {
                 Dialogs.INSTANCE.showLocationSettings(mCurrentActivity, Permissions.LOCATION_PERMISSION);
             else {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
+            }
+        } else if (requestCode == Constants.REQUEST_CAMERA) {
+            if (resultCode == RESULT_OK && tempUri != null && tempUri.exists()) {
+                imageUri = tempUri;
+                previewImage();
+                try {
+                    Utils.deleteLastPhotoFromGallery(FeedbackActivity.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void previewImage() {
+        ivEyeView.setVisibility(View.VISIBLE);
+        ivTakeImage.setVisibility(View.GONE);
+        Dialogs.INSTANCE.showChangeImageDialog(FeedbackActivity.this, imageUri, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, view -> {
+            Dialogs.INSTANCE.dismissDialog();
+            takePicture();
+        });
+    }
+
+    private void takePicture() {
+        try {
+            if (checkPermissions()) {
+                tempUri = Utils.createImageFile(FeedbackActivity.this, "doc");
+                Utils.startCameraByIntent(mCurrentActivity, tempUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkPermissions() {
+        boolean hasPermission = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int location = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION);
+            if (location != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{PERMISSION}, 1011);
+            } else {
+                hasPermission = true;
+            }
+        } else {
+            hasPermission = true;
+        }
+        return hasPermission;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull String[] permissions, @NonNull final int[] grantResults) {
+        if (mCurrentActivity != null) {
+            switch (requestCode) {
+                case 1011:
+                    if (grantResults.length > 0) {
+                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                            ivTakeImage.performClick();
+                        } else {
+                            onPermissionResult();
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+
+    private void onPermissionResult() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(PERMISSION)) {
+                Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                        new StringCallBack() {
+                            @Override
+                            public void onCallBack(String msg) {
+                                checkPermissions();
+                            }
+                        }, null, getString(R.string.camera_permission)
+                        , getString(R.string.permissions_docs));
+            } else {
+                Dialogs.INSTANCE.showPermissionSettings(mCurrentActivity,
+                        1011, getString(R.string.permissions_required),
+                        getString(R.string.java_camera_permission_msg));
             }
         }
     }

@@ -247,6 +247,10 @@ class JobsRepository(
         jobsRemoteDataSource.skipJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
+    override fun pushTripDetails(jobId: String, filePath: String, callback: JobsDataSource.PushTripDetailCallback) {
+        jobsRemoteDataSource.pushTripDetails(jobId, filePath, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
     override fun submitTemperature(temperature: Float, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
         val temperatureSubmitRequest = TemperatureSubmitRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), temperature)
         jobsRemoteDataSource.submitTemperature(temperatureSubmitRequest, callback)

@@ -53,6 +53,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -794,6 +795,25 @@ public enum Dialogs {
         });
         mDialog.setCancelable(false);
         showDialog();
+    }
+
+
+    public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            mDialog.setContentView(R.layout.dialog_change_image);
+            ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
+            ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+            View cancelIv = mDialog.findViewById(R.id.llChangeImage);
+            ivPicture.setImageURI(Uri.fromFile(uri));
+            if (negativeClickListener == null)
+                cancelIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                cancelIv.setOnClickListener(negativeClickListener);
+            okIv.setOnClickListener(positiveClickListener);
+            showDialog();
+        }
     }
 
     /**

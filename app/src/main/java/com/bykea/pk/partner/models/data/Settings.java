@@ -5,7 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
@@ -42,6 +45,9 @@ public class Settings {
     private String terms;
     @SerializedName("kronos_partner_summary")
     private String kronosPartnerSummary;
+
+    @SerializedName("proof_of_delivery_service_codes")
+    private String podServiceCodes;
 
     private String cih_range;
     private String partner_topup_limit;
@@ -340,6 +346,16 @@ public class Settings {
      */
     public void setKronosPartnerSummary(String kronosPartnerSummary) {
         this.kronosPartnerSummary = kronosPartnerSummary;
+    }
+
+    public List<String> getPodServiceCodes() {
+        return StringUtils.isEmpty(podServiceCodes) ?
+                Arrays.asList(String.valueOf(Constants.ServiceCode.SEND), String.valueOf(Constants.ServiceCode.SEND_COD),
+                        String.valueOf(Constants.ServiceCode.OFFLINE_DELIVERY)) : Arrays.asList(podServiceCodes.split("\\s*,\\s*"));
+    }
+
+    public void setPodServiceCodes(String podServiceCodes) {
+        this.podServiceCodes = podServiceCodes;
     }
 
     /**
