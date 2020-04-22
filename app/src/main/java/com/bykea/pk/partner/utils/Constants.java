@@ -429,6 +429,7 @@ public class Constants {
         public static final int MART = 25;
         public static final int MOBILE_TOP_UP = 27;
         public static final int MOBILE_WALLET = 28;
+        public static final int FOOD = 36;
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
         public static final int OFFLINE_DELIVERY = 31;
@@ -605,6 +606,7 @@ public class Constants {
     public static class Amazon {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
+        public static String BUCKET_NAME_POD = "proof-of-delivery";
     }
 
     /**

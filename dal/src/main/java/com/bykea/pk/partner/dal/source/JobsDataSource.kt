@@ -421,6 +421,15 @@ interface JobsDataSource {
     }
 
     /**
+     * Callback interface to otp generate
+     */
+    interface PushTripDetailCallback {
+        fun onSuccess()
+
+        fun onFail(code: Int, message: String?) {}
+    }
+
+    /**
      * Callback interface for update booking details
      */
     interface UpdateBykeaCashBookingCallback {
@@ -443,6 +452,8 @@ interface JobsDataSource {
         fun onJobSkip()
         fun onJobSkipFailed()
     }
+
+    fun pushTripDetails(jobId: String, filePath: String, callback: PushTripDetailCallback)
 
     fun submitTemperature(temperature: Float, callback: LoadDataCallback<TemperatureSubmitResponse>)
 

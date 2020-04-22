@@ -337,6 +337,13 @@ class JobsRemoteDataSource {
         })
     }
 
+    fun pushTripDetails(jobId: String, filePath: String, driverId: String, accessToken: String, callback: JobsDataSource.PushTripDetailCallback) {
+        Backend.talos.pushTripDetails(jobId, PushJobDetailsRequest(driverId, accessToken, arrayOf(filePath))).enqueue(object : Callback<BaseResponse> {
+            override fun onSuccess(response: BaseResponse) = callback.onSuccess()
+            override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
+        })
+    }
+
     /**
      * this method can be used to fetch invoice details against the booking id
      *
