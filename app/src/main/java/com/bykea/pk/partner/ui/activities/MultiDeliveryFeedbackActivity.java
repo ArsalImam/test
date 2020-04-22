@@ -59,6 +59,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -539,15 +540,16 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     }
 
     private boolean isProofRequired() {
-//        List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
-//        boolean isRequired = false;
-//        for (String code : codes) {
-//            if (callData.getServiceCode() != null && code.equalsIgnoreCase(String.valueOf(callData.getServiceCode()))) {
-//                isRequired = true;
-//                break;
-//            }
-//        }
-        return tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY && selectedMsgPosition == 0;
+        List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
+        boolean isRequired = false;
+        for (String code : codes) {
+            if (
+            code.equalsIgnoreCase(String.valueOf(tripInfo.getTripStatusCode()))) {
+                isRequired = true;
+                break;
+            }
+        }
+        return isRequired && selectedMsgPosition == 0;
     }
 
     /**
