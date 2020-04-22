@@ -286,6 +286,9 @@ interface Backend {
     @PUT("/api/v1/trips/{job_id}/details")
     fun pushTripDetails(@Path("job_id") jobId: String, @Body bodyObject: PushJobDetailsRequest): Call<BaseResponse>
 
+    @PUT("/api/v1/batch/{batch_id}/cancel/partner")
+    fun cancelMultiDeliveryBatchJob(@Path("batch_id") batch: String, @Body bodyObject: CancelBatchJobRequest): Call<BaseResponse>
+
     @POST("/api/v1/partner/temperature")
     fun submitTemperature(@Body bodyObject: TemperatureSubmitRequest): Call<TemperatureSubmitResponse>
 

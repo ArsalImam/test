@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
@@ -833,7 +835,25 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             @Override
             public void onCallBack(String msg) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                dataRepository.requestMultiDeliveryCancelBatch(msg, handler);
+
+                Injection.INSTANCE
+                        .provideJobsRepository(MultipleDeliveryBookingActivity.this)
+                        .cancelMultiDeliveryBatchJob(
+                                AppPreferences.getMultiDeliveryCallDriverData()
+                                        .getBatchID(), msg, new JobsDataSource.CancelBatchCallback() {
+                                    @Override
+                                    public void onJobCancel() {
+                                        Dialogs.INSTANCE.dismissDialog();
+                                        onCancelBatch();
+                                        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+                                    }
+
+                                    @Override
+                                    public void onJobCancelFailed() {
+                                        Dialogs.INSTANCE.dismissDialog();
+                                        Utils.appToast("Something went wrong");
+                                    }
+                                });
             }
         });
 

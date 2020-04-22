@@ -445,6 +445,8 @@ interface JobsDataSource {
      */
     fun skipJob(jobId: String, callback: SkipJobCallback)
 
+    fun cancelMultiDeliveryBatchJob(id: String, batchID: String, callback: CancelBatchCallback)
+
     /**
      * Callback interface for cancel job
      */
@@ -452,10 +454,18 @@ interface JobsDataSource {
         fun onJobSkip()
         fun onJobSkipFailed()
     }
+    /**
+     * Callback interface for cancel job
+     */
+    interface CancelBatchCallback {
+        fun onJobCancel()
+        fun onJobCancelFailed()
+    }
 
     fun pushTripDetails(jobId: String, filePath: String, callback: PushTripDetailCallback)
 
     fun submitTemperature(temperature: Float, callback: LoadDataCallback<TemperatureSubmitResponse>)
+
 
     interface LoadDataCallback<T> {
         fun onDataLoaded(response: T) {
