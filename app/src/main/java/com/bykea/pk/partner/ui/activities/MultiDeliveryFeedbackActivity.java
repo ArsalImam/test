@@ -703,7 +703,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 }
 
                 if (isProofRequired() && selectedMsgPosition == 0) {
-                    ivTakeImage.setVisibility(View.VISIBLE);
+//                    ivTakeImage.setVisibility(View.VISIBLE);
                     if (imageUri == null) {
                         ivTakeImage.setVisibility(View.VISIBLE);
                     } else {

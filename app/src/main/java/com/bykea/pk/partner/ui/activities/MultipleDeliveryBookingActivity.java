@@ -464,6 +464,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                     setTripStates();
                     updateDropOffMarkers();
                     setPickupBounds();
+                    setPickupBounds();
                     setMarkersBound();
                 }
             });
