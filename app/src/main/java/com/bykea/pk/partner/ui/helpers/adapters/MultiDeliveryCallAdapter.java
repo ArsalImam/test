@@ -95,6 +95,7 @@ public class MultiDeliveryCallAdapter extends RecyclerView.Adapter<MultiDelivery
                     }
                 } else {
                     holder.callIv.setOnClickListener(null);
+                    holder.callIv.setVisibility(View.GONE);
                     holder.callIv.setImageResource(R.drawable.ic_call);
                 }
             } else {

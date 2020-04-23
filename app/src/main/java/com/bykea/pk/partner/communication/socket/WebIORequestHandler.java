@@ -70,6 +70,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 import static com.bykea.pk.partner.DriverApp.getApplication;
+import static com.bykea.pk.partner.utils.Keys.BROADCAST_CANCEL_BATCH;
 
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
@@ -742,6 +743,19 @@ public class WebIORequestHandler {
             String serverResponse = args[0].toString();
             Utils.redLog(TAG, serverResponse);
             EventBus.getDefault().post(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN);
+        }
+    }
+
+    /**
+     * Multi Delivery Trip Batch Cancelled by admin onLoadBoardListFragmentInteractionListener
+     */
+    public static class BatchCancelledByPassengerListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            EventBus.getDefault().post(new Intent(BROADCAST_CANCEL_BATCH));
         }
     }
 

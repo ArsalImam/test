@@ -11,6 +11,8 @@ import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
+import com.bykea.pk.partner.repositories.UserDataHandler
+import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
@@ -168,6 +170,10 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
      */
     fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    fun getTripDetails(userDataHandler: UserDataHandler) {
+        UserRepository().requestRunningTrip(DriverApp.getContext(), userDataHandler)
     }
 
 }

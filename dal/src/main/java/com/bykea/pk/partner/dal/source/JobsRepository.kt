@@ -26,6 +26,7 @@ class JobsRepository(
         private val jobsLocalDataSource: JobsLocalDataSource,
         val pref: SharedPreferences) : JobsDataSource {
 
+
     private val limit: Int = 20
 
     /**
@@ -250,11 +251,16 @@ class JobsRepository(
     override fun pushTripDetails(jobId: String, filePath: String, callback: JobsDataSource.PushTripDetailCallback) {
         jobsRemoteDataSource.pushTripDetails(jobId, filePath, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
+    override fun cancelMultiDeliveryBatchJob(jobId: String, message: String, callback: JobsDataSource.CancelBatchCallback) {
+        jobsRemoteDataSource.cancelMultiDeliveryBatchJob(jobId, message, AppPref.getDriverId(pref),
+                AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
 
     override fun submitTemperature(temperature: Float, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
         val temperatureSubmitRequest = TemperatureSubmitRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), temperature)
         jobsRemoteDataSource.submitTemperature(temperatureSubmitRequest, callback)
     }
+
 
     companion object {
 

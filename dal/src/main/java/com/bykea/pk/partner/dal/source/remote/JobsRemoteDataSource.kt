@@ -344,6 +344,13 @@ class JobsRemoteDataSource {
         })
     }
 
+    fun cancelMultiDeliveryBatchJob(jobId: String, reason: String, driverId: String, accessToken: String, lat: Double, lng: Double, callback: JobsDataSource.CancelBatchCallback) {
+        Backend.talos.cancelMultiDeliveryBatchJob(jobId, CancelBatchJobRequest(driverId, accessToken, lat, lng, reason)).enqueue(object : Callback<BaseResponse> {
+            override fun onSuccess(response: BaseResponse) = callback.onJobCancel()
+            override fun onFail(code: Int, message: String?) = callback.onJobCancelFailed()
+        })
+    }
+
     /**
      * this method can be used to fetch invoice details against the booking id
      *
