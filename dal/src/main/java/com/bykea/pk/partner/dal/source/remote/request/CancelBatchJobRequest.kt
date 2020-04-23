@@ -11,7 +11,7 @@ package com.bykea.pk.partner.dal.source.remote.request
  * @property trip_id Id of trip
  *
  *
- * @author Sibtain Raza
+ * @author ArsalImam
  */
 data class CancelBatchJobRequest(
         val _id: String,
