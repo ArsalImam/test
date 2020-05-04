@@ -43,6 +43,12 @@ android {
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.xyz\""
                 buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.xyz\""
             }
+
+            jenkinsUrl {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"$rootProject.ext.jenkinsTalosUrl\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"$rootProject.ext.jenkinsLoadboardUrl\""
+            }
             livetesting {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://secure.bykea.net:3001\""

@@ -345,6 +345,7 @@
     <string name="booking_already_taken_title">معذرت!</string>
     <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
     <string name="no_voice_note_available">No voice note available</string>
+    <string name="no_file_available">No file attached</string>
     <string name="enter_your_ip">enter your ip</string>
     <string name="enter_valid_ip">enter valid url</string>
     <string name="enter_your_loadboard_ip">enter your loadboard ip</string>
@@ -529,6 +530,7 @@
     <string name="booking_urdu">بکنگز</string>
     <string name="order_number">Order #</string>
     <string name="booking_ur">\u0020بکنگ\u0020</string>
+    <string name="empty_string_sandwich_placeholder">\u0020%1$s\u0020</string>
     <string name="advantages">\u0020فوائد\u0020</string>
     <string name="you_are_going_to_offline">\u0020آپ آف لائن ہورہے ہیں۔\u0020</string>
     <string name="manzil">Manzil</string>
@@ -542,4 +544,16 @@
     <string name="record_voice_message">وائیس میسیج ریکورڈ کریں</string>
     <string name="gps_address_hint">GPS Address*</string>
     <string name="consignee_name">Consignee Name</string>
+    <string name="empty_formatting">%s</string>
+    <string name="formatting_with_street">Street # %s</string>
+    <string name="formatting_with_order">Order # %s</string>
+    <string name="formatted_name">%s (%s)</string>
+    <string name="change_it">تبدیل کریں</string>
+    <string name="valid_image_required">وصول کردہ کا نام، موبائل نمبر، اور شناختی کارڈ یا دستخط کی تصویر درج کریں</string>
+    <string name="enter_your_temperature">اپنا درجہ حرارت درج کریں</string>
+    <string name="temperature_value_hint">98.2</string>
+    <string name="fahrenheit">(°F)</string>
+    <string name="numbers_with_decimal">0123456789.</string>
+    <string name="temperature_value_error">Durust darja–e–harrarat darj karein (%s - %s°F kay darmiyan)</string>
+    <string name="temperature_error">\u0020آپ کو بخار ہے ، براہ مہربانی  ٹیسٹ کروائیں۔\u0020</string>
 </resources>

@@ -28,6 +28,7 @@ import com.bykea.pk.partner.ui.activities.BanksDetailsActivity;
 import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.activities.DeliveryScheduleDetailActivity;
+import com.bykea.pk.partner.ui.activities.FSImplFeedbackActivity;
 import com.bykea.pk.partner.ui.activities.FeedbackActivity;
 import com.bykea.pk.partner.ui.activities.ForgotPasswordActivity;
 import com.bykea.pk.partner.ui.activities.HistoryCancelDetailsActivity;
@@ -64,6 +65,7 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
@@ -230,9 +232,24 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startFeedbackActivity(Context mContext) {
-        Intent intent = new Intent(mContext, FeedbackActivity.class);
+    /***
+     * Start MultiDelivery Booking activity using activity context
+     * @param mContext hold the reference of an activity.
+     */
+    public void startMultiDeliveryBookingActivity(Context mContext, boolean isFetchRequired) {
+        Intent intent = new Intent(mContext, MultipleDeliveryBookingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(Constants.Extras.IS_CALLED_FROM_LOADBOARD, isFetchRequired);
         mContext.startActivity(intent);
+    }
+
+    public void startFeedbackActivity(Context mContext) {
+        NormalCallData callData = AppPreferences.getCallData();
+        if (callData != null && CollectionUtils.isNotEmpty(callData.getRuleIds())) {
+            startFeedbackFromResume(mContext, FSImplFeedbackActivity.class);
+            return;
+        }
+        startFeedbackFromResume(mContext, FeedbackActivity.class);
     }
 
     /**
@@ -251,8 +268,8 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
-    public void startFeedbackFromResume(Context mContext) {
-        Intent intent = new Intent(mContext, FeedbackActivity.class);
+    private void startFeedbackFromResume(Context mContext, Class<? extends Activity> activity) {
+        Intent intent = new Intent(mContext, activity);
         mContext.startActivity(intent);
     }
 

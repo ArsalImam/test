@@ -21,7 +21,8 @@ buildscript {
         supportLibraryVersion = '1.1.0'
         kotlinVersion = '1.3.31'
         okhttp3='3.4.1'
-
+        jenkinsTalosUrl="$System.env.JENKINS_TALOS_URL"
+        jenkinsLoadboardUrl="$System.env.JENKINS_LOADBOARD_URL"
         deps = [
                 markerClustering: "com.google.maps.android:android-maps-utils:$markerClusterVersion"
         ]

@@ -123,7 +123,7 @@ public class MultiDeliveryCallFragment extends Fragment {
             MultiDeliveryDropOff dropOff = new MultiDeliveryDropOff(
                     response.getPassenger().getName(),
                     response.getDropOff().getPickupAddress(),
-                    String.valueOf(i+1), response.getPassenger().getPhone());
+                    String.valueOf(i+1), response.getTrip().getDeliveryInfo().getReceiverPhone());
             //set individual's delivery status
             dropOff.setRideStatus(response.getTrip().getStatus());
             list.add(dropOff);
