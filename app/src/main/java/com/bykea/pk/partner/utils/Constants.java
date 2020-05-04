@@ -9,6 +9,7 @@ public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
+    public static final int DIGIT_FIVE = 5;
     public static final int DIGIT_TEN = 10;
     public static final int DIGIT_SIXTY = 60;
     public static final int DIGIT_HUNDRED = 100;
@@ -96,6 +97,9 @@ public class Constants {
     public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline_delivery.png";
     public static final String CREATOR_PASSENGER = "PASSENGER_ANDROID";
     public static final String ANDROID = "ANDROID";
+    public static final int NUMBER_OF_CHARS_IN_LINE = 40;
+    public static final int OFFSET_FOR_SINGLE_LINE = 37;
+    public static final String IOS = "IOS";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
@@ -435,12 +439,14 @@ public class Constants {
         public static final int OLD_COURIER = 26;
 
         public static final int SEND = 21;
+        public static final int MULTI_DELIVERY = 0;
         public static final int SEND_COD = 22;
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
         public static final int MOBILE_TOP_UP = 27;
         public static final int MOBILE_WALLET = 28;
+        public static final int FOOD = 36;
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
         public static final int OFFLINE_DELIVERY = 31;
@@ -617,6 +623,7 @@ public class Constants {
     public static class Amazon {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
+        public static String BUCKET_NAME_POD = "proof-of-delivery";
     }
 
     /**
@@ -749,6 +756,9 @@ public class Constants {
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
     public static final String ANDROID_RESOURCE_URI = "android.resource://";
+
+    public static final double MIN_FAHRENHEIT_VALUE = 95;
+    public static final double MAX_FAHRENHEIT_VALUE = 99.4;
 
     /**
      * Inner class for Audio recording/player related constants

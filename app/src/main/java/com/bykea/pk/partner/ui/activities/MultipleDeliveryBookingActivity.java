@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +21,10 @@ import androidx.core.content.ContextCompat;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
+import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryCancelBatchResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverArrivedResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryDriverStartedResponse;
@@ -60,10 +64,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.List;
 
@@ -174,23 +182,33 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * Set data according to tripInfo states
      */
     private void setInitialData() {
-        setProgressDialog();
 
+        setProgressDialog();
         //call once on resume app to display last saved time and distance
         callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
-        setTimeDistanceOnResume();
-        ActivityStackManager.getInstance().restartLocationServiceWithCustomIntervals(mCurrentActivity, Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS);
+        isResume = true;
+        if (callDriverData == null) {
+            new UserRepository().requestRunningTrip(mCurrentActivity, handler);
+            return;
+        }
+        updateDataOnReceive();
+    }
+
+    private void updateDataOnReceive() {
         mLocBearing = (float) AppPreferences.getBearing();
         mCurrentLocation = new Location(StringUtils.EMPTY);
         setCurrentLocation();
-        isResume = true;
         AppPreferences.setIsOnTrip(true);
+
+        setTimeDistanceOnResume();
+        ActivityStackManager.getInstance().restartLocationServiceWithCustomIntervals(mCurrentActivity, Constants.ON_TRIP_UPDATE_INTERVAL_IN_MILLISECONDS);
         checkGps();
         setTripStates();
         checkConnectivity(mCurrentActivity);
         AppPreferences.setJobActivityOnForeground(true);
         AppPreferences.setMultiDeliveryJobActivityOnForeground(true);
         Utils.loadImgURL(serviceImageView, callDriverData.getImageURL());
+
     }
 
     /***
@@ -445,6 +463,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
                         addPickupMarker();
                     setTripStates();
                     updateDropOffMarkers();
+                    setPickupBounds();
                     setPickupBounds();
                     setMarkersBound();
                 }
@@ -817,7 +836,25 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             @Override
             public void onCallBack(String msg) {
                 Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                dataRepository.requestMultiDeliveryCancelBatch(msg, handler);
+
+                Injection.INSTANCE
+                        .provideJobsRepository(MultipleDeliveryBookingActivity.this)
+                        .cancelMultiDeliveryBatchJob(
+                                AppPreferences.getMultiDeliveryCallDriverData()
+                                        .getBatchID(), msg, new JobsDataSource.CancelBatchCallback() {
+                                    @Override
+                                    public void onJobCancel() {
+                                        Dialogs.INSTANCE.dismissDialog();
+                                        onCancelBatch();
+                                        EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
+                                    }
+
+                                    @Override
+                                    public void onJobCancelFailed() {
+                                        Dialogs.INSTANCE.dismissDialog();
+                                        Utils.appToast("Something went wrong");
+                                    }
+                                });
             }
         });
 
@@ -958,6 +995,40 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
         geocodeStrategyManager.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude(), false);
     }
 
+
+    @Subscribe
+    public void onEvent(final Intent intent) {
+        if (mCurrentActivity != null && null != intent && null != intent.getExtras()) {
+            mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BATCH)) {
+                        cancelByPassenger();
+                    }
+                }
+            });
+        }
+    }
+
+
+    private void cancelByPassenger() {
+        AppPreferences.removeReceivedMessageCount();
+        playNotificationSound();
+        Utils.setCallIncomingState();
+        AppPreferences.setTripStatus(TripStatus.ON_FREE);
+        ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(false, mCurrentActivity);
+        mCurrentActivity.finish();
+    }
+
+
+    private void playNotificationSound() {
+        if (AppPreferences.isCallingActivityOnForeground()) {
+            MediaPlayer
+                    .create(mCurrentActivity, R.raw.notification_sound)
+                    .start();
+        }
+    }
+
     /***
      * Network Change Broadcast Reciever to listen GPS change & internet conectivity change
      */
@@ -1086,6 +1157,19 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
      * i.e arrived, started & complete.
      */
     private IUserDataHandler handler = new UserDataHandler() {
+
+        @Override
+        public void onRunningTrips(CheckDriverStatusResponse response) {
+            super.onRunningTrips(response);
+            Gson gson = new Gson();
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<MultiDeliveryCallDriverData>() {
+            }.getType();
+            MultiDeliveryCallDriverData deliveryCallDriverData = gson.fromJson(trip, type);
+            AppPreferences.setMultiDeliveryCallDriverData(deliveryCallDriverData);
+            callDriverData = deliveryCallDriverData;
+            updateDataOnReceive();
+        }
 
         @Override
         public void onMultiDeliveryDriverCancelBatch(MultiDeliveryCancelBatchResponse response) {

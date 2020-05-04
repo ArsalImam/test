@@ -136,7 +136,8 @@
             android:excludeFromRecents="false"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
             android:launchMode="singleTop" />
-        <activity android:name=".ui.activities.FeedbackActivity" /> <!-- CROPPING ACTIVITY -->
+        <activity android:name=".ui.activities.FeedbackActivity" />
+        <activity android:name=".ui.activities.FSImplFeedbackActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

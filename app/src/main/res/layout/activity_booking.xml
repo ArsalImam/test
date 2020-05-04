@@ -187,7 +187,7 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_8sdp"
+                android:paddingTop="@dimen/_4sdp"
                 android:paddingEnd="@dimen/_8sdp">
 
                 <ImageView
@@ -354,26 +354,30 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:background="@color/grey_light" />
 
         <LinearLayout
             android:id="@+id/llStartAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="@dimen/_8sdp">
+            android:paddingLeft="@dimen/_8sdp"
+            android:paddingRight="@dimen/_8sdp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
                 android:src="@drawable/ic_drop_off_green" />
 
             <com.bykea.pk.partner.widgets.AutoFitFontTextView
                 android:id="@+id/startAddressTv"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_28sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginLeft="@dimen/_1sdp"
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:maxLines="1"
@@ -398,7 +402,7 @@
                 android:gravity="center"
                 android:text="00:00"
                 android:textColor="@color/color_red"
-                android:textSize="@dimen/_14sdp" />
+                android:textSize="@dimen/_13sdp" />
 
         </LinearLayout>
 
@@ -406,21 +410,25 @@
             android:id="@+id/llEndAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="@dimen/_8sdp"
+            android:paddingLeft="@dimen/_8sdp"
+            android:paddingRight="@dimen/_8sdp"
             android:visibility="gone"
             tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
                 android:src="@drawable/ic_drop_off_blue" />
 
             <com.bykea.pk.partner.widgets.AutoFitFontTextView
                 android:id="@+id/endAddressTv"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_28sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginLeft="@dimen/_1sdp"
                 android:layout_weight="1"
                 android:gravity="left|center_vertical"
                 android:maxLines="1"
@@ -455,7 +463,7 @@
                 android:gravity="center"
                 android:text="00:00"
                 android:textColor="@color/color_red"
-                android:textSize="@dimen/_14sdp" />
+                android:textSize="@dimen/_13sdp" />
 
         </LinearLayout>
 
@@ -516,75 +524,222 @@
             app:fontName="jameel_noori_nastaleeq.ttf"
             tools:visibility="visible" />
 
-        <LinearLayout
-            android:id="@+id/llDetails"
+        <RelativeLayout
+            android:id="@+id/rlAddressMainLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#f5f5f5"
-            android:orientation="vertical"
-            android:padding="@dimen/_8sdp"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:background="#f5f5f5"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingTop="@dimen/_4sdp">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvCustomerName"
-                    android:layout_width="0dp"
+                <RelativeLayout
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#676767"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="Akhtar Khan" />
+                    android:orientation="vertical">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvCustomerPhone"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:textColor="#00729c"
-                    android:textSize="@dimen/_14sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="0341858685" />
+                    <ImageView
+                        android:id="@+id/green_dot"
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:src="@drawable/circle_booking"
+                        android:tint="@color/green_03a83b" />
 
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    <com.bykea.pk.partner.widgets.DashedLine
+                        android:id="@+id/dottedLine"
+                        android:layout_width="@dimen/_2sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_below="@id/green_dot"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center_horizontal"
+                        android:layerType="software"
+                        android:visibility="visible"
+                        app:dashColor="@color/grey"
+                        app:dashGap="@dimen/_1sdp"
+                        app:dashLength="@dimen/_2sdp"
+                        app:dashThickness="@dimen/_2sdp"
+                        app:orientation="vertical" />
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvDetailsAddress"
+                    <ImageView
+                        android:id="@+id/blueDot"
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_below="@id/dottedLine"
+                        android:src="@drawable/circle_booking"
+                        android:tint="@color/blue_1f81a4" />
+
+                </RelativeLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLines="2"
-                    android:textColor="#676767"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="House# 1, street # 34, block B, DHA" />
+                    android:orientation="vertical">
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tvOrderNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLines="2"
-                    android:visibility="gone"
-                    android:textColor="#676767"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="Order # 12345" />
+                    <LinearLayout
+                        android:id="@+id/llPickUpDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#f5f5f5"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/_8sdp"
+                        android:paddingRight="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.bykea.pk.partner.widgets.FontTextView
+                                    android:id="@+id/tvPickUpCustomerName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    app:fontName="open_sans_regular.ttf"
+                                    tools:text="Akhtar Khan" />
+
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <com.bykea.pk.partner.widgets.FontTextView
+                                        android:id="@+id/tvPickUpDetailsAddress"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:maxLines="2"
+                                        android:textColor="#676767"
+                                        android:textSize="@dimen/_12sdp"
+                                        android:visibility="gone"
+                                        app:fontName="open_sans_regular.ttf"
+                                        tools:text="House# 1, street # 34, block B, DHA" />
+
+                                    <com.bykea.pk.partner.widgets.FontTextView
+                                        android:id="@+id/tvPickUpOrderNumber"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:maxLines="2"
+                                        android:textColor="#676767"
+                                        android:textSize="@dimen/_12sdp"
+                                        android:visibility="gone"
+                                        app:fontName="open_sans_regular.ttf"
+                                        tools:text="Order # 12345" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/ivPickUpCustomerPhone"
+                                android:layout_width="@dimen/_26sdp"
+                                android:layout_height="@dimen/_26sdp"
+                                app:srcCompat="@drawable/ic_call_icon" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/vAddressDivider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginLeft="@dimen/_25sdp"
+                        android:alpha="0.2"
+                        android:background="@color/textColorPrimary676767" />
+
+                    <LinearLayout
+                        android:id="@+id/llDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#f5f5f5"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/_8sdp"
+                        android:paddingRight="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <com.bykea.pk.partner.widgets.FontTextView
+                                    android:id="@+id/tvCustomerName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    app:fontName="open_sans_regular.ttf"
+                                    tools:text="Akhtar Khan" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <com.bykea.pk.partner.widgets.FontTextView
+                                        android:id="@+id/tvDetailsAddress"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:maxLines="2"
+                                        android:textColor="#676767"
+                                        android:textSize="@dimen/_12sdp"
+                                        app:fontName="open_sans_regular.ttf"
+                                        tools:text="House# 1, street # 34, block B, DHA" />
+
+                                    <com.bykea.pk.partner.widgets.FontTextView
+                                        android:id="@+id/tvOrderNumber"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:maxLines="2"
+                                        android:textColor="#676767"
+                                        android:textSize="@dimen/_12sdp"
+                                        android:visibility="gone"
+                                        app:fontName="open_sans_regular.ttf"
+                                        tools:text="Order # 12345" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/ivCustomerPhone"
+                            android:layout_width="@dimen/_26sdp"
+                            android:layout_height="@dimen/_26sdp"
+                            app:srcCompat="@drawable/ic_call_icon" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/llBykeaSupportContactInfo"
@@ -592,7 +747,7 @@
             android:layout_height="wrap_content"
             android:background="#f5f5f5"
             android:orientation="horizontal"
-            android:padding="@dimen/_8sdp"
+            android:padding="@dimen/_5sdp"
             android:visibility="gone">
 
             <com.bykea.pk.partner.widgets.FontTextView

@@ -31,6 +31,11 @@ interface JobsDataSource {
     fun getJob(jobId: Long, callback: GetJobRequestCallback)
 
     /**
+     * callback Callback to executed
+     */
+    fun getInvoiceDetails(invoiceUrl: String, bookingId: String, callback: GetInvoiceCallback)
+
+    /**
      * Save JobRequest to data source
      *
      * @param job
@@ -157,7 +162,7 @@ interface JobsDataSource {
      * @param callback to get results in case of failure or success
      */
     fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String,
-                          type: String, rideType: String, callback: FareEstimationCallback)
+                          serviceCode: Int, callback: FareEstimationCallback)
 
     /**
      * Generate OTP
@@ -205,6 +210,23 @@ interface JobsDataSource {
          * @param errorMsg
          */
         fun onDataNotAvailable(errorMsg: String? = "Data Not Available")
+    }
+
+    interface GetInvoiceCallback {
+        /**
+         * On successfully Invoice detail loaded
+         *
+         * @param feedbackInvoiceResponse data on received
+         */
+        fun onInvoiceDataLoaded(feedbackInvoiceResponse: FeedbackInvoiceResponse)
+
+        /**
+         * On successfully Invoice detail loaded
+         *
+         * @param errorMessage
+         */
+        fun onInvoiceDataFailed(errorMessage: String?)
+
     }
 
     /**
@@ -399,6 +421,15 @@ interface JobsDataSource {
     }
 
     /**
+     * Callback interface to otp generate
+     */
+    interface PushTripDetailCallback {
+        fun onSuccess()
+
+        fun onFail(code: Int, message: String?) {}
+    }
+
+    /**
      * Callback interface for update booking details
      */
     interface UpdateBykeaCashBookingCallback {
@@ -414,6 +445,8 @@ interface JobsDataSource {
      */
     fun skipJob(jobId: String, callback: SkipJobCallback)
 
+    fun cancelMultiDeliveryBatchJob(id: String, batchID: String, callback: CancelBatchCallback)
+
     /**
      * Callback interface for cancel job
      */
@@ -421,4 +454,26 @@ interface JobsDataSource {
         fun onJobSkip()
         fun onJobSkipFailed()
     }
+    /**
+     * Callback interface for cancel job
+     */
+    interface CancelBatchCallback {
+        fun onJobCancel()
+        fun onJobCancelFailed()
+    }
+
+    fun pushTripDetails(jobId: String, filePath: String, callback: PushTripDetailCallback)
+
+    fun submitTemperature(temperature: Float, callback: LoadDataCallback<TemperatureSubmitResponse>)
+
+
+    interface LoadDataCallback<T> {
+        fun onDataLoaded(response: T) {
+        }
+
+        fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+
+        }
+    }
+
 }

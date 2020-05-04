@@ -12,14 +12,11 @@ object Fields {
     object FareEstimation {
         const val ID = "_id"
         const val TOKEN_ID = "token_id"
-        const val START_LAT = "s_lat"
-        const val START_LNG = "s_lng"
-        const val END_LAT = "e_lat"
-        const val END_LNG = "e_lng"
-        const val DISTANCE = "distance"
-        const val TIME = "time"
-        const val RIDE_TYPE = "v_type"
-        const val TYPE = "type"
+        const val START_LAT = "pickup_lat"
+        const val START_LNG = "pickup_lng"
+        const val END_LAT = "dropoff_lat"
+        const val END_LNG = "dropoff_lng"
+        const val SERVICE_CODE = "service_code"
     }
 
     object Login {

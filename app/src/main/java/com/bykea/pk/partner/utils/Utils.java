@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -146,7 +147,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -167,6 +170,8 @@ import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
@@ -240,6 +245,26 @@ public class Utils {
     public static int getMaxPageSize(int maxRecordsPerPage, Integer totalRecords) {
         return (int) Math.ceil((double) totalRecords / maxRecordsPerPage);
     }
+
+    public static File createImageFile(Context context, String type) throws IOException {
+        String imageFileName = "BykeaDocument" + type;
+
+        File storageDir = new File(context.getExternalFilesDir(null), ".bykea");
+        if (!storageDir.exists()) storageDir.mkdir();
+
+        File noMediaFile = new File(storageDir, ".nomedia");
+        if (!noMediaFile.exists()) {
+            noMediaFile.createNewFile();
+        }
+
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                Constants.UPLOAD_IMG_EXT,         /* suffix */
+                storageDir      /* directory */
+        );
+        return image;
+    }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -2251,6 +2276,8 @@ public class Utils {
                 return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
+            case "fooddelivery":
+                return R.drawable.ic_food;
             case "courier":
             case "goods":
                 return R.drawable.courier_no_caption;
@@ -2653,7 +2680,25 @@ public class Utils {
         fragment.startActivityForResult(intent1, Constants.REQUEST_GALLERY);
     }
 
+    public static void deleteLastPhotoFromGallery(Context context) {
+        File f = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
+        File[] files = f.listFiles();
+        Arrays.sort(files, new Comparator< Object >() {
+            public int compare(Object o1, Object o2) {
+
+                if (((File) o1).lastModified() > ((File) o2).lastModified()) {
+                    return -1;
+                } else if (((File) o1).lastModified() < ((File) o2).lastModified()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+        });
+        files[0].delete();
+    }
     public static Uri startCameraByIntent(Activity act, File photoFile) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -3644,6 +3689,34 @@ public class Utils {
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
                     || serviceCode == Constants.ServiceCode.UTILITY;
+    }
+
+
+    /***
+     * Validate to show partner temperature dialog or not
+     * @return Returns true if to ask temperature from partner considering the toggle and time interval
+     */
+    public static boolean isPartnerTemperatureRequired() {
+        boolean temperatureShowToggle = false;
+        long temperatureShowDialogInterval = DIGIT_ZERO;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            temperatureShowToggle = AppPreferences.getSettings().getSettings().isPartnerTemperatureInputToggle();
+            temperatureShowDialogInterval = AppPreferences.getSettings().getSettings().getPartnerTemperatureInputInterval();
+        }
+
+        return temperatureShowToggle &&
+                ((System.currentTimeMillis() - AppPreferences.getLastPartnerTemperatureSubmitTime()) >=
+                        TimeUnit.SECONDS.toMillis(temperatureShowDialogInterval));
+    }
+
+    public static Pair<Double, Double> getMinMaxFahrenheitLimit() {
+        double minFahretheitLimit = MIN_FAHRENHEIT_VALUE;
+        double maxFahretheitLimit = MAX_FAHRENHEIT_VALUE;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            minFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMinLimit();
+            maxFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMaxLimit();
+        }
+        return new Pair<>(minFahretheitLimit, maxFahretheitLimit);
     }
 
     /**

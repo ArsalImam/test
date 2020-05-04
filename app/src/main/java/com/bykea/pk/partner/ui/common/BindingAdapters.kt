@@ -1,8 +1,11 @@
 package com.bykea.pk.partner.ui.common
 
+import android.graphics.Paint
+import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -46,6 +49,16 @@ object BindingAdapters {
         }
     }
 
+    @BindingAdapter("app:showLineOverText")
+    @JvmStatic
+    fun showStrikeLine(textView: TextView, enable: Boolean) {
+        textView.paintFlags = if (enable) {
+            textView.paintFlags or STRIKE_THRU_TEXT_FLAG
+        } else {
+            textView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
+    }
+
     /**
      * this binding adapter can be used to load image from url directly from xml
      */
@@ -56,6 +69,13 @@ object BindingAdapters {
         Utils.loadImgPicasso(imageView, R.color.white, url)
     }
 
+    @BindingAdapter("app:urduWrappingText")
+    @JvmStatic
+    fun urduWrappingText(textView: TextView, url: String? = null) {
+        if (url == null) return
+        textView.text = String.format(textView.resources.getString(R.string.empty_string_sandwich_placeholder), url)
+    }
+
     @BindingAdapter("app:serviceCode")
     @JvmStatic
     fun setServiceCode(imageView: ImageView, serviceCode: Int) {
@@ -64,9 +84,10 @@ object BindingAdapters {
             SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
             RIDE, DISPATCH_RIDE -> imageView.setImageResource(R.drawable.ride_right)
             MART -> imageView.setImageResource(R.drawable.ic_purchase)
-            COURIER -> imageView.setImageResource(R.drawable.courier_no_caption)
+            COURIER, MULTI_DELIVERY -> imageView.setImageResource(R.drawable.courier_no_caption)
             MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
             MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
+            FOOD -> imageView.setImageResource(R.drawable.ic_food)
             BANK_TRANSFER -> imageView.setImageResource(R.drawable.ic_pay)
             UTILITY -> imageView.setImageResource(R.drawable.ic_pay)
             else -> imageView.setImageResource(R.drawable.ride_right)
