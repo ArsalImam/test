@@ -9,10 +9,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -42,16 +47,24 @@ import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.bykea.pk.partner.widgets.Fonts;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 
 //import com.thefinestartist.Base;
 
@@ -784,6 +797,25 @@ public enum Dialogs {
         showDialog();
     }
 
+
+    public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            mDialog.setContentView(R.layout.dialog_change_image);
+            ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
+            ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+            View cancelIv = mDialog.findViewById(R.id.llChangeImage);
+            ivPicture.setImageURI(Uri.fromFile(uri));
+            if (negativeClickListener == null)
+                cancelIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                cancelIv.setOnClickListener(negativeClickListener);
+            okIv.setOnClickListener(positiveClickListener);
+            showDialog();
+        }
+    }
+
     /**
      * This method shows a pop up dialog with Urdu text and Tick/Cross as Positive/Negative Button
      * Positive button will have Red background and negative will have green/colorAccent.
@@ -1137,5 +1169,75 @@ public enum Dialogs {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param context     : Calling context
+     * @param dataHandler : Use for the callback of strings.
+     */
+    public Dialog showTemperatureDialog(Context context, StringCallBack dataHandler) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
+            mDialog.setContentView(R.layout.dialog_enter_temperature);
+            try {
+                mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mDialog.setCancelable(false);
+            TextView titleTv = mDialog.findViewById(R.id.titleTv);
+            EditText mEditTextTemperature = mDialog.findViewById(R.id.editTextTemperature);
+            TextView textViewError = mDialog.findViewById(R.id.textViewError);
+
+            Pair<Double, Double> fahrenheitMinMaxLimit = Utils.getMinMaxFahrenheitLimit();
+            titleTv.setText(new SpannableStringBuilder(StringUtils.SPACE)
+                    .append(FontUtils.getStyledTitle(context, context.getString(R.string.fahrenheit),
+                            Fonts.Roboto_Medium.getName()))
+                    .append(FontUtils.getStyledTitle(context, StringUtils.SPACE,
+                            Fonts.Roboto_Medium.getName()))
+                    .append(FontUtils.getStyledTitle(context, context.getString(R.string.enter_your_temperature),
+                            Fonts.Jameel_Noori_Nastaleeq.getName()))
+                    .append(StringUtils.SPACE));
+
+            mEditTextTemperature.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(DIGIT_FIVE, DIGIT_ONE)});
+            mEditTextTemperature.setFocusable(true);
+            mEditTextTemperature.requestFocus();
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(mEditTextTemperature, InputMethodManager.SHOW_FORCED);
+
+            ImageView mPositiveButton = mDialog.findViewById(R.id.positiveBtn);
+
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> {
+                mEditTextTemperature.setText(StringUtils.EMPTY);
+                mDialog.dismiss();
+            });
+
+            mEditTextTemperature.addTextChangedListener(new TextWatcherUtil() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mEditTextTemperature.setError(null);
+                    if (s.toString().length() > DIGIT_ZERO && Double.parseDouble(s.toString()) > fahrenheitMinMaxLimit.second) {
+                        textViewError.setVisibility(View.VISIBLE);
+                    } else {
+                        textViewError.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            mDialog.setOnShowListener(dialog -> mPositiveButton.setOnClickListener(v -> {
+                if (StringUtils.isEmpty(mEditTextTemperature.getText()) ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) < fahrenheitMinMaxLimit.first ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) > fahrenheitMinMaxLimit.second) {
+                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error,
+                            String.valueOf(fahrenheitMinMaxLimit.first), String.valueOf(fahrenheitMinMaxLimit.second)));
+                    mEditTextTemperature.requestFocus();
+                    return;
+                }
+                dataHandler.onCallBack(mEditTextTemperature.getText().toString());
+            }));
+            return mDialog;
+        }
+        return null;
     }
 }

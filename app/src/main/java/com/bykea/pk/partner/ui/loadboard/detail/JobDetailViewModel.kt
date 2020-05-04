@@ -11,6 +11,8 @@ import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.pref.AppPref
+import com.bykea.pk.partner.repositories.UserDataHandler
+import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
@@ -18,6 +20,7 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.google.android.gms.maps.model.LatLng
+import org.apache.commons.lang3.StringUtils
 
 /**
  * The ViewModel used in [JobDetailActivity].
@@ -25,6 +28,14 @@ import com.google.android.gms.maps.model.LatLng
  * @Author: Yousuf Sohail
  */
 class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel(), JobsDataSource.GetJobRequestCallback, JobsDataSource.AcceptJobRequestCallback {
+
+    /**
+     * this property will contain the formatted name
+     * {including sender name + customer name (who created the booking)}
+     */
+    private val _formattedSenderName = MutableLiveData<String>().apply { value = StringUtils.EMPTY }
+    val formattedSenderName: LiveData<String>
+        get() = _formattedSenderName
 
     private val _currentLatLng = MutableLiveData<LatLng>()
     val currentLatLng: LiveData<LatLng>
@@ -101,6 +112,17 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     private fun renderDetails(job: Job?) {
         this._job.value = job
         _isDataAvailable.value = job != null
+        var formattedName = StringUtils.EMPTY
+        job?.sender?.name?.let {
+            formattedName = it
+            job.customer_name?.let {
+                //only show both when they are not same
+                if (!job.customer_name.equals(job.sender?.name, ignoreCase = true)) {
+                    formattedName = String.format(DriverApp.getContext().getString(R.string.formatted_name), job.sender?.name, job.customer_name)
+                }
+            }
+        }
+        this._formattedSenderName.value = formattedName
     }
 
     override fun onJobLoaded(job: Job) {
@@ -148,6 +170,10 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
      */
     fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    fun getTripDetails(userDataHandler: UserDataHandler) {
+        UserRepository().requestRunningTrip(DriverApp.getContext(), userDataHandler)
     }
 
 }

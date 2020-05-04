@@ -88,14 +88,15 @@ class BookingDetailViewModel
             data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
                     StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
                     DriverApp.getContext().getString(R.string.partner_ki_taraf_se_rating),
-                    data.rate?.customer?.toFloat(), Constants.BOOKING_DETAIL_VIEW_TYPE_RATING))
+                    StringUtils.EMPTY_STRING, null, false, Constants.BOOKING_DETAIL_VIEW_TYPE_RATING, data.rate?.customer?.toFloat()!!))
+
         }
 
         if (data.rate?.customer != null) {
             data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
                     StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
                     DriverApp.getContext().getString(R.string.customer_ki_taraf_se_rating),
-                    data.rate?.partner?.toFloat(), Constants.BOOKING_DETAIL_VIEW_TYPE_RATING))
+                    StringUtils.EMPTY_STRING, null, false, Constants.BOOKING_DETAIL_VIEW_TYPE_RATING, data.rate?.partner?.toFloat()!!))
         }
 
         _bookingDetailData.value = data
