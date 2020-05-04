@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by Sibtain Raza on 4/13/2020.
- * smsibtainrn@gmail.com
  */
 class ListDeliveryDetailsViewModel : ViewModel() {
 

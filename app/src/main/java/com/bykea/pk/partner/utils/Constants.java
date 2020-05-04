@@ -299,6 +299,8 @@ public class Constants {
 
     public static class RequestCode {
         public final static int SCAN_FINGER_PRINTS = 123;
+        public static final int PERMISSIONS_REQUEST_FOR_AUDIO_RECORDING_FROM_SETTINGS = 1089;
+        public static final int REQUEST_AUDIO_PERMISSION = 9998;
     }
 
     public static class TimeFormats {
@@ -747,4 +749,19 @@ public class Constants {
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
     public static final String ANDROID_RESOURCE_URI = "android.resource://";
+
+    /**
+     * Inner class for Audio recording/player related constants
+     */
+    public static class Audio {
+        public static final int AUDIO_CHANNELS = 1;
+        public static final int BIT_RATES = 8000;
+        public static final int SAMPLE_RATES = 8000;
+        public static final String AUDIO_FOLDER_NAME = "AudioRecorder";
+        public static final String FILE_EXT = ".aac";
+        public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
+        public static final String AUDIO_FILE_NAME = "voice_note" + FILE_EXT;
+        public static final int AUDIO_MAX_DURATION = 60;
+        public static final int AUDIO_MAX_DURATION_IN_MILLIS = AUDIO_MAX_DURATION * 1000;
+    }
 }

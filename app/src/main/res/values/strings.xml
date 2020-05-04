@@ -544,4 +544,7 @@
     <string name="consignee_name">Consignee Name</string>
     <string name="cash_on_delivery_ur">\u0020کیش آن ڈیلیوری\u0020</string>
     <string name="cancel_with_question_mark">\u0020کینسل؟\u0020</string>
+    <string name="permission_required_msg">For the best Bykea experience, please enable Permission -> Location &amp; Phone in the application settings.></string>
+    <string name="permission_msg_audio_settings">To record/play audio message, please enable Permission -> Microphone &amp; Storage in the application settings.</string>
+    <string name="permission_msg_audio">Bykea needs Microphone &amp; Storage Permissions to record/play audio message, please enable these permissions for better user experience.</string>
 </resources>

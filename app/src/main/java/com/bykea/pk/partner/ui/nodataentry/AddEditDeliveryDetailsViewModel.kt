@@ -7,7 +7,6 @@ import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetail
 
 /**
  * Created by Sibtain Raza on 4/14/2020.
- * smsibtainrn@gmail.com
  */
 class AddEditDeliveryDetailsViewModel : ViewModel() {
 

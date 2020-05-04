@@ -1172,4 +1172,43 @@ public enum Dialogs {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Shows Alert Dialog
+     *
+     * @param context   calling Context
+     * @param titleText Title Text
+     * @param message   Message Text
+     * @param onClick   On Positive Button Click callback
+     */
+    public void showAlertDialogNew(Context context, String titleText, String message, View.OnClickListener onClick) {
+        showAlertDialogNew(context, titleText, message, onClick, false);
+    }
+
+    /**
+     * Shows Alert Dialog
+     *
+     * @param context   calling Context
+     * @param titleText Title Text
+     * @param message   Message Text
+     * @param onClick   On Positive Button Click callback
+     */
+    public void showAlertDialogNew(Context context, String titleText, String message, View.OnClickListener onClick, boolean isCancellable) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_permission);
+
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+        ImageView cancelIv = mDialog.findViewById(R.id.ivNegative);
+
+        FontTextView title = mDialog.findViewById(R.id.cancelTitle);
+        FontTextView msg = mDialog.findViewById(R.id.tvErrorMessage);
+
+        title.setText(titleText);
+        msg.setText(message);
+        okIv.setOnClickListener(onClick);
+        cancelIv.setOnClickListener(v -> dismissDialog());
+        mDialog.setCancelable(isCancellable);
+        showDialog();
+    }
 }

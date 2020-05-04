@@ -30,7 +30,7 @@ interface Backend {
     /**
      * Get Driver Email Update
      * @param email Driver email
-     * @param _id Driver id 
+     * @param _id Driver id
      * @param token_id Driver access token
      * @return Email is successfully update or not
      */
@@ -272,6 +272,29 @@ interface Backend {
 
     @POST("/api/v1/trips/{job_id}/skip")
     fun skipJobRequest(@Path("job_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
+
+    @POST("/v2/batch/{batch_id}/bookings")
+    fun addDeliveryDetail(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String, deliveryDetailAddRequest: DeliveryDetailAddRequest
+    ): Call<DeliveryDetailAddResponse>
+
+    @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun editDeliveryDetail(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String,
+            deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest): Call<DeliveryDetailUpdateResponse>
+
+    @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun removeDeliveryDetail(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String,
+            deliveryDetailRemoveRequest: DeliveryDetailRemoveRequest): Call<DeliveryDetailRemoveResponse>
 
     companion object {
 
