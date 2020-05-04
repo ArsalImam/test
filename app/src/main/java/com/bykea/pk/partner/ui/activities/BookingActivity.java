@@ -78,6 +78,7 @@ import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
+import com.bykea.pk.partner.widgets.DashedLine;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -104,6 +105,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -138,6 +140,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
+    @BindView(R.id.blueDot)
+    ImageView blueDot;
+    @BindView(R.id.rlAddressMainLayout)
+    RelativeLayout rlAddressMainLayout;
+    @BindView(R.id.green_dot)
+    ImageView greenDot;
+    @BindView(R.id.dottedLine)
+    DashedLine dottedLine;
     @BindView(R.id.llStartAddress)
     LinearLayout llStartAddress;
     @BindView(R.id.startAddressTv)
@@ -192,6 +202,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     ImageView ivTopUp;
     @BindView(R.id.llDetails)
     LinearLayout llDetails;
+    @BindView(R.id.llPickUpDetails)
+    LinearLayout llPickUpDetails;
+    @BindView(R.id.vAddressDivider)
+    View vAddressDivider;
+    @BindView(R.id.tvPickUpCustomerName)
+    TextView tvPickUpCustomerName;
+    @BindView(R.id.tvPickUpDetailsAddress)
+    TextView tvPickUpDetailsAddress;
+    @BindView(R.id.tvPickUpOrderNumber)
+    TextView tvPickUpOrderNumber;
     @BindView(R.id.llBykeaSupportContactInfo)
     LinearLayout llBykeaSupportContactInfo;
     @BindView(R.id.tvDetailsNotEntered)
@@ -202,8 +222,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     FontTextView tvCustomerName;
     @BindView(R.id.tvBykeaSupportContactNumber)
     FontTextView tvBykeaSupportContactNumber;
-    @BindView(R.id.tvCustomerPhone)
-    FontTextView tvCustomerPhone;
+    @BindView(R.id.ivCustomerPhone)
+    ImageView ivCustomerPhone;
+    @BindView(R.id.ivPickUpCustomerPhone)
+    ImageView ivPickUpCustomerPhone;
     @BindView(R.id.tvDetailsAddress)
     FontTextView tvDetailsAddress;
     @BindView(R.id.cartBadge)
@@ -304,16 +326,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
                                 callData = normalCallData;
                                 if (callData != null && callData.getServiceCode() != null) {
-                                    if(callData.getServiceCode() == OFFLINE_RIDE ||
+                                    if (callData.getServiceCode() == OFFLINE_RIDE ||
                                             callData.getServiceCode() == OFFLINE_DELIVERY) {
                                         chatBtn.setVisibility(View.GONE);
                                     }
-                                    if(Utils.isVoiceNoteRequired(callData.getServiceCode())){
+                                    if (Utils.isVoiceNoteRequired(callData.getServiceCode())) {
                                         voiceNoteUrl = AppPreferences.getBookingVoiceNoteUrlAvailable();
-                                        if(StringUtils.isNotEmpty(voiceNoteUrl)){
+                                        if (StringUtils.isNotEmpty(voiceNoteUrl)) {
                                             voiceNoteRl.setVisibility(View.VISIBLE);
                                         }
                                     }
+                                    updateCustomerPickUp();
                                 }
                                 updateDropOff(isDirectionApiTimeResetRequired);
                                 isDirectionApiTimeResetRequired = false;
@@ -323,7 +346,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             if (normalCallData.getStatus() != null && normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                                 AppPreferences.setCallData(normalCallData);
                                 AppPreferences.setTripStatus(normalCallData.getStatus());
-                                ActivityStackManager.getInstance().startFeedbackFromResume(mCurrentActivity);
+                                ActivityStackManager.getInstance().startFeedbackActivity(mCurrentActivity);
                             } else {
                                 setInitialData();
                             }
@@ -351,6 +374,78 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
     };
+
+    /**
+     * this will show pickup details window only if trip is in accept or arrived state
+     * and call type is delivery
+     */
+    private void updateCustomerPickUp() {
+        if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                || (Utils.isDeliveryService(callData.getCallType()) && callData.getServiceCode() != OFFLINE_DELIVERY))
+                && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
+                callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
+            llPickUpDetails.setVisibility(View.VISIBLE);
+            vAddressDivider.setVisibility(View.VISIBLE);
+            greenDot.setVisibility(View.VISIBLE);
+            int dotsHeightOffset = getResources().getDimensionPixelOffset(R.dimen._28sdp);
+            if (!StringUtils.isEmpty(callData.getSenderName())) {
+                tvPickUpCustomerName.setVisibility(View.VISIBLE);
+                tvPickUpCustomerName.setText(callData.getSenderName());
+                if (callData.getSenderName().length() > Constants.NUMBER_OF_CHARS_IN_LINE) {
+                    dotsHeightOffset += getResources().getDimensionPixelOffset(R.dimen._17sdp);
+                }
+            } else {
+                tvPickUpCustomerName.setVisibility(View.GONE);
+                dotsHeightOffset -= getResources().getDimensionPixelOffset(R.dimen._17sdp);
+//                dotsHeightOffset = dotsHeightOffset - 32;
+            }
+            if (!StringUtils.isEmpty(callData.getSenderPhone())) {
+                ivPickUpCustomerPhone.setTag(callData.getSenderPhone());
+                ivPickUpCustomerPhone.setVisibility(View.VISIBLE);
+            } else
+                ivPickUpCustomerPhone.setVisibility(View.GONE);
+            if (!StringUtils.isEmpty(callData.getSenderAddress())) {
+                tvPickUpDetailsAddress.setText(String.format(getString(R.string.formatting_with_street), callData.getSenderAddress()));
+                tvPickUpDetailsAddress.setVisibility(View.VISIBLE);
+                if (callData.getSenderAddress().length() > Constants.NUMBER_OF_CHARS_IN_LINE) {
+                    dotsHeightOffset += getResources().getDimensionPixelOffset(R.dimen._17sdp);
+                }
+            }
+            if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP) && !StringUtils.isEmpty(callData.getOrder_no())) {
+                tvPickUpOrderNumber.setText(String.format(getString(R.string.formatting_with_order), callData.getOrder_no()));
+                tvPickUpOrderNumber.setVisibility(View.VISIBLE);
+            } else {
+                tvPickUpOrderNumber.setVisibility(View.GONE);
+            }
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                vAddressDivider.setVisibility(View.GONE);
+            }
+
+            if (!Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                    && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                dottedLine.setVisibility(View.VISIBLE);
+                blueDot.setVisibility(View.VISIBLE);
+                dottedLine.getLayoutParams().height = dotsHeightOffset;
+                dottedLine.requestLayout();
+            } else {
+                dottedLine.setVisibility(View.GONE);
+                blueDot.setVisibility(View.GONE);
+            }
+        } else {
+            greenDot.setVisibility(View.GONE);
+            dottedLine.setVisibility(View.GONE);
+            vAddressDivider.setVisibility(View.GONE);
+            llPickUpDetails.setVisibility(View.GONE);
+            if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                    || (callData.getServiceCode() != null && callData.getServiceCode() == OFFLINE_DELIVERY) || Utils.isRideService(callData.getCallType())
+                    || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
+                blueDot.setVisibility(View.GONE);
+            }
+        }
+        rlAddressMainLayout.setVisibility(greenDot.getVisibility() == View.VISIBLE
+                || blueDot.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
+
+    }
 
     private UserDataHandler driversDataHandler = new UserDataHandler() {
 
@@ -647,6 +742,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 dataRepository.requestRunningTrip(mCurrentActivity, handler);
             }
         }
+
         super.onResume();
     }
 
@@ -749,8 +845,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections,
-            R.id.ivAddressEdit, R.id.ivTopUp, R.id.tvCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber,
+    @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections, R.id.ivPickUpCustomerPhone,
+            R.id.ivAddressEdit, R.id.ivTopUp, R.id.ivCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber,
             R.id.imgViewAudioPlay, R.id.progressBarForAudioPlay})
     public void onClick(View view) {
 
@@ -765,7 +861,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         ActivityStackManager.getInstance()
                                 .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
                     } else {
-                        Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                        if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.IOS))
+                            Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                        else
+                            Utils.sendSms(mCurrentActivity, callData.getSenderPhone());
                     }
                 }
                 break;
@@ -783,19 +882,33 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
 //                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
-            case R.id.tvCustomerPhone:
-                String phoneNumber = tvCustomerPhone.getText().toString();
-                if (StringUtils.isNotBlank(phoneNumber)) {
-                    if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                        Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
-                    } else {
-                        Utils.callingIntent(mCurrentActivity, phoneNumber);
+            case R.id.ivCustomerPhone:
+                if (ivCustomerPhone.getTag() != null) {
+                    String phoneNumber = ivCustomerPhone.getTag().toString();
+                    if (StringUtils.isNotBlank(phoneNumber)) {
+                        if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                            Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                        } else {
+                            Utils.callingIntent(mCurrentActivity, phoneNumber);
+                        }
                     }
                 }
                 break;
             case R.id.tvBykeaSupportContactNumber:
                 if (StringUtils.isNotBlank(tvBykeaSupportContactNumber.getText().toString())) {
                     Utils.callingIntent(mCurrentActivity, tvBykeaSupportContactNumber.getText().toString());
+                }
+                break;
+            case R.id.ivPickUpCustomerPhone:
+                if (ivPickUpCustomerPhone.getTag() != null) {
+                    String phoneNumber = ivPickUpCustomerPhone.getTag().toString();
+                    if (StringUtils.isNotBlank(phoneNumber)) {
+                        if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                            Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                        } else {
+                            Utils.callingIntent(mCurrentActivity, phoneNumber);
+                        }
+                    }
                 }
                 break;
             case R.id.cancelBtn:
@@ -1278,6 +1391,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 setAddressDetailsVisible();
             }
 
+            if (callData.isDispatcher()) {
+                rlAddressMainLayout.setVisibility(View.GONE);
+            }
             cvDirections.setVisibility(View.VISIBLE);
             if (StringUtils.isBlank(callData.getStatus())) {
                 setAcceptedState();
@@ -1412,26 +1528,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
+                if (callData.getServiceCode() != null &&
+                        callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
+                        callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
+                    if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
+                        cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
+                    } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
+                        cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                    }
+                }
             }
             tvCodAmount.setText(String.format(getString(R.string.amount_rs), String.valueOf(cashKiWasooliValue)));
         }
-
-        /*if (StringUtils.isNotBlank(callData.getCodAmount())) {
-            tvCodAmount.setText(String.format(getString(R.string.amount_rs), callData.getCodAmount()));
-            if (Utils.isPurchaseService(callData.getCallType())) {
-                tvCashWasooliLabel.setText(R.string.kharidari_label);
-            }
-        } else {
-            tvCodAmount.setText(R.string.dash);
-        }
-
-        if (Utils.isDeliveryService(callData.getCallType())) {
-            if (!callData.isCod()) {
-                llTopMiddle.setVisibility(View.INVISIBLE);
-            } else {
-                llTopMiddle.setVisibility(View.VISIBLE);
-            }
-        }*/
         if (callData.getKraiKiKamai() != 0) {
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), callData.getKraiKiKamai()));
         } else if (AppPreferences.getEstimatedFare() != 0) {
@@ -2414,6 +2522,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     showDropOffAddress();
                     AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
                     setOnArrivedData();
+                    BookingActivity.this.updateCustomerPickUp();
                     // CHANGING DRIVER MARKER FROM SINGLE DRIVER TO DRIVER AND PASSENGER MARKER...
                     changeDriverMarker();
                     updateEtaAndCallData("0", "0");
@@ -2463,6 +2572,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     hideButtonOnArrived();
                     callData = AppPreferences.getCallData();
                     callData.setStatus(TripStatus.ON_START_TRIP);
+
+                    updateCustomerPickUp();
                     setStartedState();
                     long startTripTime = System.currentTimeMillis();
                     AppPreferences.setStartTripTime(startTripTime);
@@ -2553,6 +2664,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             callData.setTotalFare(String.valueOf(data.getInvoice().getTotal()));
             callData.setTotalMins(String.valueOf(data.getInvoice().getMinutes()));
             callData.setDistanceCovered(String.valueOf(data.getInvoice().getKm()));
+            callData.setRuleIds(data.getTrip().getRule_ids());
             if (StringUtils.isNotBlank(String.valueOf(data.getInvoice().getWallet_deduction()))) {
                 callData.setWallet_deduction(String.valueOf(data.getInvoice().getWallet_deduction()));
             }
@@ -2635,16 +2747,33 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Entered by user for creation of booking
      */
     private void setAddressDetailsVisible() {
+        if (Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) return;
+
         String senderAddress = callData.getSenderAddress() != null ? callData.getSenderAddress() : "";
         String senderName = callData.getSenderName() != null ? callData.getSenderName() : "";
         String senderPhone = Utils.phoneNumberToShow(callData.getSenderPhone());
 
         llDetails.setVisibility(View.VISIBLE);
         tvDetailsNotEntered.setVisibility(View.GONE);
-
-        setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress());
-        setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName());
-        setAddressDetailEitherSenderOrReceiver(tvCustomerPhone, senderPhone, Utils.phoneNumberToShow(callData.getReceiverPhone()));
+        blueDot.setVisibility(View.VISIBLE);
+        if (Utils.isDeliveryService(callData.getCallType())) {
+            setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, StringUtils.EMPTY,
+                    callData.getReceiverAddress(), getString(R.string.formatting_with_street));
+            setAddressDetailEitherSenderOrReceiver(tvCustomerName, StringUtils.EMPTY,
+                    callData.getReceiverName(), getString(R.string.empty_formatting));
+        } else {
+            setAddressDetailEitherSenderOrReceiver(tvDetailsAddress, senderAddress, callData.getReceiverAddress(), getString(R.string.formatting_with_street));
+            setAddressDetailEitherSenderOrReceiver(tvCustomerName, senderName, callData.getReceiverName(), getString(R.string.empty_formatting));
+        }
+        if (!StringUtils.isEmpty(callData.getReceiverPhone())) {
+            ivCustomerPhone.setTag(Utils.phoneNumberToShow(callData.getReceiverPhone()));
+            ivCustomerPhone.setVisibility(View.VISIBLE);
+        } else if (!StringUtils.isEmpty(senderPhone)) {
+            ivCustomerPhone.setTag(senderPhone);
+            ivCustomerPhone.setVisibility(View.VISIBLE);
+        } else {
+            ivCustomerPhone.setVisibility(View.GONE);
+        }
 
         if (isBykeaCashJob) {
             tvDetailsBanner.setVisibility(View.VISIBLE);
@@ -2661,6 +2790,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (senderAddress.equalsIgnoreCase(callData.getStartAddress()) && senderName.equalsIgnoreCase(callData.getPassName()) && senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
                     llDetails.setVisibility(View.GONE);
                     tvDetailsNotEntered.setVisibility(View.GONE);
+                    blueDot.setVisibility(View.GONE);
                 }
                 if (senderAddress.equalsIgnoreCase(callData.getStartAddress())) {
                     tvDetailsAddress.setVisibility(View.GONE);
@@ -2669,7 +2799,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     tvCustomerName.setVisibility(View.GONE);
                 }
                 if (senderPhone.equalsIgnoreCase(callData.getPhoneNo())) {
-                    tvCustomerPhone.setVisibility(View.GONE);
+                    ivCustomerPhone.setVisibility(View.GONE);
                 }
             }
         }
@@ -2679,6 +2809,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             String orderNumber = getString(R.string.order_number) + StringUtils.SPACE + callData.getOrder_no();
             tvOrderNumber.setText(orderNumber);
         }
+
     }
 
     /**
@@ -2687,14 +2818,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * @param textField     : Widget Reference
      * @param senderField   : Sender Value (Name, Address or Phone)
      * @param receiverField : Receiver Value (Name, Address or Phone)
+     * @param format        : format to display text in fields
      */
-    public void setAddressDetailEitherSenderOrReceiver(FontTextView textField, String senderField, String receiverField) {
+    public void setAddressDetailEitherSenderOrReceiver(FontTextView textField, String senderField, String receiverField, String format) {
         if (StringUtils.isNotBlank(receiverField)) {
             textField.setVisibility(View.VISIBLE);
-            textField.setText(receiverField);
+            textField.setText(String.format(format, receiverField));
         } else if (StringUtils.isNotBlank(senderField)) {
             textField.setVisibility(View.VISIBLE);
             textField.setText(senderField);
+            textField.setText(String.format(format, senderField));
         } else {
             textField.setVisibility(View.GONE);
         }
@@ -2715,7 +2848,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void voiceClipPlayDownload(String url) {
         if (mediaPlayer != null) {
-            imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_audio_stop));
+            imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_audio_stop));
             imgViewAudioPlay.setEnabled(false);
             progressBarForAudioPlay.setVisibility(View.VISIBLE);
             mediaPlayer.start();
@@ -2726,7 +2859,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 @Override
                 public void success(File obj) {
                     Dialogs.INSTANCE.dismissDialog();
-                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity,R.drawable.ic_audio_stop));
+                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_audio_stop));
                     imgViewAudioPlay.setEnabled(false);
                     progressBarForAudioPlay.setVisibility(View.VISIBLE);
                     mediaPlayer = new MediaPlayer();
@@ -2740,7 +2873,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -2759,7 +2892,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * Handle to maintain the status for progress bar
      */
     public void startPlayProgressUpdater() {
-        if(mediaPlayer!=null) {
+        if (mediaPlayer != null) {
             progressBarForAudioPlay.setProgress(mediaPlayer.getCurrentPosition());
             if (mediaPlayer.isPlaying()) {
                 Runnable notification = this::startPlayProgressUpdater;

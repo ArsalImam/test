@@ -24,8 +24,8 @@ object BykeaAmazonClient {
      * @param file     audio file
      * @param callback callback for success/fail upload
      */
-    fun uploadFile(fileName: String, file: File, callback: Callback<String>) {
-        UploadFileToAmazon(fileName, callback).execute(file)
+    fun uploadFile(fileName: String, file: File, callback: Callback<String>, bucketName: String = Constants.Amazon.BUCKET_NAME) {
+        UploadFileToAmazon(fileName, callback, bucketName).execute(file)
     }
 
 
@@ -41,10 +41,10 @@ object BykeaAmazonClient {
     /**
      * AsyncTask to upload file to Amazon
      */
-    private class UploadFileToAmazon(var fileName: String, var callback: Callback<String>) : AsyncTask<File, Unit, PutObjectResult>() {
+    private class UploadFileToAmazon(var fileName: String, var callback: Callback<String>, val bucketName: String) : AsyncTask<File, Unit, PutObjectResult>() {
         override fun doInBackground(vararg files: File): PutObjectResult? {
             return try {
-                val p = PutObjectRequest(Constants.Amazon.BUCKET_NAME, fileName, files[0])
+                val p = PutObjectRequest(bucketName, fileName, files[0])
                 val client = AmazonS3Client(amazonCredential()) //creating Amazon client instance
                 client.putObject(p) //upload file to amazon now
             } catch (e: Exception) {

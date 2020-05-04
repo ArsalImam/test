@@ -8,14 +8,15 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DocumentsData;
@@ -339,11 +340,11 @@ public class DocumentsRegistrationActivity extends BaseActivity {
             public void onClick(View view) {
 //                Dialogs.INSTANCE.dismissDialog();
 
-                    ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                    if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
-                        DocumentsGridAdapter.getInstance().resetTheInstance();
-                    }
-                    mCurrentActivity.finish();
+                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
+                    DocumentsGridAdapter.getInstance().resetTheInstance();
+                }
+                mCurrentActivity.finish();
             }
         });
     }
@@ -370,7 +371,12 @@ public class DocumentsRegistrationActivity extends BaseActivity {
                 Dialogs.INSTANCE.dismissDialog();
                 try {
                     if (checkPermissions()) {
-                        mAdapter.getItem(mAdapter.getSelectedItemIndex()).setImageUri(Utils.startCameraByIntent(mCurrentActivity, createImageFile()));
+                        File file = Utils.createImageFile(
+                                DocumentsRegistrationActivity.this, mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType()
+                        );
+                        mAdapter.setImgPath(file.getAbsolutePath());
+                        mAdapter.getItem(mAdapter.getSelectedItemIndex())
+                                .setImageUri(Utils.startCameraByIntent(mCurrentActivity, file));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -126,6 +126,7 @@ public class Keys {
 
     /*JOB ACTIVITY CANCEL JOB LISTENER*/
     public static final String BROADCAST_CANCEL_RIDE = "BROADCAST_CANCEL_RIDE";
+    public static final String BROADCAST_CANCEL_BATCH = "BROADCAST_CANCEL_BATCH";
     public static final String BROADCAST_DROP_OFF_UPDATED = "BROADCAST_DROP_OFF_UPDATED";
     public static final String TRIP_DATA_UPDATED = "TRIP_DATA_UPDATED";
     public static final String BROADCAST_CANCEL_BY_ADMIN = "BROADCAST_CANCEL_BY_ADMIN";
@@ -208,4 +209,6 @@ public class Keys {
      */
     public static final String LOADBOARD_SELECTED_PICKUP_ZONE = "LOADBOARD_SELECTED_PICKUP_ZONE";
     public static final String LOADBOARD_SELECTED_DROPOFF_ZONE = "LOADBOARD_SELECTED_DROPOFF_ZONE";
+
+    public static final String LAST_PARTNER_TEMPERATURE_SUBMIT = "LAST_PARTNER_TEMPERATURE_SUBMIT";
 }

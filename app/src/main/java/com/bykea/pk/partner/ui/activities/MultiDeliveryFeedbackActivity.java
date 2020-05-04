@@ -1,9 +1,12 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
-import android.os.SystemClock;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
@@ -18,7 +21,13 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.MultiDeliveryInvoiceData;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -30,36 +39,48 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryMsgsSpinnerAdapter;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-import static butterknife.OnTextChanged.*;
+import static butterknife.OnTextChanged.Callback;
 
 /**
  * Multi Delivery Feedback Activity for providing
  * feedback for passenger against the multi delivery trip
  */
 public class MultiDeliveryFeedbackActivity extends BaseActivity {
+    private final String PERMISSION = "android.permission.CAMERA";
 
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
+    @BindView(R.id.ivTakeImage)
+    ImageView ivTakeImage;
+    @BindView(R.id.ivEyeView)
+    ImageView ivEyeView;
 
     @BindView(R.id.startAddressTv)
     FontTextView startAddressTv;
@@ -140,6 +161,8 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     @BindView(R.id.etReceiverMobileNo)
     FontEditText etReceiverMobileNo;
 
+    private File imageUri;
+    private File tempUri;
     private long totalCharges;
     private int PARTNER_TOP_UP_NEGATIVE_LIMIT;
     private int AMOUNT_LIMIT;
@@ -239,6 +262,10 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
             }
         });
+
+        //updating the visibility of camera icon
+        ivTakeImage.setVisibility(isProofRequired() ? View.VISIBLE : View.GONE);
+
     }
 
     /**
@@ -308,19 +335,65 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.feedbackBtn)
-    public void onClick() {
+    @OnClick({R.id.ivTakeImage, R.id.feedbackBtn, R.id.ivEyeView})
+    public void onClick(View v) {
         //For avoiding multiple clicks
         if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
+        switch (v.getId()) {
+            case R.id.feedbackBtn:
+                if (isValid()) {
+                    requestFeedback();
+                }
+                break;
 
-        if (isValid()) {
-            requestFeedback();
+            case R.id.ivEyeView:
+                previewImage();
+                break;
+            case R.id.ivTakeImage:
+                takePicture();
+                break;
         }
+    }
 
+    private void uploadProofOfDelivery(int receivedAmount) {
+        JobsRepository repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+        //TODO need to handle image uploading here
+        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+            @Override
+            public void success(String obj) {
+                imageUri.delete();
+                repo.pushTripDetails(tripInfo.getId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                    @Override
+                    public void onSuccess() {
+                        repository.requestMultiDeliveryDriverFeedback(
+                                tripInfo.getId(),
+                                receivedAmount,
+                                callerRb.getRating(),
+                                true,
+                                selectedMsgPosition == 0,
+                                Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                                etReceiverName.getText().toString(),
+                                etReceiverMobileNo.getText().toString(),
+                                handler);
+                    }
 
+                    @Override
+                    public void onFail(int code, @Nullable String message) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Dialogs.INSTANCE.showToast(message);
+                    }
+                });
+            }
+
+            @Override
+            public void fail(int errorCode, @NotNull String errorMsg) {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+            }
+        }, Constants.Amazon.BUCKET_NAME);
     }
 
     /**
@@ -338,16 +411,20 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
             //submit delivery feedback
             if (tripInfo.getTripStatusCode() == Constants.TRIP_STATUS_CODE_DELIVERY) {
-                repository.requestMultiDeliveryDriverFeedback(
-                        tripInfo.getId(),
-                        receivedAmount,
-                        callerRb.getRating(),
-                        true,
-                        selectedMsgPosition == 0,
-                        Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
-                        etReceiverName.getText().toString(),
-                        etReceiverMobileNo.getText().toString(),
-                        handler);
+                if (selectedMsgPosition == 0)
+                    uploadProofOfDelivery(receivedAmount);
+                else
+                    repository.requestMultiDeliveryDriverFeedback(
+                            tripInfo.getId(),
+                            receivedAmount,
+                            callerRb.getRating(),
+                            true,
+                            selectedMsgPosition == 0,
+                            Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                            etReceiverName.getText().toString(),
+                            etReceiverMobileNo.getText().toString(),
+                            handler);
+
             }
             //submit ride feedback
             else {
@@ -444,6 +521,9 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn,
                     getString(R.string.passenger_rating));
             return false;
+        } else if (isProofRequired() && imageUri == null) {
+            Dialogs.INSTANCE.showAlertDialogTick(MultiDeliveryFeedbackActivity.this, null, getString(R.string.valid_image_required), view -> Dialogs.INSTANCE.dismissDialog());
+            return false;
         } else if (StringUtils.isNotBlank(receivedAmountEt.getText().toString())) {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
@@ -457,6 +537,19 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
             }
         }
         return true;
+    }
+
+    private boolean isProofRequired() {
+        List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
+        boolean isRequired = false;
+        for (String code : codes) {
+            if (
+            code.equalsIgnoreCase(String.valueOf(tripInfo.getTripStatusCode()))) {
+                isRequired = true;
+                break;
+            }
+        }
+        return isRequired && selectedMsgPosition == 0;
     }
 
     /**
@@ -608,6 +701,18 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                     }
                     tvAmountToGet.setText(Utils.getCommaFormattedAmount(totalCharges));
                 }
+
+                if (isProofRequired() && selectedMsgPosition == 0) {
+//                    ivTakeImage.setVisibility(View.VISIBLE);
+                    if (imageUri == null) {
+                        ivTakeImage.setVisibility(View.VISIBLE);
+                    } else {
+                        ivEyeView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    ivTakeImage.setVisibility(View.GONE);
+                    ivEyeView.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -617,5 +722,100 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         });
         spDeliveryStatus.setAdapter(adapter);
         spDeliveryStatus.setSelection(0);
+    }
+
+
+    private void previewImage() {
+        ivEyeView.setVisibility(View.VISIBLE);
+        ivTakeImage.setVisibility(View.GONE);
+        Dialogs.INSTANCE.showChangeImageDialog(MultiDeliveryFeedbackActivity.this, imageUri, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, view -> {
+            Dialogs.INSTANCE.dismissDialog();
+            takePicture();
+        });
+    }
+
+    private void takePicture() {
+        try {
+            if (checkPermissions()) {
+                tempUri = Utils.createImageFile(MultiDeliveryFeedbackActivity.this, "doc");
+                Utils.startCameraByIntent(mCurrentActivity, tempUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkPermissions() {
+        boolean hasPermission = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int location = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION);
+            if (location != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{PERMISSION}, 1011);
+            } else {
+                hasPermission = true;
+            }
+        } else {
+            hasPermission = true;
+        }
+        return hasPermission;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull String[] permissions, @NonNull final int[] grantResults) {
+        if (mCurrentActivity != null) {
+            switch (requestCode) {
+                case 1011:
+                    if (grantResults.length > 0) {
+                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                            ivTakeImage.performClick();
+                        } else {
+                            onPermissionResult();
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_CAMERA) {
+            if (resultCode == RESULT_OK && tempUri != null && tempUri.exists()) {
+                imageUri = tempUri;
+                previewImage();
+                try {
+                    Utils.deleteLastPhotoFromGallery(MultiDeliveryFeedbackActivity.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void onPermissionResult() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(PERMISSION)) {
+                Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                        new StringCallBack() {
+                            @Override
+                            public void onCallBack(String msg) {
+                                checkPermissions();
+                            }
+                        }, null, getString(R.string.camera_permission)
+                        , getString(R.string.permissions_docs));
+            } else {
+                Dialogs.INSTANCE.showPermissionSettings(mCurrentActivity,
+                        1011, getString(R.string.permissions_required),
+                        getString(R.string.java_camera_permission_msg));
+            }
+        }
     }
 }
