@@ -8,6 +8,9 @@ import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddResponse
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailRemoveResponse
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailUpdateResponse
 import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse
 import com.bykea.pk.partner.dal.util.*
 import java.util.*
@@ -251,6 +254,7 @@ class JobsRepository(
     override fun pushTripDetails(jobId: String, filePath: String, callback: JobsDataSource.PushTripDetailCallback) {
         jobsRemoteDataSource.pushTripDetails(jobId, filePath, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
+
     override fun cancelMultiDeliveryBatchJob(jobId: String, message: String, callback: JobsDataSource.CancelBatchCallback) {
         jobsRemoteDataSource.cancelMultiDeliveryBatchJob(jobId, message, AppPref.getDriverId(pref),
                 AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
@@ -259,6 +263,18 @@ class JobsRepository(
     override fun submitTemperature(temperature: Float, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
         val temperatureSubmitRequest = TemperatureSubmitRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), temperature)
         jobsRemoteDataSource.submitTemperature(temperatureSubmitRequest, callback)
+    }
+
+    override fun addDeliveryDetail(batchID: String, deliveryDetailAddRequest: DeliveryDetailAddRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddResponse>) {
+        jobsRemoteDataSource.addDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, deliveryDetailAddRequest, callback)
+    }
+
+    override fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailUpdateResponse>) {
+        jobsRemoteDataSource.updateDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, deliveryDetailUpdateRequest, callback)
+    }
+
+    override fun removeDeliveryDetail(batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse>) {
+        jobsRemoteDataSource.removeDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, callback)
     }
 
 

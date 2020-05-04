@@ -372,4 +372,25 @@ class JobsRemoteDataSource {
 
         })
     }
+
+    fun addDeliveryDetails(driverId: String, accessToken: String, batchID: String, deliveryDetailAddRequest: DeliveryDetailAddRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddResponse>) {
+        Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetailAddRequest).enqueue(object : Callback<DeliveryDetailAddResponse> {
+            override fun onSuccess(response: DeliveryDetailAddResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun updateDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailUpdateResponse>) {
+        Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetailUpdateRequest).enqueue(object : Callback<DeliveryDetailUpdateResponse> {
+            override fun onSuccess(response: DeliveryDetailUpdateResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun removeDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse>) {
+        Backend.talos.removeDeliveryDetail(driverId, accessToken, batchID, bookingId).enqueue(object : Callback<DeliveryDetailRemoveResponse> {
+            override fun onSuccess(response: DeliveryDetailRemoveResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
 }

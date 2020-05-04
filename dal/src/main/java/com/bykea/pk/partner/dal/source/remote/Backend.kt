@@ -300,20 +300,21 @@ interface Backend {
     ): Call<DeliveryDetailAddResponse>
 
     @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
-    fun editDeliveryDetail(
+    fun updateDeliveryDetail(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String,
-            deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest): Call<DeliveryDetailUpdateResponse>
+            deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest
+    ): Call<DeliveryDetailUpdateResponse>
 
     @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")
     fun removeDeliveryDetail(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
-            @Path("booking_id") bookingId: String,
-            deliveryDetailRemoveRequest: DeliveryDetailRemoveRequest): Call<DeliveryDetailRemoveResponse>
+            @Path("booking_id") bookingId: String
+    ): Call<DeliveryDetailRemoveResponse>
 
     companion object {
 

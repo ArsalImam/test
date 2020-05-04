@@ -3,6 +3,8 @@ package com.bykea.pk.partner.dal.source
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
+import com.bykea.pk.partner.dal.source.remote.request.DeliveryDetailAddRequest
+import com.bykea.pk.partner.dal.source.remote.request.DeliveryDetailUpdateRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
@@ -454,6 +456,7 @@ interface JobsDataSource {
         fun onJobSkip()
         fun onJobSkipFailed()
     }
+
     /**
      * Callback interface for cancel job
      */
@@ -475,5 +478,11 @@ interface JobsDataSource {
 
         }
     }
+
+    fun addDeliveryDetail(batchID: String, deliveryDetailAddRequest: DeliveryDetailAddRequest, callback: LoadDataCallback<DeliveryDetailAddResponse>)
+
+    fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest, callback: LoadDataCallback<DeliveryDetailUpdateResponse>)
+
+    fun removeDeliveryDetail(batchID: String, bookingId: String, callback: LoadDataCallback<DeliveryDetailRemoveResponse>)
 
 }
