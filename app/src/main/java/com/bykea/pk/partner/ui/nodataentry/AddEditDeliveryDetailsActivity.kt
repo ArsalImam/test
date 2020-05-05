@@ -14,20 +14,26 @@ import android.widget.SeekBar
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
+import com.bykea.pk.partner.dal.source.remote.response.FareEstimationResponse
 import com.bykea.pk.partner.dal.util.DIGIT_ZERO
 import com.bykea.pk.partner.databinding.ActivityAddEditDeliveryDetailsBinding
+import com.bykea.pk.partner.models.data.PlacesResult
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
-import com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT
-import com.bykea.pk.partner.utils.Constants.DIGIT_ONE
+import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.audio.MediaPlayerHolder
 import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
 import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
+import kotlinx.android.synthetic.main.fragment_offline_rides.*
+import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util.*
 
@@ -42,9 +48,10 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private var isRecordingAudio: Boolean = false
     private var isAudioReleased: Boolean = false
     private val audioRecordTimerHandler = Handler()
-    private var recordedAudioTime = Constants.DIGIT_ZERO
+    private var recordedAudioTime = DIGIT_ZERO
     var flowForAddOrEdit: Int = DIGIT_ZERO
     var deliveryDetails: DeliveryDetails? = null
+    var mDropOffResult: PlacesResult? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +91,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                         }
                     }
                 }
+            }
+
+            override fun navigateToPlaceSearch() {
+                val returndropoffIntent = Intent(this@AddEditDeliveryDetailsActivity, SelectPlaceActivity::class.java)
+                /*returndropoffIntent.putExtra(Constants.Extras.SELECTED_ITEM, AppPreferences.getDriverDestination())*/
+                returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE)
+                startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
             }
         }
     }
@@ -230,7 +244,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * record audio recording time to display when playing recorded audio
      */
     private fun startAudioRecordTimer() {
-        recordedAudioTime = -1
+        recordedAudioTime = NEGATIVE_DIGIT_ONE
         audioTimer = Timer(false)
         audioTimer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
@@ -266,16 +280,18 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             mMediaPlayerHolder.reset()
             mMediaPlayerHolder.release()
             setPlayIcon(true)
-            audioSeekbar.progress = 0
+            audioSeekbar.progress = DIGIT_ZERO
             Utils.deleteFile(getAudioFile())
             showRecordAudioLayout()
         }
+
         audioPlayPauseIV.setOnClickListener {
             if (mMediaPlayerHolder.isPlaying) pausePlaying() else startPlaying()
         }
+
         audioSeekbar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
-                    var userSelectedPosition = 0
+                    var userSelectedPosition = DIGIT_ZERO
 
                     override fun onStartTrackingTouch(seekBar: SeekBar) {
                         mUserIsSeeking = true
@@ -293,9 +309,9 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                         mMediaPlayerHolder.seekTo(userSelectedPosition)
                     }
                 })
+
         registerOnRecordingListener()
     }
-
 
     /**
      * register voice recording listener
@@ -339,7 +355,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             audioRecordButton.isListenForRecord = false
             audioRecordButton.setOnRecordClickListener {
                 ActivityCompat.requestPermissions(this@AddEditDeliveryDetailsActivity, arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        Constants.RequestCode.REQUEST_AUDIO_PERMISSION)
+                        RequestCode.REQUEST_AUDIO_PERMISSION)
             }
         }
     }
@@ -380,7 +396,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * @param time time is secs to display in UI
      */
     private fun getFormattedTime(time: Int): String {
-        return if (time < 10) "0:0$time" else "0:$time"
+        return if (time < DIGIT_TEN) "0:0$time" else "0:$time"
     }
 
     /**
@@ -407,7 +423,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                         getString(R.string.permissions_required), getString(R.string.permission_msg_audio)) {
                     Dialogs.INSTANCE.dismissDialog()
                     ActivityCompat.requestPermissions(this@AddEditDeliveryDetailsActivity, arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            Constants.RequestCode.REQUEST_AUDIO_PERMISSION)
+                            RequestCode.REQUEST_AUDIO_PERMISSION)
                 }
             } else {
                 Dialogs.INSTANCE.showPermissionSettings(this@AddEditDeliveryDetailsActivity,
@@ -445,6 +461,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     fun getFilePath(): String {
         return "${Environment.getExternalStorageDirectory()}${File.separator}${Constants.Audio.AUDIO_FOLDER_NAME}"
     }
+
     /**
      * media player listener for tracking current position of playing audio
      */
@@ -468,16 +485,33 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             audioSeekTimeTV.text = getFormattedTime(recordedAudioTime)
             pausePlaying()
         }
-
     }
 
     /**
-     * onActivity result for Audio Recording Permission
+     * Set The DropOff Address
+     */
+    private fun setCallForETA() {
+        tVDropOffAddress.text = mDropOffResult?.name
+    }
+
+    /**
+     * On Activity Result For
+     * 1) Places Search Result
+     * 2) Audio Recording Permission
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (Permissions.hasAudioPermissions()) {
-            audioRecordButton.isListenForRecord = true
-            registerOnRecordingListener()
+        if (resultCode == RESULT_OK && requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
+            mDropOffResult = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT)
+            if (mDropOffResult != null) {
+                setCallForETA()
+            } else {
+                Utils.appToast(getString(R.string.error_try_again))
+            }
+        } else {
+            if (Permissions.hasAudioPermissions()) {
+                audioRecordButton.isListenForRecord = true
+                registerOnRecordingListener()
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

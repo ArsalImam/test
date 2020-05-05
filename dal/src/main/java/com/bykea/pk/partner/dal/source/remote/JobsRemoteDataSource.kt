@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.AvailableTripStatus
@@ -373,16 +374,16 @@ class JobsRemoteDataSource {
         })
     }
 
-    fun addDeliveryDetails(driverId: String, accessToken: String, batchID: String, deliveryDetailAddRequest: DeliveryDetailAddRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddResponse>) {
-        Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetailAddRequest).enqueue(object : Callback<DeliveryDetailAddResponse> {
-            override fun onSuccess(response: DeliveryDetailAddResponse) = callback.onDataLoaded(response)
+    fun addDeliveryDetails(driverId: String, accessToken: String, batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetailAddEditRequest).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
+            override fun onSuccess(editResponse: DeliveryDetailAddEditResponse) = callback.onDataLoaded(editResponse)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
 
-    fun updateDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailUpdateResponse>) {
-        Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetailUpdateRequest).enqueue(object : Callback<DeliveryDetailUpdateResponse> {
-            override fun onSuccess(response: DeliveryDetailUpdateResponse) = callback.onDataLoaded(response)
+    fun updateDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetailAddEditRequest).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
+            override fun onSuccess(editResponse: DeliveryDetailAddEditResponse) = callback.onDataLoaded(editResponse)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }

@@ -9,4 +9,9 @@ interface GenericListener {
      * Tapped When To Add Or Edit Delivery Details
      */
     fun addOrEditDeliveryDetails()
+
+    /**
+     * Navigate to Place Search Activity
+     */
+    fun navigateToPlaceSearch()
 }

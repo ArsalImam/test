@@ -32,7 +32,11 @@ class ListDeliveryDetailsViewModel : ViewModel() {
     fun requestDeliveryDetails() {
         val deliveryDetailsList: ArrayList<DeliveryDetails> = ArrayList()
         for (i in 65..90) {
-            deliveryDetailsList.add(DeliveryDetails(i.toChar().toString(), ((i % 65 + 1)).toString() + StringUtils.SPACE + DriverApp.getContext().getString(R.string.sawari), "KHIJKL" + ((i % 65 + 1)).toString()))
+            val deliveryDetails = DeliveryDetails()
+            deliveryDetails.details?.batch_id = ((i % 65 + 1)).toString()
+            deliveryDetails.details?.trip_no = "KHIJKL" + ((i % 65 + 1)).toString()
+            deliveryDetails.dropoff?.address = DriverApp.getContext().getString(R.string.sawari)
+            deliveryDetailsList.add(deliveryDetails)
         }
         _items = deliveryDetailsList
     }

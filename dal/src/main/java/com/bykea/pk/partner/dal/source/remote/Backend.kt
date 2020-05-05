@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.RequestParams
@@ -296,8 +297,9 @@ interface Backend {
     fun addDeliveryDetail(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
-            @Path("batch_id") batchId: String, deliveryDetailAddRequest: DeliveryDetailAddRequest
-    ): Call<DeliveryDetailAddResponse>
+            @Path("batch_id") batchId: String,
+            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+    ): Call<DeliveryDetailAddEditResponse>
 
     @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
     fun updateDeliveryDetail(
@@ -305,8 +307,8 @@ interface Backend {
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String,
-            deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest
-    ): Call<DeliveryDetailUpdateResponse>
+            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+    ): Call<DeliveryDetailAddEditResponse>
 
     @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")
     fun removeDeliveryDetail(

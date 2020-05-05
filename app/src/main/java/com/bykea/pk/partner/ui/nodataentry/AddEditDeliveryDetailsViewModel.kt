@@ -5,11 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.remote.request.DeliveryDetailAddRequest
-import com.bykea.pk.partner.dal.source.remote.request.DeliveryDetailUpdateRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddResponse
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailUpdateResponse
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResponse
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.utils.Dialogs
 
@@ -26,9 +24,9 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
         get() = _deliveryDetails
 
     fun requestAddDeliveryDetails() {
-        val deliveryDetailAddRequest = DeliveryDetailAddRequest()
-        jobRespository.addDeliveryDetail("PENDING", deliveryDetailAddRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailAddResponse> {
-            override fun onDataLoaded(response: DeliveryDetailAddResponse) {
+        val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
+        jobRespository.addDeliveryDetail("PENDING", deliveryDetailAddRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+            override fun onDataLoaded(editResponse: DeliveryDetailAddEditResponse) {
                 Dialogs.INSTANCE.dismissDialog()
             }
 
@@ -39,9 +37,9 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     }
 
     fun requestEditDeliveryDetail() {
-        val deliveryDetailUpdateRequest = DeliveryDetailUpdateRequest()
-        jobRespository.updateDeliveryDetail("PENDING", "PENDING", deliveryDetailUpdateRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailUpdateResponse> {
-            override fun onDataLoaded(response: DeliveryDetailUpdateResponse) {
+        val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
+        jobRespository.updateDeliveryDetail("PENDING", "PENDING", deliveryDetailAddRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+            override fun onDataLoaded(editResponse: DeliveryDetailAddEditResponse) {
                 Dialogs.INSTANCE.dismissDialog()
             }
 
