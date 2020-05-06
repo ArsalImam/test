@@ -23,29 +23,33 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     val deliveryDetails: MutableLiveData<DeliveryDetails>
         get() = _deliveryDetails
 
+
     fun requestAddDeliveryDetails() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
-        jobRespository.addDeliveryDetail("PENDING", deliveryDetailAddRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
-            override fun onDataLoaded(editResponse: DeliveryDetailAddEditResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
+        jobRespository.addDeliveryDetail(deliveryDetails.value?.details?.batch_id.toString(), deliveryDetailAddRequest,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
 
-            override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
-        })
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 
     fun requestEditDeliveryDetail() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
-        jobRespository.updateDeliveryDetail("PENDING", "PENDING", deliveryDetailAddRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
-            override fun onDataLoaded(editResponse: DeliveryDetailAddEditResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
+        jobRespository.updateDeliveryDetail(deliveryDetails.value?.details?.batch_id.toString(),
+                deliveryDetails.value?.details?.trip_id.toString(), deliveryDetailAddRequest,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
 
-            override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
-        })
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 }

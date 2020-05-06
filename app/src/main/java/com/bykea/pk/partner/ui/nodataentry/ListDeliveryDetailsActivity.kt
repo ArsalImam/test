@@ -6,7 +6,6 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
@@ -89,11 +88,9 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     Dialogs.INSTANCE.showCancelDialog(this@ListDeliveryDetailsActivity,
                             DriverApp.getContext().getString(R.string.cancel_with_question_mark),
                             {
-                                /*
-                                TODO : OPEN, REMOVE BOTTOM CODE
-                                removedItemPosition = position
-                                viewModel.removeDeliveryDetail()
-                                */
+                                //TODO : OPEN, REMOVE BOTTOM CODE
+                                /*removedItemPosition = position
+                                viewModel.removeDeliveryDetail(lastAdapter.items.get(position))*/
 
                                 lastAdapter.removeItem(position)
                                 if (lastAdapter.items.isEmpty()) {

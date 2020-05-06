@@ -9,8 +9,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 open class DeliveryDetails : Parcelable {
-    val meta: MetaData? = null
-    val pickup: DeliveryDetailsLocationInfoData? = null
-    val dropoff: DeliveryDetailsLocationInfoData? = null
-    val details: DeliveryDetailInfo? = null
+    var meta: MetaData? = null
+    var pickup: DeliveryDetailsLocationInfoData? = null
+    var dropoff: DeliveryDetailsLocationInfoData? = null
+    var details: DeliveryDetailInfo? = null
 }
