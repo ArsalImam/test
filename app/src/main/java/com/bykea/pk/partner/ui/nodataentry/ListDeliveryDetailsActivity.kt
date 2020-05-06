@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.ui.nodataentry
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -10,13 +12,16 @@ import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
+import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
-import com.bykea.pk.partner.utils.Constants.Extras.ADD_DELIVERY_DETAILS
-import com.bykea.pk.partner.utils.Constants.Extras.EDIT_DELIVERY_DETAILS
+import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE
+import com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_DELIVERY_DETAILS
+import com.bykea.pk.partner.utils.Constants.RequestCode.RC_EDIT_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.GenericListeners
 import com.bykea.pk.partner.utils.RecyclerItemTouchHelper
@@ -27,6 +32,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
     lateinit var lastAdapter: LastAdapter<DeliveryDetails>
     lateinit var viewModel: ListDeliveryDetailsViewModel
     private var removedItemPosition: Int = NEGATIVE_DIGIT_ONE
+    private var activeTrip: NormalCallData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +62,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
             }
         }
 
+        activeTrip = AppPreferences.getCallData()
         setAdapter()
         setAdapterSwipeItemCallback()
         binding.viewModel?.requestDeliveryDetails()
@@ -104,5 +111,31 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             })
                 })
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recViewDeliveries)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        var deliveryDetails: DeliveryDetails? = null
+
+        if (resultCode == RESULT_OK) {
+            data?.let { deliveryDetails = data.getParcelableExtra(DELIVERY_DETAILS_OBJECT) as DeliveryDetails }
+            if (requestCode == RC_ADD_DELIVERY_DETAILS) {
+                // TODO : ADD IN SP
+                deliveryDetails?.let {
+                    lastAdapter.addItem(it)
+                }
+            } else if (requestCode == RC_EDIT_DELIVERY_DETAILS) {
+                // TODO : UPDATE IN SP
+                deliveryDetails?.let { delivery ->
+                    for (i in lastAdapter.items.indices) {
+                        if (lastAdapter.items[i].details?.trip_id.equals(delivery.details?.trip_id)) {
+                            lastAdapter.items[i] = delivery
+                            lastAdapter.notifyItemChanged(i)
+                            break
+                        }
+                    }
+                }
+            }
+        }
     }
 }

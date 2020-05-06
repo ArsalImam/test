@@ -76,4 +76,11 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
         }
         notifyItemRemoved(itemPosition)
     }
+
+    fun addItem(item: T) {
+        if (!items.isNullOrEmpty()) {
+            items.add(item)
+        }
+        notifyDataSetChanged()
+    }
 }

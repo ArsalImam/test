@@ -9,5 +9,5 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 class MetaData : Parcelable {
-    val service_code: String? = null
+    var service_code: Int? = null
 }

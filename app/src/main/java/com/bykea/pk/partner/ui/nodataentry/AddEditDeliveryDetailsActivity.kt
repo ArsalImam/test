@@ -1,7 +1,6 @@
 package com.bykea.pk.partner.ui.nodataentry
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
@@ -14,16 +13,16 @@ import android.widget.SeekBar
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
-import com.bykea.pk.partner.dal.source.remote.response.FareEstimationResponse
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailsLocationInfoData
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.MetaData
 import com.bykea.pk.partner.dal.util.DIGIT_ZERO
 import com.bykea.pk.partner.databinding.ActivityAddEditDeliveryDetailsBinding
 import com.bykea.pk.partner.models.data.PlacesResult
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
-import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
@@ -50,13 +49,14 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private val audioRecordTimerHandler = Handler()
     private var recordedAudioTime = DIGIT_ZERO
     var flowForAddOrEdit: Int = DIGIT_ZERO
-    var deliveryDetails: DeliveryDetails? = null
     var mDropOffResult: PlacesResult? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_delivery_details)
-        binding.viewModel = obtainViewModel(AddEditDeliveryDetailsViewModel::class.java)
+        viewModel = obtainViewModel(AddEditDeliveryDetailsViewModel::class.java)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this@AddEditDeliveryDetailsActivity
 
         // CHECK FLOW IS FOR ADD OR EDIT DELIVERY DETAILS
         if (intent != null && intent?.extras != null) {
@@ -64,30 +64,32 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 flowForAddOrEdit = intent?.extras!!.get(FLOW_FOR) as Int
             }
             if (intent?.extras!!.containsKey(DELIVERY_DETAILS_OBJECT)) {
-                deliveryDetails = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
-                binding.viewModel?.deliveryDetails?.value = deliveryDetails
+                viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
             }
         }
 
         setTitleCustomToolbarUrdu(getString(R.string.parcel_details))
         fLLocation.visibility = View.VISIBLE
 
-        audioRecordButton.setRecordView(audioRecordView)
-        addListeners()
-        checkIfRecordPermissionRequired()
-        mMediaPlayerHolder = MediaPlayerHolder(this@AddEditDeliveryDetailsActivity)
-        mMediaPlayerHolder.setPlaybackInfoListener(PlaybackListener())
-        initViews()
+        viewModel.isAddedOrUpdatedSuccessful.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
+            val intent = Intent()
+            intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)
+            setResult(RESULT_OK, intent)
+            finish()
+        })
 
         binding.listener = object : GenericListener {
             override fun addOrEditDeliveryDetails() {
                 if (isValidate()) {
+                    /*Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)*/
                     when (flowForAddOrEdit) {
                         ADD_DELIVERY_DETAILS -> {
-                            binding.viewModel?.requestAddDeliveryDetails()
+                            createRequestBodyForAddEdit()
+                            viewModel.requestAddDeliveryDetails()
                         }
                         EDIT_DELIVERY_DETAILS -> {
-                            binding.viewModel?.requestEditDeliveryDetail()
+                            createRequestBodyForAddEdit(false)
+                            viewModel.requestEditDeliveryDetail()
                         }
                     }
                 }
@@ -100,6 +102,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
             }
         }
+
+        audioRecordButton.setRecordView(audioRecordView)
+        addListeners()
+        checkIfRecordPermissionRequired()
+        mMediaPlayerHolder = MediaPlayerHolder(this@AddEditDeliveryDetailsActivity)
+        mMediaPlayerHolder.setPlaybackInfoListener(PlaybackListener())
+        initViews()
     }
 
     /**
@@ -120,17 +129,68 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     }
 
     fun isValidate(): Boolean {
-        if (editTextMobileNumber.text.isNullOrEmpty()) {
+        if (!Utils.isValidNumber(editTextMobileNumber)) {
+            editTextMobileNumber.error = getString(R.string.error_phone_number_1);
+            editTextMobileNumber.requestFocus()
             return false
         } else if (editTextGPSAddress.text.isNullOrEmpty()) {
+            editTextGPSAddress.error = "Please select gps address"
+            editTextMobileNumber.requestFocus()
             return false
-        } else if (editTextParcelValue.text.isNullOrEmpty() || editTextParcelValue.text.toString().toInt() == DIGIT_ZERO) {
+        } else if (editTextParcelValue.text.isNullOrEmpty()) {
+            editTextParcelValue.error = "Please enter parcel value"
+            editTextParcelValue.requestFocus()
             return false
-        } else if (!(editTextParcelValue.text.toString().toInt() > DIGIT_ZERO &&
-                        editTextParcelValue.text.toString().toInt() > AMOUNT_LIMIT)) {
+        } else if (!(editTextParcelValue.text.toString().trim().toInt() > DIGIT_ZERO &&
+                        editTextParcelValue.text.toString().trim().toInt() > AMOUNT_LIMIT)) {
+            editTextParcelValue.error = "Please enter correct parcel value"
+            editTextParcelValue.requestFocus()
             return false
         }
         return true
+    }
+
+    private fun createRequestBodyForAddEdit(isDeliveryAdd: Boolean = true) {
+        if (isDeliveryAdd) {
+            viewModel.deliveryDetails.value = DeliveryDetails()
+            viewModel.deliveryDetails.value?.meta = MetaData()
+            viewModel.deliveryDetails.value?.dropoff = DeliveryDetailsLocationInfoData()
+            viewModel.deliveryDetails.value?.details = DeliveryDetailInfo()
+            viewModel.deliveryDetails.value?.details?.batch_id = StringUtils.EMPTY // TODO : Batch Id
+        }
+
+        // DELIVERY DETAILS META INFO
+        viewModel.deliveryDetails.value?.meta?.service_code = 22
+
+        // DELIVERY DETAILS DROP OFF INFO
+        if (editTextMobileNumber.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString())
+        }
+        if (editTextConsigneeName.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.dropoff?.name = editTextConsigneeName.text.toString().trim()
+        }
+        if (editTextAddress.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.dropoff?.address = editTextAddress.text.toString().trim()
+        }
+        if (editTextAddress.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.dropoff?.address = mDropOffResult?.address
+        }
+        if (editTextGPSAddress.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.dropoff?.gps_address = mDropOffResult?.address
+            viewModel.deliveryDetails.value?.dropoff?.lat = mDropOffResult?.latitude
+            viewModel.deliveryDetails.value?.dropoff?.lng = mDropOffResult?.longitude
+        }
+
+        // DELIVERY DETAILS INFO
+        if (editTextParcelValue.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.details?.parcel_value = editTextParcelValue.text.toString().trim()
+        }
+        if (editTextOrderNumber.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.details?.order_no = editTextOrderNumber.text.toString().trim()
+        }
+        if (editTextCODAmount.text.toString().isNotEmpty()) {
+            viewModel.deliveryDetails.value?.details?.order_no = editTextCODAmount.text.toString().trim()
+        }
     }
 
     /**

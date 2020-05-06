@@ -23,16 +23,21 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     val deliveryDetails: MutableLiveData<DeliveryDetails>
         get() = _deliveryDetails
 
+    private var _isAddedOrUpdatedSuccessful = MutableLiveData<Boolean>()
+    val isAddedOrUpdatedSuccessful: MutableLiveData<Boolean>
+        get() = _isAddedOrUpdatedSuccessful
 
     fun requestAddDeliveryDetails() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
         jobRespository.addDeliveryDetail(deliveryDetails.value?.details?.batch_id.toString(), deliveryDetailAddRequest,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _isAddedOrUpdatedSuccessful.value = true
                         Dialogs.INSTANCE.dismissDialog()
                     }
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.showToast(reasonMsg)
                         Dialogs.INSTANCE.dismissDialog()
                     }
                 })
@@ -44,10 +49,12 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                 deliveryDetails.value?.details?.trip_id.toString(), deliveryDetailAddRequest,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _isAddedOrUpdatedSuccessful.value = true
                         Dialogs.INSTANCE.dismissDialog()
                     }
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.showToast(reasonMsg)
                         Dialogs.INSTANCE.dismissDialog()
                     }
                 })
