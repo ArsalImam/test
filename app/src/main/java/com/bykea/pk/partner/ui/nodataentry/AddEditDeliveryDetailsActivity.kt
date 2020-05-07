@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
@@ -23,9 +24,13 @@ import com.bykea.pk.partner.models.data.PlacesResult
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
+import com.bykea.pk.partner.utils.Constants.TripTypes.DELIVERY_TYPE
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
+import com.bykea.pk.partner.utils.audio.Callback
 import com.bykea.pk.partner.utils.audio.MediaPlayerHolder
 import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
 import com.bykea.pk.partner.widgets.record_view.OnRecordListener
@@ -80,16 +85,24 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
         binding.listener = object : GenericListener {
             override fun addOrEditDeliveryDetails() {
+                pausePlaying()
                 if (isValidate()) {
-                    /*Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)*/
-                    when (flowForAddOrEdit) {
-                        ADD_DELIVERY_DETAILS -> {
-                            createRequestBodyForAddEdit()
-                            viewModel.requestAddDeliveryDetails()
-                        }
-                        EDIT_DELIVERY_DETAILS -> {
-                            createRequestBodyForAddEdit(false)
-                            viewModel.requestEditDeliveryDetail()
+                    if (Utils.isConnected(this@AddEditDeliveryDetailsActivity, true)) {
+                        Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
+                        if (audioPlayRL.visibility == View.VISIBLE) {
+                            //voice note is recorded by user.. upload to amazon
+                            BykeaAmazonClient.uploadFile(fileNameToBeUploadedToAmazon(), createAudioFile(), object : Callback<String> {
+                                override fun success(obj: String) {
+                                    viewModel.deliveryDetails.value?.details?.voice_note = obj
+                                    callPostApiNow()
+                                }
+
+                                override fun fail(errorCode: Int, errorMsg: String) {
+                                    Utils.appToast("Error in uploading file, please try again")
+                                }
+                            })
+                        } else {
+                            callPostApiNow()
                         }
                     }
                 }
@@ -112,10 +125,33 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     }
 
     /**
+     * creating unique file name to be uploaded to amazon
+     */
+    private fun fileNameToBeUploadedToAmazon() =
+            "${DELIVERY_TYPE.toLowerCase()}_${AppPreferences.getDriverId()}_${System.currentTimeMillis()}"
+
+
+    /**
+     * call delivery POST api after uploading file to amazon
+     */
+    private fun callPostApiNow() {
+        when (flowForAddOrEdit) {
+            ADD_DELIVERY_DETAILS -> {
+                createRequestBodyForAddEdit()
+                viewModel.requestAddDeliveryDetails()
+            }
+            EDIT_DELIVERY_DETAILS -> {
+                createRequestBodyForAddEdit(false)
+                viewModel.requestEditDeliveryDetail()
+            }
+        }
+    }
+
+    /**
      * Initializes views for Parcel Summary fragment
      */
     private fun initViews() {
-        val file = File(getFilePath(), Constants.Audio.AUDIO_FILE_NAME)
+        val file = File(getFilePath(), Audio.AUDIO_FILE_NAME)
         if (file.exists() && Permissions.hasAudioPermissions()) {
             showPlayAudioLayout()
         }
