@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
 
         <variable
             name="viewmodel"
@@ -81,7 +82,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:text="@{`Rs. ` + (int)viewmodel.job.fare_est}"
+                    android:text="@{viewmodel.job.fare_est == 0 ? `?` : `Rs. ` + viewmodel.job.fare_est + (viewmodel.job.service_code == ServiceCode.NEW_BATCH_DELIVERY ? `+` : ``)}"
                     android:textColor="@color/color_06A833"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"

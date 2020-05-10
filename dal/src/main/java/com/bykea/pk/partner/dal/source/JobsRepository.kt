@@ -135,8 +135,16 @@ class JobsRepository(
         jobsRemoteDataSource.arrivedAtJob(jobId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
+    override fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.ArrivedAtJobCallback) {
+        jobsRemoteDataSource.arrivedAtJobForBatch(batchId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
     override fun startJob(jobId: String, address: String, callback: JobsDataSource.StartJobCallback) {
         jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
+    override fun startJobForBatch(batchId: String, address: String, callback: JobsDataSource.StartJobCallback) {
+        jobsRemoteDataSource.startJobForBatch(batchId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
     override fun cancelJob(jobId: String, reason: String, callback: JobsDataSource.CancelJobCallback) {

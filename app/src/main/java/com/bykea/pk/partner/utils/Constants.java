@@ -100,6 +100,7 @@ public class Constants {
     public static final int NUMBER_OF_CHARS_IN_LINE = 40;
     public static final int OFFSET_FOR_SINGLE_LINE = 37;
     public static final String IOS = "IOS";
+    public static final String PLUS = "+";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
@@ -182,6 +183,7 @@ public class Constants {
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
+        public static final String NEW_BATCH = "new_batch";
     }
 
 
@@ -440,6 +442,7 @@ public class Constants {
 
         public static final int SEND = 21;
         public static final int MULTI_DELIVERY = 0;
+        public static final int NEW_BATCH_DELIVERY = 100;
         public static final int SEND_COD = 22;
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;

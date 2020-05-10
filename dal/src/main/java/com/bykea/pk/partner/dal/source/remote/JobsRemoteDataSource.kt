@@ -122,6 +122,22 @@ class JobsRemoteDataSource {
     }
 
     /**
+     * Requests to mark arrived for active batch job
+     * @param jobId String
+     * @param driverId String
+     * @param token String
+     * @param lat Double
+     * @param lng Double
+     * @param callback ArrivedAtJobCallback
+     */
+    fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.ArrivedAtJobCallback) {
+        Backend.loadboard.arrivedAtJobForBatch(driverId, token, batchId, ArrivedAtJobRequest(driverId, token, lat, lng, route)).enqueue(object : Callback<ArriveAtJobResponse> {
+            override fun onSuccess(response: ArriveAtJobResponse) = callback.onJobArrived()
+            override fun onFail(code: Int, message: String?) = callback.onJobArriveFailed()
+        })
+    }
+
+    /**
      * Requests to start active job
      * @param jobId String
      * @param address String
@@ -133,6 +149,23 @@ class JobsRemoteDataSource {
      */
     fun startJob(jobId: String, address: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.StartJobCallback) {
         Backend.talos.startJob(jobId, StartJobRequest(driverId, token, lat, lng, address)).enqueue(object : Callback<StartJobResponse> {
+            override fun onSuccess(response: StartJobResponse) = callback.onJobStarted()
+            override fun onFail(code: Int, message: String?) = callback.onJobStartFailed(message)
+        })
+    }
+
+    /**
+     * Requests to start active job
+     * @param jobId String
+     * @param address String
+     * @param driverId String
+     * @param token String
+     * @param lat Double
+     * @param lng Double
+     * @param callback StartJobCallback
+     */
+    fun startJobForBatch(batchId: String, address: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.StartJobCallback) {
+        Backend.loadboard.startJobForBatch(driverId, token, batchId, StartJobRequest(driverId, token, lat, lng, address)).enqueue(object : Callback<StartJobResponse> {
             override fun onSuccess(response: StartJobResponse) = callback.onJobStarted()
             override fun onFail(code: Int, message: String?) = callback.onJobStartFailed(message)
         })

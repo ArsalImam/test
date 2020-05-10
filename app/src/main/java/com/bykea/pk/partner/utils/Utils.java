@@ -176,6 +176,7 @@ import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
@@ -2161,6 +2162,9 @@ public class Utils {
     public static boolean isPurchaseService(String callType) {
         return isPurchaseService(callType, null);
     }
+    public static boolean isNewBatchService(int serviceCode) {
+        return serviceCode == NEW_BATCH_DELIVERY;
+    }
 
     public static boolean isPurchaseService(String callType, Integer serviceCode) {
         if (serviceCode == null)
@@ -2280,6 +2284,7 @@ public class Utils {
                 return R.drawable.ic_food;
             case "courier":
             case "goods":
+            case Constants.CallType.NEW_BATCH:
                 return R.drawable.courier_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":

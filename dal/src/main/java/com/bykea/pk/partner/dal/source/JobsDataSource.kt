@@ -96,12 +96,27 @@ interface JobsDataSource {
     fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
 
     /**
+     * Requests arrived at job
+     * @param jobId Job ID
+     * @param callback ArrivedAtJobCallback
+     */
+    fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
+
+    /**
      * Requests start job
      * @param jobId Job ID
      * @param address Address at which started the job
      * @param callback StartJobCallback
      */
     fun startJob(jobId: String, address: String, callback: StartJobCallback)
+
+    /**
+     * Requests start job
+     * @param jobId Job ID
+     * @param address Address at which started the job
+     * @param callback StartJobCallback
+     */
+    fun startJobForBatch(batchId: String, address: String, callback: StartJobCallback)
 
     /**
      * Requests to cancel job

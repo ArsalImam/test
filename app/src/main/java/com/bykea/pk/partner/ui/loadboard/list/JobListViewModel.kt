@@ -88,6 +88,7 @@ class JobListViewModel internal constructor(private val jobsRepository: JobsRepo
         jobsRepository.getJobs(object : JobsDataSource.LoadJobsCallback {
             override fun onJobsLoaded(jobs: List<Job>) {
                 _dataLoading.value = false
+                jobs[0].service_code = 100
                 _items.value = ArrayList(jobs)
             }
 
