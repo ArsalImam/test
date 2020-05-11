@@ -171,29 +171,33 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             editTextMobileNumber.requestFocus()
             return false
         } else if (editTextGPSAddress.text.isNullOrEmpty()) {
-            editTextGPSAddress.error = "Please select gps address"
+            editTextGPSAddress.error = getString(R.string.select_gps_address)
             editTextMobileNumber.requestFocus()
             return false
         } else if (editTextParcelValue.text.isNullOrEmpty()) {
-            editTextParcelValue.error = "Please enter parcel value"
+            editTextParcelValue.error = getString(R.string.enter_parcel_value)
             editTextParcelValue.requestFocus()
             return false
         } else if (!(editTextParcelValue.text.toString().trim().toInt() > DIGIT_ZERO &&
                         editTextParcelValue.text.toString().trim().toInt() > AMOUNT_LIMIT)) {
-            editTextParcelValue.error = "Please enter correct parcel value"
+            editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
             editTextParcelValue.requestFocus()
             return false
         }
         return true
     }
 
+    /**
+     * Create Request For Add or Edit DeliveryDetails
+     * @param isDeliveryAdd : If true, create request body for add else for edit
+     */
     private fun createRequestBodyForAddEdit(isDeliveryAdd: Boolean = true) {
         if (isDeliveryAdd) {
             viewModel.deliveryDetails.value = DeliveryDetails()
             viewModel.deliveryDetails.value?.meta = MetaData()
             viewModel.deliveryDetails.value?.dropoff = DeliveryDetailsLocationInfoData()
             viewModel.deliveryDetails.value?.details = DeliveryDetailInfo()
-            viewModel.deliveryDetails.value?.details?.batch_id = StringUtils.EMPTY // TODO : Batch Id
+            viewModel.deliveryDetails.value?.details?.batch_id = viewModel.callData.value?.tripId
         }
 
         // DELIVERY DETAILS META INFO

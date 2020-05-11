@@ -11,9 +11,13 @@ import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
+import com.bykea.pk.partner.models.response.TopUpPassWalletResponse
+import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.ui.helpers.StringCallBack
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_DELIVERY_DETAILS
@@ -21,7 +25,9 @@ import com.bykea.pk.partner.utils.Constants.RequestCode.RC_EDIT_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.GenericListeners
 import com.bykea.pk.partner.utils.RecyclerItemTouchHelper
+import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
+import org.apache.commons.lang3.StringUtils
 
 class ListDeliveryDetailsActivity : AppCompatActivity() {
     lateinit var binding: ActivityListDeliveryDetailsBinding
@@ -45,6 +51,15 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     Dialogs.INSTANCE.dismissDialog()
                 }
             })
+
+            passengerWalletUpdated.observe(this@ListDeliveryDetailsActivity, Observer {
+                if (it) {
+                    binding.viewModel?.passengerWalletUpdated?.value = false
+                    ivTopUp.visibility = View.INVISIBLE
+                    setPassengerWallet()
+                    Dialogs.INSTANCE.dismissDialog()
+                }
+            })
         }
 
         binding.lifecycleOwner = this
@@ -56,6 +71,18 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                                 ADD_DELIVERY_DETAILS, null);
 
             }
+
+            override fun topUpPassengerWallet() {
+                Dialogs.INSTANCE.showTopUpDialog(this@ListDeliveryDetailsActivity,
+                        Utils.isCourierService(binding.viewModel?.callData?.value?.callType), object : StringCallBack {
+                    override fun onCallBack(msg: String) {
+                        if (StringUtils.isNotBlank(msg)) {
+                            Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+                            binding.viewModel?.requestTopUpPassengerWallet(msg)
+                        }
+                    }
+                })
+            }
         }
 
         binding.viewModel?.getActiveTrip()
@@ -63,6 +90,10 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         setAdapterSwipeItemCallback()
         Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
         binding.viewModel?.getAllDeliveryDetails()
+
+        setPassengerWallet()
+        setCodValue()
+        setFareAmount()
     }
 
     private fun setAdapter() {
@@ -94,7 +125,6 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             {
                                 removeDeliveryDetail = lastAdapter.items[position]
                                 removeDeliveryDetail?.let { viewModel.removeDeliveryDetail(it) }
-                                Dialogs.INSTANCE.dismissDialog()
                                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                             },
                             {
@@ -103,6 +133,35 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             })
                 })
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recViewDeliveries)
+    }
+
+    /**
+     * Set passenger wallet from trip data
+     */
+    private fun setPassengerWallet() {
+        tvPWalletAmount.text = String.format(getString(R.string.amount_rs), binding.viewModel?.callData?.value?.passWallet)
+    }
+
+    /**
+     * Set COD value from trip data
+     */
+    private fun setCodValue() {
+        //TODO : SET CODE VALUE
+    }
+
+    /**
+     * Set Fare Amount from trip data
+     */
+    private fun setFareAmount() {
+        when {
+            binding.viewModel?.callData?.value?.kraiKiKamai != DIGIT_ZERO -> {
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), binding.viewModel?.callData?.value?.kraiKiKamai)
+            }
+            AppPreferences.getEstimatedFare() != DIGIT_ZERO -> {
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare())
+            }
+            else -> tvFareAmount.setText(R.string.dash)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -325,6 +325,15 @@ interface Backend {
             @Path("booking_id") bookingId: String
     ): Call<DeliveryDetailRemoveResponse>
 
+    @FormUrlEncoded
+    @POST("/api/v1/driver/topupToPassenger")
+    abstract fun topUpPassengerWallet(@Field("_id") _id: String,
+                                      @Field("token_id") token_id: String,
+                                      @Field("tId") tripNo: String,
+                                      @Field("amount") amount: String,
+                                      @Field("pId") passId: String
+    ): Call<TopUpPassengerWalletResponse>
+
     companion object {
 
         var FLAVOR_URL_TELOS: String = ""

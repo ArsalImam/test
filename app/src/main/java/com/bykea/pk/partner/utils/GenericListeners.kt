@@ -12,4 +12,11 @@ interface GenericListeners {
     fun addDeliveryDetails() {
 
     }
+
+    /**
+     * When user tap on passenger top up wallet
+     */
+    fun topUpPassengerWallet() {
+
+    }
 }

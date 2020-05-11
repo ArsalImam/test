@@ -9,10 +9,7 @@ import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResponse
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailRemoveResponse
-import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -282,6 +279,9 @@ class JobsRepository(
         jobsRemoteDataSource.removeDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, callback)
     }
 
+    override fun topUpPassengerWallet(batchID: String, amount: String, passengerId: String, callback: JobsDataSource.LoadDataCallback<TopUpPassengerWalletResponse>) {
+        jobsRemoteDataSource.topUpPassengerWallet(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, amount, passengerId, callback)
+    }
 
     companion object {
 

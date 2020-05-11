@@ -401,4 +401,11 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
+
+    fun topUpPassengerWallet(driverId: String, accessToken: String, tripNo: String, amount: String, passengerId: String, callback: JobsDataSource.LoadDataCallback<TopUpPassengerWalletResponse>) {
+        Backend.talos.topUpPassengerWallet(driverId, accessToken, tripNo, amount, passengerId).enqueue(object : Callback<TopUpPassengerWalletResponse> {
+            override fun onSuccess(response: TopUpPassengerWalletResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
 }

@@ -21,6 +21,9 @@ class ViewDeliveryDetailViewsModel : ViewModel() {
     val callData: MutableLiveData<NormalCallData>
         get() = _callData
 
+    /**
+     * Get active trip from shared preferences
+     */
     fun getActiveTrip() {
         _callData.value = AppPreferences.getCallData()
     }

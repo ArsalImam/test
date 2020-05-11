@@ -34,10 +34,16 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     val callData: MutableLiveData<NormalCallData>
         get() = _callData
 
+    /**
+     * Get active trip from shared preferences
+     */
     fun getActiveTrip() {
         _callData.value = AppPreferences.getCallData()
     }
 
+    /**
+     * Request add delivery detail item in list
+     */
     fun requestAddDeliveryDetails() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
         jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetailAddRequest,
@@ -54,6 +60,9 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                 })
     }
 
+    /**
+     * Request update delivery detail item in list
+     */
     fun requestEditDeliveryDetail() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
         jobRespository.updateDeliveryDetail(callData.value?.tripId.toString(),
