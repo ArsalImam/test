@@ -75,6 +75,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
         setTitleCustomToolbarUrdu(getString(R.string.parcel_details))
         fLLocation.visibility = View.VISIBLE
+        viewModel.getActiveTrip()
 
         viewModel.isAddedOrUpdatedSuccessful.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
             val intent = Intent()
@@ -547,14 +548,14 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Getting method for voice recording file stored in local storage
      * @return Audio File
      */
-    fun getAudioFile(): File {
+    private fun getAudioFile(): File {
         return File(getFilePath(), Constants.Audio.AUDIO_FILE_NAME)
     }
 
     /**
      * getting voice recording file path stored in local storage
      */
-    fun getFilePath(): String {
+    private fun getFilePath(): String {
         return "${Environment.getExternalStorageDirectory()}${File.separator}${Constants.Audio.AUDIO_FOLDER_NAME}"
     }
 

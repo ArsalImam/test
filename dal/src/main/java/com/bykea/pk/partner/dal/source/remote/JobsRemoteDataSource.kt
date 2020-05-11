@@ -374,16 +374,23 @@ class JobsRemoteDataSource {
         })
     }
 
+    fun getAllDeliveryDetails(driverId: String, accessToken: String, batchID: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailListResponse>) {
+        Backend.talos.getAllDeliveryDetails(driverId, accessToken, batchID).enqueue(object : Callback<DeliveryDetailListResponse> {
+            override fun onSuccess(response: DeliveryDetailListResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
     fun addDeliveryDetails(driverId: String, accessToken: String, batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
         Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetailAddEditRequest).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
-            override fun onSuccess(editResponse: DeliveryDetailAddEditResponse) = callback.onDataLoaded(editResponse)
+            override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
 
     fun updateDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
         Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetailAddEditRequest).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
-            override fun onSuccess(editResponse: DeliveryDetailAddEditResponse) = callback.onDataLoaded(editResponse)
+            override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }

@@ -9,8 +9,11 @@ import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailsLocationInfoData
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailRemoveResponse
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.models.response.NormalCallData
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 
 
@@ -21,38 +24,48 @@ class ListDeliveryDetailsViewModel : ViewModel() {
 
     val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
 
-    private var _items = ArrayList<DeliveryDetails>()
-    val items: List<DeliveryDetails>
+    private var _items = MutableLiveData<ArrayList<DeliveryDetails>>().apply { value = ArrayList() }
+    val items: MutableLiveData<ArrayList<DeliveryDetails>>
         get() = _items
 
     private var _itemRemoved = MutableLiveData<Boolean>()
     val itemRemoved: MutableLiveData<Boolean>
         get() = _itemRemoved
 
-    fun requestDeliveryDetails() {
-        val deliveryDetailsList: ArrayList<DeliveryDetails> = ArrayList()
-        for (i in 65..67) {
-            val deliveryDetails = DeliveryDetails()
-            deliveryDetails.details = DeliveryDetailInfo()
-            deliveryDetails.details?.batch_id = ((i % 65 + 1)).toString()
-            deliveryDetails.details?.trip_no = "KHIJKL" + ((i % 65 + 1)).toString()
-            deliveryDetails.dropoff = DeliveryDetailsLocationInfoData()
-            deliveryDetails.dropoff?.address = DriverApp.getContext().getString(R.string.sawari)
-            deliveryDetailsList.add(deliveryDetails)
-        }
-        _items = deliveryDetailsList
+    private var _callData = MutableLiveData<NormalCallData>()
+    val callData: MutableLiveData<NormalCallData>
+        get() = _callData
+
+    fun getActiveTrip() {
+        _callData.value = AppPreferences.getCallData()
+    }
+
+    fun getAllDeliveryDetails() {
+        jobRespository.getAllDeliveryDetails(callData.value?.tripId.toString(),
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailListResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailListResponse) {
+                        _items.value = response.bookings
+                    }
+
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 
     fun removeDeliveryDetail(deliveryDetails: DeliveryDetails) {
-        jobRespository.removeDeliveryDetail(deliveryDetails.details?.batch_id.toString(), deliveryDetails.details?.trip_id.toString(), object : JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse> {
-            override fun onDataLoaded(response: DeliveryDetailRemoveResponse) {
-                _itemRemoved.value = true
-                Dialogs.INSTANCE.dismissDialog()
-            }
+        jobRespository.removeDeliveryDetail(callData.value?.tripId.toString(),
+                deliveryDetails.details?.trip_id.toString(),
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailRemoveResponse) {
+                        _items.value?.remove(deliveryDetails)
+                        _itemRemoved.value = true
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
 
-            override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
-        })
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 }

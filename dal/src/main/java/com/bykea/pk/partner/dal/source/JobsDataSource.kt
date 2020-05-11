@@ -478,6 +478,8 @@ interface JobsDataSource {
         }
     }
 
+    fun getAllDeliveryDetails(batchID: String, callback: LoadDataCallback<DeliveryDetailListResponse>)
+
     fun addDeliveryDetail(batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
 
     fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)

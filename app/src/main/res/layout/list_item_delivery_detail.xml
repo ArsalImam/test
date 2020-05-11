@@ -120,7 +120,7 @@
                         android:gravity="center_vertical"
                         android:maxLines="1"
                         android:padding="@dimen/_3sdp"
-                        android:text="@{item.dropoff.address}"
+                        android:text="@{item.dropoff.zone_dropoff_name_urdu}"
                         android:textSize="@dimen/_13sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf"
                         tools:text="@string/booking_ur" />
@@ -141,7 +141,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/_10sdp"
-                        android:text="@{item.details.alphabetical_order}"
+                        android:text="@{item.details.display_tag}"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf"
                         tools:text="A" />

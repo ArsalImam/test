@@ -293,6 +293,13 @@ interface Backend {
     @POST("/api/v1/partner/temperature")
     fun submitTemperature(@Body bodyObject: TemperatureSubmitRequest): Call<TemperatureSubmitResponse>
 
+    @GET("/v2/batch/{batch_id}/bookings")
+    fun getAllDeliveryDetails(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String
+    ): Call<DeliveryDetailListResponse>
+
     @POST("/v2/batch/{batch_id}/bookings")
     fun addDeliveryDetail(
             @Header("x-app-partner-id") driverId: String,

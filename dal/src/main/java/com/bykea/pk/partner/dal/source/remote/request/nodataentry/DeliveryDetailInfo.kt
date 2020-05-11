@@ -16,9 +16,8 @@ class DeliveryDetailInfo : Parcelable {
     var voice_note: String? = null
 
     //RECEIVE FROM SERVER
-    var alphabetical_order: String? = null
     var batch_id: String? = null
-    var sequence_number: String? = null
+    var display_tag: String? = null
     var trip_id: String? = null
     var trip_no: String? = null
 }

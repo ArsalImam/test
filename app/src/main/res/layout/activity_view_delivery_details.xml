@@ -4,6 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.nodataentry.ViewDeliveryDetailsActivity">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailViewsModel" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,6 +54,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:maxLines="1"
+                    android:text="@{viewModel.deliveryDetails.dropoff.zone_dropoff_name_urdu}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_38sdp"
                     android:textStyle="bold"
@@ -119,6 +127,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
+                android:text="@{viewModel.deliveryDetails.dropoff.name}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_16sdp"
                 app:fontName="open_sans_regular.ttf"
@@ -169,6 +178,7 @@
                     android:layout_marginRight="@dimen/_5sdp"
                     android:layout_weight="1"
                     android:ellipsize="end"
+                    android:text="@{viewModel.deliveryDetails.dropoff.address}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -205,6 +215,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
+                    android:text="@{viewModel.deliveryDetails.dropoff.gps_address}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -230,9 +241,9 @@
                     android:layout_marginLeft="@dimen/_12sdp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@string/amount_rs"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
+                    app:amountFormatted="@{viewModel.deliveryDetails.details.parcel_value}"
                     app:fontName="open_sans_regular.ttf"
                     tools:text="Rs. 1000" />
 
@@ -251,6 +262,7 @@
                     android:layout_marginLeft="@dimen/_12sdp"
                     android:ellipsize="end"
                     android:singleLine="true"
+                    android:text="@{viewModel.deliveryDetails.details.order_no}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -292,9 +304,9 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="@string/amount_rs"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12sdp"
+                app:amountFormatted="@{viewModel.deliveryDetails.details.cod_value}"
                 app:fontName="open_sans_regular.ttf"
                 tools:text="Rs. 1000" />
 

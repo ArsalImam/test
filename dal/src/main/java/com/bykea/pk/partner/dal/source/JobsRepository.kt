@@ -10,6 +10,7 @@ import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResponse
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailRemoveResponse
 import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse
 import com.bykea.pk.partner.dal.util.*
@@ -263,6 +264,10 @@ class JobsRepository(
     override fun submitTemperature(temperature: Float, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
         val temperatureSubmitRequest = TemperatureSubmitRequest(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), temperature)
         jobsRemoteDataSource.submitTemperature(temperatureSubmitRequest, callback)
+    }
+
+    override fun getAllDeliveryDetails(batchID: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailListResponse>) {
+        jobsRemoteDataSource.getAllDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, callback)
     }
 
     override fun addDeliveryDetail(batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {

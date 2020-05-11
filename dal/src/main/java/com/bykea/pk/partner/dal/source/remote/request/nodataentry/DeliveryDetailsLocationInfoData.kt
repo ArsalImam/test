@@ -15,4 +15,6 @@ class DeliveryDetailsLocationInfoData : Parcelable {
     var lng: Double? = null
     var address: String? = null
     var gps_address: String? = null
+    var zone_dropoff_name: String? = null
+    var zone_dropoff_name_urdu: String? = null
 }

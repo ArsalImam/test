@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResponse
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.models.response.NormalCallData
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 
 
@@ -27,9 +30,17 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     val isAddedOrUpdatedSuccessful: MutableLiveData<Boolean>
         get() = _isAddedOrUpdatedSuccessful
 
+    private var _callData = MutableLiveData<NormalCallData>()
+    val callData: MutableLiveData<NormalCallData>
+        get() = _callData
+
+    fun getActiveTrip() {
+        _callData.value = AppPreferences.getCallData()
+    }
+
     fun requestAddDeliveryDetails() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
-        jobRespository.addDeliveryDetail(deliveryDetails.value?.details?.batch_id.toString(), deliveryDetailAddRequest,
+        jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetailAddRequest,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
                         _isAddedOrUpdatedSuccessful.value = true
@@ -45,8 +56,8 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
 
     fun requestEditDeliveryDetail() {
         val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
-        jobRespository.updateDeliveryDetail(deliveryDetails.value?.details?.batch_id.toString(),
-                deliveryDetails.value?.details?.trip_id.toString(), deliveryDetailAddRequest,
+        jobRespository.updateDeliveryDetail(callData.value?.tripId.toString(),
+                _deliveryDetails.value?.details?.trip_id.toString(), deliveryDetailAddRequest,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
                         _isAddedOrUpdatedSuccessful.value = true
@@ -54,7 +65,6 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                     }
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                        Dialogs.INSTANCE.showToast(reasonMsg)
                         Dialogs.INSTANCE.dismissDialog()
                     }
                 })
