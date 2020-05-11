@@ -37,6 +37,7 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.pref.AppPref;
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -1528,13 +1529,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
-                if (callData.getServiceCode() != null &&
-                        callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
-                        callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
-                    if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
-                        cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
-                    } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
-                        cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                if (AppPreferences.getSettings().getSettings().isCustomCalculationsAllowForEasyPaisa()
+                        && callData.getCreator_type().equalsIgnoreCase(Constants.API)) {
+                    if (callData.getServiceCode() != null &&
+                            callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
+                            callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
+                        if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
+                            cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
+                        } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
+                            cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                        }
                     }
                 }
             }

@@ -33,6 +33,8 @@ public class Settings {
 
     @SerializedName("trip_support_max_days_driver")
     private String trip_support_max_days;
+    @SerializedName("is_custom_calculations_allow_for_easy_paisa")
+    private Boolean isCustomCalculationsAllowForEasyPaisa;
     private String demand;
     private String notice;
     private String top_up_limit;
@@ -404,5 +406,13 @@ public class Settings {
         } catch (Exception e) {
             return MAX_FAHRENHEIT_VALUE;
         }
+    }
+
+    public boolean isCustomCalculationsAllowForEasyPaisa() {
+        return isCustomCalculationsAllowForEasyPaisa == null ? true : isCustomCalculationsAllowForEasyPaisa;
+    }
+
+    public void setCustomCalculationsAllowForEasyPaisa(boolean customCalculationsAllowForEasyPaisa) {
+        isCustomCalculationsAllowForEasyPaisa = customCalculationsAllowForEasyPaisa;
     }
 }
