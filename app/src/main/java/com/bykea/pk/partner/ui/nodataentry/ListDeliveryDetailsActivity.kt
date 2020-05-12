@@ -95,6 +95,9 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         setFareAmount()
     }
 
+    /**
+     * Set visibility for top up icon considering the call type and ride status.
+     */
     private fun setVisibilityForTopUp() {
         // TODO SET AGAINST BATCH
         if ((Utils.isDeliveryService(binding.viewModel?.callData?.value?.callType) ||
@@ -107,6 +110,9 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Set adapter for delivery details item
+     */
     private fun setAdapter() {
         lastAdapter = LastAdapter(R.layout.list_item_delivery_detail, object : LastAdapter.OnItemClickListener<DeliveryDetails> {
             override fun onItemClick(item: DeliveryDetails) {}
@@ -128,6 +134,9 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         recViewDeliveries.adapter = lastAdapter
     }
 
+    /**
+     * Set swipe to delete on recycler view
+     */
     private fun setAdapterSwipeItemCallback() {
         val itemTouchHelperCallback = RecyclerItemTouchHelper(DIGIT_ZERO, ItemTouchHelper.LEFT,
                 RecyclerItemTouchHelper.RecyclerItemTouchHelperListener { _, _, position ->

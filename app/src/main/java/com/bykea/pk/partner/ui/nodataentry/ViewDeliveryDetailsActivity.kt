@@ -116,6 +116,11 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Handling for the media player play and pause,
+     * resume from the previous stopped position, and
+     * set icon accordingly
+     */
     fun startPlayProgressUpdater() {
         progressBarForAudioPlay.progress = mediaPlayer?.currentPosition!!
         if (mediaPlayer?.isPlaying!!) {
