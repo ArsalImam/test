@@ -1870,6 +1870,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
             // need to update markers here
+
         }
 
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
