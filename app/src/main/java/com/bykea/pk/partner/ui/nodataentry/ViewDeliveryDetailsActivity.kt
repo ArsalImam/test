@@ -14,6 +14,8 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
+import com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND
+import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
 import com.zendesk.util.StringUtils
@@ -120,14 +122,14 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
             val notification = Runnable {
                 startPlayProgressUpdater();
             }
-            handler.postDelayed(notification, 1000)
+            handler.postDelayed(notification, DIGIT_THOUSAND.toLong())
         } else {
             mediaPlayer?.pause();
 
             imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(DriverApp.getContext(), R.drawable.ic_audio_play))
             imgViewAudioPlay.isEnabled = true;
             progressBarForAudioPlay.visibility = View.GONE;
-            progressBarForAudioPlay.progress = 0;
+            progressBarForAudioPlay.progress = DIGIT_ZERO;
         }
     }
 
