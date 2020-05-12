@@ -93,6 +93,7 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -3345,6 +3346,25 @@ public class Utils {
 
                     response.getDropOff().getLat(),
                     response.getDropOff().getLng())
+            );
+        }
+
+        return latLngList;
+    }
+    /**
+     * Fetch drop down lat lng list.
+     *
+     * @param normalCallData The {@link MultiDeliveryCallDriverData} object.
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(NormalCallData
+                                                             normalCallData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (BatchBooking response : normalCallData.getBookingList()) {
+            latLngList.add(new LatLng(
+
+                    response.getDropoff().getLat(),
+                    response.getDropoff().getLng())
             );
         }
 

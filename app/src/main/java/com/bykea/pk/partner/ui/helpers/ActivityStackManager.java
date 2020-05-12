@@ -58,6 +58,7 @@ import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
 import com.bykea.pk.partner.ui.nodataentry.AddEditDeliveryDetailsActivity;
+import com.bykea.pk.partner.ui.nodataentry.ListDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
@@ -662,6 +663,15 @@ public class ActivityStackManager {
         if (deliveryDetails != null) {
             intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
         }
+        activity.startActivity(intent);
+    }
+
+    /**
+     * will open booking listings screen
+     * @param activity context
+     */
+    public void startListDeliveryScreen(Activity activity) {
+        Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
         activity.startActivity(intent);
     }
 }

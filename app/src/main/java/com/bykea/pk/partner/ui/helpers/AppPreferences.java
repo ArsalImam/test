@@ -397,7 +397,6 @@ public class AppPreferences {
     }
 
     public static void setCallData(NormalCallData callData) {
-        callData.setServiceCode(100);
         callData.setCallType(Constants.CallType.NEW_BATCH);
         mSharedPreferences
                 .edit()

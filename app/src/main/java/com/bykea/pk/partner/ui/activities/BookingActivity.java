@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -1046,9 +1047,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 });
                 break;
             case R.id.tvDetailsBanner:
+                if (Utils.isNewBatchService(callData.getServiceCode())) {
+                    ActivityStackManager.getInstance().startListDeliveryScreen(BookingActivity.this);
+                    return;
+                }
                 bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
                 bykeaCashFormFragment.setCancelable(false);
                 bykeaCashFormFragment.show(getSupportFragmentManager(), BykeaCashFormFragment.class.getSimpleName());
+
                 break;
             case R.id.imgViewAudioPlay:
                 if (StringUtils.isNotEmpty(voiceNoteUrl)) {
@@ -1868,16 +1874,68 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             pickUpMarker.remove();
         }
 
-        if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
-            // need to update markers here
-
-        }
 
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
             updateDropOffMarker();
         }
         if (shouldUpdateCamera) setCameraToTripView();
         else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
+
+
+        if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+            // need to update markers here
+            updateDropOffMarkers();
+            setMarkersBound();
+        }
+    }
+
+    /***
+     * Add Pickup marker to the pickup location.
+     *
+     * The Time complexity or rate of growth of a function is: O(n)
+     */
+    private void updateDropOffMarkers() {
+        try {
+            if (null == mGoogleMap || callData == null) return;
+            if (dropOffMarker != null) {
+                dropOffMarker.remove();
+            }
+            List<LatLng> latLngList = Utils.getDropDownLatLngList(callData);
+
+            for (int i = 0; i < latLngList.size(); i++) {
+
+                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
+                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
+                                String.valueOf(i + 1)))
+                        .position(latLngList.get(i)));
+            }
+
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * fit All dropOff locations and driver's current location to the screen - bound markers within screen
+     */
+    private void setMarkersBound() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        List<LatLng> latLngList = Utils.getDropDownLatLngList(callData);
+        for (LatLng pos : latLngList) {
+            builder.include(pos);
+        }
+//        if (pickupMarker != null) {
+//            builder.include(pickupMarker.getPosition());
+//        }
+        if (driverMarker != null) {
+            builder.include(driverMarker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = (int) mCurrentActivity.getResources().getDimension(R.dimen._30sdp);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mGoogleMap.moveCamera(cu);
     }
 
     private boolean isLastAnimationComplete = true;
