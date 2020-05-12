@@ -1596,6 +1596,20 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         jobBtn.setText(getString(R.string.button_text_start));
         AppPreferences.setTripStatus(TripStatus.ON_ARRIVED_TRIP);
+
+        if (Utils.isNewBatchService(callData.getServiceCode())) {
+            tvDetailsBanner.setVisibility(View.VISIBLE);
+            if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+                tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
+            } else {
+                tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
+            }
+            jobBtn.setEnabled(CollectionUtils.isEmpty(callData.getBookingList()));
+            updateMarkers(true);
+        }
+    }
+
+    private void updateAllBatchMarkers() {
     }
 
     private void updateEtaAndCallData(String time, String distance) {
@@ -1834,6 +1848,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private synchronized void updateMarkers(boolean shouldUpdateCamera) {
         if (null == mGoogleMap || null == callData) return;
 
+        mGoogleMap.clear();
+
         if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                     callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
@@ -1847,6 +1863,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     pickUpMarker.remove();
                 }
             }
+        }
+        if (Utils.isNewBatchService(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+            pickUpMarker.remove();
+        }
+
+        if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+            // need to update markers here
         }
 
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
@@ -2546,8 +2569,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     changeDriverMarker();
                     updateEtaAndCallData("0", "0");
                     configCountDown();
-
-                    checkArriveStateForBatch();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
                 }
@@ -2558,13 +2579,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void checkArriveStateForBatch() {
         if (!Utils.isNewBatchService(callData.getServiceCode())) return;
-        if (CollectionUtils.isEmpty(callData.getBookingList())) {
-            jobBtn.setEnabled(false);
-
-        } else {
-            jobBtn.setEnabled(true);
-
-        }
     }
 
     /**
