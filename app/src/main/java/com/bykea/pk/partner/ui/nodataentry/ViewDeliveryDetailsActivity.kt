@@ -29,8 +29,8 @@ import java.io.FileInputStream
 
 class ViewDeliveryDetailsActivity : BaseActivity() {
     lateinit var binding: ActivityViewDeliveryDetailsBinding
-    private var mediaPlayer: MediaPlayer? = null;
-    private val handler: Handler = Handler();
+    private var mediaPlayer: MediaPlayer? = null
+    private val handler: Handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +55,9 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
             override fun onStopAudio() {
                 if (mediaPlayer != null) {
                     imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(DriverApp.getContext(), R.drawable.ic_audio_play))
-                    imgViewAudioPlay.isEnabled = true;
-                    progressBarForAudioPlay.visibility = View.GONE;
-                    mediaPlayer?.pause();
+                    imgViewAudioPlay.isEnabled = true
+                    progressBarForAudioPlay.visibility = View.GONE
+                    mediaPlayer?.pause()
                 }
             }
         }
@@ -101,9 +101,9 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
                     progressBarForAudioPlay.visibility = View.VISIBLE
 
                     mediaPlayer = MediaPlayer()
-                    mediaPlayer?.setDataSource(FileInputStream(obj).fd);
+                    mediaPlayer?.setDataSource(FileInputStream(obj).fd)
                     mediaPlayer?.prepare()
-                    progressBarForAudioPlay.setMax(mediaPlayer?.duration!!);
+                    progressBarForAudioPlay.max = mediaPlayer?.duration!!
                     mediaPlayer?.start()
                     startPlayProgressUpdater()
                 }
@@ -117,26 +117,26 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
     }
 
     fun startPlayProgressUpdater() {
-        progressBarForAudioPlay.progress = mediaPlayer?.currentPosition!!;
+        progressBarForAudioPlay.progress = mediaPlayer?.currentPosition!!
         if (mediaPlayer?.isPlaying!!) {
             val notification = Runnable {
-                startPlayProgressUpdater();
+                startPlayProgressUpdater()
             }
             handler.postDelayed(notification, DIGIT_THOUSAND.toLong())
         } else {
-            mediaPlayer?.pause();
+            mediaPlayer?.pause()
 
             imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(DriverApp.getContext(), R.drawable.ic_audio_play))
-            imgViewAudioPlay.isEnabled = true;
-            progressBarForAudioPlay.visibility = View.GONE;
-            progressBarForAudioPlay.progress = DIGIT_ZERO;
+            imgViewAudioPlay.isEnabled = true
+            progressBarForAudioPlay.visibility = View.GONE
+            progressBarForAudioPlay.progress = DIGIT_ZERO
         }
     }
 
     override fun onPause() {
         if (mediaPlayer != null) {
-            mediaPlayer?.pause();
-            startPlayProgressUpdater();
+            mediaPlayer?.pause()
+            startPlayProgressUpdater()
         }
         super.onPause()
     }

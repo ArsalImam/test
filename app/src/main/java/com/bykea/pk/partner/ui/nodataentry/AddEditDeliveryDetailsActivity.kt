@@ -167,7 +167,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
     fun isValidate(): Boolean {
         if (!Utils.isValidNumber(editTextMobileNumber)) {
-            editTextMobileNumber.error = getString(R.string.error_phone_number_1);
+            editTextMobileNumber.error = getString(R.string.error_phone_number_1)
             editTextMobileNumber.requestFocus()
             return false
         } else if (editTextGPSAddress.text.isNullOrEmpty()) {

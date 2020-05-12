@@ -66,7 +66,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                 // Add DELIVERY DETAILS
                 ActivityStackManager.getInstance()
                         .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
-                                ADD_DELIVERY_DETAILS, null);
+                                ADD_DELIVERY_DETAILS, null)
 
             }
 
@@ -121,7 +121,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                 // EDIT DELIVERY DETAILS
                 ActivityStackManager.getInstance()
                         .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
-                                EDIT_DELIVERY_DETAILS, item);
+                                EDIT_DELIVERY_DETAILS, item)
             }
         })
 
