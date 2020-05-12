@@ -101,6 +101,23 @@ object BindingAdapters {
         view.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
+    @BindingAdapter("app:invisibleUnless")
+    @JvmStatic
+    fun setInvisibleUnless(view: View, value: Any? = null) {
+        value?.let {
+            when (value) {
+                is Boolean -> {
+                    view.visibility = if (value) View.VISIBLE else View.INVISIBLE
+                }
+                is String -> {
+                    view.visibility = if (value.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+                }
+            }
+        } ?: run {
+            view.visibility = View.INVISIBLE
+        }
+    }
+
     @BindingAdapter("app:dateFormat")
     @JvmStatic
     fun setDateTimeFormat(fontTextView: FontTextView, date: Date?) {

@@ -11,7 +11,7 @@
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.utils.GenericListeners" />
+            type="com.bykea.pk.partner.utils.GenericListener" />
     </data>
 
     <RelativeLayout

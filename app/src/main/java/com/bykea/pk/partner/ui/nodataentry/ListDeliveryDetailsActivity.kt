@@ -18,14 +18,11 @@ import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.StringCallBack
+import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Constants.RequestCode.RC_EDIT_DELIVERY_DETAILS
-import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.GenericListeners
-import com.bykea.pk.partner.utils.RecyclerItemTouchHelper
-import com.bykea.pk.partner.utils.Utils
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 import org.apache.commons.lang3.StringUtils
 
@@ -48,6 +45,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             recViewDeliveries.visibility = View.GONE
                         }
                     }
+                    ivTopUp.visibility = View.INVISIBLE
                     Dialogs.INSTANCE.dismissDialog()
                 }
             })
@@ -63,7 +61,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         }
 
         binding.lifecycleOwner = this
-        binding.listener = object : GenericListeners {
+        binding.listener = object : GenericListener {
             override fun addDeliveryDetails() {
                 // Add DELIVERY DETAILS
                 ActivityStackManager.getInstance()
@@ -91,9 +89,22 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
         binding.viewModel?.getAllDeliveryDetails()
 
+        setVisibilityForTopUp()
         setPassengerWallet()
         setCodValue()
         setFareAmount()
+    }
+
+    private fun setVisibilityForTopUp() {
+        // TODO SET AGAINST BATCH
+        if ((Utils.isDeliveryService(binding.viewModel?.callData?.value?.callType) ||
+                        Utils.isCourierService(binding.viewModel?.callData?.value?.callType)) &&
+                TripStatus.ON_ARRIVED_TRIP.equals(binding.viewModel?.callData?.value?.callType, ignoreCase = true) &&
+                AppPreferences.isTopUpPassengerWalletAllowed()) {
+            ivTopUp.visibility = View.VISIBLE
+        } else {
+            ivTopUp.visibility = View.INVISIBLE
+        }
     }
 
     private fun setAdapter() {

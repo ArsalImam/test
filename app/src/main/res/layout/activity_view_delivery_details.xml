@@ -9,6 +9,10 @@
         <variable
             name="viewModel"
             type="com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailViewsModel" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.utils.GenericListener" />
     </data>
 
     <LinearLayout
@@ -184,12 +188,34 @@
                     app:fontName="open_sans_regular.ttf"
                     tools:text="University Road, between NipaChorangi , Hassan Square, near Bait-ul-Mukarram Masjid" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iVAudioPlay"
-                    android:layout_width="@dimen/_38sdp"
-                    android:layout_height="@dimen/_38sdp"
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/icon_play" />
+                    app:invisibleUnless="@{viewModel.deliveryDetails.details.voice_note}">
+
+                    <ImageView
+                        android:id="@+id/imgViewAudioPlay"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:onClick="@{() -> listener.onPlayAudio(viewModel.deliveryDetails.details.voice_note)}"
+                        app:srcCompat="@drawable/ic_audio_play" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarForAudioPlay"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:indeterminate="false"
+                        android:max="100"
+                        android:onClick="@{() -> listener.onStopAudio()}"
+                        android:progress="80"
+                        android:progressDrawable="@drawable/circular_progress_bar"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 
