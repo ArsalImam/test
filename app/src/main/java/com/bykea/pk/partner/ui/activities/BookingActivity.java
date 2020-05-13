@@ -1,6 +1,5 @@
 package com.bykea.pk.partner.ui.activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -547,6 +546,22 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     if (!TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(AppPreferences.getTripStatus()))
                         Utils.setScaleAnimation(cvDirections);
 
+                    mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+                            if (marker.getTag() != null) return true;
+                            try {
+//                                int position = (int) marker.getTag();
+                                //here, need to open navigation/finish activity
+
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
+                    });
+
+
                     mGoogleMap.setMyLocationEnabled(true);
                     mGoogleMap.setOnMyLocationChangeListener(location -> {
                         Log.e("Location changed", "by google maps");
@@ -998,7 +1013,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 updateMarkers(true);
                 break;
             case R.id.cvDirections:
-                startGoogleDirectionsApp();
+                if (Utils.isNewBatchService(callData.getServiceCode())
+                        && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)
+                        || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
+                    ActivityStackManager.getInstance().startFinishBookingListingActivity();
+                } else {
+                    startGoogleDirectionsApp();
+                }
                 break;
             case R.id.cvLocation:
                 setCameraToDriverLocation();
@@ -1272,17 +1293,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     end = callData.getStartLat() + "," + callData.getStartLng();
                 }
             }
-            try {
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + end + "&mode=d");
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                startActivity(mapIntent);
-            } catch (Exception ex) {
-                Utils.appToast("Please install Google Maps");
-            }
-
+            openGoogleDirectionsIntent(end);
         }
     }
+
+    private void openGoogleDirectionsIntent(String end) {
+        try {
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + end + "&mode=d");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
+        } catch (Exception ex) {
+            Utils.appToast("Please install Google Maps");
+        }
+    }
+
 
     /**
      * Validates ride type for Food delivery.
@@ -1723,12 +1748,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                 Utils.getMapIcon(callData.getCallType())))
                 .position(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude())));
-        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return true;
-            }
-        });
     }
 
     /**
@@ -1897,20 +1916,13 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateDropOffMarkers() {
         try {
             if (null == mGoogleMap || callData == null) return;
-            if (dropOffMarker != null) {
-                dropOffMarker.remove();
+            for (int i = 0; i < callData.getBookingList().size(); i++) {
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .icon(Utils.getDropOffBitmapDiscriptorForBooking(mCurrentActivity,
+                                callData.getBookingList().get(i)))
+                        .position(new LatLng(callData.getBookingList().get(i).getDropoff().getLat(),
+                                callData.getBookingList().get(i).getDropoff().getLng()))).setTag(i);
             }
-            List<LatLng> latLngList = Utils.getDropDownLatLngList(callData);
-
-            for (int i = 0; i < latLngList.size(); i++) {
-
-                dropOffMarker = mGoogleMap.addMarker(new MarkerOptions().
-                        icon(Utils.getDropOffBitmapDiscriptor(mCurrentActivity,
-                                String.valueOf(i + 1)))
-                        .position(latLngList.get(i)));
-            }
-
-
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }

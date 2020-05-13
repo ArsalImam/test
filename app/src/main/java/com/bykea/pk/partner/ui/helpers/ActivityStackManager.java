@@ -58,6 +58,7 @@ import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
 import com.bykea.pk.partner.ui.nodataentry.AddEditDeliveryDetailsActivity;
+import com.bykea.pk.partner.ui.nodataentry.FinishBookingListingActivity;
 import com.bykea.pk.partner.ui.nodataentry.ListDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
@@ -672,6 +673,11 @@ public class ActivityStackManager {
      */
     public void startListDeliveryScreen(Activity activity) {
         Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
+        activity.startActivity(intent);
+    }
+
+    public void startFinishBookingListingActivity(Activity activity) {
+        Intent intent = new Intent(activity, FinishBookingListingActivity.class);
         activity.startActivity(intent);
     }
 }

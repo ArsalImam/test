@@ -810,6 +810,63 @@ public class Utils {
         Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
     }
+    public static BitmapDescriptor getDropOffBitmapDiscriptorForBooking(Context context, BatchBooking booking) {
+        Bitmap bmp = createDropOffMarkerForBooking(context, booking);
+        return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param booking The number of drop off.
+     *                <p>
+     *                By ignoring the constant, Time complexity of this function is O(n)^2
+     *                because this function execute in a loop.
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarkerForBooking(Context context, BatchBooking booking) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_marker_layout, null);
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        txt_name.setText(booking.getDisplayTag());
+        try {
+            if (booking.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                    booking.getStatus().equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
+                ViewCompat.setBackgroundTintList(txt_name, ContextCompat
+                        .getColorStateList(context,
+                                R.color.multi_delivery_dropoff_completed));
+
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
+    }
 
     /***
      * Fetch the bitmap from drawable resource id.
