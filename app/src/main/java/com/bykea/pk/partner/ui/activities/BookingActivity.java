@@ -1016,7 +1016,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 if (Utils.isNewBatchService(callData.getServiceCode())
                         && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)
                         || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
-                    ActivityStackManager.getInstance().startFinishBookingListingActivity();
+                    ActivityStackManager.getInstance().startFinishBookingListingActivity(BookingActivity.this);
                 } else {
                     startGoogleDirectionsApp();
                 }
