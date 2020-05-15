@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.RequestParams
@@ -314,12 +315,20 @@ interface Backend {
     @POST("/api/v1/partner/temperature")
     fun submitTemperature(@Body bodyObject: TemperatureSubmitRequest): Call<TemperatureSubmitResponse>
 
+    @GET("/v2/batch/{batch_id}/bookings")
+    fun getAllDeliveryDetails(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String
+    ): Call<DeliveryDetailListResponse>
+
     @POST("/v2/batch/{batch_id}/bookings")
     fun addDeliveryDetail(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
-            @Path("batch_id") batchId: String, deliveryDetailAddRequest: DeliveryDetailAddRequest
-    ): Call<DeliveryDetailAddResponse>
+            @Path("batch_id") batchId: String,
+            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+    ): Call<DeliveryDetailAddEditResponse>
 
     @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
     fun updateDeliveryDetail(
@@ -327,8 +336,8 @@ interface Backend {
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String,
-            deliveryDetailUpdateRequest: DeliveryDetailUpdateRequest
-    ): Call<DeliveryDetailUpdateResponse>
+            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+    ): Call<DeliveryDetailAddEditResponse>
 
     @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")
     fun removeDeliveryDetail(
@@ -337,6 +346,15 @@ interface Backend {
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String
     ): Call<DeliveryDetailRemoveResponse>
+
+    @FormUrlEncoded
+    @POST("/api/v1/driver/topupToPassenger")
+    abstract fun topUpPassengerWallet(@Field("_id") _id: String,
+                                      @Field("token_id") token_id: String,
+                                      @Field("tId") tripNo: String,
+                                      @Field("amount") amount: String,
+                                      @Field("pId") passId: String
+    ): Call<TopUpPassengerWalletResponse>
 
     companion object {
 

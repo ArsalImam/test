@@ -5,12 +5,13 @@ import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.remote.request.DeliveryDetailAddRequest
-import com.bykea.pk.partner.dal.source.remote.request.DeliveryDetailUpdateRequest
+import com.bykea.pk.partner.dal.source.pref.AppPref
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddResponse
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailUpdateResponse
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResponse
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.models.response.NormalCallData
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
 
 
@@ -25,29 +26,56 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     val deliveryDetails: MutableLiveData<DeliveryDetails>
         get() = _deliveryDetails
 
-    fun requestAddDeliveryDetails() {
-        val deliveryDetailAddRequest = DeliveryDetailAddRequest()
-        jobRespository.addDeliveryDetail("PENDING", deliveryDetailAddRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailAddResponse> {
-            override fun onDataLoaded(response: DeliveryDetailAddResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
+    private var _isAddedOrUpdatedSuccessful = MutableLiveData<Boolean>()
+    val isAddedOrUpdatedSuccessful: MutableLiveData<Boolean>
+        get() = _isAddedOrUpdatedSuccessful
 
-            override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
-        })
+    private var _callData = MutableLiveData<NormalCallData>()
+    val callData: MutableLiveData<NormalCallData>
+        get() = _callData
+
+    /**
+     * Get active trip from shared preferences
+     */
+    fun getActiveTrip() {
+        _callData.value = AppPreferences.getCallData()
     }
 
-    fun requestEditDeliveryDetail() {
-        val deliveryDetailUpdateRequest = DeliveryDetailUpdateRequest()
-        jobRespository.updateDeliveryDetail("PENDING", "PENDING", deliveryDetailUpdateRequest, object : JobsDataSource.LoadDataCallback<DeliveryDetailUpdateResponse> {
-            override fun onDataLoaded(response: DeliveryDetailUpdateResponse) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
+    /**
+     * Request add delivery detail item in list
+     */
+    fun requestAddDeliveryDetails() {
+        val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
+        jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetailAddRequest,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _isAddedOrUpdatedSuccessful.value = true
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
 
-            override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                Dialogs.INSTANCE.dismissDialog()
-            }
-        })
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.showToast(reasonMsg)
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
+    }
+
+    /**
+     * Request update delivery detail item in list
+     */
+    fun requestEditDeliveryDetail() {
+        val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
+        jobRespository.updateDeliveryDetail(callData.value?.tripId.toString(),
+                _deliveryDetails.value?.details?.trip_id.toString(), deliveryDetailAddRequest,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _isAddedOrUpdatedSuccessful.value = true
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 }

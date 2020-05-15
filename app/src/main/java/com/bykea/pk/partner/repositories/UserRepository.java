@@ -1676,7 +1676,7 @@ public class UserRepository {
                     case "ZoneAreaResponse":
                         mUserCallback.onZoneAreasResponse((ZoneAreaResponse) object);
                         break;
-                    case "TopUpPassWalletResponse":
+                    case "TopUpPassengerWalletResponse":
                         mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
                         break;
                     case "LocationResponse":
