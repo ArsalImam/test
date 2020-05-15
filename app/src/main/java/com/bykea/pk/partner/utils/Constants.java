@@ -183,7 +183,7 @@ public class Constants {
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
-        public static final String NEW_BATCH = "new_batch";
+        public static final String NEW_BATCH = "batch_v2";
     }
 
 

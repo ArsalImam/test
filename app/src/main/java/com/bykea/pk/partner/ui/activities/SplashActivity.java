@@ -443,6 +443,40 @@ public class SplashActivity extends BaseActivity {
                 ActivityStackManager.getInstance()
                         .startFeedbackActivity(mCurrentActivity);
             }
+        } else if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+
+            AppPreferences.setDeliveryType(Constants.CallType.NEW_BATCH);
+
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+
+            NormalCallData callData = gson.fromJson(trip, type);
+            if (StringUtils.isNotBlank(callData.getStarted_at())) {
+                AppPreferences.setStartTripTime(
+                        AppPreferences.getServerTimeDifference() +
+                                Utils.getTimeInMiles(
+                                        callData.getStarted_at())
+                );
+            }
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+
+            if (!callData.getStatus().equalsIgnoreCase(
+                    TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler.
+                        getInstance().
+                        registerChatListener();
+                ActivityStackManager.
+                        getInstance().
+                        startJobActivity(mCurrentActivity);
+
+            } else {
+                ActivityStackManager.getInstance()
+                        .startFeedbackActivity(mCurrentActivity);
+            }
+
         } else {
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>() {

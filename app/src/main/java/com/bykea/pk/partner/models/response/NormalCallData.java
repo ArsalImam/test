@@ -21,6 +21,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("initiate_time")
     private long sentTime;
 
+    @SerializedName("bookings_summary")
+    private String bookingsSummary;
+
     @SerializedName("booking_list")
     private ArrayList<BatchBooking> bookingList;
 
@@ -978,5 +981,13 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     public void setBookingList(ArrayList<BatchBooking> bookingList) {
         this.bookingList = bookingList;
+    }
+
+    public String getBookingsSummary() {
+        return bookingsSummary;
+    }
+
+    public void setBookingsSummary(String bookingsSummary) {
+        this.bookingsSummary = bookingsSummary;
     }
 }
