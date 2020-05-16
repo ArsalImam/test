@@ -80,7 +80,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.xyz\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://52.184.193.109:3000\""
             }
             jenkinsUrl {
                 dimension "env"
