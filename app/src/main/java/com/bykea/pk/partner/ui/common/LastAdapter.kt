@@ -85,9 +85,7 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
     }
 
     fun addItem(item: T) {
-        if (!items.isNullOrEmpty()) {
-            items.add(item)
-        }
+        items.add(item)
         notifyDataSetChanged()
     }
 }

@@ -8,6 +8,7 @@ import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.*
@@ -275,12 +276,12 @@ class JobsRepository(
         jobsRemoteDataSource.getAllDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, callback)
     }
 
-    override fun addDeliveryDetail(batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
-        jobsRemoteDataSource.addDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, deliveryDetailAddEditRequest, callback)
+    override fun addDeliveryDetail(batchID: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        jobsRemoteDataSource.addDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, deliveryDetails, callback)
     }
 
-    override fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
-        jobsRemoteDataSource.updateDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, deliveryDetailAddEditRequest, callback)
+    override fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        jobsRemoteDataSource.updateDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, deliveryDetails, callback)
     }
 
     override fun removeDeliveryDetail(batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse>) {

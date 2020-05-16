@@ -4,6 +4,7 @@ import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.RequestParams
@@ -327,7 +328,7 @@ interface Backend {
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
-            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+            @Body deliveryDetails: DeliveryDetails
     ): Call<DeliveryDetailAddEditResponse>
 
     @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
@@ -336,7 +337,7 @@ interface Backend {
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String,
-            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+            @Body deliveryDetails: DeliveryDetails
     ): Call<DeliveryDetailAddEditResponse>
 
     @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")

@@ -53,8 +53,8 @@ class ListDeliveryDetailsViewModel : ViewModel() {
         jobRespository.getAllDeliveryDetails(callData.value?.tripId.toString(),
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailListResponse> {
                     override fun onDataLoaded(response: DeliveryDetailListResponse) {
+                        _items.value = response.data?.bookings
                         Dialogs.INSTANCE.dismissDialog()
-                        _items.value = response.bookings
                     }
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {

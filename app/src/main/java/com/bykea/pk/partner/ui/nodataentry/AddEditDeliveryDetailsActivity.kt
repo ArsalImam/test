@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
+import com.bykea.pk.partner.utils.Constants.ServiceCode.SEND_COD
 import com.bykea.pk.partner.utils.Constants.TripTypes.DELIVERY_TYPE
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
@@ -68,11 +69,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
             if (intent?.extras!!.containsKey(DELIVERY_DETAILS_OBJECT)) {
                 viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
+                tVLocationAlphabet.text = binding.viewModel?.deliveryDetails?.value?.details?.display_tag
+                fLLocation.visibility = View.VISIBLE
             }
         }
 
         setTitleCustomToolbarUrdu(getString(R.string.parcel_details))
-        fLLocation.visibility = View.VISIBLE
+
         viewModel.getActiveTrip()
 
         viewModel.isAddedOrUpdatedSuccessful.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
@@ -108,10 +111,10 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
 
             override fun navigateToPlaceSearch() {
-                val returndropoffIntent = Intent(this@AddEditDeliveryDetailsActivity, SelectPlaceActivity::class.java)
-                /*returndropoffIntent.putExtra(Constants.Extras.SELECTED_ITEM, AppPreferences.getDriverDestination())*/
-                returndropoffIntent.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE)
-                startActivityForResult(returndropoffIntent, Constants.CONFIRM_DROPOFF_REQUEST_CODE)
+                Intent(this@AddEditDeliveryDetailsActivity, SelectPlaceActivity::class.java).apply {
+                    putExtra(FROM, CONFIRM_DROPOFF_REQUEST_CODE)
+                    startActivityForResult(this, CONFIRM_DROPOFF_REQUEST_CODE)
+                }
             }
         }
 
@@ -168,16 +171,15 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             editTextMobileNumber.error = getString(R.string.error_phone_number_1)
             editTextMobileNumber.requestFocus()
             return false
-        } else if (editTextGPSAddress.text.isNullOrEmpty()) {
-            editTextGPSAddress.error = getString(R.string.select_gps_address)
+        } else if (textViewGPSAddress.text.isNullOrEmpty()) {
+            textViewGPSAddress.error = getString(R.string.select_gps_address)
             editTextMobileNumber.requestFocus()
             return false
         } else if (editTextParcelValue.text.isNullOrEmpty()) {
             editTextParcelValue.error = getString(R.string.enter_parcel_value)
             editTextParcelValue.requestFocus()
             return false
-        } else if (!(editTextParcelValue.text.toString().trim().toInt() > DIGIT_ZERO &&
-                        editTextParcelValue.text.toString().trim().toInt() > AMOUNT_LIMIT)) {
+        } else if (!(editTextParcelValue.text.toString().trim().toInt() in (DIGIT_ZERO + 1) until AMOUNT_LIMIT)) {
             editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
             editTextParcelValue.requestFocus()
             return false
@@ -195,40 +197,37 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             viewModel.deliveryDetails.value?.meta = MetaData()
             viewModel.deliveryDetails.value?.dropoff = DeliveryDetailsLocationInfoData()
             viewModel.deliveryDetails.value?.details = DeliveryDetailInfo()
-            viewModel.deliveryDetails.value?.details?.batch_id = viewModel.callData.value?.tripId
         }
 
         // DELIVERY DETAILS META INFO
-        viewModel.deliveryDetails.value?.meta?.service_code = 22
+        viewModel.deliveryDetails.value?.meta?.service_code = SEND_COD
 
         // DELIVERY DETAILS DROP OFF INFO
-        if (editTextMobileNumber.text.toString().isNotEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString())
+        if (!editTextMobileNumber.text.isNullOrEmpty()) {
+            viewModel.deliveryDetails.value?.dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString().trim())
         }
-        if (editTextConsigneeName.text.toString().isNotEmpty()) {
+        if (!editTextConsigneeName.text.isNullOrEmpty()) {
             viewModel.deliveryDetails.value?.dropoff?.name = editTextConsigneeName.text.toString().trim()
         }
-        if (editTextAddress.text.toString().isNotEmpty()) {
+        if (!editTextAddress.text.isNullOrEmpty()) {
             viewModel.deliveryDetails.value?.dropoff?.address = editTextAddress.text.toString().trim()
         }
-        if (editTextAddress.text.toString().isNotEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.address = mDropOffResult?.address
-        }
-        if (editTextGPSAddress.text.toString().isNotEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.gps_address = mDropOffResult?.address
+
+        mDropOffResult?.let {
+            viewModel.deliveryDetails.value?.dropoff?.gps_address = mDropOffResult?.name
             viewModel.deliveryDetails.value?.dropoff?.lat = mDropOffResult?.latitude
             viewModel.deliveryDetails.value?.dropoff?.lng = mDropOffResult?.longitude
         }
 
         // DELIVERY DETAILS INFO
-        if (editTextParcelValue.text.toString().isNotEmpty()) {
+        if (!editTextParcelValue.text.isNullOrEmpty()) {
             viewModel.deliveryDetails.value?.details?.parcel_value = editTextParcelValue.text.toString().trim()
         }
-        if (editTextOrderNumber.text.toString().isNotEmpty()) {
+        if (!editTextOrderNumber.text.isNullOrEmpty()) {
             viewModel.deliveryDetails.value?.details?.order_no = editTextOrderNumber.text.toString().trim()
         }
-        if (editTextCODAmount.text.toString().isNotEmpty()) {
-            viewModel.deliveryDetails.value?.details?.order_no = editTextCODAmount.text.toString().trim()
+        if (!editTextCODAmount.text.isNullOrEmpty()) {
+            viewModel.deliveryDetails.value?.details?.cod_value = editTextCODAmount.text.toString().trim()
         }
     }
 
@@ -590,9 +589,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Set The DropOff Address
      */
     private fun setCallForETA() {
-        mDropOffResult?.let {
-            tVDropOffAddress.text = it.name
-        }
+        textViewGPSAddress.text = mDropOffResult?.name
     }
 
     /**
@@ -601,7 +598,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * 2) Audio Recording Permission
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && requestCode == Constants.CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
+        if (resultCode == RESULT_OK && requestCode == CONFIRM_DROPOFF_REQUEST_CODE && data != null) {
             mDropOffResult = data.getParcelableExtra(Constants.CONFIRM_DROPOFF_ADDRESS_RESULT)
             if (mDropOffResult != null) {
                 setCallForETA()

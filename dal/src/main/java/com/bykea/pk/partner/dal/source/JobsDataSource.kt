@@ -5,6 +5,7 @@ import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 
@@ -495,9 +496,9 @@ interface JobsDataSource {
 
     fun getAllDeliveryDetails(batchID: String, callback: LoadDataCallback<DeliveryDetailListResponse>)
 
-    fun addDeliveryDetail(batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+    fun addDeliveryDetail(batchID: String, deliveryDetails: DeliveryDetails, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
 
-    fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+    fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
 
     fun removeDeliveryDetail(batchID: String, bookingId: String, callback: LoadDataCallback<DeliveryDetailRemoveResponse>)
 

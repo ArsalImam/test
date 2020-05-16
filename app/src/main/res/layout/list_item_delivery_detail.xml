@@ -120,7 +120,7 @@
                         android:gravity="center_vertical"
                         android:maxLines="1"
                         android:padding="@dimen/_3sdp"
-                        android:text="@{item.dropoff.zone_dropoff_name_urdu}"
+                        android:text="@{item.dropoff.zone_dropoff_name_urdu + ` `}"
                         android:textSize="@dimen/_13sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf"
                         tools:text="@string/booking_ur" />

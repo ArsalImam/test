@@ -77,19 +77,20 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:text="@string/amount_rs"
+                        android:text="@{`Rs. ` +  viewModel.deliveryDetails.details.parcel_value}"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_16sdp"
                         android:textStyle="bold"
                         app:fontName="open_sans_bold.ttf"
                         tools:text="Rs. 120" />
 
+
                     <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:text="@string/offline_ride_fare"
+                        android:text="@{@string/karaya_ur + `: `}"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_16sdp"
                         android:textStyle="bold"
@@ -165,12 +166,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_22sdp"
                     app:srcCompat="@drawable/ic_building_black" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -230,6 +231,7 @@
                     android:layout_height="@dimen/_18sdp"
                     android:layout_marginStart="@dimen/_1sdp"
                     android:layout_marginLeft="@dimen/_1sdp"
+                    app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}"
                     app:srcCompat="@drawable/ic_location_blue" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -245,6 +247,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
+                    app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}"
                     tools:text="13 D, Gushan-e-Iqbal" />
             </LinearLayout>
 
@@ -257,6 +260,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
+                    app:goneUnless="@{viewModel.deliveryDetails.details.parcel_value != null}"
                     app:srcCompat="@drawable/ic_delivery_grayscale" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -271,6 +275,7 @@
                     android:textSize="@dimen/_12sdp"
                     app:amountFormatted="@{viewModel.deliveryDetails.details.parcel_value}"
                     app:fontName="open_sans_regular.ttf"
+                    app:goneUnless="@{viewModel.deliveryDetails.details.parcel_value != null}"
                     tools:text="Rs. 1000" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -278,6 +283,7 @@
                     android:layout_height="@dimen/_18sdp"
                     android:layout_marginStart="@dimen/_20sdp"
                     android:layout_marginLeft="@dimen/_20sdp"
+                    app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
                     app:srcCompat="@drawable/ic_number_black" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -292,6 +298,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
+                    app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
                     tools:text="515113" />
 
             </LinearLayout>
@@ -314,7 +321,8 @@
             android:paddingTop="@dimen/_10sdp"
             android:paddingEnd="@dimen/_10sdp"
             android:paddingRight="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_10sdp">
+            android:paddingBottom="@dimen/_10sdp"
+            app:goneUnless="@{viewModel.deliveryDetails.details.cod_value != null}">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/_24sdp"

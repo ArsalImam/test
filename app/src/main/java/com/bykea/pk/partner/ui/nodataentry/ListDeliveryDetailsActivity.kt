@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils
 class ListDeliveryDetailsActivity : AppCompatActivity() {
     lateinit var binding: ActivityListDeliveryDetailsBinding
     lateinit var lastAdapter: LastAdapter<DeliveryDetails>
-    lateinit var viewModel: ListDeliveryDetailsViewModel
     private var removeDeliveryDetail: DeliveryDetails? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +40,8 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     binding.viewModel?.itemRemoved?.value = false
                     if (::lastAdapter.isInitialized) {
                         removeDeliveryDetail?.let { item -> lastAdapter.removeItem(item) }
-                        if (lastAdapter.items.isEmpty()) {
-                            recViewDeliveries.visibility = View.GONE
-                        }
+                        binding.viewModel?.items?.value = lastAdapter.items
                     }
-                    ivTopUp.visibility = View.INVISIBLE
-                    Dialogs.INSTANCE.dismissDialog()
                 }
             })
 
@@ -55,7 +50,6 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     binding.viewModel?.passengerWalletUpdated?.value = false
                     ivTopUp.visibility = View.INVISIBLE
                     setPassengerWallet()
-                    Dialogs.INSTANCE.dismissDialog()
                 }
             })
         }
@@ -144,7 +138,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             DriverApp.getContext().getString(R.string.cancel_with_question_mark),
                             {
                                 removeDeliveryDetail = lastAdapter.items[position]
-                                removeDeliveryDetail?.let { viewModel.removeDeliveryDetail(it) }
+                                removeDeliveryDetail?.let { binding.viewModel?.removeDeliveryDetail(it) }
                                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                             },
                             {
@@ -193,7 +187,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
             if (requestCode == RC_ADD_DELIVERY_DETAILS) {
                 deliveryDetails?.let {
                     binding.viewModel?.items?.value?.add(it)
-                    lastAdapter.addItem(it)
+                    binding.viewModel?.items?.value = binding.viewModel?.items?.value
                 }
             } else if (requestCode == RC_EDIT_DELIVERY_DETAILS) {
                 deliveryDetails?.let { delivery ->
