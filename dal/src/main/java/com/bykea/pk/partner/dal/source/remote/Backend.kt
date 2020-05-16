@@ -166,7 +166,7 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/api/v1/batch/{batch_id}/arrived")
+    @POST("/v2/batch/{batch_id}/arrived")
     fun arrivedAtJobForBatch(@Header("x-app-partner-id") driverId: String,
                              @Header("x-app-partner-token") token: String,
                              @Path("batch_id") batchId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
@@ -186,7 +186,7 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/api/v1/batch/{job_id}/start")
+    @POST("/v2/batch/{job_id}/start")
     fun startJobForBatch(@Header("x-app-partner-id") driverId: String,
                          @Header("x-app-partner-token") token: String,
                          @Path("batch_id") batchId: String, @Body body: StartJobRequest): Call<StartJobResponse>

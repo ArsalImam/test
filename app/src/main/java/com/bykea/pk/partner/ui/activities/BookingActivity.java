@@ -1529,6 +1529,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isCourierService(callData.getCallType())) {
             llStartAddress.setVisibility(View.GONE);
             llEndAddress.setVisibility(View.GONE);
+        } else if (Utils.isNewBatchService(callData.getServiceCode())) {
+            llEndAddress.setVisibility(View.GONE);
         } else if (isBykeaCashJob) {
             llStartAddress.setVisibility(View.VISIBLE);
             llEndAddress.setVisibility(View.GONE);
@@ -1640,8 +1642,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
-    private void updateAllBatchMarkers() {
-    }
 
     private void updateEtaAndCallData(String time, String distance) {
         callData.setArivalTime(time);
@@ -1874,11 +1874,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (null == mGoogleMap || null == callData) return;
 
         mGoogleMap.clear();
+        driverMarker = null;
+        updateDriverMarker(mCurrentLocation.getLatitude() + "",
+                mCurrentLocation.getLongitude() + "");
 
         if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
                     callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT OR ARRIVED STATE
+                pickUpMarker = null;
                 updatePickupMarker();
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
                 // DO NOT REMOVE PICKUP MARKER FOR START STATE AS WELL FOR BYKEA CASH
@@ -1895,17 +1899,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
 
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
+            dropOffMarker = null;
             updateDropOffMarker();
         }
-        if (shouldUpdateCamera) setCameraToTripView();
-        else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
-
 
         if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
             // need to update markers here
             updateDropOffMarkers();
             setMarkersBound();
         }
+
+        if (shouldUpdateCamera) setCameraToTripView();
+        else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
     }
 
     /***
@@ -2856,7 +2861,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     public void setDropOffAddress() {
         endAddressTv.setTextColor(ContextCompat.getColor(mCurrentActivity, R.color.textColorPrimary676767));
-        endAddressTv.setText(callData.getEndAddress());
+        if (Utils.isNewBatchService(callData.getServiceCode())) {
+            endAddressTv.setText(callData.getBookingsSummary());
+        } else {
+            endAddressTv.setText(callData.getEndAddress());
+        }
     }
 
     /**
