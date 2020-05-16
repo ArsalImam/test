@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
@@ -98,6 +99,23 @@ object BindingAdapters {
     @JvmStatic
     fun setGoneUnless(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    @BindingAdapter("app:invisibleUnless")
+    @JvmStatic
+    fun setInvisibleUnless(view: View, value: Any? = null) {
+        value?.let {
+            when (value) {
+                is Boolean -> {
+                    view.visibility = if (value) View.VISIBLE else View.INVISIBLE
+                }
+                is String -> {
+                    view.visibility = if (value.isNotEmpty()) View.VISIBLE else View.INVISIBLE
+                }
+            }
+        } ?: run {
+            view.visibility = View.INVISIBLE
+        }
     }
 
     @BindingAdapter("app:dateFormat")
@@ -195,4 +213,20 @@ object BindingAdapters {
             autoFontTextView.setBackgroundResource(R.drawable.gray_left_top_bottom_bordered_bg)
         }
     }
+
+    @BindingAdapter("app:amountFormatted")
+    @JvmStatic
+    fun setAmountFormatted(fontTextView: FontTextView, amount: Any? = null) {
+        amount?.let {
+            when (it) {
+                is Int -> {
+                    fontTextView.text = String.format(DriverApp.getContext().getString(R.string.amount_rs), it.toString())
+                }
+                is String -> {
+                    fontTextView.text = String.format(DriverApp.getContext().getString(R.string.amount_rs), it)
+                }
+            }
+        }
+    }
+
 }

@@ -307,6 +307,8 @@ public class Constants {
         public final static int SCAN_FINGER_PRINTS = 123;
         public static final int PERMISSIONS_REQUEST_FOR_AUDIO_RECORDING_FROM_SETTINGS = 1089;
         public static final int REQUEST_AUDIO_PERMISSION = 9998;
+        public static final int RC_ADD_DELIVERY_DETAILS = 1000;
+        public static final int RC_EDIT_DELIVERY_DETAILS = 1001;
     }
 
     public static class TimeFormats {

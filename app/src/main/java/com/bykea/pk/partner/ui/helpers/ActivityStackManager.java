@@ -75,6 +75,8 @@ import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJEC
 import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_ID;
+import static com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_DELIVERY_DETAILS;
+import static com.bykea.pk.partner.utils.Constants.RequestCode.RC_EDIT_DELIVERY_DETAILS;
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -649,8 +651,10 @@ public class ActivityStackManager {
         intent.putExtra(FLOW_FOR, flowFor);
         if (deliveryDetails != null) {
             intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
+            activity.startActivityForResult(intent,RC_EDIT_DELIVERY_DETAILS);
+        } else {
+            activity.startActivityForResult(intent,RC_ADD_DELIVERY_DETAILS);
         }
-        activity.startActivity(intent);
     }
 
     /**

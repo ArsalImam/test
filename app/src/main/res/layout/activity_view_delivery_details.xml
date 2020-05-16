@@ -4,6 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.nodataentry.ViewDeliveryDetailsActivity">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailViewsModel" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.utils.GenericListener" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,6 +58,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:maxLines="1"
+                    android:text="@{viewModel.deliveryDetails.dropoff.zone_dropoff_name_urdu}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_38sdp"
                     android:textStyle="bold"
@@ -119,6 +131,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
+                android:text="@{viewModel.deliveryDetails.dropoff.name}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_16sdp"
                 app:fontName="open_sans_regular.ttf"
@@ -169,17 +182,40 @@
                     android:layout_marginRight="@dimen/_5sdp"
                     android:layout_weight="1"
                     android:ellipsize="end"
+                    android:text="@{viewModel.deliveryDetails.dropoff.address}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
                     tools:text="University Road, between NipaChorangi , Hassan Square, near Bait-ul-Mukarram Masjid" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iVAudioPlay"
-                    android:layout_width="@dimen/_38sdp"
-                    android:layout_height="@dimen/_38sdp"
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/icon_play" />
+                    app:invisibleUnless="@{viewModel.deliveryDetails.details.voice_note}">
+
+                    <ImageView
+                        android:id="@+id/imgViewAudioPlay"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:onClick="@{() -> listener.onPlayAudio(viewModel.deliveryDetails.details.voice_note)}"
+                        app:srcCompat="@drawable/ic_audio_play" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarForAudioPlay"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/_38sdp"
+                        android:layout_height="@dimen/_38sdp"
+                        android:indeterminate="false"
+                        android:max="100"
+                        android:onClick="@{() -> listener.onStopAudio()}"
+                        android:progress="80"
+                        android:progressDrawable="@drawable/circular_progress_bar"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -205,6 +241,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
+                    android:text="@{viewModel.deliveryDetails.dropoff.gps_address}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -230,9 +267,9 @@
                     android:layout_marginLeft="@dimen/_12sdp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@string/amount_rs"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
+                    app:amountFormatted="@{viewModel.deliveryDetails.details.parcel_value}"
                     app:fontName="open_sans_regular.ttf"
                     tools:text="Rs. 1000" />
 
@@ -251,6 +288,7 @@
                     android:layout_marginLeft="@dimen/_12sdp"
                     android:ellipsize="end"
                     android:singleLine="true"
+                    android:text="@{viewModel.deliveryDetails.details.order_no}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -292,9 +330,9 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="@string/amount_rs"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12sdp"
+                app:amountFormatted="@{viewModel.deliveryDetails.details.cod_value}"
                 app:fontName="open_sans_regular.ttf"
                 tools:text="Rs. 1000" />
 

@@ -561,4 +561,7 @@
     <string name="permission_required_msg">For the best Bykea experience, please enable Permission -> Location &amp; Phone in the application settings.></string>
     <string name="permission_msg_audio_settings">To record/play audio message, please enable Permission -> Microphone &amp; Storage in the application settings.</string>
     <string name="permission_msg_audio">Bykea needs Microphone &amp; Storage Permissions to record/play audio message, please enable these permissions for better user experience.</string>
+    <string name="select_gps_address">Please select gps address</string>
+    <string name="enter_parcel_value">Please enter parcel value</string>
+    <string name="enter_correct_parcel_value">Please enter correct parcel value</string>
 </resources>

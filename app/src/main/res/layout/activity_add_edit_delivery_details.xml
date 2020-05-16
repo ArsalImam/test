@@ -105,6 +105,7 @@
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:scrollbars="horizontal"
+                                    android:text="@={viewModel.deliveryDetails.dropoff.phone}"
                                     android:textColor="@color/black"
                                     android:textColorHint="@drawable/hint_color_unselected"
                                     android:textSize="@dimen/_11sdp"
@@ -146,6 +147,7 @@
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:scrollbars="horizontal"
+                                    android:text="@={viewModel.deliveryDetails.dropoff.name}"
                                     android:textColor="@color/black"
                                     android:textColorHint="@drawable/hint_color_unselected"
                                     android:textSize="@dimen/_11sdp"
@@ -182,6 +184,7 @@
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
                                 android:scrollbars="horizontal"
+                                android:text="@={viewModel.deliveryDetails.dropoff.address}"
                                 android:textColor="@color/black"
                                 android:textColorHint="@drawable/hint_color_unselected"
                                 android:textSize="@dimen/_11sdp"
@@ -320,7 +323,8 @@
                             android:layout_marginTop="@dimen/_15sdp"
                             android:layout_marginBottom="@dimen/_5sdp"
                             android:background="@drawable/border_details_form_round_light"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:onClick="@{()->listener.navigateToPlaceSearch()}">
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="@dimen/_12sdp"
@@ -329,6 +333,8 @@
                                 android:layout_marginLeft="@dimen/_8sdp"
                                 android:layout_marginEnd="@dimen/_10sdp"
                                 android:layout_marginRight="@dimen/_10sdp"
+                                android:clickable="false"
+                                android:enabled="false"
                                 app:srcCompat="@drawable/ic_location_blue" />
 
                             <com.bykea.pk.partner.widgets.FontEditText
@@ -337,12 +343,15 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:background="@android:color/transparent"
+                                android:clickable="false"
+                                android:enabled="false"
                                 android:hint="@string/gps_address_hint"
                                 android:inputType="numberSigned"
                                 android:maxLines="1"
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
                                 android:scrollbars="horizontal"
+                                android:text="@={viewModel.deliveryDetails.dropoff.gps_address}"
                                 android:textColor="@color/black"
                                 android:textColorHint="@drawable/hint_color_unselected"
                                 android:textSize="@dimen/_11sdp"
@@ -355,6 +364,8 @@
                                 android:layout_marginLeft="@dimen/_5sdp"
                                 android:layout_marginEnd="@dimen/_10sdp"
                                 android:layout_marginRight="@dimen/_10sdp"
+                                android:clickable="false"
+                                android:enabled="false"
                                 app:srcCompat="@drawable/ic_pencil_icon" />
 
                         </LinearLayout>
@@ -428,6 +439,7 @@
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:scrollbars="horizontal"
+                                    android:text="@={viewModel.deliveryDetails.details.parcel_value}"
                                     android:textColor="@color/black"
                                     android:textColorHint="@drawable/hint_color_unselected"
                                     android:textSize="@dimen/_11sdp"
@@ -469,6 +481,7 @@
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:scrollbars="horizontal"
+                                    android:text="@={viewModel.deliveryDetails.details.order_no}"
                                     android:textColor="@color/black"
                                     android:textColorHint="@drawable/hint_color_unselected"
                                     android:textSize="@dimen/_11sdp"
@@ -507,6 +520,7 @@
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
                                 android:scrollbars="horizontal"
+                                android:text="@={viewModel.deliveryDetails.details.cod_value}"
                                 android:textColor="@color/black"
                                 android:textColorHint="@drawable/hint_color_unselected"
                                 android:textSize="@dimen/_11sdp"
