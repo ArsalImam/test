@@ -260,6 +260,9 @@
             android:name=".ui.activities.MapDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.nodataentry.FinishBookingListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activities.ShahkarActivity"
             android:screenOrientation="portrait" />
         <activity

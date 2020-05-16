@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
@@ -37,7 +36,6 @@ import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
-import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util.*
 
@@ -592,7 +590,9 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Set The DropOff Address
      */
     private fun setCallForETA() {
-        tVDropOffAddress.text = mDropOffResult?.name
+        mDropOffResult?.let {
+            tVDropOffAddress.text = it.name
+        }
     }
 
     /**

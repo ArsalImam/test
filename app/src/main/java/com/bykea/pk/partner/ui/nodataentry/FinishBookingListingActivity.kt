@@ -30,19 +30,25 @@ class FinishBookingListingActivity : BaseActivity() {
     }
 
     private fun setAdapter() {
-        val adapter = LastAdapter(R.layout.item_finish_booking_listing, object : LastAdapter.OnItemClickListener<BatchBooking> {
-            override fun onItemClick(item: BatchBooking) {
+        binding?.recyclerView?.apply {
+            adapter = LastAdapter(R.layout.item_finish_booking_listing, object : LastAdapter.OnItemClickListener<BatchBooking> {
+                override fun onItemClick(item: BatchBooking) {
 
+                }
+            }).apply {
+                items = callData?.bookingList!!
             }
-        })
+        }
     }
 
     private fun initToolbar() {
         setSupportActionBar(map_toolbar)
         back.setOnClickListener { finish() }
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        map_toolbar.title = StringUtils.EMPTY_STRING
-        map_toolbar.subtitle = StringUtils.EMPTY_STRING
-        (map_toolbar.findViewById<View>(R.id.title) as TextView).text = intent.getStringExtra(EXTRA_TITLE)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        map_toolbar.apply {
+            title = StringUtils.EMPTY_STRING
+            subtitle = StringUtils.EMPTY_STRING
+            findViewById<TextView>(R.id.title).text = intent.getStringExtra(EXTRA_TITLE)
+        }
     }
 }

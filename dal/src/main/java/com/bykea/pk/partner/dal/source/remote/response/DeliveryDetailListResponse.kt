@@ -12,5 +12,5 @@ class DeliveryDetailListResponse : BaseResponse() {
     var limit = 10
     var total: Int? = null
     var batch_id: String? = null
-    var bookings: ArrayList<DeliveryDetails>? = null
+    var bookings: ArrayList<DeliveryDetails>? = ArrayList()
 }
