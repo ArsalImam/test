@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    >
                     <!-- region Account Number -->
                     <!--Without Top Margin-->
                     <com.bykea.pk.partner.widgets.FontTextView
@@ -108,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    >
                     <!-- region CNIC Number -->
                     <!--With Top Margin-->
                     <com.bykea.pk.partner.widgets.FontTextView
@@ -152,7 +152,7 @@
                         android:singleLine="true"
                         android:textColor="@color/color_red"
                         android:textSize="@dimen/_11sdp"
-                        android:visibility="gone"
+                        
                         app:fontName="jameel_noori_nastaleeq.ttf"
                         tools:text="@string/account_number" />
                     <!-- endregion -->
@@ -163,7 +163,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    >
 
                     <!-- region Mobile Number -->
                     <!--Without Top Margin-->
@@ -208,7 +208,7 @@
                         android:gravity="right"
                         android:textColor="@color/color_red"
                         android:textSize="@dimen/_11sdp"
-                        android:visibility="gone"
+                        
                         app:fontName="jameel_noori_nastaleeq.ttf"
                         tools:text="@string/account_number" />
                     <!-- endregion -->
@@ -219,7 +219,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    >
                     <!-- region IBAN-->
                     <!--Without Top Margin-->
                     <com.bykea.pk.partner.widgets.FontTextView
@@ -264,7 +264,7 @@
                         android:gravity="right"
                         android:textColor="@color/color_red"
                         android:textSize="@dimen/_11sdp"
-                        android:visibility="gone"
+                        
                         app:fontName="jameel_noori_nastaleeq.ttf"
                         tools:text="@string/account_number" />
                     <!-- endregion -->
@@ -312,7 +312,7 @@
                     android:gravity="right"
                     android:textColor="@color/color_red"
                     android:textSize="@dimen/_11sdp"
-                    android:visibility="gone"
+                    
                     app:fontName="jameel_noori_nastaleeq.ttf"
                     tools:text="@string/account_number" />
                 <!-- endregion -->

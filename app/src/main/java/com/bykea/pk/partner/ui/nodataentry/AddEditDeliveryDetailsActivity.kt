@@ -36,7 +36,6 @@ import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
 import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import kotlinx.android.synthetic.main.fragment_offline_rides.*
 import java.io.File
 import java.util.*
 
@@ -124,6 +123,99 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         mMediaPlayerHolder = MediaPlayerHolder(this@AddEditDeliveryDetailsActivity)
         mMediaPlayerHolder.setPlaybackInfoListener(PlaybackListener())
         initViews()
+        setTextChangeListeners()
+    }
+
+    private fun setTextChangeListeners() {
+        editTextMobileNumber.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateMobileNumber()
+            }
+        })
+
+        textViewGPSAddress.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateGPSAddress()
+            }
+        })
+
+        editTextParcelValue.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateParcelValue()
+            }
+        })
+
+        editTextCODAmount.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateCODAmount()
+            }
+        })
+    }
+
+    /**
+     * Validate Mobile Number
+     */
+    private fun validateMobileNumber(): Boolean {
+        return if (!Utils.isValidNumber(editTextMobileNumber)) {
+            editTextMobileNumber.requestFocus()
+            editTextMobileNumber.error = getString(R.string.error_phone_number_1)
+            linLayoutMobileNumber.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            editTextMobileNumber.error = null
+            linLayoutMobileNumber.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
+    }
+
+    /**
+     * Validate GPS Address
+     */
+    private fun validateGPSAddress(): Boolean {
+        return if (textViewGPSAddress.text.isNullOrEmpty()) {
+            textViewGPSAddress.requestFocus()
+            textViewGPSAddress.error = getString(R.string.select_gps_address)
+            linLayoutGPSAddress.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            textViewGPSAddress.error = null
+            linLayoutGPSAddress.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
+    }
+
+    /**
+     * Validate Parcel Value
+     */
+    private fun validateParcelValue(): Boolean {
+        return if (editTextParcelValue.text.isNullOrEmpty() ||
+                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT) {
+            editTextParcelValue.requestFocus()
+            editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
+            linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            editTextParcelValue.error = null
+            linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
+    }
+
+    /**
+     * Validate COD Amount
+     */
+    private fun validateCODAmount(): Boolean {
+        return if (editTextCODAmount.text.toString().isNotEmpty() &&
+                editTextCODAmount.text.toString().trim().toInt() == DIGIT_ZERO) {
+            editTextCODAmount.requestFocus()
+            editTextCODAmount.error = getString(R.string.enter_correct_cod_amount)
+            linLayoutCODAmount.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            editTextCODAmount.error = null
+            linLayoutCODAmount.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
     }
 
     /**
@@ -164,33 +256,11 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         pausePlaying()
     }
 
+    /**
+     * Validate the fields which are required
+     */
     fun isValidate(): Boolean {
-        if (!Utils.isValidNumber(editTextMobileNumber)) {
-            editTextMobileNumber.error = getString(R.string.error_phone_number_1)
-            editTextMobileNumber.requestFocus()
-            return false
-        } else if (textViewGPSAddress.text.isNullOrEmpty()) {
-            textViewGPSAddress.error = getString(R.string.select_gps_address)
-            editTextMobileNumber.requestFocus()
-            return false
-        } else if (editTextParcelValue.text.isNullOrEmpty()) {
-            editTextParcelValue.error = getString(R.string.enter_parcel_value)
-            editTextParcelValue.requestFocus()
-            return false
-        } else if (editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ZERO + 1) until AMOUNT_LIMIT) {
-            editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
-            editTextParcelValue.requestFocus()
-            return false
-        } else if (editTextCODAmount.text.isNullOrEmpty()) {
-            editTextCODAmount.error = getString(R.string.enter_cod_amount)
-            editTextCODAmount.requestFocus()
-            return false
-        } else if (editTextCODAmount.text.toString().trim().toInt() !in (DIGIT_ZERO + 1) until AMOUNT_LIMIT) {
-            editTextCODAmount.error = getString(R.string.enter_correct_cod_amount)
-            editTextCODAmount.requestFocus()
-            return false
-        }
-        return true
+        return validateMobileNumber() && validateGPSAddress() && validateParcelValue() && validateCODAmount()
     }
 
     /**
@@ -202,14 +272,11 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             dropoff = DeliveryDetailsLocationInfoData()
             details = DeliveryDetailInfo()
 
-            // DELIVERY DETAILS META INFO
-            /*if (binding.viewModel?.callData?.value?.serviceCode == NEW_BATCH_DELIVERY) {
+            if (editTextCODAmount.text.isNullOrEmpty()) {
                 meta?.service_code = SEND
-            } else if (binding.viewModel?.callData?.value?.serviceCode == NEW_BATCH_DELIVERY_COD) {
+            } else {
                 meta?.service_code = SEND_COD
-            }*/
-
-            meta?.service_code = SEND_COD
+            }
 
             // DELIVERY DETAILS DROP OFF - PHONE
             if (!editTextMobileNumber.text.isNullOrEmpty()) {
@@ -357,7 +424,6 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         mMediaPlayerHolder.pause()
         setPlayIcon(true)
     }
-
 
     /**
      * record audio recording time to display when playing recorded audio
