@@ -117,6 +117,10 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     binding.viewModel?.updateBatchReturnRun(isChecked)
                 }
             }
+
+            override fun onBackClicked() {
+                onBackPressed()
+            }
         }
     }
 

@@ -260,6 +260,7 @@
             android:layout_gravity="center"
             android:background="@drawable/button_green_square"
             android:padding="@dimen/_6sdp"
+            android:onClick="@{()->listener.onBackClicked()}"
             android:src="@drawable/check_mark" />
 
     </RelativeLayout>
