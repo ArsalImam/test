@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +14,14 @@ import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.util.SEPERATOR
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
+import com.bykea.pk.partner.utils.TripStatus.*
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
@@ -224,6 +228,47 @@ object BindingAdapters {
                 }
                 is String -> {
                     fontTextView.text = String.format(DriverApp.getContext().getString(R.string.amount_rs), it)
+                }
+            }
+        }
+    }
+
+    @BindingAdapter("app:batchTripItemAccordingToStatus")
+    @JvmStatic
+    fun setBatchTripItemAccordingToStatus(view: View, deliveryDetails: DeliveryDetails?) {
+        val imageViewShowDetails: AppCompatImageView = view.findViewById(R.id.imageViewShowDetails)
+        val imageViewEdit: AppCompatImageView = view.findViewById(R.id.imageViewEdit)
+        val textViewStatus: FontTextView = view.findViewById(R.id.textViewStatus)
+
+        Util.safeLet(deliveryDetails,
+                deliveryDetails?.details,
+                deliveryDetails?.details?.status) { _, _, status ->
+            when (status) {
+                ON_START_TRIP, ON_FINISH_TRIP, ON_FEEDBACK_TRIP -> {
+                    imageViewShowDetails.visibility = View.VISIBLE
+                    imageViewEdit.visibility = View.INVISIBLE
+                    textViewStatus.visibility = View.GONE
+                }
+                ON_COMPLETED_TRIP -> {
+                    imageViewShowDetails.visibility = View.INVISIBLE
+                    imageViewEdit.visibility = View.INVISIBLE
+                    deliveryDetails?.details?.delivery_status?.let {
+                        textViewStatus.visibility = View.VISIBLE
+                        if (it) {
+                            textViewStatus.text = DriverApp.getContext().getText(R.string.successful)
+                            textViewStatus.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.color_blue_fleet))
+                        } else {
+                            textViewStatus.text = DriverApp.getContext().getText(R.string.unsuccessful)
+                            textViewStatus.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.booking_red))
+                        }
+                    } ?: run {
+                        textViewStatus.visibility = View.GONE
+                    }
+                }
+                else -> {
+                    imageViewShowDetails.visibility = View.VISIBLE
+                    imageViewEdit.visibility = View.VISIBLE
+                    textViewStatus.visibility = View.GONE
                 }
             }
         }

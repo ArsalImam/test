@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -23,6 +24,7 @@ import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.Constants.RequestCode.RC_EDIT_DELIVERY_DETAILS
+import com.bykea.pk.partner.utils.TripStatus.ON_START_TRIP
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 import org.apache.commons.lang3.StringUtils
 
@@ -52,9 +54,40 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     setPassengerWallet()
                 }
             })
+
+            isReturnRunEnable.observe(this@ListDeliveryDetailsActivity, Observer {
+                if (it) {
+                    linLayoutReturnRun.visibility = View.VISIBLE
+                } else {
+                    if (::lastAdapter.isInitialized && lastAdapter.items.size > DIGIT_ZERO) {
+                        linLayoutReturnRun.visibility = View.VISIBLE
+                    } else {
+                        linLayoutReturnRun.visibility = View.GONE
+                    }
+                }
+            })
         }
 
         binding.lifecycleOwner = this
+        binding.viewModel?.getActiveTrip()
+        binding.viewModel?.setReturnRunEnableOrNot()
+
+        setListeners()
+        setVisibilityForTopUp()
+        setPassengerWallet()
+        setCodValue()
+        setFareAmount()
+
+        setAdapter()
+        setAdapterSwipeItemCallback()
+        Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+        binding.viewModel?.getAllDeliveryDetails()
+    }
+
+    /**
+     * Set Listeners using generic listener interface
+     */
+    private fun setListeners() {
         binding.listener = object : GenericListener {
             override fun addDeliveryDetails() {
                 // Add DELIVERY DETAILS
@@ -75,32 +108,61 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     }
                 })
             }
+
+            override fun onCheckChangedListener(compoundButton: CompoundButton, isChecked: Boolean) {
+                if (binding.viewModel?.callData?.value?.status.toString().equals(ON_START_TRIP, ignoreCase = true)) {
+                    binding.viewModel?.setReturnRunEnableOrNot(!isChecked)
+                } else {
+                    Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+                    binding.viewModel?.updateBatchReturnRun(isChecked)
+                }
+            }
         }
-
-        binding.viewModel?.getActiveTrip()
-        setAdapter()
-        setAdapterSwipeItemCallback()
-        Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-        binding.viewModel?.getAllDeliveryDetails()
-
-        setVisibilityForTopUp()
-        setPassengerWallet()
-        setCodValue()
-        setFareAmount()
     }
 
     /**
      * Set visibility for top up icon considering the call type and ride status.
      */
     private fun setVisibilityForTopUp() {
-        // TODO SET AGAINST BATCH
-        if ((Utils.isDeliveryService(binding.viewModel?.callData?.value?.callType) ||
-                        Utils.isCourierService(binding.viewModel?.callData?.value?.callType)) &&
-                TripStatus.ON_ARRIVED_TRIP.equals(binding.viewModel?.callData?.value?.callType, ignoreCase = true) &&
-                AppPreferences.isTopUpPassengerWalletAllowed()) {
-            ivTopUp.visibility = View.VISIBLE
-        } else {
+        binding.viewModel?.callData?.value?.serviceCode?.let {
+            if ((Utils.isNewBatchService(it)) &&
+                    TripStatus.ON_ARRIVED_TRIP.equals(binding.viewModel?.callData?.value?.status, ignoreCase = true) &&
+                    AppPreferences.isTopUpPassengerWalletAllowed()) {
+                ivTopUp.visibility = View.VISIBLE
+            } else {
+                ivTopUp.visibility = View.INVISIBLE
+            }
+        } ?: run {
             ivTopUp.visibility = View.INVISIBLE
+        }
+    }
+
+    /**
+     * Set passenger wallet from trip data
+     */
+    private fun setPassengerWallet() {
+        tvPWalletAmount.text = String.format(getString(R.string.amount_rs), binding.viewModel?.callData?.value?.passWallet)
+    }
+
+    /**
+     * Set COD value from trip data
+     */
+    private fun setCodValue() {
+
+    }
+
+    /**
+     * Set Fare Amount from trip data
+     */
+    private fun setFareAmount() {
+        when {
+            binding.viewModel?.callData?.value?.kraiKiKamai != DIGIT_ZERO -> {
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), binding.viewModel?.callData?.value?.kraiKiKamai)
+            }
+            AppPreferences.getEstimatedFare() != DIGIT_ZERO -> {
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare())
+            }
+            else -> tvFareAmount.setText(R.string.dash)
         }
     }
 
@@ -147,35 +209,6 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             })
                 })
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recViewDeliveries)
-    }
-
-    /**
-     * Set passenger wallet from trip data
-     */
-    private fun setPassengerWallet() {
-        tvPWalletAmount.text = String.format(getString(R.string.amount_rs), binding.viewModel?.callData?.value?.passWallet)
-    }
-
-    /**
-     * Set COD value from trip data
-     */
-    private fun setCodValue() {
-        //TODO : SET CODE VALUE
-    }
-
-    /**
-     * Set Fare Amount from trip data
-     */
-    private fun setFareAmount() {
-        when {
-            binding.viewModel?.callData?.value?.kraiKiKamai != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), binding.viewModel?.callData?.value?.kraiKiKamai)
-            }
-            AppPreferences.getEstimatedFare() != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare())
-            }
-            else -> tvFareAmount.setText(R.string.dash)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

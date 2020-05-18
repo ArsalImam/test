@@ -445,6 +445,7 @@ public class Constants {
         public static final int SEND = 21;
         public static final int MULTI_DELIVERY = 0;
         public static final int NEW_BATCH_DELIVERY = 100;
+        public static final int NEW_BATCH_DELIVERY_COD = 101;
         public static final int SEND_COD = 22;
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;

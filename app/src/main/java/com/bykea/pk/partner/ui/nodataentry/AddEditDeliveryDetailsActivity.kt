@@ -27,7 +27,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
-import com.bykea.pk.partner.utils.Constants.ServiceCode.SEND_COD
+import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Constants.TripTypes.DELIVERY_TYPE
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
@@ -139,12 +139,10 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private fun callPostApiNow() {
         when (flowForAddOrEdit) {
             ADD_DELIVERY_DETAILS -> {
-                createRequestBodyForAddEdit()
-                viewModel.requestAddDeliveryDetails()
+                viewModel.requestAddDeliveryDetails(createRequestBodyForAddEdit())
             }
             EDIT_DELIVERY_DETAILS -> {
-                createRequestBodyForAddEdit(false)
-                viewModel.requestEditDeliveryDetail()
+                viewModel.requestEditDeliveryDetail(createRequestBodyForAddEdit())
             }
         }
     }
@@ -179,9 +177,17 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             editTextParcelValue.error = getString(R.string.enter_parcel_value)
             editTextParcelValue.requestFocus()
             return false
-        } else if (!(editTextParcelValue.text.toString().trim().toInt() in (DIGIT_ZERO + 1) until AMOUNT_LIMIT)) {
+        } else if (editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ZERO + 1) until AMOUNT_LIMIT) {
             editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
             editTextParcelValue.requestFocus()
+            return false
+        } else if (editTextCODAmount.text.isNullOrEmpty()) {
+            editTextCODAmount.error = getString(R.string.enter_cod_amount)
+            editTextCODAmount.requestFocus()
+            return false
+        } else if (editTextCODAmount.text.toString().trim().toInt() !in (DIGIT_ZERO + 1) until AMOUNT_LIMIT) {
+            editTextCODAmount.error = getString(R.string.enter_correct_cod_amount)
+            editTextCODAmount.requestFocus()
             return false
         }
         return true
@@ -189,45 +195,60 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
     /**
      * Create Request For Add or Edit DeliveryDetails
-     * @param isDeliveryAdd : If true, create request body for add else for edit
      */
-    private fun createRequestBodyForAddEdit(isDeliveryAdd: Boolean = true) {
-        if (isDeliveryAdd) {
-            viewModel.deliveryDetails.value = DeliveryDetails()
-            viewModel.deliveryDetails.value?.meta = MetaData()
-            viewModel.deliveryDetails.value?.dropoff = DeliveryDetailsLocationInfoData()
-            viewModel.deliveryDetails.value?.details = DeliveryDetailInfo()
-        }
+    private fun createRequestBodyForAddEdit(): DeliveryDetails {
+        return DeliveryDetails().apply {
+            meta = MetaData()
+            dropoff = DeliveryDetailsLocationInfoData()
+            details = DeliveryDetailInfo()
 
-        // DELIVERY DETAILS META INFO
-        viewModel.deliveryDetails.value?.meta?.service_code = SEND_COD
+            // DELIVERY DETAILS META INFO
+            /*if (binding.viewModel?.callData?.value?.serviceCode == NEW_BATCH_DELIVERY) {
+                meta?.service_code = SEND
+            } else if (binding.viewModel?.callData?.value?.serviceCode == NEW_BATCH_DELIVERY_COD) {
+                meta?.service_code = SEND_COD
+            }*/
 
-        // DELIVERY DETAILS DROP OFF INFO
-        if (!editTextMobileNumber.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString().trim())
-        }
-        if (!editTextConsigneeName.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.name = editTextConsigneeName.text.toString().trim()
-        }
-        if (!editTextAddress.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.address = editTextAddress.text.toString().trim()
-        }
+            meta?.service_code = SEND_COD
 
-        mDropOffResult?.let {
-            viewModel.deliveryDetails.value?.dropoff?.gps_address = mDropOffResult?.name
-            viewModel.deliveryDetails.value?.dropoff?.lat = mDropOffResult?.latitude
-            viewModel.deliveryDetails.value?.dropoff?.lng = mDropOffResult?.longitude
-        }
+            // DELIVERY DETAILS DROP OFF - PHONE
+            if (!editTextMobileNumber.text.isNullOrEmpty()) {
+                dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString().trim())
+            }
+            // DELIVERY DETAILS DROP OFF - CONSIGNEE NAME
+            if (!editTextConsigneeName.text.isNullOrEmpty()) {
+                dropoff?.name = editTextConsigneeName.text.toString().trim()
+            }
 
-        // DELIVERY DETAILS INFO
-        if (!editTextParcelValue.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.details?.parcel_value = editTextParcelValue.text.toString().trim()
-        }
-        if (!editTextOrderNumber.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.details?.order_no = editTextOrderNumber.text.toString().trim()
-        }
-        if (!editTextCODAmount.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.details?.cod_value = editTextCODAmount.text.toString().trim()
+            // DELIVERY DETAILS DROP OFF - ADDRESS
+            if (!editTextAddress.text.isNullOrEmpty()) {
+                dropoff?.address = editTextAddress.text.toString().trim()
+            }
+
+            mDropOffResult?.let {
+                dropoff?.gps_address = mDropOffResult?.name
+                dropoff?.lat = mDropOffResult?.latitude
+                dropoff?.lng = mDropOffResult?.longitude
+            } ?: run {
+                dropoff?.gps_address = binding.viewModel?.deliveryDetails?.value?.dropoff?.gps_address
+                dropoff?.lat = binding.viewModel?.deliveryDetails?.value?.dropoff?.lat
+                dropoff?.lng = binding.viewModel?.deliveryDetails?.value?.dropoff?.lng
+            }
+
+            // DELIVERY DETAILS INFO - PARCEL VALUE
+            if (!editTextParcelValue.text.isNullOrEmpty()) {
+                details?.parcel_value = editTextParcelValue.text.toString().trim()
+            }
+
+            // DELIVERY DETAILS INFO - ORDER NUMBER VALUE
+            if (!editTextOrderNumber.text.isNullOrEmpty()) {
+                details?.order_no = editTextOrderNumber.text.toString().trim()
+            }
+
+            // DELIVERY DETAILS INFO - COD VALUE
+            if (!editTextCODAmount.text.isNullOrEmpty()) {
+                details?.cod_value = editTextCODAmount.text.toString().trim()
+            }
         }
     }
 

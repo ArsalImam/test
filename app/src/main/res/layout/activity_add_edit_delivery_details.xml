@@ -148,7 +148,6 @@
                                     android:maxLines="1"
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
-                                    android:scrollbars="horizontal"
                                     android:text="@{viewModel.deliveryDetails.dropoff.name}"
                                     android:textColor="@color/black"
                                     android:textColorHint="@drawable/hint_color_unselected"

@@ -44,41 +44,38 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     /**
      * Request add delivery detail item in list
      */
-    fun requestAddDeliveryDetails() {
-        _deliveryDetails.value?.let {
-            jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), it,
-                    object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
-                        override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
-                            _deliveryDetails.value = response.data
-                            _isAddedOrUpdatedSuccessful.value = true
-                            Dialogs.INSTANCE.dismissDialog()
-                        }
+    fun requestAddDeliveryDetails(deliveryDetails: DeliveryDetails) {
+        jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetails,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _deliveryDetails.value = response.data
+                        _isAddedOrUpdatedSuccessful.value = true
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
 
-                        override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                            Dialogs.INSTANCE.showToast(reasonMsg)
-                            Dialogs.INSTANCE.dismissDialog()
-                        }
-                    })
-        }
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.showToast(reasonMsg)
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 
     /**
      * Request update delivery detail item in list
      */
-    fun requestEditDeliveryDetail() {
-        _deliveryDetails.value?.let {
-            jobRespository.updateDeliveryDetail(callData.value?.tripId.toString(),
-                    _deliveryDetails.value?.details?.trip_id.toString(), it,
-                    object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
-                        override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
-                            _isAddedOrUpdatedSuccessful.value = true
-                            Dialogs.INSTANCE.dismissDialog()
-                        }
+    fun requestEditDeliveryDetail(deliveryDetails: DeliveryDetails) {
+        jobRespository.updateDeliveryDetail(callData.value?.tripId.toString(),
+                _deliveryDetails.value?.details?.trip_id.toString(), deliveryDetails,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _deliveryDetails.value = response.data
+                        _isAddedOrUpdatedSuccessful.value = true
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
 
-                        override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                            Dialogs.INSTANCE.dismissDialog()
-                        }
-                    })
-        }
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
     }
 }

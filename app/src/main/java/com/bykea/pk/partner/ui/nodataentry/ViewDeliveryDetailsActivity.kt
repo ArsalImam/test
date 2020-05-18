@@ -14,20 +14,17 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
-import com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND
-import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
+import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
 import com.zendesk.util.StringUtils
 import kotlinx.android.synthetic.main.activity_view_delivery_details.*
-import kotlinx.android.synthetic.main.activity_view_delivery_details.imgViewAudioPlay
-import kotlinx.android.synthetic.main.activity_view_delivery_details.progressBarForAudioPlay
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import kotlinx.android.synthetic.main.job_detail_act.*
 import java.io.File
 import java.io.FileInputStream
 
 class ViewDeliveryDetailsActivity : BaseActivity() {
+    private var TAG = ViewDeliveryDetailViewsModel::class.java.simpleName
     lateinit var binding: ActivityViewDeliveryDetailsBinding
     private var mediaPlayer: MediaPlayer? = null
     private val handler: Handler = Handler()
@@ -44,6 +41,16 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
 
         binding.viewModel?.getActiveTrip()
         binding.listener = object : GenericListener {
+            override fun navigateToPlaceSearch() {
+                Util.safeLet(binding.viewModel?.deliveryDetails?.value,
+                        binding.viewModel?.deliveryDetails?.value?.dropoff,
+                        binding.viewModel?.deliveryDetails?.value?.dropoff?.lat,
+                        binding.viewModel?.deliveryDetails?.value?.dropoff?.lng) { _, _, lat, lng ->
+                    Utils.navigateToGoogleMap(this@ViewDeliveryDetailsActivity,
+                            AppPreferences.getLatitude(), AppPreferences.getLongitude(), lat, lng)
+                }
+            }
+
             override fun onPlayAudio(url: String?) {
                 if (url != null) {
                     voiceClipPlayDownload(url)
@@ -60,21 +67,29 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
                     mediaPlayer?.pause()
                 }
             }
+
+            override fun showCallDialog() {
+                Dialogs.INSTANCE.showCallPassengerDialog(this@ViewDeliveryDetailsActivity, {
+                    if (Utils.isAppInstalledWithPackageName(this@ViewDeliveryDetailsActivity, ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        Utils.openCallDialog(this@ViewDeliveryDetailsActivity, binding.viewModel?.callData?.value, getSenderNumber())
+                    } else {
+                        Utils.callingIntent(this@ViewDeliveryDetailsActivity, getSenderNumber())
+                    }
+                    Utils.redLog(TAG, getString(R.string.call_sender))
+                }, {
+                    if (Utils.isAppInstalledWithPackageName(this@ViewDeliveryDetailsActivity, ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        Utils.openCallDialog(this@ViewDeliveryDetailsActivity, binding.viewModel?.callData?.value, getRecipientNumber())
+                    } else {
+                        Utils.callingIntent(this@ViewDeliveryDetailsActivity, getRecipientNumber())
+                    }
+                    Utils.redLog(TAG, getString(R.string.call_recipent))
+                })
+            }
         }
 
         setTitleCustomToolbarWithUrdu(binding.viewModel?.deliveryDetails?.value?.details?.trip_no, StringUtils.EMPTY_STRING)
         fLLocation.visibility = View.VISIBLE
         tVLocationAlphabet.text = binding.viewModel?.deliveryDetails?.value?.details?.display_tag
-
-        iVDirectionPickUp.setOnClickListener {
-            Util.safeLet(binding.viewModel?.deliveryDetails?.value,
-                    binding.viewModel?.deliveryDetails?.value?.dropoff,
-                    binding.viewModel?.deliveryDetails?.value?.dropoff?.lat,
-                    binding.viewModel?.deliveryDetails?.value?.dropoff?.lng) { _, _, lat, lng ->
-                Utils.navigateToGoogleMap(this@ViewDeliveryDetailsActivity,
-                        AppPreferences.getLatitude(), AppPreferences.getLongitude(), lat, lng)
-            }
-        }
     }
 
     /**
@@ -96,7 +111,7 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
                 override fun success(obj: File) {
                     Dialogs.INSTANCE.dismissDialog()
 
-                    imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
+                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(DriverApp.getContext(), R.drawable.ic_audio_stop))
                     imgViewAudioPlay.isEnabled = false
                     progressBarForAudioPlay.visibility = View.VISIBLE
 
@@ -136,6 +151,44 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
             progressBarForAudioPlay.visibility = View.GONE
             progressBarForAudioPlay.progress = DIGIT_ZERO
         }
+    }
+
+    /***
+     * Get Sender phone number according
+     * @return Phone number for Sender
+     */
+    private fun getSenderNumber(): String {
+        binding.viewModel?.callData?.value?.let {
+            return if (!it.phoneNo.isNullOrEmpty() && !it.senderPhone.isNullOrEmpty()) {
+                var passengerPhoneNumber = it.phoneNo
+                var senderPhoneNumber = it.senderPhone
+                if (passengerPhoneNumber.startsWith(MOBILE_COUNTRY_STANDARD))
+                    passengerPhoneNumber = Utils.phoneNumberToShow(it.phoneNo)
+                if (senderPhoneNumber.startsWith(MOBILE_COUNTRY_STANDARD))
+                    senderPhoneNumber = Utils.phoneNumberToShow(it.senderPhone)
+
+                if (passengerPhoneNumber.equals(senderPhoneNumber, ignoreCase = true))
+                    passengerPhoneNumber
+                else
+                    senderPhoneNumber
+            } else if (!it.phoneNo.isNullOrEmpty()) {
+                it.phoneNo
+            } else {
+                return StringUtils.EMPTY_STRING
+            }
+        }
+        return StringUtils.EMPTY_STRING
+    }
+
+    /***
+     * Get Sender phone number according
+     * @return Phone number for Sender
+     */
+    private fun getRecipientNumber(): String {
+        if (!binding.viewModel?.deliveryDetails?.value?.dropoff?.phone.isNullOrEmpty()) {
+            return binding.viewModel?.deliveryDetails?.value?.dropoff?.phone.toString()
+        }
+        return StringUtils.EMPTY_STRING
     }
 
     override fun onPause() {

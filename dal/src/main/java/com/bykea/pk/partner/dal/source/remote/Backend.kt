@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
@@ -347,6 +348,13 @@ interface Backend {
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String
     ): Call<DeliveryDetailRemoveResponse>
+
+    @PUT("/v2/batch/{batch_id}/update-return-run")
+    fun updateBatchReturnRun(@Header("x-app-partner-id") driverId: String,
+                             @Header("x-app-partner-token") token: String,
+                             @Path("batch_id") batchId: String,
+                             @Body batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest
+    ): Call<BatchUpdateReturnRunResponse>
 
     @FormUrlEncoded
     @POST("/api/v1/driver/topupToPassenger")

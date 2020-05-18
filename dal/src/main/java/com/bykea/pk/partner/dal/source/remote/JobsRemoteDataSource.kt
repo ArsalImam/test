@@ -3,6 +3,7 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
@@ -432,6 +433,13 @@ class JobsRemoteDataSource {
     fun removeDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse>) {
         Backend.talos.removeDeliveryDetail(driverId, accessToken, batchID, bookingId).enqueue(object : Callback<DeliveryDetailRemoveResponse> {
             override fun onSuccess(response: DeliveryDetailRemoveResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun updateBatchReturnRun(driverId: String, accessToken: String, batchID: String, batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest, callback: JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse>) {
+        Backend.talos.updateBatchReturnRun(driverId, accessToken, batchID, batchUpdateReturnRunRequest).enqueue(object : Callback<BatchUpdateReturnRunResponse> {
+            override fun onSuccess(response: BatchUpdateReturnRunResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
