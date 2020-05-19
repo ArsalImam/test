@@ -19,6 +19,7 @@ public class BatchBooking {
     @SerializedName("dropoff")
     @Expose
     private BatchBookingDropoff dropoff;
+    private boolean selected;
 
     public String getId() {
         return id;
@@ -58,5 +59,13 @@ public class BatchBooking {
 
     public void setDropoff(BatchBookingDropoff dropoff) {
         this.dropoff = dropoff;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

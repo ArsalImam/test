@@ -351,7 +351,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             } else {
                                 setInitialData();
                             }
-
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
@@ -437,6 +436,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             vAddressDivider.setVisibility(View.GONE);
             llPickUpDetails.setVisibility(View.GONE);
             if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
+                    || Utils.isNewBatchService(callData.getServiceCode())
                     || (callData.getServiceCode() != null && callData.getServiceCode() == OFFLINE_DELIVERY) || Utils.isRideService(callData.getCallType())
                     || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL))) {
                 blueDot.setVisibility(View.GONE);
@@ -1069,7 +1069,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.tvDetailsBanner:
                 if (Utils.isNewBatchService(callData.getServiceCode())) {
-                    ActivityStackManager.getInstance().startListDeliveryScreen(BookingActivity.this);
+                    ActivityStackManager.getInstance().startNavigationDeliveryScreen(BookingActivity.this);
                     return;
                 }
                 bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
@@ -1446,10 +1446,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (Utils.useServiceIconProvidedByAPI(callData.getCallType())) {
                 icon = callData.getIcon();
             }
+
             //Driver can not change drop-off for the loadboard jobs
             if (Utils.isLoadboardService(callData.getCallType()))
                 ivAddressEdit.setVisibility(View.GONE);
-
+            else if (Utils.isNewBatchService(callData.getServiceCode())) {
+                updateMarkers(true);
+                updateButtonState();
+            }
             //TODO: Rendering service icon sent from server in disabled, until icons get updated on server
             if (false && StringUtils.isNotBlank(icon)) {
                 Utils.redLog(mCurrentActivity.getClass().getSimpleName(), Utils.getCloudinaryLink(icon));
@@ -1632,13 +1636,31 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             tvDetailsBanner.setVisibility(View.VISIBLE);
+
             if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
             } else {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
             }
-            jobBtn.setEnabled(CollectionUtils.isEmpty(callData.getBookingList()));
+            updateButtonState();
             updateMarkers(true);
+        }
+    }
+
+    private void updateButtonState() {
+        if (Utils.isNewBatchService(callData.getServiceCode())) {
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+                jobBtn.setEnabled(CollectionUtils.isNotEmpty(callData.getBookingList()));
+                jobBtn.setBackgroundColor(ContextCompat.getColor(BookingActivity.this,
+                        CollectionUtils.isNotEmpty(callData.getBookingList())
+                                ? R.color.colorAccent
+                                : R.color.grey_828683
+                        )
+                );
+            } else {
+                jobBtn.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
+                jobBtn.setEnabled(true);
+            }
         }
     }
 
@@ -1907,10 +1929,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             // need to update markers here
             updateDropOffMarkers();
             setMarkersBound();
+        } else {
+            if (shouldUpdateCamera) setCameraToTripView();
+            else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
         }
 
-        if (shouldUpdateCamera) setCameraToTripView();
-        else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
     }
 
     /***

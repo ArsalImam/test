@@ -24,7 +24,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("bookings_summary")
     private String bookingsSummary;
 
-    @SerializedName("booking_list")
+    @SerializedName("bookings")
     private ArrayList<BatchBooking> bookingList;
 
     @SerializedName("trip_id")
