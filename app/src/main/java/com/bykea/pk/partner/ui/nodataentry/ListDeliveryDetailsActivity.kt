@@ -22,8 +22,7 @@ import com.bykea.pk.partner.ui.helpers.StringCallBack
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
-import com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_DELIVERY_DETAILS
-import com.bykea.pk.partner.utils.Constants.RequestCode.RC_EDIT_DELIVERY_DETAILS
+import com.bykea.pk.partner.utils.Constants.RequestCode.*
 import com.bykea.pk.partner.utils.TripStatus.ON_START_TRIP
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 import org.apache.commons.lang3.StringUtils
@@ -37,16 +36,6 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list_delivery_details)
         binding.viewModel = obtainViewModel(ListDeliveryDetailsViewModel::class.java).apply {
-            itemRemoved.observe(this@ListDeliveryDetailsActivity, Observer {
-                if (it) {
-                    binding.viewModel?.itemRemoved?.value = false
-                    if (::lastAdapter.isInitialized) {
-                        removeDeliveryDetail?.let { item -> lastAdapter.removeItem(item) }
-                        binding.viewModel?.items?.value = lastAdapter.items
-                    }
-                }
-            })
-
             passengerWalletUpdated.observe(this@ListDeliveryDetailsActivity, Observer {
                 if (it) {
                     binding.viewModel?.passengerWalletUpdated?.value = false
@@ -63,6 +52,22 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                         linLayoutReturnRun.visibility = View.VISIBLE
                     } else {
                         linLayoutReturnRun.visibility = View.GONE
+                    }
+                }
+            })
+
+            deliveryDetailsEditOrView.observe(this@ListDeliveryDetailsActivity, Observer {
+                it?.let {
+                    when(it.first){
+                        VIEW_DELIVERY_DETAILS->{
+                            ActivityStackManager.getInstance()
+                                    .startViewDeliveryDetails(this@ListDeliveryDetailsActivity, it.second)
+                        }
+                        EDIT_DELIVERY_DETAILS->{
+                            ActivityStackManager.getInstance()
+                                    .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
+                                            EDIT_DELIVERY_DETAILS, it.second)
+                        }
                     }
                 }
             })
@@ -179,15 +184,14 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
 
             override fun onSubItemOneClick(item: DeliveryDetails) {
                 // VIEW DELIVERY DETAILS
-                ActivityStackManager.getInstance()
-                        .startViewDeliveryDetails(this@ListDeliveryDetailsActivity, item)
+                Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+                binding.viewModel?.getSingleDeliveryDetails(VIEW_DELIVERY_DETAILS, item.details?.trip_id.toString())
             }
 
             override fun onSubItemTwoClick(item: DeliveryDetails) {
                 // EDIT DELIVERY DETAILS
-                ActivityStackManager.getInstance()
-                        .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
-                                EDIT_DELIVERY_DETAILS, item)
+                Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+                binding.viewModel?.getSingleDeliveryDetails(EDIT_DELIVERY_DETAILS, item.details?.trip_id.toString())
             }
         })
 
@@ -217,26 +221,10 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        var deliveryDetails: DeliveryDetails? = null
-
         if (resultCode == RESULT_OK) {
-            data?.let { deliveryDetails = data.getParcelableExtra(DELIVERY_DETAILS_OBJECT) as DeliveryDetails }
-            if (requestCode == RC_ADD_DELIVERY_DETAILS) {
-                deliveryDetails?.let {
-                    binding.viewModel?.items?.value?.add(it)
-                    binding.viewModel?.items?.value = binding.viewModel?.items?.value
-                }
-            } else if (requestCode == RC_EDIT_DELIVERY_DETAILS) {
-                deliveryDetails?.let { delivery ->
-                    for (i in lastAdapter.items.indices) {
-                        if (lastAdapter.items[i].details?.trip_id.equals(delivery.details?.trip_id)) {
-                            binding.viewModel?.items?.value?.set(i, delivery)
-                            lastAdapter.items[i] = delivery
-                            lastAdapter.notifyItemChanged(i)
-                            break
-                        }
-                    }
-                }
+            if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
+                Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+                binding.viewModel?.getAllDeliveryDetails()
             }
         }
     }

@@ -568,7 +568,8 @@
     <string name="call_recipent">Call Recipient</string>
     <string name="enter_cod_amount">Please enter cod amount</string>
     <string name="enter_correct_cod_amount">Please enter correct cod amount</string>
-    <string name="successful">\u0020کامیاب\u0020</string>
+    <string name="successful">\u0020کامیاب\u00D20</string>
     <string name="unsuccessful">\u0020ناکام\u0020</string>
     <string name="return_booking">\u0020واپسی کی بکنگ\u0020</string>
+    <string name="your_cash_limit_is_end">\u0020آپ کی کیش لیمیٹ ختم ہوگئی ہے\u0020</string>
 </resources>

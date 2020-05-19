@@ -79,9 +79,16 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
         viewModel.isAddedOrUpdatedSuccessful.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
             val intent = Intent()
-            intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)
+            /*intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)*/
             setResult(RESULT_OK, intent)
             finish()
+        })
+
+        viewModel.isCashLimitLow.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
+            if (it) {
+                viewModel.isCashLimitLow.value = false
+                Dialogs.INSTANCE.showGeneralMessageDialog(this@AddEditDeliveryDetailsActivity, getString(R.string.your_cash_limit_is_end))
+            }
         })
 
         binding.listener = object : GenericListener {

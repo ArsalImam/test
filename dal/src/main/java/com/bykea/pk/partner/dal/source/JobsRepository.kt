@@ -281,9 +281,14 @@ class JobsRepository(
         jobsRemoteDataSource.getAllDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, callback)
     }
 
+    override fun getSingleBatchDeliveryDetails(batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailSingleTripResponse>) {
+        jobsRemoteDataSource.getSingleBatchDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, callback)
+    }
+
     override fun addDeliveryDetail(batchID: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
         jobsRemoteDataSource.addDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, deliveryDetails, callback)
     }
+
 
     override fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
         jobsRemoteDataSource.updateDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, deliveryDetails, callback)

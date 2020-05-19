@@ -8,6 +8,7 @@ import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetail
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.DIGIT_TWENTY
 import com.bykea.pk.partner.dal.util.RequestParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -321,8 +322,17 @@ interface Backend {
     fun getAllDeliveryDetails(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
-            @Path("batch_id") batchId: String
+            @Path("batch_id") batchId: String,
+            @Query("limit") limit: Int = DIGIT_TWENTY
     ): Call<DeliveryDetailListResponse>
+
+    @GET("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun getSingleBatchDeliveryDetails(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String
+    ): Call<DeliveryDetailSingleTripResponse>
 
     @POST("/v2/batch/{batch_id}/bookings")
     fun addDeliveryDetail(

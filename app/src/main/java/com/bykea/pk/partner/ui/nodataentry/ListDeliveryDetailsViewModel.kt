@@ -7,10 +7,7 @@ import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
-import com.bykea.pk.partner.dal.source.remote.response.BatchUpdateReturnRunResponse
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailRemoveResponse
-import com.bykea.pk.partner.dal.source.remote.response.TopUpPassengerWalletResponse
+import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.helpers.AppPreferences
@@ -23,15 +20,11 @@ import com.bykea.pk.partner.utils.Utils
  */
 class ListDeliveryDetailsViewModel : ViewModel() {
 
-    val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
+    private val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
 
     private var _items = MutableLiveData<ArrayList<DeliveryDetails>>().apply { value = ArrayList() }
     val items: MutableLiveData<ArrayList<DeliveryDetails>>
         get() = _items
-
-    private var _itemRemoved = MutableLiveData<Boolean>()
-    val itemRemoved: MutableLiveData<Boolean>
-        get() = _itemRemoved
 
     private var _callData = MutableLiveData<NormalCallData>()
     val callData: MutableLiveData<NormalCallData>
@@ -44,6 +37,10 @@ class ListDeliveryDetailsViewModel : ViewModel() {
     private var _isReturnRunEnable = MutableLiveData<Boolean>().apply { value = false }
     val isReturnRunEnable: MutableLiveData<Boolean>
         get() = _isReturnRunEnable
+
+    private var _deliveryDetailsEditOrView = MutableLiveData<Pair<Int, DeliveryDetails>>()
+    val deliveryDetailsEditOrView: MutableLiveData<Pair<Int, DeliveryDetails>>
+        get() = _deliveryDetailsEditOrView
 
     /**
      * Get active trip from shared preferences
@@ -82,6 +79,23 @@ class ListDeliveryDetailsViewModel : ViewModel() {
     }
 
     /**
+     * Get single delivery details item from remote
+     */
+    fun getSingleDeliveryDetails(flowFor: Int, bookingId: String) {
+        jobRespository.getSingleBatchDeliveryDetails(callData.value?.tripId.toString(), bookingId,
+                object : JobsDataSource.LoadDataCallback<DeliveryDetailSingleTripResponse> {
+                    override fun onDataLoaded(response: DeliveryDetailSingleTripResponse) {
+                        deliveryDetailsEditOrView.value = Pair(flowFor, response.data!!)
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+
+                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                })
+    }
+
+    /**
      * Remove delivery detail item from list
      * @param deliveryDetails : Delivery detail item to remove
      */
@@ -91,7 +105,7 @@ class ListDeliveryDetailsViewModel : ViewModel() {
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse> {
                     override fun onDataLoaded(response: DeliveryDetailRemoveResponse) {
                         _items.value?.remove(deliveryDetails)
-                        _itemRemoved.value = true
+                        _items.value = _items.value
                         Dialogs.INSTANCE.dismissDialog()
                     }
 
