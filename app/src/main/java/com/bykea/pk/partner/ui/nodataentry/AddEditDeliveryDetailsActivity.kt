@@ -27,7 +27,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
-import com.bykea.pk.partner.utils.Constants.ServiceCode.SEND_COD
+import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Constants.TripTypes.DELIVERY_TYPE
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
@@ -36,7 +36,6 @@ import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
 import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import kotlinx.android.synthetic.main.fragment_offline_rides.*
 import java.io.File
 import java.util.*
 
@@ -124,6 +123,99 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         mMediaPlayerHolder = MediaPlayerHolder(this@AddEditDeliveryDetailsActivity)
         mMediaPlayerHolder.setPlaybackInfoListener(PlaybackListener())
         initViews()
+        setTextChangeListeners()
+    }
+
+    private fun setTextChangeListeners() {
+        editTextMobileNumber.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateMobileNumber()
+            }
+        })
+
+        textViewGPSAddress.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateGPSAddress()
+            }
+        })
+
+        editTextParcelValue.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateParcelValue()
+            }
+        })
+
+        editTextCODAmount.addTextChangedListener(object : TextWatcherUtil() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validateCODAmount()
+            }
+        })
+    }
+
+    /**
+     * Validate Mobile Number
+     */
+    private fun validateMobileNumber(): Boolean {
+        return if (!Utils.isValidNumber(editTextMobileNumber)) {
+            editTextMobileNumber.requestFocus()
+            editTextMobileNumber.error = getString(R.string.error_phone_number_1)
+            linLayoutMobileNumber.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            editTextMobileNumber.error = null
+            linLayoutMobileNumber.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
+    }
+
+    /**
+     * Validate GPS Address
+     */
+    private fun validateGPSAddress(): Boolean {
+        return if (textViewGPSAddress.text.isNullOrEmpty()) {
+            textViewGPSAddress.requestFocus()
+            textViewGPSAddress.error = getString(R.string.select_gps_address)
+            linLayoutGPSAddress.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            textViewGPSAddress.error = null
+            linLayoutGPSAddress.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
+    }
+
+    /**
+     * Validate Parcel Value
+     */
+    private fun validateParcelValue(): Boolean {
+        return if (editTextParcelValue.text.isNullOrEmpty() ||
+                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT) {
+            editTextParcelValue.requestFocus()
+            editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
+            linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            editTextParcelValue.error = null
+            linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
+    }
+
+    /**
+     * Validate COD Amount
+     */
+    private fun validateCODAmount(): Boolean {
+        return if (editTextCODAmount.text.toString().isNotEmpty() &&
+                editTextCODAmount.text.toString().trim().toInt() == DIGIT_ZERO) {
+            editTextCODAmount.requestFocus()
+            editTextCODAmount.error = getString(R.string.enter_correct_cod_amount)
+            linLayoutCODAmount.setBackgroundResource(R.drawable.border_details_form_square_red)
+            false
+        } else {
+            editTextCODAmount.error = null
+            linLayoutCODAmount.setBackgroundResource(R.drawable.border_details_form_square_light)
+            true
+        }
     }
 
     /**
@@ -139,12 +231,10 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private fun callPostApiNow() {
         when (flowForAddOrEdit) {
             ADD_DELIVERY_DETAILS -> {
-                createRequestBodyForAddEdit()
-                viewModel.requestAddDeliveryDetails()
+                viewModel.requestAddDeliveryDetails(createRequestBodyForAddEdit())
             }
             EDIT_DELIVERY_DETAILS -> {
-                createRequestBodyForAddEdit(false)
-                viewModel.requestEditDeliveryDetail()
+                viewModel.requestEditDeliveryDetail(createRequestBodyForAddEdit())
             }
         }
     }
@@ -166,68 +256,66 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         pausePlaying()
     }
 
+    /**
+     * Validate the fields which are required
+     */
     fun isValidate(): Boolean {
-        if (!Utils.isValidNumber(editTextMobileNumber)) {
-            editTextMobileNumber.error = getString(R.string.error_phone_number_1)
-            editTextMobileNumber.requestFocus()
-            return false
-        } else if (textViewGPSAddress.text.isNullOrEmpty()) {
-            textViewGPSAddress.error = getString(R.string.select_gps_address)
-            editTextMobileNumber.requestFocus()
-            return false
-        } else if (editTextParcelValue.text.isNullOrEmpty()) {
-            editTextParcelValue.error = getString(R.string.enter_parcel_value)
-            editTextParcelValue.requestFocus()
-            return false
-        } else if (!(editTextParcelValue.text.toString().trim().toInt() in (DIGIT_ZERO + 1) until AMOUNT_LIMIT)) {
-            editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
-            editTextParcelValue.requestFocus()
-            return false
-        }
-        return true
+        return validateMobileNumber() && validateGPSAddress() && validateParcelValue() && validateCODAmount()
     }
 
     /**
      * Create Request For Add or Edit DeliveryDetails
-     * @param isDeliveryAdd : If true, create request body for add else for edit
      */
-    private fun createRequestBodyForAddEdit(isDeliveryAdd: Boolean = true) {
-        if (isDeliveryAdd) {
-            viewModel.deliveryDetails.value = DeliveryDetails()
-            viewModel.deliveryDetails.value?.meta = MetaData()
-            viewModel.deliveryDetails.value?.dropoff = DeliveryDetailsLocationInfoData()
-            viewModel.deliveryDetails.value?.details = DeliveryDetailInfo()
-        }
+    private fun createRequestBodyForAddEdit(): DeliveryDetails {
+        return DeliveryDetails().apply {
+            meta = MetaData()
+            dropoff = DeliveryDetailsLocationInfoData()
+            details = DeliveryDetailInfo()
 
-        // DELIVERY DETAILS META INFO
-        viewModel.deliveryDetails.value?.meta?.service_code = SEND_COD
+            if (editTextCODAmount.text.isNullOrEmpty()) {
+                meta?.service_code = SEND
+            } else {
+                meta?.service_code = SEND_COD
+            }
 
-        // DELIVERY DETAILS DROP OFF INFO
-        if (!editTextMobileNumber.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString().trim())
-        }
-        if (!editTextConsigneeName.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.name = editTextConsigneeName.text.toString().trim()
-        }
-        if (!editTextAddress.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.dropoff?.address = editTextAddress.text.toString().trim()
-        }
+            // DELIVERY DETAILS DROP OFF - PHONE
+            if (!editTextMobileNumber.text.isNullOrEmpty()) {
+                dropoff?.phone = Utils.phoneNumberForServer(editTextMobileNumber.text.toString().trim())
+            }
+            // DELIVERY DETAILS DROP OFF - CONSIGNEE NAME
+            if (!editTextConsigneeName.text.isNullOrEmpty()) {
+                dropoff?.name = editTextConsigneeName.text.toString().trim()
+            }
 
-        mDropOffResult?.let {
-            viewModel.deliveryDetails.value?.dropoff?.gps_address = mDropOffResult?.name
-            viewModel.deliveryDetails.value?.dropoff?.lat = mDropOffResult?.latitude
-            viewModel.deliveryDetails.value?.dropoff?.lng = mDropOffResult?.longitude
-        }
+            // DELIVERY DETAILS DROP OFF - ADDRESS
+            if (!editTextAddress.text.isNullOrEmpty()) {
+                dropoff?.address = editTextAddress.text.toString().trim()
+            }
 
-        // DELIVERY DETAILS INFO
-        if (!editTextParcelValue.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.details?.parcel_value = editTextParcelValue.text.toString().trim()
-        }
-        if (!editTextOrderNumber.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.details?.order_no = editTextOrderNumber.text.toString().trim()
-        }
-        if (!editTextCODAmount.text.isNullOrEmpty()) {
-            viewModel.deliveryDetails.value?.details?.cod_value = editTextCODAmount.text.toString().trim()
+            mDropOffResult?.let {
+                dropoff?.gps_address = mDropOffResult?.name
+                dropoff?.lat = mDropOffResult?.latitude
+                dropoff?.lng = mDropOffResult?.longitude
+            } ?: run {
+                dropoff?.gps_address = binding.viewModel?.deliveryDetails?.value?.dropoff?.gps_address
+                dropoff?.lat = binding.viewModel?.deliveryDetails?.value?.dropoff?.lat
+                dropoff?.lng = binding.viewModel?.deliveryDetails?.value?.dropoff?.lng
+            }
+
+            // DELIVERY DETAILS INFO - PARCEL VALUE
+            if (!editTextParcelValue.text.isNullOrEmpty()) {
+                details?.parcel_value = editTextParcelValue.text.toString().trim()
+            }
+
+            // DELIVERY DETAILS INFO - ORDER NUMBER VALUE
+            if (!editTextOrderNumber.text.isNullOrEmpty()) {
+                details?.order_no = editTextOrderNumber.text.toString().trim()
+            }
+
+            // DELIVERY DETAILS INFO - COD VALUE
+            if (!editTextCODAmount.text.isNullOrEmpty()) {
+                details?.cod_value = editTextCODAmount.text.toString().trim()
+            }
         }
     }
 
@@ -336,7 +424,6 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         mMediaPlayerHolder.pause()
         setPlayIcon(true)
     }
-
 
     /**
      * record audio recording time to display when playing recorded audio

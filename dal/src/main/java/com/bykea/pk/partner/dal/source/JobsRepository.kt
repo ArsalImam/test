@@ -7,6 +7,7 @@ import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
@@ -171,6 +172,10 @@ class JobsRepository(
     override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, serviceCode: Int, callback: JobsDataSource.FareEstimationCallback) {
         jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
                 startLat, startLng, endLat, endLng, serviceCode, callback)
+    }
+
+    override fun updateBatchReturnRun(batchID: String, batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest, callback: JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse>) {
+        jobsRemoteDataSource.updateBatchReturnRun(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, batchUpdateReturnRunRequest, callback)
     }
 
     override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {

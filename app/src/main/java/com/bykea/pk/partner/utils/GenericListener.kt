@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.utils
 
+import android.widget.CompoundButton
+
 
 /**
  * Created by Sibtain Raza on 4/12/2020.
@@ -43,4 +45,14 @@ interface GenericListener {
      * When user tap on passenger top up wallet
      */
     fun topUpPassengerWallet() {}
+
+    /**
+     * When user tap on call icon
+     */
+    fun showCallDialog() {}
+
+    /**
+     *  When use tap on checkbox
+     */
+    fun onCheckChangedListener(compoundButton: CompoundButton, isChecked: Boolean) {}
 }

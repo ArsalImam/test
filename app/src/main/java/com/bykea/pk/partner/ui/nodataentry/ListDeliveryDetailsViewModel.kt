@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
+import com.bykea.pk.partner.dal.source.remote.response.BatchUpdateReturnRunResponse
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailRemoveResponse
 import com.bykea.pk.partner.dal.source.remote.response.TopUpPassengerWalletResponse
@@ -39,11 +41,27 @@ class ListDeliveryDetailsViewModel : ViewModel() {
     val passengerWalletUpdated: MutableLiveData<Boolean>
         get() = _passengerWalletUpdated
 
+    private var _isReturnRunEnable = MutableLiveData<Boolean>().apply { value = false }
+    val isReturnRunEnable: MutableLiveData<Boolean>
+        get() = _isReturnRunEnable
+
     /**
      * Get active trip from shared preferences
      */
     fun getActiveTrip() {
         _callData.value = AppPreferences.getCallData()
+    }
+
+    /**
+     * Set return run is enable or not
+     * @param status : True or False (Will be null when set for the first time from normal call data
+     */
+    fun setReturnRunEnableOrNot(status: Boolean? = null) {
+        status?.let {
+            _isReturnRunEnable.value = status
+        } ?: run {
+            _isReturnRunEnable.value = _callData.value?.isReturnRun
+        }
     }
 
     /**
@@ -105,5 +123,22 @@ class ListDeliveryDetailsViewModel : ViewModel() {
                         Dialogs.INSTANCE.dismissDialog()
                     }
                 })
+    }
+
+    /**
+     * Request to update batch return run
+     * @param status : True/False
+     */
+    fun updateBatchReturnRun(status: Boolean) {
+        jobRespository.updateBatchReturnRun(callData.value?.tripNo.toString(), BatchUpdateReturnRunRequest(status), object : JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse> {
+            override fun onDataLoaded(response: BatchUpdateReturnRunResponse) {
+                _isReturnRunEnable.value = status
+                Dialogs.INSTANCE.dismissDialog()
+            }
+
+            override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                Dialogs.INSTANCE.dismissDialog()
+            }
+        })
     }
 }

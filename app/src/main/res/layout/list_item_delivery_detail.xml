@@ -63,12 +63,13 @@
                 android:paddingRight="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_15sdp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="wrap_content"
+                    app:batchTripItemAccordingToStatus="@{item}"
                     android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/imageViewCancel"
+                        android:id="@+id/imageViewShowDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="@{()->listener.onSubItemOneClick(item)}"
@@ -80,10 +81,25 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_15sdp"
                         android:layout_marginRight="@dimen/_15sdp"
+                        android:layout_toEndOf="@+id/imageViewShowDetails"
+                        android:layout_toRightOf="@+id/imageViewShowDetails"
                         android:onClick="@{()->listener.onSubItemTwoClick(item)}"
                         app:srcCompat="@drawable/ic_edit" />
 
-                </LinearLayout>
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/textViewStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_minus5sdp"
+                        android:layout_marginLeft="@dimen/_minus5sdp"
+                        android:textSize="@dimen/_20sdp"
+                        android:visibility="gone"
+                        app:fontName="jameel_noori_nastaleeq.ttf"
+                        tools:text="@string/successful"
+                        tools:textColor="@color/red" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -120,7 +136,7 @@
                         android:gravity="center_vertical"
                         android:maxLines="1"
                         android:padding="@dimen/_3sdp"
-                        android:text="@{item.dropoff.zone_dropoff_name_urdu + ` `}"
+                        android:text="@{` ` + item.dropoff.zone_dropoff_name_urdu}"
                         android:textSize="@dimen/_13sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf"
                         tools:text="@string/booking_ur" />
