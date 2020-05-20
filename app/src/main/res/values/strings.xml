@@ -564,6 +564,8 @@
     <string name="select_gps_address">Please select gps address</string>
     <string name="enter_parcel_value">Please enter parcel value</string>
     <string name="enter_correct_parcel_value">Please enter correct parcel value</string>
+    <string name="button_text_navigation">میپ لوکیشن</string>
+    <string name="questino_mukammal">مکمل؟</string>
     <string name="call_sender">Call Sender</string>
     <string name="call_recipent">Call Recipient</string>
     <string name="enter_cod_amount">Please enter cod amount</string>

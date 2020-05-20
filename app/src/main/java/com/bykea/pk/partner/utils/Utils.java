@@ -830,18 +830,18 @@ public class Utils {
 
         View marker = ((LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.drop_off_marker_layout, null);
+                .inflate(R.layout.drop_off_batch_marker_layout, null);
 
         FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        ImageView imgView = marker.findViewById(R.id.drop_off_marker_img_view);
         txt_name.setText(booking.getDisplayTag());
         try {
             if (booking.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
                     booking.getStatus().equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
 
-                ViewCompat.setBackgroundTintList(txt_name, ContextCompat
+                ViewCompat.setBackgroundTintList(imgView, ContextCompat
                         .getColorStateList(context,
                                 R.color.multi_delivery_dropoff_completed));
-
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();

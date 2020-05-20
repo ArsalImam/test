@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.remote.data.ComplainReason;
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails;
@@ -675,9 +676,22 @@ public class ActivityStackManager {
      *
      * @param activity context
      */
-    public void startListDeliveryScreen(Activity activity) {
-        Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
-        activity.startActivity(intent);
+    public void startNavigationDeliveryScreen(Activity activity) {
+        FinishBookingListingActivity.Companion.openActivity(activity,
+                activity.getResources().getString(R.string.button_text_finish),
+                FinishBookingListingActivity.Companion.getTYPE_NAVIGATION()
+        );
+    }
+
+    /**
+     * will open booking listings screen
+     * @param activity context
+     */
+    public void startFinishDeliveryScreen(Activity activity) {
+        FinishBookingListingActivity.Companion.openActivity(activity,
+                activity.getResources().getString(R.string.button_text_navigation),
+                FinishBookingListingActivity.Companion.getTYPE_FINISH()
+        );
     }
 
     public void startFinishBookingListingActivity(Activity activity) {

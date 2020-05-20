@@ -10,6 +10,9 @@ public class BatchBookingDropoff {
     @SerializedName("lng")
     @Expose
     private double lng;
+    @SerializedName("address")
+    @Expose
+    private String address;
 
     public double getLat() {
         return lat;
@@ -25,5 +28,13 @@ public class BatchBookingDropoff {
 
     public void setLng(double lng) {
         this.lng = lng;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
