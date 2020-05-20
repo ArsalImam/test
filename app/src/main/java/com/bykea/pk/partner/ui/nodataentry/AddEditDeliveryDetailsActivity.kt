@@ -106,7 +106,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                                 }
 
                                 override fun fail(errorCode: Int, errorMsg: String) {
-                                    Utils.appToast("Error in uploading file, please try again")
+                                    Utils.appToast(getString(R.string.error_uploading_file))
                                 }
                             })
                         } else {
