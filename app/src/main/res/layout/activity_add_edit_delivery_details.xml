@@ -208,7 +208,7 @@
                                 android:layout_height="match_parent"
                                 android:visibility="visible">
 
-                                <com.bykea.pk.partner.widgets.FontTextView
+                                <com.bykea.pk.partner.ui.helpers.FontTextView
                                     android:id="@+id/audioSendVoiceMsgHintTV"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -291,7 +291,7 @@
                                         android:layout_height="wrap_content"
                                         android:progress="0" />
 
-                                    <com.bykea.pk.partner.widgets.FontTextView
+                                    <com.bykea.pk.partner.ui.helpers.FontTextView
                                         android:id="@+id/audioSeekTimeTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -339,20 +339,15 @@
                                 android:enabled="false"
                                 app:srcCompat="@drawable/ic_location_blue" />
 
-                            <com.bykea.pk.partner.widgets.FontTextView
+                            <com.bykea.pk.partner.ui.helpers.FontTextView
                                 android:id="@+id/textViewGPSAddress"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:background="@android:color/transparent"
-                                android:clickable="false"
-                                android:enabled="false"
                                 android:hint="@string/gps_address_hint"
-                                android:inputType="numberSigned"
                                 android:maxLines="1"
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
-                                android:scrollbars="horizontal"
                                 android:text="@{viewModel.deliveryDetails.dropoff.gps_address}"
                                 android:textColor="@color/black"
                                 android:textColorHint="@drawable/hint_color_unselected"
