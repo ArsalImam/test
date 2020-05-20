@@ -59,6 +59,7 @@
                 <ImageView
                     android:id="@+id/drop_off_marker_img_view"
                     android:layout_width="@dimen/_30sdp"
+                    android:tint="@{item.completed ? @color/grey : @android:color/transparent}"
                     android:layout_height="@dimen/_42sdp"
                     android:background="@drawable/drop_off_icon"
                     android:scaleType="fitXY" />

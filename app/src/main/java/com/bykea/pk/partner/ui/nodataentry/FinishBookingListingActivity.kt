@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -75,7 +76,7 @@ class FinishBookingListingActivity : BaseActivity() {
             latLngList.addAll(prevLatLngList)
         }
         latLngList.add(endLatLng)
-        jobRepo.finishJob(callData!!.tripId, latLngList, endAddress, object : FinishJobCallback {
+        jobRepo.finishJob(selectedBooking?.id!!, latLngList, endAddress, object : FinishJobCallback {
             override fun onJobFinished(data: FinishJobResponseData, request: String, resp: String) {
                 AppPreferences.removeReceivedMessageCount()
                 Crashlytics.setUserIdentifier(AppPreferences.getPilotData().id)
@@ -156,7 +157,7 @@ class FinishBookingListingActivity : BaseActivity() {
         }
     }
 
-    fun onDoneClick() {
+    fun onDoneClick(view: View) {
         when (intent.getStringExtra(EXTRA_TYPE)) {
             TYPE_FINISH -> {
                 Dialogs.INSTANCE.showRideStatusDialog(this, { finishJob() }, { Dialogs.INSTANCE.dismissDialog() }, getString(R.string.questino_mukammal))

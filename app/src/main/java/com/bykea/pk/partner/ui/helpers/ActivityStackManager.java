@@ -678,7 +678,7 @@ public class ActivityStackManager {
      */
     public void startNavigationDeliveryScreen(Activity activity) {
         FinishBookingListingActivity.Companion.openActivity(activity,
-                activity.getResources().getString(R.string.button_text_finish),
+                activity.getResources().getString(R.string.button_text_navigation),
                 FinishBookingListingActivity.Companion.getTYPE_NAVIGATION()
         );
     }
@@ -689,13 +689,13 @@ public class ActivityStackManager {
      */
     public void startFinishDeliveryScreen(Activity activity) {
         FinishBookingListingActivity.Companion.openActivity(activity,
-                activity.getResources().getString(R.string.button_text_navigation),
+                activity.getResources().getString(R.string.button_text_finish),
                 FinishBookingListingActivity.Companion.getTYPE_FINISH()
         );
     }
 
-    public void startFinishBookingListingActivity(Activity activity) {
-        Intent intent = new Intent(activity, FinishBookingListingActivity.class);
+    public void startDeliveryListingActivity(Activity activity) {
+        Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
         activity.startActivity(intent);
     }
 }

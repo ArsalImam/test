@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.models.response;
 
+import com.bykea.pk.partner.utils.TripStatus;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -63,6 +64,10 @@ public class BatchBooking {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public boolean isCompleted() {
+        return status.equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) || status.equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP);
     }
 
     public void setSelected(boolean selected) {

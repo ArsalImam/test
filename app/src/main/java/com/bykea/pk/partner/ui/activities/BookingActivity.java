@@ -995,17 +995,21 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             }
                         }, " اسٹارٹ؟");
                     } else if (jobBtn.getText().toString().equalsIgnoreCase(getString(R.string.button_text_finish)) && callData != null) {
-                        Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                finishJob();
-                            }
-                        }, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Dialogs.INSTANCE.dismissDialog();
-                            }
-                        }, " مکمل؟");
+                        if (Utils.isNewBatchService(callData.getServiceCode())) {
+                            ActivityStackManager.getInstance().startFinishDeliveryScreen(BookingActivity.this);
+                        } else {
+                            Dialogs.INSTANCE.showRideStatusDialog(mCurrentActivity, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    finishJob();
+                                }
+                            }, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Dialogs.INSTANCE.dismissDialog();
+                                }
+                            }, " مکمل؟");
+                        }
                     }
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, getString(R.string.error_internet_connectivity));
@@ -1013,10 +1017,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 updateMarkers(true);
                 break;
             case R.id.cvDirections:
-                if (Utils.isNewBatchService(callData.getServiceCode())
-                        && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)
-                        || callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP))) {
-                    ActivityStackManager.getInstance().startFinishBookingListingActivity(BookingActivity.this);
+                if (Utils.isNewBatchService(callData.getServiceCode())) {
+                    ActivityStackManager.getInstance().startNavigationDeliveryScreen(BookingActivity.this);
+                    return;
                 } else {
                     startGoogleDirectionsApp();
                 }
@@ -1069,7 +1072,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.tvDetailsBanner:
                 if (Utils.isNewBatchService(callData.getServiceCode())) {
-                    ActivityStackManager.getInstance().startNavigationDeliveryScreen(BookingActivity.this);
+                    ActivityStackManager.getInstance().startDeliveryListingActivity(BookingActivity.this);
                     return;
                 }
                 bykeaCashFormFragment = BykeaCashFormFragment.newInstance(callData);
@@ -1651,14 +1654,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
                 jobBtn.setEnabled(CollectionUtils.isNotEmpty(callData.getBookingList()));
-                jobBtn.setBackgroundColor(ContextCompat.getColor(BookingActivity.this,
-                        CollectionUtils.isNotEmpty(callData.getBookingList())
-                                ? R.color.colorAccent
-                                : R.color.grey_828683
-                        )
+                jobBtn.setBackgroundResource(CollectionUtils.isNotEmpty(callData.getBookingList())
+                        ? R.drawable.button_green
+                        : R.drawable.button_grey
                 );
             } else {
-                jobBtn.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
+                jobBtn.setBackgroundResource(R.drawable.button_green/*ContextCompat.getColor(BookingActivity.this, R.color.colorAccent)*/);
                 jobBtn.setEnabled(true);
             }
         }
@@ -2674,10 +2675,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 EventBus.getDefault().post(Constants.Broadcast.UPDATE_FOREGROUND_NOTIFICATION);
             }
         });
-    }
-
-    private void checkArriveStateForBatch() {
-        if (!Utils.isNewBatchService(callData.getServiceCode())) return;
     }
 
     /**
