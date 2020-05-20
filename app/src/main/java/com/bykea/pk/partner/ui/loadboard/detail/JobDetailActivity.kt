@@ -125,7 +125,9 @@ class JobDetailActivity : BaseActivity() {
                 } else {
                     AppPreferences.removeBookingVoiceNoteUrl()
                 }
-                if (binding.viewmodel?.job?.value?.trip_type?.equals(Constants.TripTypes.BATCH_TYPE, true)!!) {
+                if (Utils.isNewBatchService(binding.viewmodel?.job?.value?.service_code!!)) {
+                    ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
+                } else if (binding.viewmodel?.job?.value?.trip_type?.equals(Constants.TripTypes.BATCH_TYPE, true)!!) {
                     Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
                     Handler().postDelayed({
                         binding.viewmodel?.getTripDetails(object : UserDataHandler() {
