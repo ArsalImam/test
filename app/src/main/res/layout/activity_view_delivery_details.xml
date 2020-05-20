@@ -360,6 +360,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_2sdp"
-            android:background="@drawable/toolbar_bottom_shadow_gray" />
+            android:background="@drawable/toolbar_bottom_shadow_gray"
+            app:goneUnless="@{viewModel.deliveryDetails.details.cod_value != null}" />
     </LinearLayout>
 </layout>

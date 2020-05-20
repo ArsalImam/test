@@ -42,6 +42,10 @@ class ListDeliveryDetailsViewModel : ViewModel() {
     val deliveryDetailsEditOrView: MutableLiveData<Pair<Int, DeliveryDetails>>
         get() = _deliveryDetailsEditOrView
 
+    private var _isFieldsUpdateRequired = MutableLiveData<Boolean>().apply { value = false }
+    val isFieldsUpdateRequired: MutableLiveData<Boolean>
+        get() = _isFieldsUpdateRequired
+
     /**
      * Get active trip from shared preferences
      */
@@ -69,11 +73,14 @@ class ListDeliveryDetailsViewModel : ViewModel() {
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailListResponse> {
                     override fun onDataLoaded(response: DeliveryDetailListResponse) {
                         _items.value = response.data?.bookings
+                        updateParticularsForActiveTrip(response)
+                        _isFieldsUpdateRequired.value = true
                         Dialogs.INSTANCE.dismissDialog()
                     }
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
+                        Dialogs.INSTANCE.showToast(reasonMsg)
                     }
                 })
     }
@@ -91,6 +98,7 @@ class ListDeliveryDetailsViewModel : ViewModel() {
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
+                        Dialogs.INSTANCE.showToast(reasonMsg)
                     }
                 })
     }
@@ -106,11 +114,13 @@ class ListDeliveryDetailsViewModel : ViewModel() {
                     override fun onDataLoaded(response: DeliveryDetailRemoveResponse) {
                         _items.value?.remove(deliveryDetails)
                         _items.value = _items.value
-                        Dialogs.INSTANCE.dismissDialog()
+                        getAllDeliveryDetails()
+                        /*Dialogs.INSTANCE.dismissDialog()*/
                     }
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
+                        Dialogs.INSTANCE.showToast(reasonMsg)
                     }
                 })
     }
@@ -135,6 +145,7 @@ class ListDeliveryDetailsViewModel : ViewModel() {
 
                     override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
+                        Dialogs.INSTANCE.showToast(reasonMsg)
                     }
                 })
     }
@@ -152,7 +163,22 @@ class ListDeliveryDetailsViewModel : ViewModel() {
 
             override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
                 Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(reasonMsg)
             }
         })
+    }
+
+    /**
+     * Update Particular Fields In Get Active Trip Shared Preferences Object
+     * @param response : Batch Listing Api Response
+     */
+    private fun updateParticularsForActiveTrip(response: DeliveryDetailListResponse) {
+        val callData = AppPreferences.getCallData()
+        response.data?.passWallet?.let { callData.setPassWallet(it) }
+        response.data?.cashKiWasooli?.let { callData.cashKiWasooli = it }
+        response.data?.codAmount?.let { callData.codAmount = it }
+        response.data?.kraiKiKamai?.let { callData.kraiKiKamai = it }
+        AppPreferences.setCallData(callData)
+        _callData.value = callData
     }
 }

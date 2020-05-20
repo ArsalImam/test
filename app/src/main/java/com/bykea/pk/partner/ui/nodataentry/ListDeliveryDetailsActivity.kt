@@ -11,9 +11,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
+import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
 import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
-import com.bykea.pk.partner.models.response.TopUpPassWalletResponse
-import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -23,6 +22,7 @@ import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.Constants.RequestCode.*
+import com.bykea.pk.partner.utils.TripStatus.ON_ARRIVED_TRIP
 import com.bykea.pk.partner.utils.TripStatus.ON_START_TRIP
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 import org.apache.commons.lang3.StringUtils
@@ -31,14 +31,15 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
     lateinit var binding: ActivityListDeliveryDetailsBinding
     lateinit var lastAdapter: LastAdapter<DeliveryDetails>
     private var removeDeliveryDetail: DeliveryDetails? = null
+    lateinit var viewModel: ListDeliveryDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list_delivery_details)
-        binding.viewModel = obtainViewModel(ListDeliveryDetailsViewModel::class.java).apply {
+        viewModel = obtainViewModel(ListDeliveryDetailsViewModel::class.java).apply {
             passengerWalletUpdated.observe(this@ListDeliveryDetailsActivity, Observer {
                 if (it) {
-                    binding.viewModel?.passengerWalletUpdated?.value = false
+                    viewModel.passengerWalletUpdated.value = false
                     ivTopUp.visibility = View.INVISIBLE
                     setPassengerWallet()
                 }
@@ -58,12 +59,12 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
 
             deliveryDetailsEditOrView.observe(this@ListDeliveryDetailsActivity, Observer {
                 it?.let {
-                    when(it.first){
-                        VIEW_DELIVERY_DETAILS->{
+                    when (it.first) {
+                        VIEW_DELIVERY_DETAILS -> {
                             ActivityStackManager.getInstance()
                                     .startViewDeliveryDetails(this@ListDeliveryDetailsActivity, it.second)
                         }
-                        EDIT_DELIVERY_DETAILS->{
+                        EDIT_DELIVERY_DETAILS -> {
                             ActivityStackManager.getInstance()
                                     .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
                                             EDIT_DELIVERY_DETAILS, it.second)
@@ -71,11 +72,19 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                     }
                 }
             })
+
+            isFieldsUpdateRequired.observe(this@ListDeliveryDetailsActivity, Observer {
+                it?.let {
+                    setCodValue()
+                    setFareAmount()
+                }
+            })
         }
 
+        binding.viewModel = viewModel
         binding.lifecycleOwner = this
-        binding.viewModel?.getActiveTrip()
-        binding.viewModel?.setReturnRunEnableOrNot()
+        viewModel.getActiveTrip()
+        viewModel.setReturnRunEnableOrNot()
 
         setListeners()
         setVisibilityForTopUp()
@@ -84,9 +93,18 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         setFareAmount()
 
         setAdapter()
-        setAdapterSwipeItemCallback()
+        viewModel.callData.value?.status?.let {
+            //ENABLE SWIPE TO DELETE ON ARRIVED STATE ONLY
+            if (it.equals(ON_ARRIVED_TRIP, ignoreCase = true)) {
+                setAdapterSwipeItemCallback()
+            } else if (it.equals(ON_START_TRIP, ignoreCase = true)) {
+                linLayoutReturnRun.visibility = View.GONE
+                imageViewAddDelivery.visibility = View.GONE
+            }
+        }
+
         Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-        binding.viewModel?.getAllDeliveryDetails()
+        viewModel.getAllDeliveryDetails()
     }
 
     /**
@@ -104,22 +122,22 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
 
             override fun topUpPassengerWallet() {
                 Dialogs.INSTANCE.showTopUpDialog(this@ListDeliveryDetailsActivity,
-                        Utils.isCourierService(binding.viewModel?.callData?.value?.callType), object : StringCallBack {
+                        Utils.isCourierService(viewModel.callData.value?.callType), object : StringCallBack {
                     override fun onCallBack(msg: String) {
                         if (StringUtils.isNotBlank(msg)) {
                             Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-                            binding.viewModel?.requestTopUpPassengerWallet(msg)
+                            viewModel.requestTopUpPassengerWallet(msg)
                         }
                     }
                 })
             }
 
             override fun onCheckChangedListener(compoundButton: CompoundButton, isChecked: Boolean) {
-                if (binding.viewModel?.callData?.value?.status.toString().equals(ON_START_TRIP, ignoreCase = true)) {
-                    binding.viewModel?.setReturnRunEnableOrNot(!isChecked)
+                if (viewModel.callData.value?.status.toString().equals(ON_START_TRIP, ignoreCase = true)) {
+                    viewModel.setReturnRunEnableOrNot(!isChecked)
                 } else {
                     Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-                    binding.viewModel?.updateBatchReturnRun(isChecked)
+                    viewModel.updateBatchReturnRun(isChecked)
                 }
             }
 
@@ -133,9 +151,9 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
      * Set visibility for top up icon considering the call type and ride status.
      */
     private fun setVisibilityForTopUp() {
-        binding.viewModel?.callData?.value?.serviceCode?.let {
+        viewModel.callData.value?.serviceCode?.let {
             if ((Utils.isNewBatchService(it)) &&
-                    TripStatus.ON_ARRIVED_TRIP.equals(binding.viewModel?.callData?.value?.status, ignoreCase = true) &&
+                    TripStatus.ON_ARRIVED_TRIP.equals(viewModel.callData.value?.status, ignoreCase = true) &&
                     AppPreferences.isTopUpPassengerWalletAllowed()) {
                 ivTopUp.visibility = View.VISIBLE
             } else {
@@ -150,14 +168,18 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
      * Set passenger wallet from trip data
      */
     private fun setPassengerWallet() {
-        tvPWalletAmount.text = String.format(getString(R.string.amount_rs), binding.viewModel?.callData?.value?.passWallet)
+        tvPWalletAmount.text = String.format(getString(R.string.amount_rs), viewModel.callData.value?.passWallet)
     }
 
     /**
      * Set COD value from trip data
      */
     private fun setCodValue() {
-
+        viewModel.callData.value?.cashKiWasooli?.let {
+            val cashKiWasooliValue = it
+            /*cashKiWasooliValue += Integer.valueOf(viewModel.callData.value?.codAmountNotFormatted?.trim { it <= ' ' })*/
+            tvCodAmount.text = String.format(getString(R.string.amount_rs), cashKiWasooliValue.toString())
+        }
     }
 
     /**
@@ -165,8 +187,8 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
      */
     private fun setFareAmount() {
         when {
-            binding.viewModel?.callData?.value?.kraiKiKamai != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), binding.viewModel?.callData?.value?.kraiKiKamai)
+            viewModel.callData.value?.kraiKiKamai != DIGIT_ZERO -> {
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), viewModel.callData.value?.kraiKiKamai)
             }
             AppPreferences.getEstimatedFare() != DIGIT_ZERO -> {
                 tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare())
@@ -185,13 +207,13 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
             override fun onSubItemOneClick(item: DeliveryDetails) {
                 // VIEW DELIVERY DETAILS
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-                binding.viewModel?.getSingleDeliveryDetails(VIEW_DELIVERY_DETAILS, item.details?.trip_id.toString())
+                viewModel.getSingleDeliveryDetails(VIEW_DELIVERY_DETAILS, item.details?.trip_id.toString())
             }
 
             override fun onSubItemTwoClick(item: DeliveryDetails) {
                 // EDIT DELIVERY DETAILS
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-                binding.viewModel?.getSingleDeliveryDetails(EDIT_DELIVERY_DETAILS, item.details?.trip_id.toString())
+                viewModel.getSingleDeliveryDetails(EDIT_DELIVERY_DETAILS, item.details?.trip_id.toString())
             }
         })
 
@@ -208,7 +230,8 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
                             DriverApp.getContext().getString(R.string.cancel_with_question_mark),
                             {
                                 removeDeliveryDetail = lastAdapter.items[position]
-                                removeDeliveryDetail?.let { binding.viewModel?.removeDeliveryDetail(it) }
+                                removeDeliveryDetail?.let { viewModel.removeDeliveryDetail(it) }
+                                Dialogs.INSTANCE.dismissDialog()
                                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                             },
                             {
@@ -224,7 +247,7 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
         if (resultCode == RESULT_OK) {
             if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
-                binding.viewModel?.getAllDeliveryDetails()
+                viewModel.getAllDeliveryDetails()
             }
         }
     }

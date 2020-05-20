@@ -26,26 +26,28 @@ import java.io.FileInputStream
 class ViewDeliveryDetailsActivity : BaseActivity() {
     private var TAG = ViewDeliveryDetailViewsModel::class.java.simpleName
     lateinit var binding: ActivityViewDeliveryDetailsBinding
+    lateinit var viewModel: ViewDeliveryDetailViewsModel
     private var mediaPlayer: MediaPlayer? = null
     private val handler: Handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_delivery_details)
-        binding.viewModel = obtainViewModel(ViewDeliveryDetailViewsModel::class.java)
+        viewModel = obtainViewModel(ViewDeliveryDetailViewsModel::class.java)
+        binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
         if (intent?.extras!!.containsKey(Constants.Extras.DELIVERY_DETAILS_OBJECT)) {
-            binding.viewModel?.deliveryDetails?.value = intent?.extras!!.getParcelable(Constants.Extras.DELIVERY_DETAILS_OBJECT) as DeliveryDetails
+            viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(Constants.Extras.DELIVERY_DETAILS_OBJECT) as DeliveryDetails
         }
 
-        binding.viewModel?.getActiveTrip()
+        viewModel.getActiveTrip()
         binding.listener = object : GenericListener {
             override fun navigateToPlaceSearch() {
-                Util.safeLet(binding.viewModel?.deliveryDetails?.value,
-                        binding.viewModel?.deliveryDetails?.value?.dropoff,
-                        binding.viewModel?.deliveryDetails?.value?.dropoff?.lat,
-                        binding.viewModel?.deliveryDetails?.value?.dropoff?.lng) { _, _, lat, lng ->
+                Util.safeLet(viewModel.deliveryDetails.value,
+                        viewModel.deliveryDetails.value?.dropoff,
+                        viewModel.deliveryDetails.value?.dropoff?.lat,
+                        viewModel.deliveryDetails.value?.dropoff?.lng) { _, _, lat, lng ->
                     Utils.navigateToGoogleMap(this@ViewDeliveryDetailsActivity,
                             AppPreferences.getLatitude(), AppPreferences.getLongitude(), lat, lng)
                 }
@@ -71,14 +73,14 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
             override fun showCallDialog() {
                 Dialogs.INSTANCE.showCallPassengerDialog(this@ViewDeliveryDetailsActivity, {
                     if (Utils.isAppInstalledWithPackageName(this@ViewDeliveryDetailsActivity, ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                        Utils.openCallDialog(this@ViewDeliveryDetailsActivity, binding.viewModel?.callData?.value, getSenderNumber())
+                        Utils.openCallDialog(this@ViewDeliveryDetailsActivity, viewModel.callData.value, getSenderNumber())
                     } else {
                         Utils.callingIntent(this@ViewDeliveryDetailsActivity, getSenderNumber())
                     }
                     Utils.redLog(TAG, getString(R.string.call_sender))
                 }, {
                     if (Utils.isAppInstalledWithPackageName(this@ViewDeliveryDetailsActivity, ApplicationsPackageName.WHATSAPP_PACKAGE)) {
-                        Utils.openCallDialog(this@ViewDeliveryDetailsActivity, binding.viewModel?.callData?.value, getRecipientNumber())
+                        Utils.openCallDialog(this@ViewDeliveryDetailsActivity, viewModel.callData.value, getRecipientNumber())
                     } else {
                         Utils.callingIntent(this@ViewDeliveryDetailsActivity, getRecipientNumber())
                     }
@@ -87,9 +89,9 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
             }
         }
 
-        setTitleCustomToolbarWithUrdu(binding.viewModel?.deliveryDetails?.value?.details?.trip_no, StringUtils.EMPTY_STRING)
+        setTitleCustomToolbarWithUrdu(viewModel.deliveryDetails.value?.details?.trip_no, StringUtils.EMPTY_STRING)
         fLLocation.visibility = View.VISIBLE
-        tVLocationAlphabet.text = binding.viewModel?.deliveryDetails?.value?.details?.display_tag
+        tVLocationAlphabet.text = viewModel.deliveryDetails.value?.details?.display_tag
     }
 
     /**
@@ -158,7 +160,7 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
      * @return Phone number for Sender
      */
     private fun getSenderNumber(): String {
-        binding.viewModel?.callData?.value?.let {
+        viewModel.callData.value?.let {
             return if (!it.phoneNo.isNullOrEmpty() && !it.senderPhone.isNullOrEmpty()) {
                 var passengerPhoneNumber = it.phoneNo
                 var senderPhoneNumber = it.senderPhone
@@ -185,8 +187,8 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
      * @return Phone number for Sender
      */
     private fun getRecipientNumber(): String {
-        if (!binding.viewModel?.deliveryDetails?.value?.dropoff?.phone.isNullOrEmpty()) {
-            return binding.viewModel?.deliveryDetails?.value?.dropoff?.phone.toString()
+        if (!viewModel.deliveryDetails.value?.dropoff?.phone.isNullOrEmpty()) {
+            return viewModel.deliveryDetails.value?.dropoff?.phone.toString()
         }
         return StringUtils.EMPTY_STRING
     }
