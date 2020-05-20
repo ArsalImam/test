@@ -1313,4 +1313,28 @@ public enum Dialogs {
         mDialog.setCancelable(isCancellable);
         showDialog();
     }
+
+    /**
+     * This method creates a dialog to show any message which has been sent againt message
+     *
+     * @param context Calling context
+     * @param message Message to show
+     * @param onClick Callback to notify that OK/Positive button is clicked
+     */
+    public void showGeneralMessageDialog(Context context, String message) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            dialog.setContentView(R.layout.dialog_general_message_layout);
+            dialog.setCancelable(false);
+            ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
+            dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
 }

@@ -573,4 +573,6 @@
     <string name="successful">\u0020کامیاب\u0020</string>
     <string name="unsuccessful">\u0020ناکام\u0020</string>
     <string name="return_booking">\u0020واپسی کی بکنگ\u0020</string>
+    <string name="your_cash_limit_is_end">\u0020آپ کی کیش لیمیٹ ختم ہوگئی ہے\u0020</string>
+    <string name="error_uploading_file">Error in uploading file, please try again</string>
 </resources>

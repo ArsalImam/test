@@ -279,6 +279,7 @@ public class Constants {
         public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
         public static final int ADD_DELIVERY_DETAILS = DIGIT_ONE;
         public static final int EDIT_DELIVERY_DETAILS = DIGIT_TWO;
+        public static final int VIEW_DELIVERY_DETAILS = DIGIT_THREE;
         public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
     }
 
@@ -309,6 +310,7 @@ public class Constants {
         public static final int REQUEST_AUDIO_PERMISSION = 9998;
         public static final int RC_ADD_DELIVERY_DETAILS = 1000;
         public static final int RC_EDIT_DELIVERY_DETAILS = 1001;
+        public static final int RC_ADD_EDIT_DELIVERY_DETAILS = 1002;
     }
 
     public static class TimeFormats {

@@ -23,6 +23,7 @@ class DeliveryDetailInfo() : Parcelable {
     var display_tag: String? = null
     var trip_id: String? = null
     var trip_no: String? = null
+    var fare: Int? = null
     var status: String? = null
     var delivery_status: Boolean? = null
     var creator: String? = PARTNER_ANDROID
@@ -36,7 +37,9 @@ class DeliveryDetailInfo() : Parcelable {
         display_tag = parcel.readString()
         trip_id = parcel.readString()
         trip_no = parcel.readString()
+        fare = parcel.readValue(Int::class.java.classLoader) as? Int
         status = parcel.readString()
+        delivery_status = parcel.readValue(Boolean::class.java.classLoader) as? Boolean
         creator = parcel.readString()
     }
 
@@ -49,12 +52,14 @@ class DeliveryDetailInfo() : Parcelable {
         parcel.writeString(display_tag)
         parcel.writeString(trip_id)
         parcel.writeString(trip_no)
+        parcel.writeValue(fare)
         parcel.writeString(status)
+        parcel.writeValue(delivery_status)
         parcel.writeString(creator)
     }
 
     override fun describeContents(): Int {
-        return DIGIT_ZERO
+        return 0
     }
 
     companion object CREATOR : Parcelable.Creator<DeliveryDetailInfo> {

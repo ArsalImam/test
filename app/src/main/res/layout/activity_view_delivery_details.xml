@@ -77,7 +77,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:maxLines="1"
-                        android:text="@{`Rs. ` +  viewModel.deliveryDetails.details.parcel_value}"
+                        android:text="@{`Rs. ` +  viewModel.deliveryDetails.details.fare}"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_16sdp"
                         android:textStyle="bold"
@@ -288,10 +288,11 @@
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/tVOrderNumber"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginLeft="@dimen/_12sdp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@{viewModel.deliveryDetails.details.order_no}"
@@ -359,6 +360,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_2sdp"
-            android:background="@drawable/toolbar_bottom_shadow_gray" />
+            android:background="@drawable/toolbar_bottom_shadow_gray"
+            app:goneUnless="@{viewModel.deliveryDetails.details.cod_value != null}" />
     </LinearLayout>
 </layout>

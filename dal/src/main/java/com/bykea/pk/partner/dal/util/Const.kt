@@ -44,6 +44,7 @@ val BOOKING_ID_TO_REPLACE = ":id"
 
 val LABEL_NOT_AVAILABLE = "N/A"
 val DIGIT_ZERO = 0
+val DIGIT_TWENTY = 20
 
 
 object RequestParams {

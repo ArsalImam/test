@@ -68,7 +68,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
             if (intent?.extras!!.containsKey(DELIVERY_DETAILS_OBJECT)) {
                 viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
-                tVLocationAlphabet.text = binding.viewModel?.deliveryDetails?.value?.details?.display_tag
+                tVLocationAlphabet.text = viewModel.deliveryDetails.value?.details?.display_tag
                 fLLocation.visibility = View.VISIBLE
             }
         }
@@ -79,9 +79,16 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
         viewModel.isAddedOrUpdatedSuccessful.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
             val intent = Intent()
-            intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)
+            /*intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)*/
             setResult(RESULT_OK, intent)
             finish()
+        })
+
+        viewModel.isCashLimitLow.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
+            if (it) {
+                viewModel.isCashLimitLow.value = false
+                Dialogs.INSTANCE.showGeneralMessageDialog(this@AddEditDeliveryDetailsActivity, getString(R.string.your_cash_limit_is_end))
+            }
         })
 
         binding.listener = object : GenericListener {
@@ -99,7 +106,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                                 }
 
                                 override fun fail(errorCode: Int, errorMsg: String) {
-                                    Utils.appToast("Error in uploading file, please try again")
+                                    Utils.appToast(getString(R.string.error_uploading_file))
                                 }
                             })
                         } else {
@@ -297,9 +304,9 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 dropoff?.lat = mDropOffResult?.latitude
                 dropoff?.lng = mDropOffResult?.longitude
             } ?: run {
-                dropoff?.gps_address = binding.viewModel?.deliveryDetails?.value?.dropoff?.gps_address
-                dropoff?.lat = binding.viewModel?.deliveryDetails?.value?.dropoff?.lat
-                dropoff?.lng = binding.viewModel?.deliveryDetails?.value?.dropoff?.lng
+                dropoff?.gps_address = viewModel.deliveryDetails.value?.dropoff?.gps_address
+                dropoff?.lat = viewModel.deliveryDetails.value?.dropoff?.lat
+                dropoff?.lng = viewModel.deliveryDetails.value?.dropoff?.lng
             }
 
             // DELIVERY DETAILS INFO - PARCEL VALUE
