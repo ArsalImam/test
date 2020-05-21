@@ -7,6 +7,8 @@
 
         <import type="com.bykea.pk.partner.utils.Utils" />
 
+        <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
+
         <variable
             name="listener"
             type="com.bykea.pk.partner.utils.GenericListener" />
@@ -400,6 +402,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/_5sdp"
                             android:weightSum="2">
 
                             <!--PARCEL VALUE-->
@@ -493,8 +496,9 @@
                             android:id="@+id/linLayoutCODAmount"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_38sdp"
-                            android:layout_marginTop="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
                             android:layout_marginBottom="@dimen/_5sdp"
+                            app:goneUnless="@{viewModel.deliveryDetails.meta == null || viewModel.deliveryDetails.meta.service_code == ServiceCode.SEND_COD}"
                             android:background="@drawable/border_details_form_square_light"
                             android:gravity="center">
 
