@@ -244,12 +244,12 @@ object BindingAdapters {
                 deliveryDetails?.details,
                 deliveryDetails?.details?.status) { _, _, status ->
             when (status) {
-                ON_START_TRIP, ON_FINISH_TRIP -> {
+                ON_START_TRIP -> {
                     imageViewShowDetails.visibility = View.VISIBLE
                     imageViewEdit.visibility = View.INVISIBLE
                     textViewStatus.visibility = View.GONE
                 }
-                ON_FEEDBACK_TRIP, ON_COMPLETED_TRIP -> {
+                ON_FEEDBACK_TRIP, ON_COMPLETED_TRIP, ON_FINISH_TRIP -> {
                     imageViewShowDetails.visibility = View.INVISIBLE
                     imageViewEdit.visibility = View.INVISIBLE
                     deliveryDetails?.details?.delivery_status?.let {
