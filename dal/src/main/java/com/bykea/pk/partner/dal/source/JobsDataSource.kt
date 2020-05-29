@@ -128,6 +128,14 @@ interface JobsDataSource {
     fun cancelJob(jobId: String, reason: String, callback: CancelJobCallback)
 
     /**
+     * Requests to cancel job
+     * @param jobId String
+     * @param reason String
+     * @param callback CancelJobCallback
+     */
+    fun cancelJobForBatch(jobId: String, reason: String, callback: CancelJobCallback)
+
+    /**
      * Requests to finish job
      *
      * @param jobId Job Id
