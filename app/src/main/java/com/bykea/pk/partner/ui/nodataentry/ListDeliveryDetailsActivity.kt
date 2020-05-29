@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.CompoundButton
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -168,7 +169,18 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
      * Set passenger wallet from trip data
      */
     private fun setPassengerWallet() {
-        tvPWalletAmount.text = String.format(getString(R.string.amount_rs), viewModel.callData.value?.passWallet)
+        viewModel.callData.value?.actualPassWallet?.let {
+            if (it <= DIGIT_ZERO) {
+                rLPWalletAmount.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(), R.color.red))
+                tvPWalletAmount.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.white))
+                tvPWalletAmountLabel.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.white))
+            } else {
+                rLPWalletAmount.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(), R.color.blue_light))
+                tvPWalletAmount.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.black))
+                tvPWalletAmountLabel.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.black))
+            }
+            tvPWalletAmount.text = String.format(getString(R.string.amount_rs), viewModel.callData.value?.passWallet)
+        }
     }
 
     /**
