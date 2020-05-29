@@ -4,7 +4,6 @@ import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
-import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
@@ -202,6 +201,17 @@ interface Backend {
      */
     @POST("/api/v1/driver/cancel")
     fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobBadResponse>
+
+    /**
+     * Requests to cancel active job
+     * @param batchId batch id of the job
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @PUT("/v2/batch/{batch_id}/partner/cancel")
+    fun cancelJobForBatch(
+            @Header("x-app-partner-id") driverId: String, @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String, @Body body: CancelJobRequest): Call<CancelJobBadResponse>
 
     /**
      * Requests to finish active job

@@ -2549,7 +2549,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      */
     private void cancelJob(String reasonMsg) {
         if (Utils.isModernService(callData.getServiceCode())) {
-            jobsRepo.cancelJob(callData.getTripId(), reasonMsg, new JobsDataSource.CancelJobCallback() {
+            JobsDataSource.CancelJobCallback cancelCallBack = new JobsDataSource.CancelJobCallback() {
                 @Override
                 public void onJobCancelled() {
                     onCancelled(true, "Trip cancelled successfully", true);
@@ -2559,7 +2559,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 public void onJobCancelFailed() {
                     onStatusChangedFailed("Unable to cancel trip");
                 }
-            });
+            };
+            if (Utils.isNewBatchService(callData.getServiceCode()))
+                jobsRepo.cancelJobForBatch(callData.getTripId(), reasonMsg, cancelCallBack);
+            else
+                jobsRepo.cancelJob(callData.getTripId(), reasonMsg, cancelCallBack);
         } else {
             dataRepository.requestCancelRide(mCurrentActivity, driversDataHandler, reasonMsg);
         }
