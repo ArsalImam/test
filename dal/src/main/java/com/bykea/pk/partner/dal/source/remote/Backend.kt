@@ -369,7 +369,7 @@ interface Backend {
             @Path("booking_id") bookingId: String
     ): Call<DeliveryDetailRemoveResponse>
 
-    @PUT("/v2/batch/{batch_id}/update-return-run")
+    @PATCH("/v2/batch/{batch_id}/update-return-run")
     fun updateBatchReturnRun(@Header("x-app-partner-id") driverId: String,
                              @Header("x-app-partner-token") token: String,
                              @Path("batch_id") batchId: String,

@@ -155,7 +155,7 @@ class ListDeliveryDetailsViewModel : ViewModel() {
      * @param status : True/False
      */
     fun updateBatchReturnRun(status: Boolean) {
-        jobRespository.updateBatchReturnRun(callData.value?.tripNo.toString(), BatchUpdateReturnRunRequest(status), object : JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse> {
+        jobRespository.updateBatchReturnRun(callData.value?.tripId.toString(), BatchUpdateReturnRunRequest(status), object : JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse> {
             override fun onDataLoaded(response: BatchUpdateReturnRunResponse) {
                 _isReturnRunEnable.value = status
                 Dialogs.INSTANCE.dismissDialog()
