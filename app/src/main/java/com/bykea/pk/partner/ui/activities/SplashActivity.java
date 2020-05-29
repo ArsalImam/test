@@ -13,6 +13,7 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.source.remote.Backend;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.OfflineNotificationData;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.MultiDeliveryTrip;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -41,6 +42,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -463,20 +465,26 @@ public class SplashActivity extends BaseActivity {
             AppPreferences.setCallData(callData);
             AppPreferences.setTripStatus(callData.getStatus());
 
-            if (!callData.getStatus().equalsIgnoreCase(
-                    TripStatus.ON_FINISH_TRIP)) {
-                WebIORequestHandler.
-                        getInstance().
-                        registerChatListener();
+            // check for unfinished ride later
+            ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
+
+            boolean isFinishedStateFound = false;
+
+            for (BatchBooking tripData : bookingResponseList) {
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startFeedbackActivity(mCurrentActivity);
+                    break;
+                }
+            }
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
                 ActivityStackManager.
                         getInstance().
                         startJobActivity(mCurrentActivity);
-
-            } else {
-                ActivityStackManager.getInstance()
-                        .startFeedbackActivity(mCurrentActivity);
-            }
-
         } else {
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<MultiDeliveryCallDriverData>() {
@@ -510,8 +518,6 @@ public class SplashActivity extends BaseActivity {
                 ActivityStackManager.
                         getInstance().
                         startMultiDeliveryBookingActivity(mCurrentActivity);
-
-
         }
         finish();
     }

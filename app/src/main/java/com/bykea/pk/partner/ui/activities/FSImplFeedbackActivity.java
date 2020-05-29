@@ -27,6 +27,7 @@ import com.bykea.pk.partner.dal.source.remote.data.Invoice;
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.source.remote.response.FeedbackInvoiceResponse;
 import com.bykea.pk.partner.dal.util.Injection;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -42,6 +43,7 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
@@ -60,6 +62,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY_COD;
 
 public class FSImplFeedbackActivity extends BaseActivity {
 
@@ -114,6 +118,8 @@ public class FSImplFeedbackActivity extends BaseActivity {
     int driverWallet;
     private boolean isJobSuccessful = true;
     private LastAdapter<Invoice> invoiceAdapter;
+    private boolean isNewBatchFlow;
+    private int batchServiceCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +143,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         updateScroll();
         updateInvoice();
     }
-  
+
     /**
      * this method will update the invoice details of the current booking,
      * will populate the recycler view's adapter
@@ -242,8 +248,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         });
         invoiceRecyclerView.setAdapter(invoiceAdapter);
         invoiceRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-
-        callData = AppPreferences.getCallData();
+        initCallData();
         isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
         isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
@@ -270,6 +275,33 @@ public class FSImplFeedbackActivity extends BaseActivity {
         } else {
             receivedAmountEt.requestFocus();
         }
+    }
+
+    private void initCallData() {
+        callData = AppPreferences.getCallData();
+        isNewBatchFlow = Utils.isNewBatchService(callData.getServiceCode());
+        //this will manage the single ride flow
+        if (!isNewBatchFlow) return;
+        //extracting batch service code
+        batchServiceCode = callData.getServiceCode();
+        // check for finished trip
+        ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
+        //this will be the finished trip
+        BatchBooking trip = null;
+        for (BatchBooking tripData : bookingResponseList) {
+            // if trip status if "finished", getting trip details
+            if (tripData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                trip = tripData;
+                break;
+            }
+        }
+        callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
+        callData.setTotalFare("0"); //TODO need to get way from server to update this
+        callData.setTripId(trip.getId());
+        callData.setEndAddress(trip.getDropoff().getAddress());
+        callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
+        callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
     }
 
     private void updateUIforPurcahseService() {
@@ -366,7 +398,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 selectedMsgPosition = position;
 
 //                if (!isBykeaCashType) {
-                    updateAdapter();
+                updateAdapter();
 //                }
 
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
@@ -412,11 +444,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 public void onJobConcluded(@NotNull ConcludeJobBadResponse response) {
                     Dialogs.INSTANCE.dismissDialog();
                     Dialogs.INSTANCE.showToast(response.getMessage());
-                    Utils.setCallIncomingState();
-//                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
-//                    AppPreferences.setAvailableStatus(response.isAvailable());
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    mCurrentActivity.finish();
+                    //handled old flow if not a batch service
+                    if (!isNewBatchFlow) {
+                        Utils.setCallIncomingState();
+                        ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                        mCurrentActivity.finish();
+                        return;
+                    }
+                    //check if contains any pending booking or has any failure booking
+
                 }
 
 

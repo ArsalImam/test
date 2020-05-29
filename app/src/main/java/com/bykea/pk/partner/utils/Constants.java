@@ -184,6 +184,10 @@ public class Constants {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
         public static final String NEW_BATCH = "batch_v2";
+        public static final String NOD = "NOD";
+        public static final String COD = "COD";
+        public static final String PURCHASE = "Purchase";
+        public static final String SAWARI = "Sawari";
     }
 
 
