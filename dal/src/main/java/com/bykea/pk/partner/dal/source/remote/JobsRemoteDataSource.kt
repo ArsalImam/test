@@ -200,7 +200,7 @@ class JobsRemoteDataSource {
      * @param callback CancelJobCallback
      */
     fun cancelJobForBatch(jobId: String, driverId: String, token: String, lat: Double, lng: Double, reason: String, callback: JobsDataSource.CancelJobCallback) {
-        Backend.talos.cancelJobForBatch(jobId, CancelJobRequest(driverId, token, lat, lng, jobId, reason)).enqueue(object : Callback<CancelJobBadResponse> {
+        Backend.talos.cancelJobForBatch(driverId, token, jobId, CancelJobRequest(null, null, lat, lng, null, reason)).enqueue(object : Callback<CancelJobBadResponse> {
             override fun onSuccess(response: CancelJobBadResponse) = callback.onJobCancelled()
             override fun onFail(code: Int, message: String?) = callback.onJobCancelFailed()
         })

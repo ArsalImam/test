@@ -208,8 +208,10 @@ interface Backend {
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
-    @POST("/v2/batch/{batch_id}/partner/cancel")
-    fun cancelJobForBatch(@Path("batch_id") batchId: String, @Body body: CancelJobRequest): Call<CancelJobBadResponse>
+    @PUT("/v2/batch/{batch_id}/partner/cancel")
+    fun cancelJobForBatch(
+            @Header("x-app-partner-id") driverId: String, @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String, @Body body: CancelJobRequest): Call<CancelJobBadResponse>
 
     /**
      * Requests to finish active job
