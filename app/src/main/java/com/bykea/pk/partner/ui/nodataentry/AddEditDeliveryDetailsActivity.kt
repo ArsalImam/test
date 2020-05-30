@@ -27,7 +27,8 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.Extras.*
-import com.bykea.pk.partner.utils.Constants.ServiceCode.*
+import com.bykea.pk.partner.utils.Constants.ServiceCode.SEND
+import com.bykea.pk.partner.utils.Constants.ServiceCode.SEND_COD
 import com.bykea.pk.partner.utils.Constants.TripTypes.DELIVERY_TYPE
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
@@ -36,6 +37,7 @@ import com.bykea.pk.partner.utils.audio.PlaybackInfoListener
 import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
+import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util.*
 
@@ -53,6 +55,9 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private var recordedAudioTime = DIGIT_ZERO
     var flowForAddOrEdit: Int = DIGIT_ZERO
     var mDropOffResult: PlacesResult? = null
+    private var isFileDownloadFromAmazon: Boolean = false
+    private var voiceNoteUploadUrl: String = StringUtils.EMPTY
+    private var isFileUploadToAmazonRequired: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,11 +102,11 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 if (isValidate()) {
                     if (Utils.isConnected(this@AddEditDeliveryDetailsActivity, true)) {
                         Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
-                        if (audioPlayRL.visibility == View.VISIBLE) {
+                        if (audioPlayRL.visibility == View.VISIBLE && isFileUploadToAmazonRequired) {
                             //voice note is recorded by user.. upload to amazon
                             BykeaAmazonClient.uploadFile(fileNameToBeUploadedToAmazon(), createAudioFile(), object : Callback<String> {
                                 override fun success(obj: String) {
-                                    viewModel.deliveryDetails.value?.details?.voice_note = obj
+                                    voiceNoteUploadUrl = obj
                                     callPostApiNow()
                                 }
 
@@ -250,8 +255,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Initializes views for Parcel Summary fragment
      */
     private fun initViews() {
-        val file = File(getFilePath(), Audio.AUDIO_FILE_NAME)
-        if (file.exists() && Permissions.hasAudioPermissions()) {
+        if (Permissions.hasAudioPermissions() && !viewModel.deliveryDetails.value?.details?.voice_note.isNullOrEmpty()) {
             showPlayAudioLayout()
         }
     }
@@ -322,6 +326,23 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             // DELIVERY DETAILS INFO - COD VALUE
             if (!editTextCODAmount.text.isNullOrEmpty()) {
                 details?.cod_value = editTextCODAmount.text.toString().trim()
+            }
+
+            // DELIVERY DETAIL INFO - VOICE NOTE URL
+            viewModel.deliveryDetails.value?.details?.voice_note?.let {
+                //IF VOICE NOTE URL IS ALREADY PRESENT
+                if (voiceNoteUploadUrl.isNotEmpty() && it != voiceNoteUploadUrl) {
+                    //IF VOICE NOTE IS UPLOADED
+                    details?.voice_note = voiceNoteUploadUrl
+                } else if (audioPlayRL.visibility == View.VISIBLE) {
+                    //IF VOICE NOTE IS SAME
+                    details?.voice_note = it
+                }
+            } ?: run {
+                //IF VOICE NOTE URL IS NOT PRESENT
+                if (voiceNoteUploadUrl.isNotEmpty()) {
+                    details?.voice_note = voiceNoteUploadUrl
+                }
             }
         }
     }
@@ -418,8 +439,35 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      */
     private fun startPlaying() {
         if (!mMediaPlayerHolder.isPlaying) {
-            mMediaPlayerHolder.loadUri(createAudioFile().path)
-            mMediaPlayerHolder.play()
+            if (isFileUploadToAmazonRequired) {
+                mMediaPlayerHolder.loadUri(createAudioFile().path)
+                mMediaPlayerHolder.play()
+            } else {
+                viewModel.deliveryDetails.value?.details?.voice_note?.let {
+                    if (isFileDownloadFromAmazon) {
+                        mMediaPlayerHolder.play()
+                    } else {
+                        Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
+                        BykeaAmazonClient.getFileObject(it, object : Callback<File> {
+                            override fun success(obj: File) {
+                                Dialogs.INSTANCE.dismissDialog()
+                                mMediaPlayerHolder.loadFile(obj)
+                                isFileDownloadFromAmazon = true
+                                mMediaPlayerHolder.play()
+                            }
+
+                            override fun fail(errorCode: Int, errorMsg: String) {
+                                Dialogs.INSTANCE.dismissDialog()
+                                Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+                            }
+                        })
+                    }
+                } ?: run {
+                    mMediaPlayerHolder.loadUri(createAudioFile().path)
+                    mMediaPlayerHolder.play()
+                }
+            }
+
             setPlayIcon(false)
         }
     }
@@ -436,6 +484,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * record audio recording time to display when playing recorded audio
      */
     private fun startAudioRecordTimer() {
+        isFileUploadToAmazonRequired = true
         recordedAudioTime = NEGATIVE_DIGIT_ONE
         audioTimer = Timer(false)
         audioTimer?.scheduleAtFixedRate(object : TimerTask() {
@@ -469,6 +518,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      */
     private fun addListeners() {
         audioDeleteIV.setOnClickListener {
+            isFileUploadToAmazonRequired = true
             mMediaPlayerHolder.reset()
             mMediaPlayerHolder.release()
             setPlayIcon(true)
