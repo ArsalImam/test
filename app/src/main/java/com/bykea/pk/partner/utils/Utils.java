@@ -268,6 +268,19 @@ public class Utils {
         return image;
     }
 
+    public static String getCallTypeByServiceCode(int bookingCode) {
+        switch (bookingCode) {
+            case Constants.ServiceCode.SEND_COD:
+                return Constants.CallType.COD;
+            case Constants.ServiceCode.SEND:
+                return Constants.CallType.NOD;
+            case Constants.ServiceCode.MART:
+                return Constants.CallType.PURCHASE;
+            default:
+                return Constants.CallType.SAWARI;
+        }
+    }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -811,6 +824,7 @@ public class Utils {
         Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
     }
+
     public static BitmapDescriptor getDropOffBitmapDiscriptorForBooking(Context context, BatchBooking booking) {
         Bitmap bmp = createDropOffMarkerForBooking(context, booking);
         return BitmapDescriptorFactory.fromBitmap(bmp);
@@ -2221,6 +2235,7 @@ public class Utils {
     public static boolean isPurchaseService(String callType) {
         return isPurchaseService(callType, null);
     }
+
     public static boolean isNewBatchService(int serviceCode) {
         return serviceCode == NEW_BATCH_DELIVERY || serviceCode == NEW_BATCH_DELIVERY_COD;
     }
@@ -2748,7 +2763,7 @@ public class Utils {
         File f = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
         File[] files = f.listFiles();
-        Arrays.sort(files, new Comparator< Object >() {
+        Arrays.sort(files, new Comparator<Object>() {
             public int compare(Object o1, Object o2) {
 
                 if (((File) o1).lastModified() > ((File) o2).lastModified()) {
@@ -2763,6 +2778,7 @@ public class Utils {
         });
         files[0].delete();
     }
+
     public static Uri startCameraByIntent(Activity act, File photoFile) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -3409,6 +3425,7 @@ public class Utils {
 
         return latLngList;
     }
+
     /**
      * Fetch drop down lat lng list.
      *

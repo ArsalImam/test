@@ -101,7 +101,6 @@
                         android:textSize="@dimen/_14sdp"
                         app:fontName="roboto_regular.ttf" />
 
-
                     <View
                         android:id="@+id/addressDivider"
                         android:layout_width="match_parent"
