@@ -3,6 +3,8 @@ package com.bykea.pk.partner.utils.audio
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
+import java.io.File
+import java.io.FileInputStream
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -79,6 +81,16 @@ class MediaPlayerHolder(context: Context) {
         }
 
         initializeProgressCallback()
+    }
+
+    fun loadFile(file: File){
+        initializeMediaPlayer()
+        mMediaPlayer?.setDataSource(FileInputStream(file).fd);
+        mMediaPlayer?.prepare()
+        initializeProgressCallback()
+    }
+
+    fun retreiveFileFromAmazon(url: String) {
 
     }
 
@@ -102,7 +114,6 @@ class MediaPlayerHolder(context: Context) {
     fun reset() {
         if (mMediaPlayer != null) {
             mMediaPlayer!!.reset()
-            loadUri(mAudioUri)
             if (mPlaybackInfoListener != null) {
                 mPlaybackInfoListener!!.onStateChanged(PlaybackInfoListener.State.RESET)
             }
@@ -133,10 +144,10 @@ class MediaPlayerHolder(context: Context) {
             mSeekbarPositionUpdateTask = Runnable { updateProgressCallbackTask() }
         }
         mExecutor!!.scheduleAtFixedRate(
-            mSeekbarPositionUpdateTask,
-            0,
-            PLAYBACK_POSITION_REFRESH_INTERVAL_MS.toLong(),
-            TimeUnit.MILLISECONDS
+                mSeekbarPositionUpdateTask,
+                0,
+                PLAYBACK_POSITION_REFRESH_INTERVAL_MS.toLong(),
+                TimeUnit.MILLISECONDS
         )
     }
 
