@@ -44,6 +44,7 @@ import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -1945,17 +1946,31 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateDropOffMarkers() {
         try {
             if (null == mGoogleMap || callData == null) return;
+            boolean containsReturnRun = false;
             for (int i = 0; i < callData.getBookingList().size(); i++) {
-                mGoogleMap.addMarker(new MarkerOptions()
-                        .icon(Utils.getDropOffBitmapDiscriptorForBooking(mCurrentActivity,
-                                callData.getBookingList().get(i)))
-                        .position(new LatLng(callData.getBookingList().get(i).getDropoff().getLat(),
-                                callData.getBookingList().get(i).getDropoff().getLng()))).setTag(i);
+                BatchBooking batchBooking = callData.getBookingList().get(i);
+                addDropOffMarker(batchBooking, i);
+                if (batchBooking.getDisplayTag().equalsIgnoreCase("z")) {
+                    containsReturnRun = true;
+                }
+            }
+            if (callData.isReturnRun() && !containsReturnRun) {
+                BatchBooking batchBooking = new BatchBooking();
+                batchBooking.setServiceCode(Constants.ServiceCode.SEND_COD);
+                batchBooking.setDisplayTag("Z");
+                batchBooking.setStatus(TripStatus.ON_START_TRIP);
+                addDropOffMarker(batchBooking, callData.getBookingList().size());
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void addDropOffMarker(BatchBooking batchBooking, int tag) {
+        mGoogleMap.addMarker(new MarkerOptions()
+                .icon(Utils.getDropOffBitmapDiscriptorForBooking(mCurrentActivity, batchBooking))
+                .position(new LatLng(batchBooking.getDropoff().getLat(), batchBooking.getDropoff().getLng()))).setTag(tag);
     }
 
     /**
@@ -1967,9 +1982,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         for (LatLng pos : latLngList) {
             builder.include(pos);
         }
-//        if (pickupMarker != null) {
-//            builder.include(pickupMarker.getPosition());
-//        }
         if (driverMarker != null) {
             builder.include(driverMarker.getPosition());
         }

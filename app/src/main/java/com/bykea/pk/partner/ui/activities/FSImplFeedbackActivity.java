@@ -324,6 +324,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
         callData.setTotalFare("0"); //TODO need to get way from server to update this
         callData.setTripId(trip.getId());
+        callData.setServiceCode(trip.getServiceCode());
         callData.setEndAddress(trip.getDropoff().getAddress());
         callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
         callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
@@ -459,7 +460,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
         switch (v.getId()) {
             case R.id.imageViewAddDelivery:
-                new BatchNaKamiyabDialog(callData.getTripId(), new BatchNaKamiyabDialog.OnResult() {
+                new BatchNaKamiyabDialog(batchId, new BatchNaKamiyabDialog.OnResult() {
                     @Override
                     public void onReturnRun() {
                         callData.setReturnRun(true);
@@ -654,7 +655,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     }
                 }
             });
-
         }
     };
 
@@ -766,7 +766,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     @Override
