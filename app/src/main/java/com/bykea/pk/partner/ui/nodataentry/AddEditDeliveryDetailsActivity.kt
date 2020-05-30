@@ -79,7 +79,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
         viewModel.isAddedOrUpdatedSuccessful.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
             val intent = Intent()
-            /*intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)*/
+            intent.putExtra(DELIVERY_DETAILS_OBJECT, viewModel.deliveryDetails.value)
             setResult(RESULT_OK, intent)
             finish()
         })

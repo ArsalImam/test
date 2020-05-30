@@ -164,6 +164,7 @@
 <!--    <color name="grey_828683">#828683</color>-->
     <color name="grey_ececec">#ececec</color>
     <color name="grey_9d9d9d">#9d9d9d</color>
+    <color name="green_radio">#16ab4c</color>
     <color name="red">#f51c1c</color>
     <color name="booking_red">#e40000</color>
 </resources>
