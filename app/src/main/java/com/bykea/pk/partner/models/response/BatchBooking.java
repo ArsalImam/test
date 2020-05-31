@@ -17,6 +17,9 @@ public class BatchBooking {
     @SerializedName("status")
     @Expose
     private String status;
+    @SerializedName("service_code")
+    @Expose
+    private int serviceCode;
     @SerializedName("dropoff")
     @Expose
     private BatchBookingDropoff dropoff;
@@ -72,5 +75,13 @@ public class BatchBooking {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public int getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(int serviceCode) {
+        this.serviceCode = serviceCode;
     }
 }

@@ -576,4 +576,9 @@
     <string name="return_booking">\u0020واپسی کی بکنگ\u0020</string>
     <string name="your_cash_limit_is_end">\u0020آپ کی کیش لیمیٹ ختم ہوگئی ہے\u0020</string>
     <string name="error_uploading_file">Error in uploading file, please try again</string>
+    <string name="sender">\u0020بھیجنے والا\u0020</string>
+    <string name="return_run">\u0020بھیجنے والے کے پاس جائیں</string>
+    <string name="re_route">\u0020کوئی اور پتہ درج کریں\u0020</string>
+    <string name="new_address">نیا پتہ</string>
+    <string name="goto_purchaser">واپس بھیجنے والے کے پاس</string>
 </resources>

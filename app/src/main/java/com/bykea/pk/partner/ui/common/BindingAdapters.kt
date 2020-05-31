@@ -46,6 +46,16 @@ object BindingAdapters {
         }
     }
 
+    @BindingAdapter("app:activeRadio")
+    @JvmStatic
+    fun activeRadio(imageView: ImageView, isActive: Boolean) {
+        imageView.setImageResource(if (isActive) {
+            R.drawable.selected_radio_button
+        } else {
+            R.drawable.unselected_radio_button
+        })
+    }
+
     @BindingAdapter("app:items")
     @JvmStatic
     fun setItems(listView: ListView, items: List<Job>) {
