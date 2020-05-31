@@ -474,7 +474,7 @@
                                     android:layout_marginEnd="@dimen/_5sdp"
                                     android:layout_marginRight="@dimen/_5sdp"
                                     android:background="@android:color/transparent"
-                                    android:digits="@string/alphabets"
+                                    android:digits="@string/alphanumeric"
                                     android:hint="@string/order_number_hint"
                                     android:inputType="text"
                                     android:maxLength="40"
