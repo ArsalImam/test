@@ -201,6 +201,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         llTotal.setVisibility(isKamiyabDelivery ? View.VISIBLE : View.GONE);
         callerRb.setVisibility(isKamiyabDelivery ? View.VISIBLE : View.GONE);
         llbatchNaKamiyabDelivery.setVisibility(!isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        imageViewAddDelivery.setVisibility(!isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        llFailureDelivery.setVisibility(View.GONE);
+        feedbackBtn.setEnabled(isKamiyabDelivery);
     }
 
     /**
@@ -330,7 +333,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
         callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
 
-        updateFailureDeliveryLabel(null);
+//        updateFailureDeliveryLabel(null);
     }
 
     private void updateUIforPurcahseService() {
@@ -466,6 +469,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     public void onReturnRun() {
                         callData.setReturnRun(true);
                         updateFailureDeliveryLabel(null);
+                        feedbackBtn.setEnabled(true);
                     }
 
                     @Override
@@ -584,7 +588,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                             new UserRepository().requestFeedback(mCurrentActivity, handler,
                                     "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
                     }
-
                 }
                 break;
         }
@@ -796,6 +799,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         } else if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
             if (resultCode == RESULT_OK) {
+                feedbackBtn.setEnabled(true);
                 updateFailureDeliveryLabel(data.getParcelableExtra(DELIVERY_DETAILS_OBJECT));
             }
         }
