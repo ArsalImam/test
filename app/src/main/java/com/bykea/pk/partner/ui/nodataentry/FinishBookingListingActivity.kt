@@ -94,23 +94,13 @@ class FinishBookingListingActivity : BaseActivity() {
     private fun onFinished(data: FinishJobResponseData) {
         Dialogs.INSTANCE.dismissDialog()
         callData = AppPreferences.getCallData()
-        callData?.endAddress = data.trip.end_address
-        callData?.tripNo = data.invoice.trip_no
-        callData?.totalFare = data.invoice.total.toString()
-        callData?.totalMins = data.invoice.minutes.toString()
-        callData?.distanceCovered = data.invoice.km.toString()
         callData?.ruleIds = data.trip.rule_ids
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(data.invoice.wallet_deduction.toString())) {
-            callData?.wallet_deduction = data.invoice.wallet_deduction.toString()
+        callData?.bookingList?.forEach {
+            if (it.id == selectedBooking?.id!!)
+                it.status = TripStatus.ON_FINISH_TRIP
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(data.invoice.promo_deduction.toString())) {
-            callData?.promo_deduction = data.invoice.promo_deduction.toString()
-        }
-        callData?.status = TripStatus.ON_FINISH_TRIP
-        callData?.trip_charges = data.invoice.trip_charges.toString()
         AppPreferences.setCallData(callData)
         AppPreferences.clearTripDistanceData()
-        AppPreferences.setTripStatus(TripStatus.ON_FINISH_TRIP)
         ActivityStackManager.getInstance()
                 .startFeedbackActivity(this)
         finish()
@@ -130,6 +120,7 @@ class FinishBookingListingActivity : BaseActivity() {
             adapter = LastAdapter(R.layout.item_finish_booking_listing, object : LastAdapter.OnItemClickListener<BatchBooking> {
 
                 override fun onItemClick(item: BatchBooking) {
+                    if (item.isCompleted) return
                     item.isSelected = !item.isSelected
                     adapter?.notifyDataSetChanged()
                     selectedBooking = if (item.isSelected) {

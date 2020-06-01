@@ -45,6 +45,7 @@ import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.models.response.ArrivedResponse;
 import com.bykea.pk.partner.models.response.BatchBooking;
+import com.bykea.pk.partner.models.response.BatchBookingDropoff;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -1935,7 +1936,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (shouldUpdateCamera) setCameraToTripView();
             else if (shouldCameraFollowCurrentLocation) setCameraToDriverLocation();
         }
-
     }
 
     /***
@@ -1946,25 +1946,24 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateDropOffMarkers() {
         try {
             if (null == mGoogleMap || callData == null) return;
-            boolean containsReturnRun = false;
-            for (int i = 0; i < callData.getBookingList().size(); i++) {
-                BatchBooking batchBooking = callData.getBookingList().get(i);
-                addDropOffMarker(batchBooking, i);
-                if (batchBooking.getDisplayTag().equalsIgnoreCase("z")) {
-                    containsReturnRun = true;
-                }
+            ArrayList<BatchBooking> bookings = callData.getBookingList();
+            boolean containsReturnRun = Utils.containsReturnRunBooking(bookings);
+            for (int i = 0; i < bookings.size(); i++) {
+                addDropOffMarker(bookings.get(i), i);
             }
             if (callData.isReturnRun() && !containsReturnRun) {
                 BatchBooking batchBooking = new BatchBooking();
                 batchBooking.setServiceCode(Constants.ServiceCode.SEND_COD);
                 batchBooking.setDisplayTag("Z");
                 batchBooking.setStatus(TripStatus.ON_START_TRIP);
+                batchBooking.setDropoff(new BatchBookingDropoff());
+                batchBooking.getDropoff().setLat(Double.valueOf(callData.getStartLat()));
+                batchBooking.getDropoff().setLng(Double.valueOf(callData.getStartLng()));
                 addDropOffMarker(batchBooking, callData.getBookingList().size());
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-
     }
 
     private void addDropOffMarker(BatchBooking batchBooking, int tag) {
