@@ -518,7 +518,7 @@
                                 android:background="@android:color/transparent"
                                 android:hint="@string/cod_amount"
                                 android:inputType="numberSigned"
-                                android:maxLength="6"
+                                android:maxLength="5"
                                 android:maxLines="1"
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
