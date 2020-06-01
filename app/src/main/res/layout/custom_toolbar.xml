@@ -123,7 +123,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:paddingBottom="@dimen/_10sdp"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_14sdp"
             app:fontName="open_sans_regular.ttf"
             tools:text="A" />
     </FrameLayout>
