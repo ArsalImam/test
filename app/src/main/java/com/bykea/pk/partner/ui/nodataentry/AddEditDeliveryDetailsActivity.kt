@@ -201,7 +201,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      */
     private fun validateParcelValue(): Boolean {
         return if (editTextParcelValue.text.isNullOrEmpty() ||
-                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT) {
+                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT + DIGIT_ONE) {
             editTextParcelValue.requestFocus()
             editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
             linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
