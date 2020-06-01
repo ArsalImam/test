@@ -32,8 +32,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="@{item.bookingCode}"
                     android:gravity="right"
+                    android:text="@{item.bookingCode}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_15sdp"
                     app:fontName="open_sans_regular.ttf"
@@ -44,9 +44,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="right"
+                    android:text="@{item.dropoff.address}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_15sdp"
-                    android:text="@{item.dropoff.address}"
                     app:fontName="jameel_noori_nastaleeq.ttf"
                     tools:text="asd" />
 
@@ -59,10 +59,10 @@
                 <ImageView
                     android:id="@+id/drop_off_marker_img_view"
                     android:layout_width="@dimen/_30sdp"
-                    android:tint="@{item.completed ? @color/grey : @android:color/transparent}"
                     android:layout_height="@dimen/_42sdp"
-                    android:background="@drawable/drop_off_icon"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    android:src="@drawable/drop_off_icon"
+                    android:tint="@{item.completed ? @color/grey : @color/drop_off_marker}" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:id="@+id/dropOffMarker"
@@ -70,9 +70,9 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:text="@{item.displayTag}"
                     android:background="@drawable/circle_white"
                     android:gravity="center"
+                    android:text="@{item.displayTag}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_13sdp"
                     tools:text="2" />

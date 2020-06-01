@@ -53,6 +53,7 @@ import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -496,14 +497,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
                             Dialogs.INSTANCE.dismissDialog();
                             Dialogs.INSTANCE.showToast(response.getMessage());
                             //handled old flow if not a batch service
-//                    if (!isNewBatchFlow) {
-                            Utils.setCallIncomingState();
-                            ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                            mCurrentActivity.finish();
-//                        return;
-//                    }
-                            //check if contains any pending booking or has any failure booking
-
+                            if (!anyBookingExistsInPendingState()) {
+                                Utils.setCallIncomingState();
+                                ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                                mCurrentActivity.finish();
+                            } else {
+                                //check if contains any pending booking or has any failure booking
+                                mCurrentActivity.finish();
+                            }
                         }
 
 
@@ -587,6 +588,16 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    private boolean anyBookingExistsInPendingState() {
+        if (isNewBatchFlow) {
+            boolean containsReturnRunBooking = Utils.containsReturnRunBooking(callData.getBookingList());
+            if (containsReturnRunBooking) return false;
+            for (BatchBooking batchBooking : callData.getBookingList())
+                if (!callData.isReturnRun() && !batchBooking.isCompleted()) return true;
+        }
+        return false;
     }
 
     private void logMPEvent() {
@@ -674,6 +685,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
      * @return true if all the validation is true otherwise false
      */
     private boolean valid() {
+        if (isNewBatchFlow && selectedMsgPosition != 0) {
+            receivedAmountEt.setText(String.valueOf(NumberUtils.INTEGER_ZERO));
+            return true;
+        }
         if (isPurchaseType && StringUtils.isBlank(kharedariAmountEt.getText().toString())) {
             kharedariAmountEt.setError(getString(R.string.enter_amount));
             kharedariAmountEt.requestFocus();

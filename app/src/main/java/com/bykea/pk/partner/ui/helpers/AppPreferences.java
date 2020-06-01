@@ -855,7 +855,6 @@ public class AppPreferences {
         prevLatLngList.add(currentLatLng);
         String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
         }.getType());
-        Utils.redLog("InTripLoc", value);
         mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
     }
 
@@ -871,7 +870,6 @@ public class AppPreferences {
         prevLatLngList.add(currentLatLng);
         String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
         }.getType());
-        Utils.redLog("InTripLoc", value);
         mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
     }
 
@@ -881,7 +879,6 @@ public class AppPreferences {
             prevLatLngList.addAll(index, routeLatLngList);
             String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
             }.getType());
-            Utils.redLog("InTripLoc", value);
             mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
         }
     }

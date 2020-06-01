@@ -281,6 +281,17 @@ public class Utils {
         }
     }
 
+    public static boolean containsReturnRunBooking(ArrayList<BatchBooking> bookingList) {
+        boolean containsReturnRun = false;
+        for (int i = 0; i < bookingList.size(); i++) {
+            BatchBooking batchBooking = bookingList.get(i);
+            if (batchBooking.getDisplayTag().equalsIgnoreCase("z")) {
+                containsReturnRun = true;
+            }
+        }
+        return containsReturnRun;
+    }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
