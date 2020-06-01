@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit
 class MediaPlayerHolder(context: Context) {
 
     private val mContext: Context
-    private var mMediaPlayer: MediaPlayer? = null
+    internal var mMediaPlayer: MediaPlayer? = null
+        get() = field
     private var mResourceId: Int = 0
     private var mAudioUri: String? = null
     private var mPlaybackInfoListener: PlaybackInfoListener? = null
@@ -83,7 +84,7 @@ class MediaPlayerHolder(context: Context) {
         initializeProgressCallback()
     }
 
-    fun loadFile(file: File){
+    fun loadFile(file: File) {
         initializeMediaPlayer()
         mMediaPlayer?.setDataSource(FileInputStream(file).fd);
         mMediaPlayer?.prepare()

@@ -40,6 +40,7 @@ import kotlinx.android.synthetic.main.custom_toolbar.*
 import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class AddEditDeliveryDetailsActivity : BaseActivity() {
     lateinit var binding: ActivityAddEditDeliveryDetailsBinding
@@ -257,6 +258,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private fun initViews() {
         if (Permissions.hasAudioPermissions() && !viewModel.deliveryDetails.value?.details?.voice_note.isNullOrEmpty()) {
             showPlayAudioLayout()
+            retrieveAudioFileFromAmazon(viewModel.deliveryDetails.value?.details?.voice_note!!, false)
         }
     }
 
@@ -447,20 +449,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                     if (isFileDownloadFromAmazon) {
                         mMediaPlayerHolder.play()
                     } else {
-                        Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
-                        BykeaAmazonClient.getFileObject(it, object : Callback<File> {
-                            override fun success(obj: File) {
-                                Dialogs.INSTANCE.dismissDialog()
-                                mMediaPlayerHolder.loadFile(obj)
-                                isFileDownloadFromAmazon = true
-                                mMediaPlayerHolder.play()
-                            }
-
-                            override fun fail(errorCode: Int, errorMsg: String) {
-                                Dialogs.INSTANCE.dismissDialog()
-                                Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
-                            }
-                        })
+                        retrieveAudioFileFromAmazon(it)
                     }
                 } ?: run {
                     mMediaPlayerHolder.loadUri(createAudioFile().path)
@@ -470,6 +459,33 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
             setPlayIcon(false)
         }
+    }
+
+    private fun retrieveAudioFileFromAmazon(url: String, isShowOrHideLoader: Boolean = true) {
+        if (isShowOrHideLoader) {
+            Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
+        }
+        BykeaAmazonClient.getFileObject(url, object : Callback<File> {
+            override fun success(obj: File) {
+                mMediaPlayerHolder.loadFile(obj)
+                mMediaPlayerHolder.mMediaPlayer?.duration?.let { duration ->
+                    recordedAudioTime = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()).toInt()
+                    audioSeekTimeTV.text = getFormattedTime(recordedAudioTime)
+                }
+                isFileDownloadFromAmazon = true
+                if (isShowOrHideLoader) {
+                    Dialogs.INSTANCE.dismissDialog()
+                    mMediaPlayerHolder.play()
+                }
+            }
+
+            override fun fail(errorCode: Int, errorMsg: String) {
+                if (isShowOrHideLoader) {
+                    Dialogs.INSTANCE.dismissDialog()
+                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+                }
+            }
+        })
     }
 
     /**
