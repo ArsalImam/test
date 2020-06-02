@@ -648,7 +648,9 @@ public enum Dialogs {
             mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
+                    if (Integer.valueOf(receivedAmountEt.getText().toString()) == DIGIT_ZERO) {
+                        receivedAmountEt.setError(DriverApp.getContext().getString(R.string.enter_correct_amount));
+                    } else if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
                         dismissDialog();
                         callBack.onCallBack(receivedAmountEt.getText().toString());
                     } else {
@@ -656,7 +658,7 @@ public enum Dialogs {
                         if (isCourierType)
                             amount = AppPreferences.getSettings().getSettings().getVan_partner_topup_limit();
 
-                        receivedAmountEt.setError(DriverApp.getContext().getResources().getString(R.string.amount_cannot_greater, amount));
+                        receivedAmountEt.setError(DriverApp.getContext().getString(R.string.amount_cannot_greater, amount));
                     }
                 }
             });

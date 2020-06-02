@@ -582,4 +582,5 @@
     <string name="re_route">\u0020کوئی اور پتہ درج کریں\u0020</string>
     <string name="new_address">نیا پتہ</string>
     <string name="goto_purchaser">واپس بھیجنے والے کے پاس</string>
+    <string name="enter_correct_amount">Please enter correct amount</string>
 </resources>
