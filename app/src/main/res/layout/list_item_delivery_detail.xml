@@ -65,14 +65,14 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    app:batchTripItemAccordingToStatus="@{item}"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    app:batchTripItemAccordingToStatus="@{item}">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageViewShowDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="@{()->listener.onSubItemOneClick(item)}"
+                        android:onClick="@{(v)->listener.onSubItemOneClick(v,item)}"
                         app:srcCompat="@drawable/ic_view" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -83,7 +83,7 @@
                         android:layout_marginRight="@dimen/_15sdp"
                         android:layout_toEndOf="@+id/imageViewShowDetails"
                         android:layout_toRightOf="@+id/imageViewShowDetails"
-                        android:onClick="@{()->listener.onSubItemTwoClick(item)}"
+                        android:onClick="@{(v)->listener.onSubItemTwoClick(v,item)}"
                         app:srcCompat="@drawable/ic_edit" />
 
                     <com.bykea.pk.partner.widgets.FontTextView

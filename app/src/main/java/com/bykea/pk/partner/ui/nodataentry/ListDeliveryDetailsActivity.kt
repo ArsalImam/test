@@ -3,6 +3,7 @@ package com.bykea.pk.partner.ui.nodataentry
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
@@ -21,6 +22,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.StringCallBack
 import com.bykea.pk.partner.utils.*
+import com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
 import com.bykea.pk.partner.utils.Constants.RequestCode.*
@@ -114,7 +116,8 @@ class ListDeliveryDetailsActivity : BaseActivity() {
      */
     private fun setListeners() {
         binding.listener = object : GenericListener {
-            override fun addDeliveryDetails() {
+            override fun addDeliveryDetails(view: View) {
+                preventMultipleTap(view)
                 // Add DELIVERY DETAILS
                 ActivityStackManager.getInstance()
                         .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
@@ -217,13 +220,15 @@ class ListDeliveryDetailsActivity : BaseActivity() {
         lastAdapter = LastAdapter(R.layout.list_item_delivery_detail, object : LastAdapter.OnItemClickListener<DeliveryDetails> {
             override fun onItemClick(item: DeliveryDetails) {}
 
-            override fun onSubItemOneClick(item: DeliveryDetails) {
+            override fun onSubItemOneClick(view: View, item: DeliveryDetails) {
+                preventMultipleTap(view)
                 // VIEW DELIVERY DETAILS
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                 viewModel.getSingleDeliveryDetails(VIEW_DELIVERY_DETAILS, item.details?.trip_id.toString())
             }
 
-            override fun onSubItemTwoClick(item: DeliveryDetails) {
+            override fun onSubItemTwoClick(view: View, item: DeliveryDetails) {
+                preventMultipleTap(view)
                 // EDIT DELIVERY DETAILS
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                 viewModel.getSingleDeliveryDetails(EDIT_DELIVERY_DETAILS, item.details?.trip_id.toString())
@@ -231,6 +236,11 @@ class ListDeliveryDetailsActivity : BaseActivity() {
         })
 
         recViewDeliveries.adapter = lastAdapter
+    }
+
+    private fun preventMultipleTap(view: View) {
+        view.isEnabled = false
+        Handler().postDelayed({ view.isEnabled = true }, DIGIT_THOUSAND.toLong())
     }
 
     /**

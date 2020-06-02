@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.utils
 
+import android.view.View
 import android.widget.CompoundButton
 
 
@@ -39,7 +40,7 @@ interface GenericListener {
     /**
      * When user tap to add delivery details
      */
-    fun addDeliveryDetails() {}
+    fun addDeliveryDetails(view: View) {}
 
     /**
      * When user tap on passenger top up wallet
