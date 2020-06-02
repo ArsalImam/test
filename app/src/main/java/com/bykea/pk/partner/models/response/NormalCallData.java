@@ -117,6 +117,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("receiver_address")
     private String receiverAddress;
 
+    @SerializedName("isDetectWallet")
+    private boolean isDetectWallet;
+
     @SerializedName("sender_name")
     private String senderName;
     @SerializedName("sender_phone")
@@ -955,5 +958,13 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     public void setRuleIds(ArrayList<String> ruleIds) {
         this.ruleIds = ruleIds;
+    }
+
+    public boolean isDetectWallet() {
+        return isDetectWallet;
+    }
+
+    public void setDetectWallet(boolean detectWallet) {
+        isDetectWallet = detectWallet;
     }
 }
