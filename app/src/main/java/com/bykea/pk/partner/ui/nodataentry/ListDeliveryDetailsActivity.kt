@@ -14,6 +14,7 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
 import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
+import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -28,7 +29,7 @@ import com.bykea.pk.partner.utils.TripStatus.ON_START_TRIP
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 import org.apache.commons.lang3.StringUtils
 
-class ListDeliveryDetailsActivity : AppCompatActivity() {
+class ListDeliveryDetailsActivity : BaseActivity() {
     lateinit var binding: ActivityListDeliveryDetailsBinding
     lateinit var lastAdapter: LastAdapter<DeliveryDetails>
     private var removeDeliveryDetail: DeliveryDetails? = null
@@ -200,10 +201,10 @@ class ListDeliveryDetailsActivity : AppCompatActivity() {
     private fun setFareAmount() {
         when {
             viewModel.callData.value?.kraiKiKamai != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), viewModel.callData.value?.kraiKiKamai)
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), viewModel.callData.value?.kraiKiKamai).plus(Constants.PLUS)
             }
             AppPreferences.getEstimatedFare() != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare())
+                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare()).plus(Constants.PLUS)
             }
             else -> tvFareAmount.setText(R.string.dash)
         }

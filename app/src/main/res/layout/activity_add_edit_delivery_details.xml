@@ -498,7 +498,6 @@
                             android:layout_height="@dimen/_38sdp"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:layout_marginBottom="@dimen/_5sdp"
-                            app:goneUnless="@{viewModel.deliveryDetails.meta == null || viewModel.deliveryDetails.meta.service_code == ServiceCode.SEND_COD}"
                             android:background="@drawable/border_details_form_square_light"
                             android:gravity="center">
 
@@ -518,7 +517,7 @@
                                 android:background="@android:color/transparent"
                                 android:hint="@string/cod_amount"
                                 android:inputType="numberSigned"
-                                android:maxLength="6"
+                                android:maxLength="5"
                                 android:maxLines="1"
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"

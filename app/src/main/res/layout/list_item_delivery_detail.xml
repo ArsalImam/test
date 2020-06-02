@@ -150,15 +150,15 @@
 
                     <com.bykea.pk.partner.widgets.AutoFitFontTextView
                         android:id="@+id/tVLocationAlphabet"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_28sdp"
                         android:layout_gravity="center_horizontal"
                         android:background="@drawable/ic_location_without_alphabet"
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="@dimen/_10sdp"
                         android:text="@{item.details.display_tag}"
-                        android:textSize="@dimen/_10sdp"
+                        android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf"
                         tools:text="A" />
                 </FrameLayout>
