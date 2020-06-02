@@ -117,7 +117,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("receiver_address")
     private String receiverAddress;
 
-    @SerializedName("isDetuctWallet")
+    @SerializedName("isDeductWallet")
     private boolean isDetectWallet;
 
     @SerializedName("sender_name")
