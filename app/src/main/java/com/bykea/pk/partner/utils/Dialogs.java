@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.bykea.pk.partner.utils.Constants.COLON;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
@@ -1315,19 +1316,27 @@ public enum Dialogs {
     }
 
     /**
-     * This method creates a dialog to show any message which has been sent againt message
+     * This method creates a dialog to show any message left amount limit
      *
      * @param context Calling context
-     * @param message Message to show
-     * @param onClick Callback to notify that OK/Positive button is clicked
+     * @param amount  Left amount to show
      */
-    public void showGeneralMessageDialog(Context context, String message) {
+    public void showAmountLimitMessageDialog(Context context, int amount) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             dialog.setContentView(R.layout.dialog_general_message_layout);
             dialog.setCancelable(false);
-            ((FontTextView) dialog.findViewById(R.id.messageTv)).setText(message);
+
+            AutoFitFontTextView messageAmountTv = dialog.findViewById(R.id.messageAmountTv);
+
+            messageAmountTv.setText(new SpannableStringBuilder(StringUtils.EMPTY)
+                    .append(FontUtils.getStyledTitle(context, DriverApp.getContext().getString(R.string.remaining_limit), Constants.FontNames.JAMEEL_NASTALEEQI))
+                    .append(FontUtils.getStyledTitle(context, COLON, Constants.FontNames.ROBOTO_MEDIUM))
+                    .append(FontUtils.getStyledTitle(context, StringUtils.SPACE, Constants.FontNames.ROBOTO_MEDIUM))
+                    .append(FontUtils.getStyledTitle(context, String.format(DriverApp.getContext().getString(R.string.amount_rs_int), amount), Constants.FontNames.ROBOTO_MEDIUM))
+                    .append(StringUtils.SPACE));
+
             dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

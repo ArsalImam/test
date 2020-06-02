@@ -11,21 +11,38 @@
     android:orientation="vertical">
 
 
-    <com.bykea.pk.partner.widgets.FontTextView
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
         android:id="@+id/messageTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/margin.small"
         android:gravity="center"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/_3sdp"
         android:paddingBottom="@dimen/_6sdp"
+        android:paddingTop="@dimen/_6sdp"
+        android:paddingRight="@dimen/_3sdp"
+        android:textColor="@color/black"
+        android:text="@string/your_cash_limit_is_end"
+        android:textSize="@dimen/_24sdp"
+        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+        android:id="@+id/messageAmountTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/_minus8sdp"
         android:paddingLeft="@dimen/_3sdp"
         android:paddingRight="@dimen/_3sdp"
-        android:paddingTop="@dimen/_6sdp"
+        android:paddingBottom="@dimen/_6sdp"
         android:textColor="@color/black"
-        android:textSize="@dimen/_24sdp"
+        android:textSize="@dimen/_22sdp"
         app:fontName="jameel_noori_nastaleeq.ttf"
-        tools:text="@string/cancel_notification" />
+        tools:text="@string/your_cash_limit_is_end" />
 
 
     <ImageView

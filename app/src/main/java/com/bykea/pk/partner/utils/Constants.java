@@ -163,6 +163,7 @@ public class Constants {
     public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
     @NotNull
     public static final String COMMA = ",";
+    public static final String COLON = ":";
     public static final String NEAR_LBL = "Near ";
     public static final int DIGIT_THREE = 3;
     @Nullable
@@ -575,6 +576,7 @@ public class Constants {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
         public static final String OPEN_SANS_BOLD = "open_sans_semi_bold.ttf";
+        public static final String ROBOTO_MEDIUM = "roboto_medium.ttf";
     }
 
     /***

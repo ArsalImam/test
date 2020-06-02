@@ -189,6 +189,7 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onJobCancelFailed()
         })
     }
+
     /**
      * Requests to cancel active job
      * @param jobId String
@@ -441,14 +442,14 @@ class JobsRemoteDataSource {
     fun addDeliveryDetails(driverId: String, accessToken: String, batchID: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
         Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetails).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
             override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
-            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onDataNotAvailable(code, subCode, message.toString())
+            override fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) = callback.onDataNotAvailable(code, errorBody, message.toString())
         })
     }
 
     fun updateDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
         Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetails).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
             override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
-            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onDataNotAvailable(code, subCode, message.toString())
+            override fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) = callback.onDataNotAvailable(code, errorBody, message.toString())
         })
     }
 

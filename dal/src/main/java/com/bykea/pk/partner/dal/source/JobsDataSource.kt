@@ -506,6 +506,12 @@ interface JobsDataSource {
         fun onDataNotAvailable(errorCode: Int, subCode: Int?, reasonMsg: String) {
 
         }
+
+
+        @JvmDefault
+        fun onDataNotAvailable(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
+
+        }
     }
 
     fun getAllDeliveryDetails(batchID: String, callback: LoadDataCallback<DeliveryDetailListResponse>)

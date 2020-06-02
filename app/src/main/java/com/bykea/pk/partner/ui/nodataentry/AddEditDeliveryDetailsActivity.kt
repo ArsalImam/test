@@ -93,7 +93,9 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         viewModel.isCashLimitLow.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
             if (it) {
                 viewModel.isCashLimitLow.value = false
-                Dialogs.INSTANCE.showGeneralMessageDialog(this@AddEditDeliveryDetailsActivity, getString(R.string.your_cash_limit_is_end))
+                viewModel.isCashLimitLeftValue.value?.let { cashLeftAmount ->
+                    Dialogs.INSTANCE.showAmountLimitMessageDialog(this@AddEditDeliveryDetailsActivity, cashLeftAmount)
+                }
             }
         })
 
