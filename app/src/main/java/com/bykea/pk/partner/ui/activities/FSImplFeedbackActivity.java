@@ -218,7 +218,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 return false;
             }
         });
-
         etReceiverName.requestFocus();
     }
 
