@@ -38,6 +38,11 @@ public class Settings {
      */
     @SerializedName("is_custom_calculations_allow_for_easy_paisa")
     private Boolean isCustomCalculationsAllowForEasyPaisa;
+    /**
+     * this key will manage whether calculations for easy paisa needs to be run on client or server side
+     */
+    @SerializedName("rule_id_for_fare_wasooli_calc")
+    private Boolean customCalculationsAllowForBtlRuleId;
     private String demand;
     private String notice;
     private String top_up_limit;
@@ -423,5 +428,13 @@ public class Settings {
      */
     public void setCustomCalculationsAllowForEasyPaisa(boolean customCalculationsAllowForEasyPaisa) {
         isCustomCalculationsAllowForEasyPaisa = customCalculationsAllowForEasyPaisa;
+    }
+
+    public Boolean getCustomCalculationsAllowForBtlRuleId() {
+        return customCalculationsAllowForBtlRuleId;
+    }
+
+    public void setCustomCalculationsAllowForBtlRuleId(Boolean customCalculationsAllowForBtlRuleId) {
+        this.customCalculationsAllowForBtlRuleId = customCalculationsAllowForBtlRuleId;
     }
 }
