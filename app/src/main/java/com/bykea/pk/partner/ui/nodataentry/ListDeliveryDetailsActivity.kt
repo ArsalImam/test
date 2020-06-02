@@ -204,10 +204,18 @@ class ListDeliveryDetailsActivity : BaseActivity() {
     private fun setFareAmount() {
         when {
             viewModel.callData.value?.kraiKiKamai != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), viewModel.callData.value?.kraiKiKamai).plus(Constants.PLUS)
+                if (viewModel.items.value?.isNullOrEmpty()!!) {
+                    tvFareAmount.text = String.format(getString(R.string.amount_rs_int), viewModel.callData.value?.kraiKiKamai).plus(Constants.PLUS)
+                } else {
+                    tvFareAmount.text = String.format(getString(R.string.amount_rs_int), viewModel.callData.value?.kraiKiKamai)
+                }
             }
             AppPreferences.getEstimatedFare() != DIGIT_ZERO -> {
-                tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare()).plus(Constants.PLUS)
+                if (viewModel.items.value?.isNullOrEmpty()!!) {
+                    tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare()).plus(Constants.PLUS)
+                } else {
+                    tvFareAmount.text = String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare())
+                }
             }
             else -> tvFareAmount.setText(R.string.dash)
         }
