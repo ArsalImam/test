@@ -1553,7 +1553,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void showWalletAmount() {
         tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
-        if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()))
+        if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()) || Utils.isNewBatchService(callData.getServiceCode()))
                 && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus()) &&
                 AppPreferences.isTopUpPassengerWalletAllowed()) {
             ivTopUp.setVisibility(View.VISIBLE);

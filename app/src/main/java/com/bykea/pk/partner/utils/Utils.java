@@ -2248,7 +2248,9 @@ public class Utils {
         return isPurchaseService(callType, null);
     }
 
-    public static boolean isNewBatchService(int serviceCode) {
+    public static boolean isNewBatchService(Integer serviceCode) {
+        if (serviceCode == null)
+            return false;
         return serviceCode == NEW_BATCH_DELIVERY || serviceCode == NEW_BATCH_DELIVERY_COD;
     }
 
@@ -3844,6 +3846,7 @@ public class Utils {
 
     /**
      * Prevent Multiple Tap
+     *
      * @param view : View On Which To Stop Multiple Tap
      */
     public static void preventMultipleTap(View view) {
