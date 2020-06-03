@@ -167,6 +167,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
@@ -3839,5 +3840,16 @@ public class Utils {
     public static float toPixel(float dp) {
         DisplayMetrics metrics = DriverApp.getContext().getResources().getDisplayMetrics();
         return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     * @param view : View On Which To Stop Multiple Tap
+     */
+    public static void preventMultipleTap(View view) {
+        view.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            view.setEnabled(true);
+        }, DIGIT_THOUSAND);
     }
 }

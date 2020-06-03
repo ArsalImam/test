@@ -117,7 +117,7 @@ class ListDeliveryDetailsActivity : BaseActivity() {
     private fun setListeners() {
         binding.listener = object : GenericListener {
             override fun addDeliveryDetails(view: View) {
-                preventMultipleTap(view)
+                Utils.preventMultipleTap(view)
                 // Add DELIVERY DETAILS
                 ActivityStackManager.getInstance()
                         .startAddEditDeliveryDetails(this@ListDeliveryDetailsActivity,
@@ -229,14 +229,14 @@ class ListDeliveryDetailsActivity : BaseActivity() {
             override fun onItemClick(item: DeliveryDetails) {}
 
             override fun onSubItemOneClick(view: View, item: DeliveryDetails) {
-                preventMultipleTap(view)
+                Utils.preventMultipleTap(view)
                 // VIEW DELIVERY DETAILS
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                 viewModel.getSingleDeliveryDetails(VIEW_DELIVERY_DETAILS, item.details?.trip_id.toString())
             }
 
             override fun onSubItemTwoClick(view: View, item: DeliveryDetails) {
-                preventMultipleTap(view)
+                Utils.preventMultipleTap(view)
                 // EDIT DELIVERY DETAILS
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                 viewModel.getSingleDeliveryDetails(EDIT_DELIVERY_DETAILS, item.details?.trip_id.toString())
@@ -244,11 +244,6 @@ class ListDeliveryDetailsActivity : BaseActivity() {
         })
 
         recViewDeliveries.adapter = lastAdapter
-    }
-
-    private fun preventMultipleTap(view: View) {
-        view.isEnabled = false
-        Handler().postDelayed({ view.isEnabled = true }, DIGIT_THOUSAND.toLong())
     }
 
     /**

@@ -1019,6 +1019,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 updateMarkers(true);
                 break;
             case R.id.cvDirections:
+                Utils.preventMultipleTap(view);
                 if (Utils.isNewBatchService(callData.getServiceCode())) {
                     ActivityStackManager.getInstance().startNavigationDeliveryScreen(BookingActivity.this);
                     return;
@@ -1073,6 +1074,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 });
                 break;
             case R.id.tvDetailsBanner:
+                Utils.preventMultipleTap(view);
                 if (Utils.isNewBatchService(callData.getServiceCode())) {
                     ActivityStackManager.getInstance().startDeliveryListingActivity(BookingActivity.this);
                     return;
