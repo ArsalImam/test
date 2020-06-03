@@ -1720,6 +1720,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateMarkers(true);
         }
         shouldRefreshDropOffMarker = true;
+
+        if (Utils.isNewBatchService(callData.getServiceCode())) {
+            tvDetailsBanner.setVisibility(View.VISIBLE);
+
+            if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+                tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
+            } else {
+                tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
+            }
+            updateButtonState();
+            updateMarkers(true);
+        }
     }
 
     /******************************************************************************************

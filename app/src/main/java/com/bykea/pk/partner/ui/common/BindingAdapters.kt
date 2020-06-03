@@ -253,13 +253,13 @@ object BindingAdapters {
         Util.safeLet(deliveryDetails,
                 deliveryDetails?.details,
                 deliveryDetails?.details?.status) { _, _, status ->
-            when (status) {
-                ON_START_TRIP -> {
+            when (status.toLowerCase()) {
+                ON_START_TRIP.toLowerCase() -> {
                     imageViewShowDetails.visibility = View.VISIBLE
                     imageViewEdit.visibility = View.INVISIBLE
                     textViewStatus.visibility = View.GONE
                 }
-                ON_FEEDBACK_TRIP, ON_COMPLETED_TRIP, ON_FINISH_TRIP -> {
+                ON_FEEDBACK_TRIP.toLowerCase(), ON_COMPLETED_TRIP.toLowerCase(), ON_FINISH_TRIP.toLowerCase() -> {
                     imageViewShowDetails.visibility = View.INVISIBLE
                     imageViewEdit.visibility = View.INVISIBLE
                     deliveryDetails?.details?.delivery_status?.let {
