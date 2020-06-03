@@ -1588,8 +1588,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), callData.getKraiKiKamai()));
 
             //adding plus for new batch trip
-            if (Utils.isNewBatchService(callData.getServiceCode()))
+            if (Utils.isNewBatchService(callData.getServiceCode()) && CollectionUtils.isEmpty(callData.getBookingList())) {
                 tvFareAmount.setText(tvFareAmount.getText().toString().concat(Constants.PLUS));
+            }
         } else if (AppPreferences.getEstimatedFare() != 0) {
             tvFareAmount.setText(String.format(getString(R.string.amount_rs_int), AppPreferences.getEstimatedFare()));
 
