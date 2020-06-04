@@ -1024,9 +1024,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 break;
             case R.id.cvDirections:
                 Utils.preventMultipleTap(view);
-                if (Utils.isNewBatchService(callData.getServiceCode())) {
+                if (!callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)
+                        && Utils.isNewBatchService(callData.getServiceCode())) {
                     ActivityStackManager.getInstance().startNavigationDeliveryScreen(BookingActivity.this);
-                    return;
                 } else {
                     startGoogleDirectionsApp();
                 }

@@ -121,7 +121,9 @@ class FinishBookingListingActivity : BaseActivity() {
 
                 override fun onItemClick(item: BatchBooking) {
                     if (item.isCompleted) return
-                    item.isSelected = !item.isSelected
+                    callData?.bookingList?.forEach {
+                        it.isSelected = it.id == item.id
+                    }
                     adapter?.notifyDataSetChanged()
                     selectedBooking = if (item.isSelected) {
                         item
