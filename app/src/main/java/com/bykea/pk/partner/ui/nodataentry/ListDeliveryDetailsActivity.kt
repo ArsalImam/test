@@ -51,8 +51,10 @@ class ListDeliveryDetailsActivity : BaseActivity() {
 
             isReturnRunEnable.observe(this@ListDeliveryDetailsActivity, Observer {
                 if (it) {
+                    checkBoxReturnRun.isChecked = true
                     linLayoutReturnRun.visibility = View.VISIBLE
                 } else {
+                    checkBoxReturnRun.isChecked = false
                     if (::lastAdapter.isInitialized && lastAdapter.items.size > DIGIT_ZERO) {
                         linLayoutReturnRun.visibility = View.VISIBLE
                     } else {
