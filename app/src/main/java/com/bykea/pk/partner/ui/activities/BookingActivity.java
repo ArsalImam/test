@@ -145,6 +145,10 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @BindView(R.id.blueDot)
     ImageView blueDot;
+    @BindView(R.id.rLPWalletAmount)
+    View rLPWalletAmount;
+    @BindView(R.id.tvPWalletAmountLabel)
+    TextView tvPWalletAmountLabel;
     @BindView(R.id.rlAddressMainLayout)
     RelativeLayout rlAddressMainLayout;
     @BindView(R.id.green_dot)
@@ -1419,7 +1423,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         isResume = true;
         if (callData != null) {
             AppPreferences.setTripStatus(callData.getStatus());
-//        setCallData();
             tvTripId.setText(callData.getTripNo());
 
             isBykeaCashJob = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
@@ -1601,6 +1604,26 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             tvFareAmount.setText(R.string.dash);
         }
+        updateWalletColor();
+    }
+
+    private void updateWalletColor() {
+        if (!Utils.isNewBatchService(callData.getServiceCode())) return;
+        try {
+            int wallet = Integer.valueOf(callData.getPassWallet());
+            if (wallet <= DIGIT_ZERO) {
+                rLPWalletAmount.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(), R.color.red));
+                tvPWalletAmount.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.white));
+                tvPWalletAmountLabel.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.white));
+            } else {
+                rLPWalletAmount.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(), R.color.blue_light));
+                tvPWalletAmount.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.black));
+                tvPWalletAmountLabel.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.black));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void showDropOffPersonInfo() {
