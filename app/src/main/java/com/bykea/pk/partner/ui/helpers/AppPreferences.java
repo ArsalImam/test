@@ -397,7 +397,6 @@ public class AppPreferences {
     }
 
     public static void setCallData(NormalCallData callData) {
-        callData.setCallType(Constants.CallType.NEW_BATCH);
         mSharedPreferences
                 .edit()
                 .putString(Keys.CALLDATA_OBJECT, new Gson().toJson(callData))
