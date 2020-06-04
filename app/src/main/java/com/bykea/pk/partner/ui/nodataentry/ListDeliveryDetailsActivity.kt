@@ -102,8 +102,8 @@ class ListDeliveryDetailsActivity : BaseActivity() {
             if (it.equals(ON_ARRIVED_TRIP, ignoreCase = true)) {
                 setAdapterSwipeItemCallback()
             } else if (it.equals(ON_START_TRIP, ignoreCase = true)) {
-                linLayoutReturnRun.visibility = View.GONE
                 imageViewAddDelivery.visibility = View.GONE
+                checkBoxReturnRun.isEnabled = false
             }
         }
 
