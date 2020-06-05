@@ -334,7 +334,7 @@
                         android:layout_height="@dimen/_36sdp"
                         android:padding="@dimen/_3sdp"
                         android:visibility="visible"
-                        app:srcCompat="@drawable/ic_chat_msg" />
+                        app:srcCompat="@drawable/ic_call_icon" />
 
                     <TextView
                         android:id="@+id/cartBadge"
