@@ -46,11 +46,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgViewDelivery"
-                    android:layout_width="@dimen/_35sdp"
+                    android:layout_width="35dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_gravity="center_vertical"
                     app:serviceCode="@{viewmodel.job.service_code}"
                     tools:src="@drawable/bhejdo_no_caption" />
             </LinearLayout>
