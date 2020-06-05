@@ -267,7 +267,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private String mLocBearing = "0.0";
     private boolean animationStart = false, isFirstTime = true, isResume = false;
 
-
     private GoogleMap mGoogleMap;
     private MapView mapView;
     private ProgressDialog progressDialogJobActivity;
