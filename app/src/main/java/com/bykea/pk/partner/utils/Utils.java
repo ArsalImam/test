@@ -706,7 +706,7 @@ public class Utils {
 
     public static int getMapIcon(String type) {
         if (type.equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
-            return ;
+            return R.drawable.map_pin_with_passenger;
         }
 
         switch (AppPreferences.getTripStatus()) {
