@@ -104,6 +104,7 @@ class ListDeliveryDetailsActivity : BaseActivity() {
             if (it.equals(ON_ARRIVED_TRIP, ignoreCase = true)) {
                 setAdapterSwipeItemCallback()
             } else if (it.equals(ON_START_TRIP, ignoreCase = true)) {
+                viewModel.isAddBookingAllowed.value = false
                 imageViewAddDelivery.visibility = View.GONE
                 checkBoxReturnRun.isEnabled = false
             }

@@ -773,6 +773,7 @@ public class Constants {
 
     public static final double MIN_FAHRENHEIT_VALUE = 95;
     public static final double MAX_FAHRENHEIT_VALUE = 99.4;
+    public static final int MAX_BATCH_BOOKING_LIMIT = 3;
 
     /**
      * Inner class for Audio recording/player related constants

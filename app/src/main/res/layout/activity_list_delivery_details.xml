@@ -225,6 +225,7 @@
                 android:minWidth="@dimen/_100sdp"
                 android:minHeight="@dimen/_100sdp"
                 android:onClick="@{(v)->listener.addDeliveryDetails(v)}"
+                app:goneUnless="@{viewModel.isAddBookingAllowed}"
                 app:srcCompat="@drawable/ic_add_delivery_detail" />
 
             <LinearLayout
@@ -262,8 +263,8 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="center"
             android:background="@drawable/button_green_square"
-            android:padding="@dimen/_6sdp"
             android:onClick="@{()->listener.onBackClicked()}"
+            android:padding="@dimen/_6sdp"
             android:src="@drawable/check_mark" />
 
     </RelativeLayout>

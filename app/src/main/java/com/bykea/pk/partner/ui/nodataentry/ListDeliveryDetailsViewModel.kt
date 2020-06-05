@@ -12,6 +12,7 @@ import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.TripStatus.ON_ARRIVED_TRIP
 import com.bykea.pk.partner.utils.Utils
 
 
@@ -46,6 +47,10 @@ class ListDeliveryDetailsViewModel : ViewModel() {
     val isFieldsUpdateRequired: MutableLiveData<Boolean>
         get() = _isFieldsUpdateRequired
 
+    private var _isAddBookingAllowed = MutableLiveData<Boolean>().apply { value = true }
+    val isAddBookingAllowed: MutableLiveData<Boolean>
+        get() = _isAddBookingAllowed
+
     /**
      * Get active trip from shared preferences
      */
@@ -74,6 +79,7 @@ class ListDeliveryDetailsViewModel : ViewModel() {
                     override fun onDataLoaded(response: DeliveryDetailListResponse) {
                         _items.value = response.data?.bookings
                         updateParticularsForActiveTrip(response)
+                        updateIsAllowedBooking()
                         _isFieldsUpdateRequired.value = true
                         Dialogs.INSTANCE.dismissDialog()
                     }
@@ -180,5 +186,18 @@ class ListDeliveryDetailsViewModel : ViewModel() {
         response.data?.kraiKiKamai?.let { callData.kraiKiKamai = it }
         AppPreferences.setCallData(callData)
         _callData.value = callData
+    }
+
+    /**
+     * Update is allowed booking
+     */
+    private fun updateIsAllowedBooking() {
+        _callData.value?.status.let { status ->
+            if (status.equals(ON_ARRIVED_TRIP, ignoreCase = true)) {
+                _items.value?.let {
+                    _isAddBookingAllowed.value = it.size < AppPreferences.getSettings().settings.batchBookingLimit
+                }
+            }
+        }
     }
 }
