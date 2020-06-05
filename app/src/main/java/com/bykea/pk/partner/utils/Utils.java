@@ -181,6 +181,7 @@ import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY_COD;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
+import static com.bykea.pk.partner.utils.Constants.TripTypes.BATCH_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.OFFLINE_RIDE;
@@ -704,6 +705,10 @@ public class Utils {
     }*/
 
     public static int getMapIcon(String type) {
+        if (type.equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+            return ;
+        }
+
         switch (AppPreferences.getTripStatus()) {
             case TripStatus.ON_ARRIVED_TRIP:
                 if (StringUtils.containsIgnoreCase(type, "van")) {
@@ -3798,6 +3803,7 @@ public class Utils {
         else
             return serviceCode == Constants.ServiceCode.SEND
                     || serviceCode == Constants.ServiceCode.SEND_COD
+                    || serviceCode == NEW_BATCH_DELIVERY
                     || serviceCode == Constants.ServiceCode.MART
                     || serviceCode == Constants.ServiceCode.MOBILE_TOP_UP
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET

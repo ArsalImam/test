@@ -875,6 +875,17 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         switch (view.getId()) {
             case R.id.chatBtn:
                 if (bykeaCashFormFragment != null) bykeaCashFormFragment.dismiss();
+                if (Utils.isNewBatchService(callData.getServiceCode())) {
+                    String phoneNumber = callData.getSenderPhone();
+                    if (StringUtils.isNotBlank(phoneNumber)) {
+                        if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                            Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                        } else {
+                            Utils.callingIntent(mCurrentActivity, phoneNumber);
+                        }
+                    }
+                    return;
+                }
                 if (callData != null) {
                     if (callData.getCreator_type() != null &&
                             (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.APP) ||
@@ -1485,6 +1496,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             } else {
                 ivServiceIcon.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ride_right));
             }
+
+            if (Utils.isNewBatchService(callData.getServiceCode())) {
+                chatBtn.setImageDrawable(ContextCompat.getDrawable(BookingActivity.this, R.drawable.ic_call_icon));
+                updateBatchDropOffDetails();
+            }
+
             configCountDown();
         }
     }
@@ -1676,6 +1693,18 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
             updateButtonState();
             updateMarkers(true);
+
+            updateBatchDropOffDetails();
+        }
+    }
+
+    private void updateBatchDropOffDetails() {
+        ivAddressEdit.setVisibility(View.GONE);
+        if (CollectionUtils.isEmpty(callData.getBookingList())) {
+            llEndAddress.setVisibility(View.GONE);
+        } else {
+            llEndAddress.setVisibility(View.VISIBLE);
+            endAddressTv.setText(callData.getBookingsSummary());
         }
     }
 
