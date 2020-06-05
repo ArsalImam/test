@@ -31,9 +31,7 @@ data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                @Embedded(prefix = "drop_") val dropoff: Stop?,
                @Embedded(prefix = "receiver_") val receiver: Contact?,
                @Embedded(prefix = "sender_") val sender: Contact?) {
-
     var isComplete: Boolean = false
-
 }
 
 

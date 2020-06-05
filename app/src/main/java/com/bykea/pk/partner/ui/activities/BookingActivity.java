@@ -1805,7 +1805,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (null == driverMarker) {
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                         Utils.getMapIcon(callData.getCallType())))
-                        /*.anchor(0.5f, 0.5f)*/.position(new LatLng(Double.parseDouble(snappedLatitude),
+                            .position(new LatLng(Double.parseDouble(snappedLatitude),
                                 Double.parseDouble(snappedLongitude)))/*.flat(true).rotation(Float.parseFloat(mLocBearing))*/);
             }
 
