@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.bykea.pk.partner.utils.Utils" />
         <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
 
         <variable
@@ -381,6 +382,7 @@
                                 android:layout_height="@dimen/_40sdp"
                                 android:layout_centerVertical="true"
                                 android:layout_marginEnd="@dimen/_5sdp"
+                                app:invisibleUnless="@{!Utils.isNewBatchService(viewmodel.job.service_code)}"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
