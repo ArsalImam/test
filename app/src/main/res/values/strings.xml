@@ -584,4 +584,5 @@
     <string name="new_address">نیا پتہ</string>
     <string name="goto_purchaser">واپس بھیجنے والے کے پاس</string>
     <string name="enter_correct_amount">Please enter correct amount</string>
+    <string name="customer_will_tell">کسٹمر بتائے گا</string>
 </resources>
