@@ -18,6 +18,8 @@ interface GenericListener {
      */
     fun navigateToPlaceSearch() {}
 
+    fun navigateToPlaceSearch(view: View) {}
+
     /**
      * On user plays audio
      *

@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
+import static com.bykea.pk.partner.utils.Constants.MAX_BATCH_BOOKING_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
@@ -127,6 +128,12 @@ public class Settings {
      */
     @SerializedName("partner_temperature_max_limit")
     private String partnerTemperatureMaxLimit;
+
+    /**
+     * Max Batch Booking Limit
+     */
+    @SerializedName("batch_booking_limit")
+    private String batchBookingLimit;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -403,6 +410,14 @@ public class Settings {
             return Double.parseDouble(partnerTemperatureMaxLimit);
         } catch (Exception e) {
             return MAX_FAHRENHEIT_VALUE;
+        }
+    }
+
+    public int getBatchBookingLimit() {
+        try {
+            return Integer.parseInt(batchBookingLimit);
+        } catch (Exception e) {
+            return MAX_BATCH_BOOKING_LIMIT;
         }
     }
 }

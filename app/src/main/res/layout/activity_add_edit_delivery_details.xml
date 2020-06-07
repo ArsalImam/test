@@ -112,6 +112,7 @@
                                     android:text="@{Utils.phoneNumberToShow(viewModel.deliveryDetails.dropoff.phone)}"
                                     android:textColor="@color/black"
                                     android:textColorHint="@drawable/hint_color_unselected"
+                                    android:imeOptions="actionNext"
                                     android:textSize="@dimen/_11sdp"
                                     app:fontName="open_sans_regular.ttf" />
                             </LinearLayout>
@@ -147,6 +148,7 @@
                                     android:hint="@string/consignee_name"
                                     android:inputType="text"
                                     android:maxLength="30"
+                                    android:imeOptions="actionNext"
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:singleLine="true"
@@ -185,6 +187,7 @@
                                 android:maxLength="200"
                                 android:digits="@string/alphanumeric_address"
                                 android:maxLines="1"
+                                android:imeOptions="actionDone"
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
                                 android:singleLine="true"
@@ -328,7 +331,7 @@
                             android:layout_marginBottom="@dimen/_5sdp"
                             android:background="@drawable/border_details_form_square_light"
                             android:gravity="center"
-                            android:onClick="@{()->listener.navigateToPlaceSearch()}">
+                            android:onClick="@{(v)->listener.navigateToPlaceSearch(v)}">
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="@dimen/_12sdp"
@@ -436,6 +439,7 @@
                                     android:hint="@string/parcel_value"
                                     android:inputType="numberSigned"
                                     android:maxLength="5"
+                                    android:imeOptions="actionNext"
                                     android:paddingTop="@dimen/_8sdp"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:singleLine="true"
@@ -478,6 +482,7 @@
                                     android:inputType="text"
                                     android:maxLength="40"
                                     android:paddingTop="@dimen/_8sdp"
+                                    android:imeOptions="actionNext"
                                     android:paddingBottom="@dimen/_8sdp"
                                     android:singleLine="true"
                                     android:text="@{viewModel.deliveryDetails.details.order_no}"
@@ -518,6 +523,7 @@
                                 android:maxLength="5"
                                 android:paddingTop="@dimen/_8sdp"
                                 android:paddingBottom="@dimen/_8sdp"
+                                android:imeOptions="actionDone"
                                 android:singleLine="true"
                                 android:text="@{viewModel.deliveryDetails.details.cod_value}"
                                 android:textColor="@color/black"

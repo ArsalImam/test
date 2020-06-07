@@ -648,7 +648,8 @@ public enum Dialogs {
             mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Integer.valueOf(receivedAmountEt.getText().toString()) == DIGIT_ZERO) {
+                    if (StringUtils.isNotBlank(receivedAmountEt.getText().toString()) &&
+                            Integer.valueOf(receivedAmountEt.getText().toString()) == DIGIT_ZERO) {
                         receivedAmountEt.setError(DriverApp.getContext().getString(R.string.enter_correct_amount));
                     } else if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
                         dismissDialog();

@@ -124,7 +124,8 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 }
             }
 
-            override fun navigateToPlaceSearch() {
+            override fun navigateToPlaceSearch(view: View) {
+                Utils.preventMultipleTap(view)
                 Intent(this@AddEditDeliveryDetailsActivity, SelectPlaceActivity::class.java).apply {
                     putExtra(FROM, CONFIRM_DROPOFF_REQUEST_CODE)
                     startActivityForResult(this, CONFIRM_DROPOFF_REQUEST_CODE)
@@ -144,25 +145,29 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private fun setTextChangeListeners() {
         editTextMobileNumber.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                validateMobileNumber()
+                editTextParcelValue.error = null
+                validateMobileNumber(false)
             }
         })
 
         textViewGPSAddress.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                validateGPSAddress()
+                editTextParcelValue.error = null
+                validateGPSAddress(false)
             }
         })
 
         editTextParcelValue.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                validateParcelValue()
+                editTextParcelValue.error = null
+                validateParcelValue(false)
             }
         })
 
         editTextCODAmount.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                validateCODAmount()
+                editTextParcelValue.error = null
+                validateCODAmount(false)
             }
         })
     }
@@ -170,11 +175,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     /**
      * Validate Mobile Number
      */
-    private fun validateMobileNumber(): Boolean {
+    private fun validateMobileNumber(showError: Boolean = true): Boolean {
         return if (!Utils.isValidNumber(editTextMobileNumber)) {
-            editTextMobileNumber.requestFocus()
-            editTextMobileNumber.error = getString(R.string.error_phone_number_1)
-            linLayoutMobileNumber.setBackgroundResource(R.drawable.border_details_form_square_red)
+            if (showError) {
+                editTextMobileNumber.requestFocus()
+                editTextMobileNumber.error = getString(R.string.error_phone_number_1)
+                linLayoutMobileNumber.setBackgroundResource(R.drawable.border_details_form_square_red)
+            }
             false
         } else {
             editTextMobileNumber.error = null
@@ -186,11 +193,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     /**
      * Validate GPS Address
      */
-    private fun validateGPSAddress(): Boolean {
+    private fun validateGPSAddress(showError: Boolean = true): Boolean {
         return if (textViewGPSAddress.text.isNullOrEmpty()) {
-            textViewGPSAddress.requestFocus()
-            textViewGPSAddress.error = getString(R.string.select_gps_address)
-            linLayoutGPSAddress.setBackgroundResource(R.drawable.border_details_form_square_red)
+            if (showError) {
+                Dialogs.INSTANCE.showToast(getString(R.string.select_gps_address))
+                textViewGPSAddress.error = getString(R.string.select_gps_address)
+                linLayoutGPSAddress.setBackgroundResource(R.drawable.border_details_form_square_red)
+            }
             false
         } else {
             textViewGPSAddress.error = null
@@ -202,12 +211,14 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     /**
      * Validate Parcel Value
      */
-    private fun validateParcelValue(): Boolean {
+    private fun validateParcelValue(showError: Boolean = true): Boolean {
         return if (editTextParcelValue.text.isNullOrEmpty() ||
                 editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT + DIGIT_ONE) {
-            editTextParcelValue.requestFocus()
-            editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
-            linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
+            if (showError) {
+                editTextParcelValue.requestFocus()
+                editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
+                linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
+            }
             false
         } else {
             editTextParcelValue.error = null
@@ -219,12 +230,14 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     /**
      * Validate COD Amount
      */
-    private fun validateCODAmount(): Boolean {
+    private fun validateCODAmount(showError: Boolean = true): Boolean {
         return if (editTextCODAmount.text.toString().isNotEmpty() &&
                 editTextCODAmount.text.toString().trim().toInt() == DIGIT_ZERO) {
-            editTextCODAmount.requestFocus()
-            editTextCODAmount.error = getString(R.string.enter_correct_cod_amount)
-            linLayoutCODAmount.setBackgroundResource(R.drawable.border_details_form_square_red)
+            if (showError) {
+                editTextCODAmount.requestFocus()
+                editTextCODAmount.error = getString(R.string.enter_correct_cod_amount)
+                linLayoutCODAmount.setBackgroundResource(R.drawable.border_details_form_square_red)
+            }
             false
         } else {
             editTextCODAmount.error = null
