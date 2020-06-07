@@ -1059,6 +1059,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                                     callData.setPassWallet(response.getData().getAmount());
                                                     AppPreferences.setCallData(callData);
                                                     tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
+                                                    updateWalletColor();
                                                 }
                                             }
                                         });
