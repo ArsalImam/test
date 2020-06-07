@@ -1051,7 +1051,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                         mCurrentActivity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                AppPreferences.setTopUpPassengerWalletAllowed(false);
+                                                //allowing partner to perform top up only one time if
+                                                //he is in a ride service other than batch
+                                                AppPreferences.setTopUpPassengerWalletAllowed(Utils.isNewBatchService(callData.getServiceCode()));
                                                 ivTopUp.setVisibility(View.INVISIBLE);
                                                 Dialogs.INSTANCE.dismissDialog();
                                                 Utils.appToast(response.getMessage());
