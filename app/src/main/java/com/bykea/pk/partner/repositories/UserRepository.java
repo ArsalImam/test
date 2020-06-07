@@ -1682,6 +1682,9 @@ public class UserRepository {
                     case "TopUpPassengerWalletResponse":
                         mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
                         break;
+                    case "TopUpPassWalletResponse":
+                        mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
+                        break;
                     case "LocationResponse":
                         mUserCallback.onLocationUpdate((LocationResponse) object);
                         break;
