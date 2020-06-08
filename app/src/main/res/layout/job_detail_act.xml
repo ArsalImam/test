@@ -383,6 +383,7 @@
                                 android:layout_height="@dimen/_40sdp"
                                 android:layout_centerVertical="true"
                                 android:layout_marginEnd="@dimen/_5sdp"
+                                app:invisibleUnless="@{!Utils.isNewBatchService(viewmodel.job.service_code)}"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
