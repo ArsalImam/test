@@ -137,6 +137,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean isNewBatchFlow;
     private int batchServiceCode;
     private String batchId;
+    private boolean isRerouteCreated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,10 +334,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setTripId(trip.getId());
         callData.setTripNo(trip.getBookingCode());
         callData.setServiceCode(trip.getServiceCode());
-        callData.setEndAddress(trip.getDropoff().getAddress());
+        callData.setEndAddress(trip.getDropoff().getGpsAddress());
         callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
         callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
-
 //        updateFailureDeliveryLabel(null);
     }
 
@@ -505,12 +505,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
                             Dialogs.INSTANCE.dismissDialog();
                             Dialogs.INSTANCE.showToast(response.getMessage());
                             //handled old flow if not a batch service
-                            if (!anyBookingExistsInPendingState()) {
+                            if (allBookingInCompletedState()) {
                                 Utils.setCallIncomingState();
                                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                                 mCurrentActivity.finish();
                             } else {
-                                //check if contains any pending booking or has any failure booking
+                                //check if contains any pending booking or has any failed booking
                                 mCurrentActivity.finish();
                             }
                         }
@@ -597,14 +597,24 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean anyBookingExistsInPendingState() {
+    private boolean allBookingInCompletedState() {
         if (isNewBatchFlow) {
-            boolean containsReturnRunBooking = Utils.containsReturnRunBooking(callData.getBookingList());
-            if (containsReturnRunBooking) return false;
-            for (BatchBooking batchBooking : callData.getBookingList())
-                if (!callData.isReturnRun() && !batchBooking.isCompleted()) return true;
-        }
-        return false;
+            for (BatchBooking batchBooking : callData.getBookingList()) {
+                if (!batchBooking.isCompleted()) {
+                    return true;
+                }
+            }
+            //need to handle re-route case above return run
+            if (isRerouteCreated) {
+                return false;
+            }
+            //checking whether z's booking exist
+            if (callData.isReturnRun()) {
+                return !Utils.containsReturnRunBooking(callData.getBookingList());
+            }
+            return false;
+        } else
+            return true;
     }
 
     private void logMPEvent() {
@@ -803,6 +813,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         } else if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
             if (resultCode == RESULT_OK) {
+                isRerouteCreated = true;
                 feedbackBtn.setEnabled(true);
                 updateFailureDeliveryLabel(data.getParcelableExtra(DELIVERY_DETAILS_OBJECT));
             }
@@ -812,7 +823,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {
         if (!isNewBatchFlow) return;
         String formattedString = getResources().getString(R.string.problem_item);
-         if (deliveryDetails != null) {
+        if (deliveryDetails != null) {
             llFailureDelivery.setVisibility(View.VISIBLE);
             imageViewAddDelivery.setVisibility(View.GONE);
             tvGotoPurchaser.setText(String.format(formattedString, deliveryDetails.getDropoff().getZone_dropoff_name_urdu()));

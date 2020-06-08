@@ -393,6 +393,7 @@ public class Constants {
     public final static int MAX_LIMIT_LOAD_BOARD = 10;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+    public final static String NOT_AVAILABLE = "N/A";
 
     /**
      * Constant for checking delivery status whether is successful or not - Using is FeedbackActivity
