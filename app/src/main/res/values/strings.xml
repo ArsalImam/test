@@ -546,6 +546,7 @@
     <string name="record_voice_message">وائیس میسیج ریکورڈ کریں</string>
     <string name="gps_address_hint">GPS Address*</string>
     <string name="consignee_name">Consignee Name</string>
+    <string name="consignees_name">Consignee\'s Name</string>
     <string name="empty_formatting">%s</string>
     <string name="formatting_with_street">Street # %s</string>
     <string name="formatting_with_order">Order # %s</string>

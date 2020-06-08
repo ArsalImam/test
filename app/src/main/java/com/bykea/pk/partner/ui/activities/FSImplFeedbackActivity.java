@@ -293,6 +293,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
         endAddressTv.setText((StringUtils.isBlank(callData.getEndAddress())
                 ? "N/A" : callData.getEndAddress()));
 
+        if (Utils.isNewBatchService(batchServiceCode)) {
+            etReceiverName.setHint(R.string.consignees_name);
+        }
+
         if (isBykeaCashType) {
             updateUIBykeaCash();
         } else if (isDeliveryType || isOfflineDeliveryType) {
