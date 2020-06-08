@@ -56,8 +56,8 @@ class JobDetailActivity : BaseActivity() {
     private lateinit var mGoogleMap: GoogleMap
     private var driverMarker: Marker? = null
 
-    private var mediaPlayer: MediaPlayer? = null;
-    private val handler: Handler = Handler();
+    private var mediaPlayer: MediaPlayer? = null
+    private val handler: Handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

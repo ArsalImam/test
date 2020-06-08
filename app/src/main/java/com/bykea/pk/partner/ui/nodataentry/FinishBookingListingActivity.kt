@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -94,16 +95,18 @@ class FinishBookingListingActivity : BaseActivity() {
     private fun onFinished(data: FinishJobResponseData) {
         Dialogs.INSTANCE.dismissDialog()
         callData = AppPreferences.getCallData()
-        callData?.ruleIds = data.trip.rule_ids
-        callData?.bookingList?.forEach {
-            if (it.id == selectedBooking?.id!!)
-                it.status = TripStatus.ON_FINISH_TRIP
-        }
-        AppPreferences.setCallData(callData)
-        AppPreferences.clearTripDistanceData()
-        ActivityStackManager.getInstance()
-                .startFeedbackActivity(this)
-        finish()
+        Handler().postDelayed({
+            callData?.ruleIds = data.trip.rule_ids
+            callData?.bookingList?.forEach {
+                if (it.id == selectedBooking?.id!!)
+                    it.status = TripStatus.ON_FINISH_TRIP
+            }
+            AppPreferences.setCallData(callData)
+            AppPreferences.clearTripDistanceData()
+            ActivityStackManager.getInstance()
+                    .startFeedbackActivity(this)
+            finish()
+        }, 3000)
     }
 
 
