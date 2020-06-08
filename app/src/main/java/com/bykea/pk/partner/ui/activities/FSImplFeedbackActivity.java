@@ -327,6 +327,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
         callData.setTotalFare("0"); //TODO need to get way from server to update this
         callData.setTripId(trip.getId());
+        callData.setTripNo(trip.getBookingCode());
         callData.setServiceCode(trip.getServiceCode());
         callData.setEndAddress(trip.getDropoff().getAddress());
         callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
