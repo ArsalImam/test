@@ -8,7 +8,6 @@ import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
-import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
@@ -211,6 +210,10 @@ class JobsRepository(
         jobsRemoteDataSource.getInvoiceDetails(invoiceUrl.replace(BOOKING_ID_TO_REPLACE, bookingId), callback)
     }
 
+    override fun getReturnRunBatchInvoice(batchInvoiceUrl: String, batchID: String, callback: JobsDataSource.GetInvoiceCallback) {
+        jobsRemoteDataSource.getReturnRunBatchInvoice(batchInvoiceUrl.replace(BOOKING_ID_TO_REPLACE, batchID), callback)
+    }
+
     private fun getJobFromRemote(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {
         jobsRemoteDataSource.getJob(jobRequestId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.GetJobRequestCallback {
             override fun onJobLoaded(job: Job) {
@@ -305,6 +308,7 @@ class JobsRepository(
     override fun topUpPassengerWallet(batchID: String, amount: String, passengerId: String, callback: JobsDataSource.LoadDataCallback<TopUpPassengerWalletResponse>) {
         jobsRemoteDataSource.topUpPassengerWallet(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, amount, passengerId, callback)
     }
+
 
     companion object {
 

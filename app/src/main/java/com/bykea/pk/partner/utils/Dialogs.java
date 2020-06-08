@@ -7,13 +7,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.Settings;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -37,7 +34,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.data.Invoice;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
+import com.bykea.pk.partner.ui.common.LastAdapter;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -65,8 +64,6 @@ import static com.bykea.pk.partner.utils.Constants.COLON;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
-import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
-import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 
 //import com.thefinestartist.Base;
 
@@ -1080,6 +1077,30 @@ public enum Dialogs {
         }
     }
 
+    public void showReturnRunInvoice(Context context, ArrayList<Invoice> invoices, View.OnClickListener onClick) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            mDialog = new Dialog(context, R.style.actionSheetTheme);
+            mDialog.setContentView(R.layout.dialog_return_run_invoice);
+            LastAdapter<Invoice> adapter = new LastAdapter<>(R.layout.adapter_booking_detail_invoice, item -> {
+
+            });
+            RecyclerView mDialogRecyclerView = mDialog.findViewById(R.id.invoiceRecyclerView);
+            mDialogRecyclerView.setAdapter(adapter);
+
+            adapter.setItems(invoices);
+            mDialog.findViewById(R.id.ivPositive).setOnClickListener(v -> {
+                dismissDialog();
+                if (onClick != null)
+                    onClick.onClick(v);
+            });
+            mDialog.setCancelable(false);
+
+            showDialog();
+        }
+    }
+
+
     /**
      * GENERIC DIALOG
      *
@@ -1124,6 +1145,7 @@ public enum Dialogs {
             showDialog();
         }
     }
+
 
     /**
      * Dialog Called From Splash Activity

@@ -528,4 +528,6 @@ interface JobsDataSource {
 
     fun topUpPassengerWallet(batchID: String, amount: String, passengerId: String, callback: LoadDataCallback<TopUpPassengerWalletResponse>)
 
+    fun getReturnRunBatchInvoice(invoiceUrl: String, batchID: String, callback: GetInvoiceCallback)
+
 }
