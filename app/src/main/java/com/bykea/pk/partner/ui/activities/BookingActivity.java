@@ -1976,7 +1976,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
             }
         }
-
+        if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+            llStartAddress.setVisibility(View.GONE);
+        }
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
             dropOffMarker = null;
             updateDropOffMarker();
