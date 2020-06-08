@@ -286,6 +286,7 @@ public class Constants {
         public static final int EDIT_DELIVERY_DETAILS = DIGIT_TWO;
         public static final int VIEW_DELIVERY_DETAILS = DIGIT_THREE;
         public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
+        public static final String FAILED_BOOKING_ID = "FAILED_BOOKING_ID";
     }
 
     public static class Broadcast {

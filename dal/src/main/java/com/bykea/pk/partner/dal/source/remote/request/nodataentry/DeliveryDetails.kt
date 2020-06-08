@@ -3,7 +3,6 @@ package com.bykea.pk.partner.dal.source.remote.request.nodataentry
 import android.os.Parcel
 import android.os.Parcelable
 import com.bykea.pk.partner.dal.util.DIGIT_ZERO
-import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by Sibtain Raza on 4/13/2020.

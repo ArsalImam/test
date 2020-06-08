@@ -463,7 +463,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
         switch (v.getId()) {
             case R.id.imageViewAddDelivery:
-                new BatchNaKamiyabDialog(batchId, new BatchNaKamiyabDialog.OnResult() {
+                new BatchNaKamiyabDialog(batchId, callData.getTripId(), new BatchNaKamiyabDialog.OnResult() {
                     @Override
                     public void onReturnRun() {
                         callData.setReturnRun(true);
@@ -806,14 +806,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {
         if (!isNewBatchFlow) return;
-        if (callData.isReturnRun()) {
+        String formattedString = getResources().getString(R.string.problem_item);
+         if (deliveryDetails != null) {
             llFailureDelivery.setVisibility(View.VISIBLE);
             imageViewAddDelivery.setVisibility(View.GONE);
-            tvGotoPurchaser.setText(R.string.goto_purchaser);
-        } else if (deliveryDetails != null) {
+            tvGotoPurchaser.setText(String.format(formattedString, deliveryDetails.getDropoff().getZone_dropoff_name_urdu()));
+        } else if (callData.isReturnRun()) {
             llFailureDelivery.setVisibility(View.VISIBLE);
             imageViewAddDelivery.setVisibility(View.GONE);
-            tvGotoPurchaser.setText(deliveryDetails.getDropoff().getZone_dropoff_name_urdu());
+            tvGotoPurchaser.setText(String.format(formattedString, getString(R.string.goto_purchaser)));
         }
     }
 }

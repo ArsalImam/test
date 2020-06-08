@@ -215,6 +215,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:visibility="gone"
+                    tools:visibility="visible"
                     android:orientation="vertical">
 
                     <com.bykea.pk.partner.widgets.FontTextView
@@ -231,12 +232,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_1sdp"
                         android:gravity="center"
                         android:id="@+id/goto_purchaser"
                         android:text="@string/goto_purchaser"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="@dimen/_18sdp"
+                        android:textSize="@dimen/_22sdp"
                         app:fontName="jameel_noori_nastaleeq.ttf" />
 
                 </LinearLayout>

@@ -72,6 +72,9 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             if (intent?.extras!!.containsKey(FLOW_FOR)) {
                 flowForAddOrEdit = intent?.extras!!.get(FLOW_FOR) as Int
             }
+            if (intent?.extras!!.containsKey(FAILED_BOOKING_ID)) {
+                viewModel.failedBookingId = intent?.extras!!.get(FAILED_BOOKING_ID) as String
+            }
             if (intent?.extras!!.containsKey(DELIVERY_DETAILS_OBJECT)) {
                 viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
                 tVLocationAlphabet.text = viewModel.deliveryDetails.value?.details?.display_tag

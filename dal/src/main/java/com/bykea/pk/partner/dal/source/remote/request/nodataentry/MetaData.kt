@@ -12,13 +12,16 @@ import kotlinx.android.parcel.Parcelize
 
 class MetaData() : Parcelable {
     var service_code: Int? = null
+    var failed_booking_id: String? = null
 
     constructor(parcel: Parcel) : this() {
         service_code = parcel.readValue(Int::class.java.classLoader) as? Int
+        failed_booking_id = parcel.readValue(String::class.java.classLoader) as? String
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(service_code)
+        parcel.writeValue(failed_booking_id)
     }
 
     override fun describeContents(): Int {
