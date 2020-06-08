@@ -151,13 +151,15 @@ class FinishBookingListingActivity : BaseActivity() {
     }
 
     fun onDoneClick(view: View) {
-        when (intent.getStringExtra(EXTRA_TYPE)) {
-            TYPE_FINISH -> {
-                Dialogs.INSTANCE.showRideStatusDialog(this, { finishJob() }, { Dialogs.INSTANCE.dismissDialog() }, getString(R.string.questino_mukammal))
-            }
-            TYPE_NAVIGATION -> {
-                selectedBooking?.let {
+        selectedBooking?.let {
+            when (intent.getStringExtra(EXTRA_TYPE)) {
+                TYPE_FINISH -> {
+                    Dialogs.INSTANCE.showRideStatusDialog(this, { finishJob() }, { Dialogs.INSTANCE.dismissDialog() }, getString(R.string.questino_mukammal))
+                }
+                TYPE_NAVIGATION -> {
                     openGoogleDirectionsIntent("${it.dropoff.lat},${it.dropoff.lng}")
+                }
+                else -> {
                 }
             }
         }
