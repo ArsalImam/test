@@ -1962,9 +1962,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 mCurrentLocation.getLongitude() + "");
 
         if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
-                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT OR ARRIVED STATE
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) /*||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)*/) {
+                // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT STATE
                 pickUpMarker = null;
                 updatePickupMarker();
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
@@ -1976,9 +1976,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
             }
         }
-        if (Utils.isNewBatchService(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-            pickUpMarker.remove();
-        }
+//        if (Utils.isNewBatchService(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
+//            pickUpMarker.remove();
+//        }
 
 
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
