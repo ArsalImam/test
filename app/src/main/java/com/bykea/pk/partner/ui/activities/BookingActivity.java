@@ -37,7 +37,6 @@ import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
-import com.bykea.pk.partner.dal.source.pref.AppPref;
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest;
 import com.bykea.pk.partner.dal.source.remote.response.FinishJobResponseData;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -1551,6 +1550,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             tvFareAmount.setText(R.string.dash);
         }
+        if (!callData.isDetectWallet()) tvCodAmount.setText(tvFareAmount.getText().toString());
     }
 
     private void showDropOffPersonInfo() {
