@@ -598,6 +598,7 @@ public class Constants {
         public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
         public static final int ERROR_MSG_CODE = 1050;
+        public static final int INSUFFIECIENT_PASSENGER_WALLET = 1028;
     }
 
     /**
