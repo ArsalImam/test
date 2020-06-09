@@ -28,6 +28,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -64,6 +66,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -164,7 +167,7 @@ public class BaseActivity extends AppCompatActivity {
             } else if (location != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
             } else if (call != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
+                requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
             } else {
                 hasPermission = true;
             }
@@ -595,35 +598,44 @@ public class BaseActivity extends AppCompatActivity {
         mTitleTv.setText("");
     }
 
-    public void showWalletIcon(final View.OnClickListener onClick) {
+    public void showRightIcon(@DrawableRes int drawable, final View.OnClickListener onClick) {
+        showRightIcon(drawable, NumberUtils.INTEGER_ZERO, onClick);
+    }
+
+    public void showRightIcon(@DrawableRes int drawable, @ColorRes int color, final View.OnClickListener onClick) {
         if (null != rightIv) {
             rightIv.setVisibility(View.VISIBLE);
-            rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.wallet));
+
+            if (color != NumberUtils.INTEGER_ZERO)
+                rightIv.setColorFilter(ContextCompat.getColor(BaseActivity.this, color),
+                        android.graphics.PorterDuff.Mode.MULTIPLY);
+
+            rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, drawable));
             rightIv.setPadding(5, 5, 5, 5);
             rightIv.setOnClickListener(onClick);
+        }
+    }
+
+    public void showWalletIcon(final View.OnClickListener onClick) {
+        showRightIcon(R.drawable.wallet, onClick);
+    }
+
+    public void hideRightIcon() {
+        if (null != rightIv) {
+            rightIv.setVisibility(View.GONE);
         }
     }
 
     public void showMissedCallIcon(final View.OnClickListener onClick) {
-        if (null != rightIv) {
-            mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
-            rightIv.setVisibility(View.VISIBLE);
-            rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.miss_call_icon));
-            rightIv.setPadding(5, 5, 5, 5);
-            rightIv.setOnClickListener(onClick);
-        }
+        showRightIcon(R.drawable.miss_call_icon, onClick);
     }
 
     public void hideWalletIcon() {
-        if (null != rightIv) {
-            rightIv.setVisibility(View.GONE);
-        }
+        hideRightIcon();
     }
 
     public void hideMissedCallIcon() {
-        if (null != rightIv) {
-            rightIv.setVisibility(View.GONE);
-        }
+        hideRightIcon();
     }
 
 
@@ -662,13 +674,13 @@ public class BaseActivity extends AppCompatActivity {
             //MULTI DELIVERY EVENT ERROR HANDLING
             Utils.appToast(
                     mCurrentActivity.getString(R.string.error_try_again));
-        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED)) {
             Utils.multiDeliveryFreeDriverOnBatchComplete();
             ActivityStackManager
                     .getInstance()
                     .startHomeActivity(true, mCurrentActivity);
             finish();
-        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN )) {
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN)) {
             Utils.setCallIncomingState();
             AppPreferences.setAvailableStatus(true);
             ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(true, mCurrentActivity);
@@ -878,5 +890,4 @@ public class BaseActivity extends AppCompatActivity {
             mBound = false;
         }
     };
-
 }
