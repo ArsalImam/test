@@ -308,6 +308,9 @@ interface Backend {
     fun getInvoiceDetails(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String,
                           @Query(RequestParams.STATE) state: String): Call<FeedbackInvoiceResponse>
 
+    @GET
+    fun getReturnRunBatchInvoice(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String): Call<FeedbackInvoiceResponse>
+
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,
                               @Query("type") type: String?,
@@ -384,6 +387,7 @@ interface Backend {
                                       @Field("amount") amount: String,
                                       @Field("pId") passId: String
     ): Call<TopUpPassengerWalletResponse>
+
 
     companion object {
 

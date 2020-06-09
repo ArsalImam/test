@@ -546,6 +546,7 @@
     <string name="record_voice_message">وائیس میسیج ریکورڈ کریں</string>
     <string name="gps_address_hint">GPS Address*</string>
     <string name="consignee_name">Consignee Name</string>
+    <string name="consignees_name">Consignee\'s Name</string>
     <string name="empty_formatting">%s</string>
     <string name="formatting_with_street">Street # %s</string>
     <string name="formatting_with_order">Order # %s</string>
@@ -580,10 +581,12 @@
     <string name="error_uploading_file">Error in uploading file, please try again</string>
     <string name="sender">\u0020بھیجنے والا\u0020</string>
     <string name="return_run">\u0020بھیجنے والے کے پاس جائیں</string>
+    <string name="return_run_spinner">\u0020واپسی کی بکنگ\u0020</string>
     <string name="re_route">\u0020کوئی اور پتہ درج کریں\u0020</string>
     <string name="new_address">نیا پتہ</string>
     <string name="goto_purchaser">واپس بھیجنے والے کے پاس</string>
     <string name="enter_correct_amount">Please enter correct amount</string>
+    <string name="customer_will_tell">کسٹمر بتائے گا</string>
     <string name="parcel_value_cannot_greater">Parcel value can not be more than</string>
     <string name="customer_wallet_is_negative">\u0020کسٹمر کا والٹ منفی ہے۔ برائے مہربانی\u0020</string>
     <string name="top_up_customer_wallet">\u0020کسٹمر کا والٹ  ٹاپ اپ کری۔\u0020</string>

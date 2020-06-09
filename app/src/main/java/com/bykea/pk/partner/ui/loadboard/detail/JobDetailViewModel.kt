@@ -126,7 +126,6 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     }
 
     override fun onJobLoaded(job: Job) {
-        job.service_code = 100
         renderDetails(job)
         _dataLoading.value = false
 

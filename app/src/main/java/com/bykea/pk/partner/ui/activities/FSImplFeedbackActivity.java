@@ -75,6 +75,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     @BindView(R.id.llbatchNaKamiyabDelivery)
     LinearLayout llbatchNaKamiyabDelivery;
+    @BindView(R.id.tvTotalRakmLabel)
+    TextView tvTotalRakmLabel;
+    @BindView(R.id.ivBatchInfo)
+    ImageView ivBatchInfo;
     @BindView(R.id.goto_purchaser)
     TextView tvGotoPurchaser;
     @BindView(R.id.imageViewAddDelivery)
@@ -124,6 +128,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @BindView(R.id.scrollView)
     ScrollView scrollView;
 
+    private int selectedMsgPosition = 0;
     private ArrayList<Invoice> invoiceData = new ArrayList<>();
 
     private FSImplFeedbackActivity mCurrentActivity;
@@ -137,6 +142,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean isNewBatchFlow;
     private int batchServiceCode;
     private String batchId;
+    private boolean isRerouteCreated = false;
+    private boolean mLastReturnRunBooking;
+    private ArrayList<Invoice> batchInvoiceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +153,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-
         try {
             driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
         } catch (Exception e) {
@@ -192,6 +199,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 filtered.add(invoice);
             }
         }
+        updateTotal(filtered);
         invoiceAdapter.setItems(filtered);
     }
 
@@ -293,6 +301,28 @@ public class FSImplFeedbackActivity extends BaseActivity {
         endAddressTv.setText((StringUtils.isBlank(callData.getEndAddress())
                 ? "N/A" : callData.getEndAddress()));
 
+        if (Utils.isNewBatchService(batchServiceCode)) {
+            etReceiverName.setHint(R.string.consignees_name);
+
+            if (mLastReturnRunBooking) {
+                tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
+                ivBatchInfo.setVisibility(View.VISIBLE);
+                repo.getReturnRunBatchInvoice("http://52.184.193.109:4600/v1/batch/:id/invoice", batchId, new JobsDataSource.GetInvoiceCallback() {
+
+                    @Override
+                    public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
+                        batchInvoiceList = feedbackInvoiceResponse.getData();
+                        Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
+                        receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
+                    }
+
+                    @Override
+                    public void onInvoiceDataFailed(@Nullable String errorMessage) {
+                        Utils.appToast(errorMessage);
+                    }
+                });
+            }
+        }
         if (isBykeaCashType) {
             updateUIBykeaCash();
         } else if (isDeliveryType || isOfflineDeliveryType) {
@@ -302,6 +332,18 @@ public class FSImplFeedbackActivity extends BaseActivity {
         } else {
             receivedAmountEt.requestFocus();
         }
+    }
+
+    private String updateTotal(ArrayList<Invoice> invoiceList) {
+        String total = StringUtils.EMPTY;
+        for (Invoice invoice: invoiceList) {
+            if (invoice.getField() != null && invoice.getField().equalsIgnoreCase("total")) {
+                total = invoice.getValue();
+                break;
+            }
+        }
+        totalCharges = total;
+        return total;
     }
 
     private void initCallData() {
@@ -327,10 +369,13 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
         callData.setTotalFare("0"); //TODO need to get way from server to update this
         callData.setTripId(trip.getId());
+        callData.setTripNo(trip.getBookingCode());
         callData.setServiceCode(trip.getServiceCode());
-        callData.setEndAddress(trip.getDropoff().getAddress());
+        callData.setEndAddress(trip.getDropoff().getGpsAddress());
         callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
         callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
+
+        mLastReturnRunBooking = trip.getDisplayTag().equalsIgnoreCase("z");
 
 //        updateFailureDeliveryLabel(null);
     }
@@ -397,12 +442,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
         receivedAmountEt.requestFocus();
     }
 
-    private int selectedMsgPosition = 0;
 
     private void initAdapter(final NormalCallData callData) {
 
         String[] list;
         if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
+        else if (mLastReturnRunBooking) list = new String[]{getString(R.string.return_run)};
         else list = Utils.getDeliveryMsgsList(mCurrentActivity);
 
         final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
@@ -454,7 +499,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private long mLastClickTime;
 
-    @OnClick({R.id.feedbackBtn, R.id.ivPickUpCustomerPhone, R.id.imageViewAddDelivery})
+    @OnClick({R.id.feedbackBtn, R.id.ivBatchInfo, R.id.ivPickUpCustomerPhone, R.id.imageViewAddDelivery})
     public void onClick(View v) {
         if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
             return;
@@ -463,7 +508,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
         switch (v.getId()) {
             case R.id.imageViewAddDelivery:
-                new BatchNaKamiyabDialog(batchId, new BatchNaKamiyabDialog.OnResult() {
+                new BatchNaKamiyabDialog(batchId, callData.getTripId(), new BatchNaKamiyabDialog.OnResult() {
                     @Override
                     public void onReturnRun() {
                         callData.setReturnRun(true);
@@ -487,6 +532,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     }
                 }
                 break;
+            case R.id.ivBatchInfo:
+                if (batchInvoiceList != null)
+                    Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
+                break;
 
             case R.id.feedbackBtn:
                 if (valid()) {
@@ -500,12 +549,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
                             Dialogs.INSTANCE.dismissDialog();
                             Dialogs.INSTANCE.showToast(response.getMessage());
                             //handled old flow if not a batch service
-                            if (!anyBookingExistsInPendingState()) {
+                            if (allBookingInCompletedState()) {
                                 Utils.setCallIncomingState();
                                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                                 mCurrentActivity.finish();
                             } else {
-                                //check if contains any pending booking or has any failure booking
+                                //check if contains any pending booking or has any failed booking
                                 mCurrentActivity.finish();
                             }
                         }
@@ -592,14 +641,24 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean anyBookingExistsInPendingState() {
+    private boolean allBookingInCompletedState() {
         if (isNewBatchFlow) {
-            boolean containsReturnRunBooking = Utils.containsReturnRunBooking(callData.getBookingList());
-            if (containsReturnRunBooking) return false;
-            for (BatchBooking batchBooking : callData.getBookingList())
-                if (!callData.isReturnRun() && !batchBooking.isCompleted()) return true;
-        }
-        return false;
+            for (BatchBooking batchBooking : callData.getBookingList()) {
+                if (!batchBooking.isCompleted()) {
+                    return true;
+                }
+            }
+            //need to handle re-route case above return run
+            if (isRerouteCreated) {
+                return false;
+            }
+            //checking whether z's booking exist
+            if (callData.isReturnRun()) {
+                return !Utils.containsReturnRunBooking(callData.getBookingList());
+            }
+            return false;
+        } else
+            return true;
     }
 
     private void logMPEvent() {
@@ -771,21 +830,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Permissions.LOCATION_PERMISSION) {
@@ -798,6 +842,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         } else if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
             if (resultCode == RESULT_OK) {
+                isRerouteCreated = true;
                 feedbackBtn.setEnabled(true);
                 updateFailureDeliveryLabel(data.getParcelableExtra(DELIVERY_DETAILS_OBJECT));
             }
@@ -806,14 +851,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {
         if (!isNewBatchFlow) return;
-        if (callData.isReturnRun()) {
+        String formattedString = getResources().getString(R.string.problem_item);
+        if (deliveryDetails != null) {
             llFailureDelivery.setVisibility(View.VISIBLE);
             imageViewAddDelivery.setVisibility(View.GONE);
-            tvGotoPurchaser.setText(R.string.goto_purchaser);
-        } else if (deliveryDetails != null) {
+            tvGotoPurchaser.setText(String.format(formattedString, deliveryDetails.getDropoff().getZone_dropoff_name_urdu()));
+        } else if (callData.isReturnRun()) {
             llFailureDelivery.setVisibility(View.VISIBLE);
             imageViewAddDelivery.setVisibility(View.GONE);
-            tvGotoPurchaser.setText(deliveryDetails.getDropoff().getZone_dropoff_name_urdu());
+            tvGotoPurchaser.setText(String.format(formattedString, getString(R.string.goto_purchaser)));
         }
     }
 }

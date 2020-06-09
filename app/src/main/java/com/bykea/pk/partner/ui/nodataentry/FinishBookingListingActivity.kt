@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -94,16 +95,18 @@ class FinishBookingListingActivity : BaseActivity() {
     private fun onFinished(data: FinishJobResponseData) {
         Dialogs.INSTANCE.dismissDialog()
         callData = AppPreferences.getCallData()
-        callData?.ruleIds = data.trip.rule_ids
-        callData?.bookingList?.forEach {
-            if (it.id == selectedBooking?.id!!)
-                it.status = TripStatus.ON_FINISH_TRIP
-        }
-        AppPreferences.setCallData(callData)
-        AppPreferences.clearTripDistanceData()
-        ActivityStackManager.getInstance()
-                .startFeedbackActivity(this)
-        finish()
+        Handler().postDelayed({
+            callData?.ruleIds = data.trip.rule_ids
+            callData?.bookingList?.forEach {
+                if (it.id == selectedBooking?.id!!)
+                    it.status = TripStatus.ON_FINISH_TRIP
+            }
+            AppPreferences.setCallData(callData)
+            AppPreferences.clearTripDistanceData()
+            ActivityStackManager.getInstance()
+                    .startFeedbackActivity(this)
+            finish()
+        }, 1000)
     }
 
 
@@ -151,13 +154,15 @@ class FinishBookingListingActivity : BaseActivity() {
     }
 
     fun onDoneClick(view: View) {
-        when (intent.getStringExtra(EXTRA_TYPE)) {
-            TYPE_FINISH -> {
-                Dialogs.INSTANCE.showRideStatusDialog(this, { finishJob() }, { Dialogs.INSTANCE.dismissDialog() }, getString(R.string.questino_mukammal))
-            }
-            TYPE_NAVIGATION -> {
-                selectedBooking?.let {
+        selectedBooking?.let {
+            when (intent.getStringExtra(EXTRA_TYPE)) {
+                TYPE_FINISH -> {
+                    Dialogs.INSTANCE.showRideStatusDialog(this, { finishJob() }, { Dialogs.INSTANCE.dismissDialog() }, getString(R.string.questino_mukammal))
+                }
+                TYPE_NAVIGATION -> {
                     openGoogleDirectionsIntent("${it.dropoff.lat},${it.dropoff.lng}")
+                }
+                else -> {
                 }
             }
         }

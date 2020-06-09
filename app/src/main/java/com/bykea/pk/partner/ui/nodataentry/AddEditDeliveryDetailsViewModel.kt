@@ -22,6 +22,8 @@ import com.bykea.pk.partner.utils.Dialogs
  */
 class AddEditDeliveryDetailsViewModel : ViewModel() {
 
+    var failedBookingId: String? = null
+
     private val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
 
     private var _deliveryDetails = MutableLiveData<DeliveryDetails>()
@@ -59,6 +61,9 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
      * Request add delivery detail item in list
      */
     fun requestAddDeliveryDetails(deliveryDetails: DeliveryDetails) {
+        failedBookingId?.let {
+            deliveryDetails.meta?.failed_booking_id = it
+        }
         jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetails,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {

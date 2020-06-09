@@ -22,7 +22,7 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.apache.commons.lang3.math.NumberUtils
 
-class BatchNaKamiyabDialog(private val batchId: String, private val callback: OnResult) : BottomSheetDialogFragment() {
+class BatchNaKamiyabDialog(private val batchId: String, private val tripId: String, private val callback: OnResult) : BottomSheetDialogFragment() {
 
     private val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
     var selectedCheckPosition: MutableLiveData<Int> = MutableLiveData<Int>().apply { value = DIGIT_ZERO }
@@ -46,7 +46,7 @@ class BatchNaKamiyabDialog(private val batchId: String, private val callback: On
             NumberUtils.INTEGER_ONE -> {
                 dismiss()
                 ActivityStackManager.getInstance()
-                        .startAddEditDeliveryDetails(activity, Constants.Extras.ADD_DELIVERY_DETAILS, null)
+                        .startAddEditDeliveryDetails(activity, Constants.Extras.ADD_DELIVERY_DETAILS, null, tripId)
                 this.callback.onReRoute()
             }
         }

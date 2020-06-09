@@ -135,6 +135,7 @@ import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+import static com.bykea.pk.partner.utils.Constants.PLUS;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
@@ -1051,7 +1052,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                         mCurrentActivity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                AppPreferences.setTopUpPassengerWalletAllowed(false);
+                                                //allowing partner to perform top up only one time if
+                                                //he is in a ride service other than batch
+                                                AppPreferences.setTopUpPassengerWalletAllowed(Utils.isNewBatchService(callData.getServiceCode()));
                                                 ivTopUp.setVisibility(View.INVISIBLE);
                                                 Dialogs.INSTANCE.dismissDialog();
                                                 Utils.appToast(response.getMessage());
@@ -1059,6 +1062,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                                     callData.setPassWallet(response.getData().getAmount());
                                                     AppPreferences.setCallData(callData);
                                                     tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
+                                                    updateWalletColor();
                                                 }
                                             }
                                         });
@@ -1614,7 +1618,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateWalletColor() {
         if (!Utils.isNewBatchService(callData.getServiceCode())) return;
         try {
-            int wallet = Integer.valueOf(callData.getPassWallet());
+            int wallet = Integer.valueOf(callData.getPassWallet().replace(PLUS, StringUtils.EMPTY));
             if (wallet <= DIGIT_ZERO) {
                 rLPWalletAmount.setBackgroundColor(ContextCompat.getColor(DriverApp.getContext(), R.color.red));
                 tvPWalletAmount.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.white));
@@ -1959,9 +1963,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 mCurrentLocation.getLongitude() + "");
 
         if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
-            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
-                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT OR ARRIVED STATE
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) /*||
+                    callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)*/) {
+                // ALWAYS UPDATE PICKUP MARKER FOR ACCEPT STATE
                 pickUpMarker = null;
                 updatePickupMarker();
             } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_START_TRIP)) {
@@ -1974,10 +1978,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             }
         }
         if (Utils.isNewBatchService(callData.getServiceCode()) && callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-            pickUpMarker.remove();
+            llStartAddress.setVisibility(View.GONE);
         }
-
-
         if (callData.getDropoffStop() != null && StringUtils.isNotEmpty(callData.getEndLat()) && StringUtils.isNotEmpty(callData.getEndLng())) {
             dropOffMarker = null;
             updateDropOffMarker();

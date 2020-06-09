@@ -286,6 +286,7 @@ public class Constants {
         public static final int EDIT_DELIVERY_DETAILS = DIGIT_TWO;
         public static final int VIEW_DELIVERY_DETAILS = DIGIT_THREE;
         public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
+        public static final String FAILED_BOOKING_ID = "FAILED_BOOKING_ID";
     }
 
     public static class Broadcast {
@@ -392,6 +393,7 @@ public class Constants {
     public final static int MAX_LIMIT_LOAD_BOARD = 10;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+    public final static String NOT_AVAILABLE = "N/A";
 
     /**
      * Constant for checking delivery status whether is successful or not - Using is FeedbackActivity

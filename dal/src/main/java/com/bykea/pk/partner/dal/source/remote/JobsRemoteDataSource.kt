@@ -417,6 +417,20 @@ class JobsRemoteDataSource {
         })
     }
 
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [callback] this will response back on data/error received
+     */
+
+    fun getReturnRunBatchInvoice(invoiceUrl: String, callback: JobsDataSource.GetInvoiceCallback) {
+        Backend.talos.getReturnRunBatchInvoice(invoiceUrl, RolesByName.CANCEL_BY_PARTNER.toLowerCase()).enqueue(object : Callback<FeedbackInvoiceResponse> {
+            override fun onSuccess(response: FeedbackInvoiceResponse) = callback.onInvoiceDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
+        })
+    }
+
     fun submitTemperature(submitTemperatureSubmitRequest: TemperatureSubmitRequest, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
         Backend.talos.submitTemperature(submitTemperatureSubmitRequest).enqueue(object : Callback<TemperatureSubmitResponse> {
             override fun onSuccess(response: TemperatureSubmitResponse) = callback.onDataLoaded(response)
@@ -473,4 +487,5 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
+
 }
