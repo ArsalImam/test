@@ -112,7 +112,7 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                             _isCustomerWalletTopUpRequired.value = true
                         }
                         else -> {
-                            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+                            Dialogs.INSTANCE.showToast(reasonMsg)
                         }
                     }
                 } ?: run {
