@@ -1371,4 +1371,26 @@ public enum Dialogs {
             dialog.show();
         }
     }
+
+    /**
+     * This method creates a dialog to represent passenger balance as negative
+     *
+     * @param context Calling context
+     */
+    public void showPassengerNegativeDialog(Context context) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            dialog.setContentView(R.layout.dialog_general_passenger_negative_balance);
+            dialog.setCancelable(false);
+
+            dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
 }
