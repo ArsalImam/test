@@ -327,7 +327,7 @@
         <item>ناكام - پتہ نہیں ملا</item>
     </string-array>
     <string-array name="bykea_cash_status_messages">
-        <item>کامیاب ادائیگی</item>
+        <item>\u0020کامیاب ادائیگی\u0020</item>
         <item>ناكام - ادائیگی مکمل نہیں ہو سکی</item>
         <item>ناكام - ادائیگی کرنے والا موجود نہیں  ہے</item>
     </string-array>
@@ -568,7 +568,7 @@
     <string name="enter_parcel_value">Please enter parcel value</string>
     <string name="enter_correct_parcel_value">Please enter correct parcel value</string>
     <string name="button_text_navigation">میپ لوکیشن</string>
-    <string name="questino_mukammal">مکمل؟</string>
+    <string name="questino_mukammal">\u0020مکمل؟\u0020</string>
     <string name="call_sender">Call Sender</string>
     <string name="call_recipent">Call Recipient</string>
     <string name="enter_cod_amount">Please enter cod amount</string>
