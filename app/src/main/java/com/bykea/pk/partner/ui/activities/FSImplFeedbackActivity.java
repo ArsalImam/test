@@ -128,6 +128,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @BindView(R.id.scrollView)
     ScrollView scrollView;
 
+    private int selectedMsgPosition = 0;
     private ArrayList<Invoice> invoiceData = new ArrayList<>();
 
     private FSImplFeedbackActivity mCurrentActivity;
@@ -441,7 +442,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
         receivedAmountEt.requestFocus();
     }
 
-    private int selectedMsgPosition = 0;
 
     private void initAdapter(final NormalCallData callData) {
 
@@ -827,21 +827,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
