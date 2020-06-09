@@ -31,7 +31,7 @@ class BookingDetailActivity : BaseActivity() {
     private lateinit var invoiceAdapter: LastAdapter<Invoice>
 
     /**
-     * data source for invoice list
+     * data source for batch invoice list
      */
     private lateinit var batchInvoiceAdapter: LastAdapter<Invoice>
 

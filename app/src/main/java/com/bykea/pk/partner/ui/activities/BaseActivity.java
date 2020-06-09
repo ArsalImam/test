@@ -598,10 +598,23 @@ public class BaseActivity extends AppCompatActivity {
         mTitleTv.setText("");
     }
 
+    /**
+     * this will show right icon on top bar
+     *
+     * @param drawable icon for the icon
+     * @param onClick click of the icon
+     */
     public void showRightIcon(@DrawableRes int drawable, final View.OnClickListener onClick) {
         showRightIcon(drawable, NumberUtils.INTEGER_ZERO, onClick);
     }
 
+    /**
+     * this will show right icon on top bar
+     *
+     * @param drawable icon for the icon
+     * @param color to add tint on image
+     * @param onClick click of the icon
+     */
     public void showRightIcon(@DrawableRes int drawable, @ColorRes int color, final View.OnClickListener onClick) {
         if (null != rightIv) {
             rightIv.setVisibility(View.VISIBLE);
@@ -616,24 +629,40 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * this will show wallet icon on top bar
+     * @param onClick click of the icon
+     */
     public void showWalletIcon(final View.OnClickListener onClick) {
         showRightIcon(R.drawable.wallet, onClick);
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void hideRightIcon() {
         if (null != rightIv) {
             rightIv.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void showMissedCallIcon(final View.OnClickListener onClick) {
         showRightIcon(R.drawable.miss_call_icon, onClick);
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void hideWalletIcon() {
         hideRightIcon();
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void hideMissedCallIcon() {
         hideRightIcon();
     }
@@ -645,8 +674,6 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-
-
         return false;
     }
 

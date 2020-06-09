@@ -800,15 +800,40 @@ public enum Dialogs {
         showDialog();
     }
 
+    /**
+     * will show change image dialog
+     *
+     * @param context of the activity
+     * @param uri local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
     public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         showChangeImageDialog(context, uri, null, positiveClickListener, negativeClickListener);
     }
 
+    /**
+     * will show change image dialog
+     *
+     * @param context of the activity
+     * @param uri global image url
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
     public void showChangeImageDialog(Context context, String uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         showChangeImageDialog(context, null, uri, positiveClickListener, negativeClickListener);
     }
 
 
+    /**
+     * will show change image dialog
+     *
+     * @param context of the activity
+     * @param url global image url
+     * @param uri local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
     public void showChangeImageDialog(Context context, File uri, String url, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
