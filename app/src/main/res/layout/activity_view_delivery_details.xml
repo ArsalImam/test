@@ -155,8 +155,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@color/white"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:paddingStart="@dimen/_14sdp"
             android:paddingLeft="@dimen/_14sdp"
             android:paddingTop="@dimen/_10sdp"
@@ -165,144 +164,151 @@
             android:paddingBottom="@dimen/_10sdp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_22sdp"
-                    app:srcCompat="@drawable/ic_building_black" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:text="@{viewModel.deliveryDetails.dropoff.address}"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="University Road, between NipaChorangi , Hassan Square, near Bait-ul-Mukarram Masjid" />
+                    android:gravity="center_vertical"
+                    app:goneUnless="@{viewModel.deliveryDetails.dropoff.address != null}">
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_22sdp"
+                        app:srcCompat="@drawable/ic_building_black" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:text="@{viewModel.deliveryDetails.dropoff.address}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf"
+                        tools:text="University Road, between NipaChorangi , Hassan Square, near Bait-ul-Mukarram Masjid" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    app:invisibleUnless="@{viewModel.deliveryDetails.details.voice_note}">
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:gravity="center_vertical"
+                    app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}">
 
-                    <ImageView
-                        android:id="@+id/imgViewAudioPlay"
-                        android:layout_width="@dimen/_38sdp"
-                        android:layout_height="@dimen/_38sdp"
-                        android:onClick="@{() -> listener.onPlayAudio(viewModel.deliveryDetails.details.voice_note)}"
-                        app:srcCompat="@drawable/ic_audio_play" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_marginStart="@dimen/_1sdp"
+                        android:layout_marginLeft="@dimen/_1sdp"
+                        app:srcCompat="@drawable/ic_location_blue" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBarForAudioPlay"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="@dimen/_38sdp"
-                        android:layout_height="@dimen/_38sdp"
-                        android:indeterminate="false"
-                        android:max="100"
-                        android:onClick="@{() -> listener.onStopAudio()}"
-                        android:progress="80"
-                        android:progressDrawable="@drawable/circular_progress_bar"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tVGPSAddress"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginLeft="@dimen/_12sdp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@{viewModel.deliveryDetails.dropoff.gps_address}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf"
+                        app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}"
+                        tools:text="13 D, Gushan-e-Iqbal" />
+                </LinearLayout>
 
-                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="center_vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/_22sdp"
+                        android:layout_height="@dimen/_22sdp"
+                        app:goneUnless="@{viewModel.deliveryDetails.details.parcel_value != null}"
+                        app:srcCompat="@drawable/ic_delivery_grayscale" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tVParcelValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginLeft="@dimen/_12sdp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:amountFormatted="@{viewModel.deliveryDetails.details.parcel_value}"
+                        app:fontName="open_sans_regular.ttf"
+                        app:goneUnless="@{viewModel.deliveryDetails.details.parcel_value != null}"
+                        tools:text="Rs. 1000" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginLeft="@dimen/_20sdp"
+                        app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
+                        app:srcCompat="@drawable/ic_number_black" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tVOrderNumber"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginLeft="@dimen/_12sdp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@{viewModel.deliveryDetails.details.order_no}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="open_sans_regular.ttf"
+                        app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
+                        tools:text="515113" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:gravity="center_vertical">
+                app:invisibleUnless="@{viewModel.deliveryDetails.details.voice_note}">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_marginStart="@dimen/_1sdp"
-                    android:layout_marginLeft="@dimen/_1sdp"
-                    app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}"
-                    app:srcCompat="@drawable/ic_location_blue" />
+                <ImageView
+                    android:id="@+id/imgViewAudioPlay"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:onClick="@{() -> listener.onPlayAudio(viewModel.deliveryDetails.details.voice_note)}"
+                    app:srcCompat="@drawable/ic_audio_play" />
 
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tVGPSAddress"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_12sdp"
-                    android:layout_marginLeft="@dimen/_12sdp"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@{viewModel.deliveryDetails.dropoff.gps_address}"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}"
-                    tools:text="13 D, Gushan-e-Iqbal" />
-            </LinearLayout>
+                <ProgressBar
+                    android:id="@+id/progressBarForAudioPlay"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:onClick="@{() -> listener.onStopAudio()}"
+                    android:progress="80"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:gravity="center_vertical">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_22sdp"
-                    app:goneUnless="@{viewModel.deliveryDetails.details.parcel_value != null}"
-                    app:srcCompat="@drawable/ic_delivery_grayscale" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tVParcelValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_12sdp"
-                    android:layout_marginLeft="@dimen/_12sdp"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
-                    app:amountFormatted="@{viewModel.deliveryDetails.details.parcel_value}"
-                    app:fontName="open_sans_regular.ttf"
-                    app:goneUnless="@{viewModel.deliveryDetails.details.parcel_value != null}"
-                    tools:text="Rs. 1000" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_marginLeft="@dimen/_20sdp"
-                    app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
-                    app:srcCompat="@drawable/ic_number_black" />
-
-                <com.bykea.pk.partner.widgets.FontTextView
-                    android:id="@+id/tVOrderNumber"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_12sdp"
-                    android:layout_marginLeft="@dimen/_12sdp"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@{viewModel.deliveryDetails.details.order_no}"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
-                    tools:text="515113" />
-
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 

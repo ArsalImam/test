@@ -102,6 +102,13 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
         })
 
+        viewModel.isCustomerWalletTopUpRequired.observe(this@AddEditDeliveryDetailsActivity, androidx.lifecycle.Observer {
+            if (it) {
+                viewModel.isCustomerWalletTopUpRequired.value = false
+                Dialogs.INSTANCE.showPassengerNegativeDialog(this@AddEditDeliveryDetailsActivity)
+            }
+        })
+
         binding.listener = object : GenericListener {
             override fun addOrEditDeliveryDetails() {
                 pausePlaying()
@@ -148,14 +155,14 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
     private fun setTextChangeListeners() {
         editTextMobileNumber.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                editTextParcelValue.error = null
+                editTextMobileNumber.error = null
                 validateMobileNumber(false)
             }
         })
 
         textViewGPSAddress.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                editTextParcelValue.error = null
+                textViewGPSAddress.error = null
                 validateGPSAddress(false)
             }
         })
@@ -169,7 +176,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
 
         editTextCODAmount.addTextChangedListener(object : TextWatcherUtil() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                editTextParcelValue.error = null
+                editTextCODAmount.error = null
                 validateCODAmount(false)
             }
         })
@@ -215,11 +222,18 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Validate Parcel Value
      */
     private fun validateParcelValue(showError: Boolean = true): Boolean {
-        return if (editTextParcelValue.text.isNullOrEmpty() ||
-                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT + DIGIT_ONE) {
+        return if (editTextParcelValue.text.isNullOrEmpty() || editTextParcelValue.text.toString().trim().toInt() == DIGIT_ZERO) {
             if (showError) {
                 editTextParcelValue.requestFocus()
                 editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
+                linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
+            }
+            false
+        } else if (editTextParcelValue.text.isNullOrEmpty() ||
+                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT + DIGIT_ONE) {
+            if (showError) {
+                editTextParcelValue.requestFocus()
+                editTextParcelValue.error = String.format(getString(R.string.parcel_value_cannot_greater).plus(StringUtils.SPACE).plus(getString(R.string.amount_rs_int)), AMOUNT_LIMIT)
                 linLayoutParcelValue.setBackgroundResource(R.drawable.border_details_form_square_red)
             }
             false

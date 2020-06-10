@@ -12,8 +12,7 @@ import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResp
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR
-import com.bykea.pk.partner.utils.Constants.ApiError.WALLET_EXCEED_THRESHOLD
+import com.bykea.pk.partner.utils.Constants.ApiError.*
 import com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE
 import com.bykea.pk.partner.utils.Dialogs
 
@@ -46,6 +45,10 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     private var _isCashLimitLeftValue = MutableLiveData<Int>().apply { value = NEGATIVE_DIGIT_ONE }
     val isCashLimitLeftValue: MutableLiveData<Int>
         get() = _isCashLimitLeftValue
+
+    private var _isCustomerWalletTopUpRequired = MutableLiveData<Boolean>().apply { value = false }
+    val isCustomerWalletTopUpRequired: MutableLiveData<Boolean>
+        get() = _isCustomerWalletTopUpRequired
 
     /**
      * Get active trip from shared preferences
@@ -105,8 +108,11 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                             _isCashLimitLeftValue.value = errorBody.remaining_limit
                             _isCashLimitLow.value = true
                         }
+                        INSUFFIECIENT_PASSENGER_WALLET -> {
+                            _isCustomerWalletTopUpRequired.value = true
+                        }
                         else -> {
-                            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+                            Dialogs.INSTANCE.showToast(reasonMsg)
                         }
                     }
                 } ?: run {
