@@ -642,6 +642,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private boolean allBookingInCompletedState() {
         if (isNewBatchFlow) {
+            //saving foreach, if booking is not a return run
             if (!callData.isReturnRun()) {
                 for (BatchBooking batchBooking : callData.getBookingList()) {
                     if (!batchBooking.isCompleted()) {
