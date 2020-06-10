@@ -336,7 +336,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private String updateTotal(ArrayList<Invoice> invoiceList) {
         String total = StringUtils.EMPTY;
-        for (Invoice invoice: invoiceList) {
+        for (Invoice invoice : invoiceList) {
             if (invoice.getField() != null && invoice.getField().equalsIgnoreCase("total")) {
                 total = invoice.getValue();
                 break;
@@ -559,7 +559,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                             }
                         }
 
-
                         @Override
                         public void onJobConcludeFailed(@Nullable String message, @Nullable Integer code) {
                             Dialogs.INSTANCE.dismissDialog();
@@ -643,9 +642,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private boolean allBookingInCompletedState() {
         if (isNewBatchFlow) {
-            for (BatchBooking batchBooking : callData.getBookingList()) {
-                if (!batchBooking.isCompleted()) {
-                    return true;
+            if (!callData.isReturnRun()) {
+                for (BatchBooking batchBooking : callData.getBookingList()) {
+                    if (!batchBooking.isCompleted()) {
+                        return true;
+                    }
                 }
             }
             //need to handle re-route case above return run
@@ -654,7 +655,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
             //checking whether z's booking exist
             if (callData.isReturnRun()) {
-                return !Utils.containsReturnRunBooking(callData.getBookingList());
+                return Utils.containsReturnRunBooking(callData.getBookingList());
             }
             return false;
         } else
