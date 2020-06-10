@@ -144,6 +144,7 @@ class BookingDetailActivity : BaseActivity() {
         })
         binding?.invoiceAdapter = invoiceAdapter
         binding?.feedbackAdapter = feedbackAdapter
+        binding?.batchInvoiceAdapter = batchInvoiceAdapter
     }
 
     /**
