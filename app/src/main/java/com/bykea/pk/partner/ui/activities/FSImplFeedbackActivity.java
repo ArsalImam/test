@@ -342,7 +342,8 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 break;
             }
         }
-        totalCharges = total;
+        if (StringUtils.isNotEmpty(total))
+            totalCharges = total;
         return total;
     }
 

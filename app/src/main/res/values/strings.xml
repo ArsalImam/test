@@ -328,8 +328,8 @@
     </string-array>
     <string-array name="bykea_cash_status_messages">
         <item>\u0020کامیاب ادائیگی\u0020</item>
-        <item>ناكام - ادائیگی مکمل نہیں ہو سکی</item>
-        <item>ناكام - ادائیگی کرنے والا موجود نہیں  ہے</item>
+        <item>\u0020ناكام - ادائیگی مکمل نہیں ہو سکی\u0020</item>
+        <item>\u0020ناكام - ادائیگی کرنے والا موجود نہیں  ہے\u0020</item>
     </string-array>
     <string name="cancel_reason">Please select cancellation reason.</string>
     <string name="amount_cannot_greater">Amount can not be more than %1$s</string>
