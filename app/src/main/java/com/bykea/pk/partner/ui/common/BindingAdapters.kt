@@ -50,7 +50,7 @@ object BindingAdapters {
 
     @BindingAdapter("app:hexTextColor")
     @JvmStatic
-    fun setHexTextColor(textView: TextView, color: String) {
+    fun setHexTextColor(textView: TextView, color: String?) {
         textView.apply {
             setTextColor(if (StringUtils.isNotEmpty(color)) {
                 Color.parseColor(color)
