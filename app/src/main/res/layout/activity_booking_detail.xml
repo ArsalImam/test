@@ -241,46 +241,53 @@
                             app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_1sdp"
-                        android:background="@color/divider" />
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height.large"
-                        android:layout_marginLeft="@dimen/margin.small"
-                        android:layout_marginRight="@dimen/margin.small"
-                        android:gravity="center_vertical"
+                        android:orientation="vertical"
+                        tools:visibility="visible"
                         android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/divider" />
 
-                        <com.bykea.pk.partner.widgets.FontTextView
-                            android:id="@+id/cancelTypeTv"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5"
-                            android:background="@color/windowBackground"
-                            android:gravity="left|center_vertical"
-                            android:text="@{viewModel.bookingDetailData.cancelBy}"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="@dimen/textsize.normal"
-                            app:fontName="roboto_light.ttf" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_marginLeft="@dimen/margin.small"
+                            android:layout_marginRight="@dimen/margin.small"
+                            android:layout_height="@dimen/height.large"
+                            android:gravity="center_vertical"
+                            android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}">
+
+                            <com.bykea.pk.partner.widgets.FontTextView
+                                android:id="@+id/cancelTypeTv"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.5"
+                                android:background="@color/windowBackground"
+                                android:gravity="left|center_vertical"
+                                android:text="@{viewModel.bookingDetailData.cancelBy}"
+                                android:textColor="@color/textColorPrimary"
+                                android:textSize="@dimen/textsize.normal"
+                                app:fontName="roboto_light.ttf" />
 
 
-                        <com.bykea.pk.partner.widgets.FontTextView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@color/windowBackground"
-                            android:gravity="right|center_vertical"
-                            android:paddingRight="@dimen/_4sdp"
-                            android:text="@string/cancel_karne_wala"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="@dimen/textsize.normal"
-                            app:fontName="jameel_noori_nastaleeq.ttf" />
+                            <com.bykea.pk.partner.widgets.FontTextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@color/windowBackground"
+                                android:gravity="right|center_vertical"
+                                android:paddingRight="@dimen/_4sdp"
+                                android:text="@string/cancel_karne_wala"
+                                android:textColor="@color/textColorPrimary"
+                                android:textSize="@dimen/textsize.normal"
+                                app:fontName="jameel_noori_nastaleeq.ttf" />
 
+                        </LinearLayout>
                     </LinearLayout>
+
 
                 </LinearLayout>
 
