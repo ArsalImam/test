@@ -570,7 +570,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                             } else {
                                 Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
                             }
-
                         }
                     };
 
@@ -611,7 +610,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                                     (int) callerRb.getRating(),
                                     Integer.valueOf(receivedAmountEt.getText().toString()),
                                     jobCallback,
-                                    Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                                    getDeliveryFeedback(),
                                     selectedMsgPosition == 0,
                                     null,
                                     etReceiverName.getText().toString(),
@@ -620,7 +619,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         else
                             new UserRepository().requestFeedback(mCurrentActivity, handler,
                                     "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
-                                    , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
+                                    , selectedMsgPosition == 0, getDeliveryFeedback(), etReceiverName.getText().toString(),
                                     etReceiverMobileNo.getText().toString());
                     } else if (isPurchaseType) {
                         if (isLoadboardJob)
@@ -641,6 +640,13 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    private String getDeliveryFeedback() {
+        if (mLastReturnRunBooking) {
+            return getString(R.string.return_run);
+        }
+        return Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition];
     }
 
     private boolean allBookingInCompletedState() {

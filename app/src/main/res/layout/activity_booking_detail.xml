@@ -309,7 +309,7 @@
 
                 <!--app:spanCount="@{viewModel.feedbackSpanCount}"-->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/feedback_recycler_vie-w"
+                    android:id="@+id/feedback_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adapter="@{feedbackAdapter}"
