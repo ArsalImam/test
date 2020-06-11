@@ -146,6 +146,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean mLastReturnRunBooking;
     private ArrayList<Invoice> batchInvoiceList;
 
+    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
+    private NormalCallData callData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -273,8 +276,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
-    private NormalCallData callData;
 
     private void initViews() {
         mCurrentActivity = this;

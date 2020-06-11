@@ -43,13 +43,14 @@
                 android:background="@color/windowBackground"
                 android:gravity="left|center_vertical"
                 android:text="@{item.value}"
-                android:textColor="@color/textColorPrimary"
                 android:textSize="@{item.bold ? @dimen/textsize_large : @dimen/textsize_normal}"
                 android:visibility="@{item.viewType == Constants.BOOKING_DETAIL_VIEW_TYPE_RATING ? View.GONE : View.VISIBLE}"
                 app:fontName="roboto_light.ttf"
+                app:fontType="@{item.fontType}"
                 app:showLineOverText="@{item.strike}"
+                app:hexTextColor="@{item.colour}"
                 tools:text="1.5"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
 
             <RatingBar
                 android:id="@+id/driverRb"

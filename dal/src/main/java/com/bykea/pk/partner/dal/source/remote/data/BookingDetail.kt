@@ -128,7 +128,11 @@ data class Invoice(
         @SerializedName("rateValue")
         val rateValue: Float = 0f,
         @SerializedName("field")
-        val field: String? = null
+        val field: String? = null,
+        @SerializedName("colour")
+        val colour: String? = null,
+        @SerializedName("font_type")
+        val fontType: String? = null
 ) : Parcelable
 
 @Parcelize

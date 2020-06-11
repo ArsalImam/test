@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.ui.common
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.View
@@ -16,6 +17,7 @@ import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.util.SEPERATOR
+import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.*
@@ -43,6 +45,28 @@ object BindingAdapters {
     fun setItems(recyclerView: RecyclerView, list: List<Any>) {
         with(recyclerView.adapter as LastAdapter<Any>) {
             items = ArrayList(list)
+        }
+    }
+
+    @BindingAdapter("app:hexTextColor")
+    @JvmStatic
+    fun setHexTextColor(textView: TextView, color: String) {
+        textView.apply {
+            setTextColor(if (StringUtils.isNotEmpty(color)) {
+                Color.parseColor(color)
+            } else {
+                Color.BLACK
+            })
+        }
+    }
+
+    @BindingAdapter("app:fontType")
+    @JvmStatic
+    fun setFontType(textView: TextView, type: String?) {
+        type?.let {
+            if (type.equals("ur", false))
+                textView.typeface =
+                        FontUtils.getFonts(textView.context, "jameel_noori_nastaleeq.ttf")
         }
     }
 

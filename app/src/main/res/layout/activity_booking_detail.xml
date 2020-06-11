@@ -287,8 +287,6 @@
 
                         </LinearLayout>
                     </LinearLayout>
-
-
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
