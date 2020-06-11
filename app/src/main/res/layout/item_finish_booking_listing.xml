@@ -28,16 +28,29 @@
                 android:gravity="right|center_vertical"
                 android:orientation="horizontal">
 
-                <com.bykea.pk.partner.widgets.FontTextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:gravity="right"
-                    android:text="@{item.bookingCode}"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_15sdp"
-                    app:fontName="open_sans_regular.ttf"
-                    tools:text="asd" />
+                    android:orientation="horizontal">
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="wrap_content" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:gravity="left"
+                        android:text="@{item.bookingCode}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15sdp"
+                        app:fontName="open_sans_regular.ttf"
+                        tools:text="asd" />
+
+                </LinearLayout>
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="0dp"
