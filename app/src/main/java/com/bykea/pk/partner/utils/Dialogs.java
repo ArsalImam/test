@@ -50,6 +50,7 @@ import com.bykea.pk.partner.widgets.FontUtils;
 import com.bykea.pk.partner.widgets.Fonts;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -799,8 +800,41 @@ public enum Dialogs {
         showDialog();
     }
 
-
+    /**
+     * will show change image dialog
+     *
+     * @param context of the activity
+     * @param uri local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
     public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        showChangeImageDialog(context, uri, null, positiveClickListener, negativeClickListener);
+    }
+
+    /**
+     * will show change image dialog
+     *
+     * @param context of the activity
+     * @param uri global image url
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, String uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        showChangeImageDialog(context, null, uri, positiveClickListener, negativeClickListener);
+    }
+
+
+    /**
+     * will show change image dialog
+     *
+     * @param context of the activity
+     * @param url global image url
+     * @param uri local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, File uri, String url, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
@@ -808,12 +842,19 @@ public enum Dialogs {
             ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
             ImageView okIv = mDialog.findViewById(R.id.ivPositive);
             View cancelIv = mDialog.findViewById(R.id.llChangeImage);
-            ivPicture.setImageURI(Uri.fromFile(uri));
+            if (uri != null)
+                ivPicture.setImageURI(Uri.fromFile(uri));
+            else
+                Picasso.get().load(Uri.parse(url));
+
             if (negativeClickListener == null)
-                cancelIv.setOnClickListener(v -> mDialog.dismiss());
+                cancelIv.setVisibility(View.GONE);
             else
                 cancelIv.setOnClickListener(negativeClickListener);
-            okIv.setOnClickListener(positiveClickListener);
+            if (positiveClickListener == null)
+                okIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                okIv.setOnClickListener(positiveClickListener);
             showDialog();
         }
     }

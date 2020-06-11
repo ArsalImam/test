@@ -27,6 +27,10 @@ data class BookingDetail(
         val dropoff: Dropoff?,
         @SerializedName("invoice")
         var invoice: ArrayList<Invoice>?,
+        @SerializedName("batch_invoice")
+        var batchInvoice: ArrayList<Invoice>?,
+        @SerializedName("proof_of_delivery")
+        var proofOfDelivery: String? = null,
         @SerializedName("partner")
         val partner: Partner?,
         @SerializedName("pickup")

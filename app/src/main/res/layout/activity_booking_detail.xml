@@ -21,6 +21,10 @@
             type="com.bykea.pk.partner.ui.common.LastAdapter" />
 
         <variable
+            name="batchInvoiceAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
+
+        <variable
             name="feedbackAdapter"
             type="com.bykea.pk.partner.ui.common.LastAdapter" />
     </data>
@@ -296,9 +300,16 @@
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{batchInvoiceAdapter}"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
                 <!--app:spanCount="@{viewModel.feedbackSpanCount}"-->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/feedback_recycler_view"
+                    android:id="@+id/feedback_recycler_vie-w"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adapter="@{feedbackAdapter}"
