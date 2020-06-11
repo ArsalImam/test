@@ -92,6 +92,11 @@ public class Settings {
     @SerializedName("kronos_get_bookings_by_id")
     private String bookingDetailByIdUrl;
 
+    /**
+     * kronos URL to get booking details by id. if null, will starts the older trip flow
+     */
+    @SerializedName("kronos_partner_batch_invoice")
+    private String batchBookingInvoiceUrl;
 
     /**
      * trip fees percentage taken by bykea
@@ -419,5 +424,13 @@ public class Settings {
         } catch (Exception e) {
             return MAX_BATCH_BOOKING_LIMIT;
         }
+    }
+
+    public String getBatchBookingInvoiceUrl() {
+        return batchBookingInvoiceUrl;
+    }
+
+    public void setBatchBookingInvoiceUrl(String batchBookingInvoiceUrl) {
+        this.batchBookingInvoiceUrl = batchBookingInvoiceUrl;
     }
 }

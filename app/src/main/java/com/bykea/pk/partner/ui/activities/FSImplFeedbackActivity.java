@@ -307,7 +307,8 @@ public class FSImplFeedbackActivity extends BaseActivity {
             if (mLastReturnRunBooking) {
                 tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
                 ivBatchInfo.setVisibility(View.VISIBLE);
-                repo.getReturnRunBatchInvoice("http://52.184.193.109:4600/v1/batch/:id/invoice", batchId, new JobsDataSource.GetInvoiceCallback() {
+                repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
+                        .getSettings().getBatchBookingInvoiceUrl(), batchId, new JobsDataSource.GetInvoiceCallback() {
 
                     @Override
                     public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
