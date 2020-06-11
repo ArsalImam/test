@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
+import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
@@ -132,6 +133,8 @@ public class Settings {
      */
     @SerializedName("partner_temperature_max_limit")
     private String partnerTemperatureMaxLimit;
+    @SerializedName("partner_how_it_works_url")
+    private String howItWorksUrl;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -423,5 +426,13 @@ public class Settings {
      */
     public void setCustomCalculationsAllowForEasyPaisa(boolean customCalculationsAllowForEasyPaisa) {
         isCustomCalculationsAllowForEasyPaisa = customCalculationsAllowForEasyPaisa;
+    }
+
+    public String getHowItWorksUrl() {
+        return StringUtils.isEmpty(howItWorksUrl) ? HOW_IT_WORKS_WEB_URL : howItWorksUrl;
+    }
+
+    public void setHowItWorksUrl(String howItWorksUrl) {
+        this.howItWorksUrl = howItWorksUrl;
     }
 }
