@@ -305,7 +305,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         if (Utils.isNewBatchService(batchServiceCode)) {
             etReceiverName.setHint(R.string.consignees_name);
 
-            if (mLastReturnRunBooking) {
+            boolean hasCodBooking = containsCodBooking();
+
+            if (mLastReturnRunBooking && hasCodBooking) {
                 tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
                 ivBatchInfo.setVisibility(View.VISIBLE);
                 repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
@@ -336,6 +338,13 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }
     }
 
+    private boolean containsCodBooking() {
+        if (Utils.isNewBatchService(batchServiceCode)) return false;
+        for (BatchBooking batchBooking : callData.getBookingList())
+            if (batchBooking.getServiceCode() == Constants.ServiceCode.SEND_COD) return true;
+        return false;
+    }
+
     private String updateTotal(ArrayList<Invoice> invoiceList) {
         String total = StringUtils.EMPTY;
         for (Invoice invoice : invoiceList) {
@@ -344,8 +353,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 break;
             }
         }
-        if (StringUtils.isNotEmpty(total))
+        if (StringUtils.isNotEmpty(total)) {
             totalCharges = total;
+            callData.setTotalFare(totalCharges);
+        }
         return total;
     }
 
@@ -379,8 +390,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
 
         mLastReturnRunBooking = trip.getDisplayTag().equalsIgnoreCase("z");
-
-//        updateFailureDeliveryLabel(null);
     }
 
     private void updateUIforPurcahseService() {
