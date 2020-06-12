@@ -342,7 +342,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean containsCodBooking() {
         if (Utils.isNewBatchService(batchServiceCode)) {
             for (BatchBooking batchBooking : callData.getBookingList())
-                if (batchBooking.getBookingCode().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.SEND_COD)))
+                if (batchBooking.getServiceCode() == Constants.ServiceCode.SEND_COD)
                     return true;
         }
         return false;
