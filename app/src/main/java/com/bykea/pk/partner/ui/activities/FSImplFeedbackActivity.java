@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -148,6 +149,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
     private NormalCallData callData;
+    private DeliveryDetails reRouteDeliveryDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -520,7 +522,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
         switch (v.getId()) {
             case R.id.imageViewAddDelivery:
-                new BatchNaKamiyabDialog(batchId, callData.getTripId(), new BatchNaKamiyabDialog.OnResult() {
+                String tripId = callData.getTripId();
+                if (reRouteDeliveryDetails != null) {
+                    tripId = reRouteDeliveryDetails.getDetails().getTrip_id();
+                }
+                new BatchNaKamiyabDialog(batchId, tripId, new BatchNaKamiyabDialog.OnResult() {
                     @Override
                     public void onReturnRun() {
                         callData.setReturnRun(true);
@@ -864,7 +870,8 @@ public class FSImplFeedbackActivity extends BaseActivity {
             if (resultCode == RESULT_OK) {
                 isRerouteCreated = true;
                 feedbackBtn.setEnabled(true);
-                updateFailureDeliveryLabel(data.getParcelableExtra(DELIVERY_DETAILS_OBJECT));
+                reRouteDeliveryDetails = data.getParcelableExtra(DELIVERY_DETAILS_OBJECT);
+                updateFailureDeliveryLabel(reRouteDeliveryDetails);
             }
         }
     }
