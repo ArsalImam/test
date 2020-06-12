@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -341,9 +340,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
     }
 
     private boolean containsCodBooking() {
-        if (Utils.isNewBatchService(batchServiceCode)) return false;
-        for (BatchBooking batchBooking : callData.getBookingList())
-            if (batchBooking.getServiceCode() == Constants.ServiceCode.SEND_COD) return true;
+        if (Utils.isNewBatchService(batchServiceCode)) {
+            for (BatchBooking batchBooking : callData.getBookingList())
+                if (batchBooking.getBookingCode().equalsIgnoreCase(String.valueOf(Constants.ServiceCode.SEND_COD)))
+                    return true;
+        }
         return false;
     }
 
