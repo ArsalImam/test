@@ -462,7 +462,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
         String[] list;
         if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
-        else if (mLastReturnRunBooking) list = new String[]{getString(R.string.return_run)};
+        else if (mLastReturnRunBooking) list = new String[]{getString(R.string.return_run_spinner)};
         else list = Utils.getDeliveryMsgsList(mCurrentActivity);
 
         final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
@@ -660,7 +660,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private String getDeliveryFeedback() {
         if (mLastReturnRunBooking) {
-            return getString(R.string.return_run);
+            return getString(R.string.return_run_spinner);
         }
         return Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition];
     }
