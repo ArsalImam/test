@@ -25,7 +25,9 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.data.Invoice;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo;
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailsLocationInfoData;
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.source.remote.response.FeedbackInvoiceResponse;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -216,6 +218,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         imageViewAddDelivery.setVisibility(!isKamiyabDelivery ? View.VISIBLE : View.GONE);
         llFailureDelivery.setVisibility(View.GONE);
         feedbackBtn.setEnabled(isKamiyabDelivery);
+        if (reRouteDeliveryDetails != null) {
+            onRerouteCreated(reRouteDeliveryDetails);
+        }
     }
 
     /**
@@ -340,6 +345,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
         } else {
             receivedAmountEt.requestFocus();
         }
+        checkForRerouteUI();
+    }
+
+    private void checkForRerouteUI() {
+//        if (reRouteDeliveryDetails != null) {
+////            spDeliveryStatus.setSelection(selectedMsgPosition);
+////            handleInputInfoForBatch(false);
+////            onRerouteCreated(reRouteDeliveryDetails);
+//        }
     }
 
     private boolean containsCodBooking() {
@@ -387,7 +401,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         }
         callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
-        callData.setTotalFare("0"); //TODO need to get way from server to update this
+        callData.setTotalFare("0"); //this will automatically update through the invoice api
         callData.setTripId(trip.getId());
         callData.setTripNo(trip.getBookingCode());
         callData.setServiceCode(trip.getServiceCode());
@@ -396,6 +410,25 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
 
         mLastReturnRunBooking = trip.getDisplayTag().equalsIgnoreCase("z");
+
+        //checking for reroute
+        if (StringUtils.isNotEmpty(trip.getDropoff().getRerouteBookingId())) {
+            //trip contains reroute
+            for (BatchBooking tripData : bookingResponseList) {
+                //find for routed booking
+                if (trip.getDropoff().getRerouteBookingId().equalsIgnoreCase(tripData.getId())) {
+                    //delivery data is mapping with failed data
+                    DeliveryDetails deliveryDetails = new DeliveryDetails();
+                    deliveryDetails.setDetails(new DeliveryDetailInfo());
+                    deliveryDetails.setDropoff(new DeliveryDetailsLocationInfoData());
+                    deliveryDetails.getDropoff().setZone_dropoff_name_urdu(tripData.getDropoff().getAddress());
+                    deliveryDetails.getDetails().setTrip_id(tripData.getId());
+                    reRouteDeliveryDetails = deliveryDetails;
+                    selectedMsgPosition = AppPreferences.getLastSelectedMsgPosition();
+                    break;
+                }
+            }
+        }
     }
 
     private void updateUIforPurcahseService() {
@@ -489,10 +522,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         }
                     });
                 }
+
+                if (reRouteDeliveryDetails != null && AppPreferences.getLastSelectedMsgPosition() != position) {
+                    spDeliveryStatus.setSelection(AppPreferences.getLastSelectedMsgPosition());
+                    return;
+                }
+                AppPreferences.setLastSelectedMsgPosition(position);
                 selectedMsgPosition = position;
                 updateAdapter();
                 handleInputInfoForBatch(selectedMsgPosition == 0);
-
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
@@ -872,14 +910,18 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         } else if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
             if (resultCode == RESULT_OK) {
-                isRerouteCreated = true;
-                feedbackBtn.setEnabled(true);
-                spDeliveryStatus.setEnabled(false);
-                spDeliveryStatus.setClickable(false);
-                reRouteDeliveryDetails = data.getParcelableExtra(DELIVERY_DETAILS_OBJECT);
-                updateFailureDeliveryLabel(reRouteDeliveryDetails);
+                onRerouteCreated(data.getParcelableExtra(DELIVERY_DETAILS_OBJECT));
             }
         }
+    }
+
+    private void onRerouteCreated(DeliveryDetails data) {
+        isRerouteCreated = true;
+        feedbackBtn.setEnabled(true);
+        spDeliveryStatus.setEnabled(false);
+        spDeliveryStatus.setClickable(false);
+        reRouteDeliveryDetails = data;
+        updateFailureDeliveryLabel(data);
     }
 
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {
