@@ -252,9 +252,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
     void afterTextChanged(Editable editable) {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
+                if (Utils.isNewBatchService(batchServiceCode)) {
+                    return;
+                }
                 if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
-                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
-                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE)
+                        && !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
                     //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
                     setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
                 } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
@@ -312,14 +315,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
                 ivBatchInfo.setVisibility(View.VISIBLE);
                 repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
-                        .getSettings().getBatchBookingInvoiceUrl(), batchId, new JobsDataSource.GetInvoiceCallback() {
+                        .getSettings().getBatchBookingInvoiceUrl(), /*"5ee48b13934f65dfddb5e445"*/batchId, new JobsDataSource.GetInvoiceCallback() {
 
                     @Override
                     public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
                         batchInvoiceList = feedbackInvoiceResponse.getData();
                         Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
                         receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
-                        updateTotal(batchInvoiceList);
+//                        updateTotal(batchInvoiceList);
                     }
 
                     @Override
