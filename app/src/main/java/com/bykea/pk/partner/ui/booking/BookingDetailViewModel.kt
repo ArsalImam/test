@@ -84,14 +84,14 @@ class BookingDetailViewModel
                 SimpleDateFormat(BOOKING_CURRENT_DATE_FORMAT).parse(data.dt).time) <=
                 AppPreferences.getSettings().settings.trip_support_max_days
 
-        if (data.rate?.partner != null) {
+        if (data.rate?.showPartnerRating!! && data.rate?.partner != null) {
             data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
                     StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
                     DriverApp.getContext().getString(R.string.partner_ki_taraf_se_rating),
                     StringUtils.EMPTY_STRING, null, false, Constants.BOOKING_DETAIL_VIEW_TYPE_RATING, data.rate?.customer?.toFloat()!!))
         }
 
-        if (data.rate?.customer != null) {
+        if (data.rate?.showCustomerRating!! && data.rate?.customer != null) {
             data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
                     StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
                     DriverApp.getContext().getString(R.string.customer_ki_taraf_se_rating),

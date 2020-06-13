@@ -315,14 +315,13 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
                 ivBatchInfo.setVisibility(View.VISIBLE);
                 repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
-                        .getSettings().getBatchBookingInvoiceUrl(), /*"5ee48b13934f65dfddb5e445"*/batchId, new JobsDataSource.GetInvoiceCallback() {
+                        .getSettings().getBatchBookingInvoiceUrl(), batchId, new JobsDataSource.GetInvoiceCallback() {
 
                     @Override
                     public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
                         batchInvoiceList = feedbackInvoiceResponse.getData();
                         Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
                         receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
-//                        updateTotal(batchInvoiceList);
                     }
 
                     @Override
