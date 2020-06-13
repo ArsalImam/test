@@ -875,6 +875,8 @@ public class FSImplFeedbackActivity extends BaseActivity {
             if (resultCode == RESULT_OK) {
                 isRerouteCreated = true;
                 feedbackBtn.setEnabled(true);
+                spDeliveryStatus.setEnabled(false);
+                spDeliveryStatus.setClickable(false);
                 reRouteDeliveryDetails = data.getParcelableExtra(DELIVERY_DETAILS_OBJECT);
                 updateFailureDeliveryLabel(reRouteDeliveryDetails);
             }

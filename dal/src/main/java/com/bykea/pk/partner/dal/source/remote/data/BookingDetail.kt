@@ -169,6 +169,10 @@ data class Rate(
         val customer: Double?,
         @SerializedName("partner")
         val partner: Double?,
+        @SerializedName("show_customer_rating")
+        val showCustomerRating: Boolean?,
+        @SerializedName("show_partner_rating")
+        val showPartnerRating: Double?,
         @SerializedName("driver_feedback")
         val driverFeedback: ArrayList<String>?
 ) : Parcelable
