@@ -3605,12 +3605,25 @@ public class Utils {
      */
     public static ArrayList<ChatMessagesTranslated> getAllChatMessageTranslated(Context context) {
         ArrayList<ChatMessagesTranslated> chatMessagesTranslateds = new ArrayList<>();
-        String[] chatMessageInEnglish = Utils.getChatMessageInEnglish(context);
-        String[] chatMessageInUrdu = Utils.getChatMessageInUrdu(context);
 
-        for (int i = 0; i < chatMessageInEnglish.length; i++) {
-            if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
-                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
+        //adding default messages list by default
+        List<String> chatMessageInEnglish = Arrays.asList(Utils.getChatMessageInEnglish(context));
+        List<String> chatMessageInUrdu = Arrays.asList(Utils.getChatMessageInUrdu(context));
+
+        //checking for batch service
+        NormalCallData callData = AppPreferences.getCallData();
+        if (callData != null && isNewBatchService(callData.getServiceCode())) {
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en ));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en));
+            } else {
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_en));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_ur));
+            }
+        }
+        for (int i = 0; i < chatMessageInEnglish.size(); i++) {
+            if (StringUtils.isNotEmpty(chatMessageInEnglish.get(i)) && StringUtils.isNotEmpty(chatMessageInUrdu.get(i)))
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish.get(i), chatMessageInUrdu.get(i)));
         }
         return chatMessagesTranslateds;
     }
