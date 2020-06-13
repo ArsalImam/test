@@ -469,7 +469,7 @@
         <item>Is your location correct?</item>
         <item>I am coming towards the location.</item>
         <item>Explain the route or point to a nearby location.</item>
-        <item> I'm on my way but may be 5 minutes late.</item>
+        <item> I\'m on my way but may be 5 minutes late.</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
