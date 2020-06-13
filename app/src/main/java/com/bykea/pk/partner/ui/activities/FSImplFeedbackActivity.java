@@ -203,7 +203,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 filtered.add(invoice);
             }
         }
-        updateTotal(filtered);
+        if (!(mLastReturnRunBooking && containsCodBooking())) updateTotal(filtered);
         invoiceAdapter.setItems(filtered);
     }
 
@@ -319,6 +319,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         batchInvoiceList = feedbackInvoiceResponse.getData();
                         Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
                         receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
+                        updateTotal(batchInvoiceList);
                     }
 
                     @Override
