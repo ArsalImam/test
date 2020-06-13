@@ -3613,10 +3613,13 @@ public class Utils {
         //checking for batch service
         NormalCallData callData = AppPreferences.getCallData();
         if (callData != null && isNewBatchService(callData.getServiceCode())) {
+            //messages for pre arrive condition
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
                 chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en ));
                 chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en));
-            } else {
+            }
+            //messages for post arrive condition
+            else {
                 chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_en));
                 chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_ur));
             }
