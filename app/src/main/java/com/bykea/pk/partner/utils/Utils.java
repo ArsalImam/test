@@ -3615,8 +3615,8 @@ public class Utils {
         if (callData != null && isNewBatchService(callData.getServiceCode())) {
             //messages for pre arrive condition
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
-                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en ));
-                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en));
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_ur));
             }
             //messages for post arrive condition
             else {
