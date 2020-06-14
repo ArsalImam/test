@@ -444,6 +444,34 @@
         <item>I have arrived</item>
     </string-array>
 
+    <string-array name="batch_started_messages_ur">
+        <item>\u0020میں لوکیشن پر پہنچ گیا ہوں\u0020</item>
+        <item>\u0020براۓ مہربانی مجھے کال کریں۔\u0020</item>
+        <item>\u0020براۓ مہربانی وصول کرنے والے کو اطلاع دے دیں۔\u0020</item>
+        <item>\u0020لوکیشن واٹس ایپ کر سکتے ہین؟\u0020</item>
+    </string-array>
+
+    <string-array name="batch_started_messages_en">
+        <item>I have arrived at the location.</item>
+        <item>Please call me.</item>
+        <item>Please inform the consignee.</item>
+        <item>Can you send me the location on WhatsApp</item>
+    </string-array>
+
+    <string-array name="batch_pre_arrive_messages_ur">
+        <item>\u0020آپ کی لوکیشن صحیح ڈلی ہوئ ہے؟\u0020</item>
+        <item>\u0020میں آپ کی طرف آ رہا ہوں۔\u0020</item>
+        <item>\u0020راستہ سمجھا دیں یا نزدیک کوئ جگہ بتا دیں۔\u0020</item>
+        <item>\u0020میں راستہ میں ہوں لیکن 5 منٹ لیٹ ہو سکتا ہوں۔\u0020</item>
+    </string-array>
+
+    <string-array name="batch_pre_arrive_messages_en">
+        <item>Is your location correct?</item>
+        <item>I am coming towards the location.</item>
+        <item>Explain the route or point to a nearby location.</item>
+        <item> I\'m on my way but may be 5 minutes late.</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
 
     <string name="offline_rides_en">Offline Rides</string>
