@@ -250,7 +250,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     public static boolean isJobActivityLive = false;
 
-
     private BookingActivity mCurrentActivity;
     private NormalCallData callData;
     JobsRepository jobsRepo;
@@ -319,7 +318,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 }
                                 return;
                             }
-
                             Dialogs.INSTANCE.dismissDialog();
 
                             AppPreferences.setTripAcceptTime(System.currentTimeMillis());
@@ -744,6 +742,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onResume() {
         Utils.redLog(TAG, "onResume called: " + allowTripStatusCall);
         mapView.onResume();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
@@ -1797,7 +1796,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (null == driverMarker) {
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                         Utils.getMapIcon(callData.getCallType())))
-                            .position(new LatLng(Double.parseDouble(snappedLatitude),
+                        .position(new LatLng(Double.parseDouble(snappedLatitude),
                                 Double.parseDouble(snappedLongitude)))/*.flat(true).rotation(Float.parseFloat(mLocBearing))*/);
             }
 
