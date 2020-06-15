@@ -250,7 +250,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     public static boolean isJobActivityLive = false;
 
-
     private BookingActivity mCurrentActivity;
     private NormalCallData callData;
     JobsRepository jobsRepo;
@@ -319,7 +318,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                 }
                                 return;
                             }
-
                             Dialogs.INSTANCE.dismissDialog();
 
                             AppPreferences.setTripAcceptTime(System.currentTimeMillis());
@@ -744,6 +742,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onResume() {
         Utils.redLog(TAG, "onResume called: " + allowTripStatusCall);
         mapView.onResume();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
@@ -1055,7 +1054,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                                 //allowing partner to perform top up only one time if
                                                 //he is in a ride service other than batch
                                                 AppPreferences.setTopUpPassengerWalletAllowed(Utils.isNewBatchService(callData.getServiceCode()));
-                                                ivTopUp.setVisibility(View.INVISIBLE);
+//                                                ivTopUp.setVisibility(View.INVISIBLE);
                                                 Dialogs.INSTANCE.dismissDialog();
                                                 Utils.appToast(response.getMessage());
                                                 if (response.getData() != null) {
@@ -1565,8 +1564,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void showWalletAmount() {
         tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
         if ((Utils.isDeliveryService(callData.getCallType()) || Utils.isCourierService(callData.getCallType()) || Utils.isNewBatchService(callData.getServiceCode()))
-                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus()) &&
-                AppPreferences.isTopUpPassengerWalletAllowed()) {
+                && TripStatus.ON_ARRIVED_TRIP.equalsIgnoreCase(callData.getStatus()) /*&&
+                AppPreferences.isTopUpPassengerWalletAllowed()*/) {
             ivTopUp.setVisibility(View.VISIBLE);
         } else {
             ivTopUp.setVisibility(View.INVISIBLE);
@@ -1583,13 +1582,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
-                if (callData.getServiceCode() != null &&
-                        callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
-                        callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
-                    if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
-                        cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
-                    } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
-                        cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                if (AppPreferences.getSettings().getSettings().isCustomCalculationsAllowForEasyPaisa()
+                        && callData.getCreator_type().equalsIgnoreCase(Constants.API)) {
+                    if (callData.getServiceCode() != null &&
+                            callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
+                            callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
+                        if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
+                            cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
+                        } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
+                            cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                        }
                     }
                 }
             }
@@ -1612,7 +1614,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             tvFareAmount.setText(R.string.dash);
         }
-        updateWalletColor();
+        if (!callData.isDetectWallet()) tvCodAmount.setText(tvFareAmount.getText().toString());
     }
 
     private void updateWalletColor() {
@@ -1631,7 +1633,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void showDropOffPersonInfo() {
@@ -1797,7 +1798,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             if (null == driverMarker) {
                 driverMarker = mGoogleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(
                         Utils.getMapIcon(callData.getCallType())))
-                            .position(new LatLng(Double.parseDouble(snappedLatitude),
+                        .position(new LatLng(Double.parseDouble(snappedLatitude),
                                 Double.parseDouble(snappedLongitude)))/*.flat(true).rotation(Float.parseFloat(mLocBearing))*/);
             }
 

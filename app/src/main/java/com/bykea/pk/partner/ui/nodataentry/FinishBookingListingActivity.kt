@@ -2,6 +2,7 @@ package com.bykea.pk.partner.ui.nodataentry
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -198,7 +199,10 @@ class FinishBookingListingActivity : BaseActivity() {
         map_toolbar.apply {
             title = StringUtils.EMPTY_STRING
             subtitle = StringUtils.EMPTY_STRING
-            findViewById<TextView>(R.id.title).text = intent.getStringExtra(EXTRA_TITLE)
+        }
+        map_toolbar.findViewById<TextView>(R.id.title).apply {
+            text = intent.getStringExtra(EXTRA_TITLE)
+            setTextColor(Color.BLACK)
         }
     }
 

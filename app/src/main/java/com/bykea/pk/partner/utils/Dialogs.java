@@ -50,6 +50,7 @@ import com.bykea.pk.partner.widgets.FontUtils;
 import com.bykea.pk.partner.widgets.Fonts;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,9 +83,13 @@ public enum Dialogs {
     }
 
     public void dismissDialog() {
+        dismissDialog(mDialog);
+    }
+
+    public void dismissDialog(Dialog dialog) {
         try {
-            if (null != mDialog && isShowing()) {
-                mDialog.dismiss();
+            if (null != dialog && dialog.isShowing()) {
+                dialog.dismiss();
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -106,9 +111,13 @@ public enum Dialogs {
     }
 
     private void showDialog() {
+        showDialog(mDialog);
+    }
+
+    private void showDialog(Dialog dialog) {
         try {
             if (!isShowing()) {
-                mDialog.show();
+                dialog.show();
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -690,27 +699,23 @@ public enum Dialogs {
     public void showLocationSettings(final Context context, final int requestCode) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
-            mDialog = new Dialog(context, R.style.actionSheetTheme);
-            mDialog.setContentView(R.layout.enable_gps_dialog);
+            Dialog dialog = new Dialog(context, R.style.actionSheetTheme);
+            dialog.setContentView(R.layout.enable_gps_dialog);
 
-            ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+            ImageView okIv = dialog.findViewById(R.id.ivPositive);
 
-            okIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (context instanceof BaseActivity) {
-                        dismissDialog();
-                        ((BaseActivity) context).showLocationDialog();
-                    } else {
-                        dismissDialog();
-                        Intent intent = new Intent(
-                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
-                    }
-
+            okIv.setOnClickListener(v -> {
+                if (context instanceof BaseActivity) {
+                    dismissDialog(dialog);
+                    ((BaseActivity) context).showLocationDialog();
+                } else {
+                    dismissDialog(dialog);
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
                 }
             });
-            showDialog();
+            showDialog(dialog);
         }
     }
 
@@ -799,8 +804,41 @@ public enum Dialogs {
         showDialog();
     }
 
-
+    /**
+     * will show change image dialog
+     *
+     * @param context               of the activity
+     * @param uri                   local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
     public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        showChangeImageDialog(context, uri, null, positiveClickListener, negativeClickListener);
+    }
+
+    /**
+     * will show change image dialog
+     *
+     * @param context               of the activity
+     * @param uri                   global image url
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, String uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        showChangeImageDialog(context, null, uri, positiveClickListener, negativeClickListener);
+    }
+
+
+    /**
+     * will show change image dialog
+     *
+     * @param context               of the activity
+     * @param url                   global image url
+     * @param uri                   local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, File uri, String url, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
             mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
@@ -808,12 +846,19 @@ public enum Dialogs {
             ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
             ImageView okIv = mDialog.findViewById(R.id.ivPositive);
             View cancelIv = mDialog.findViewById(R.id.llChangeImage);
-            ivPicture.setImageURI(Uri.fromFile(uri));
+            if (uri != null)
+                ivPicture.setImageURI(Uri.fromFile(uri));
+            else
+                Picasso.get().load(Uri.parse(url)).into(ivPicture);
+
             if (negativeClickListener == null)
-                cancelIv.setOnClickListener(v -> mDialog.dismiss());
+                cancelIv.setVisibility(View.GONE);
             else
                 cancelIv.setOnClickListener(negativeClickListener);
-            okIv.setOnClickListener(positiveClickListener);
+            if (positiveClickListener == null)
+                okIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                okIv.setOnClickListener(positiveClickListener);
             showDialog();
         }
     }

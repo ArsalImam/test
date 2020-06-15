@@ -101,6 +101,7 @@ public class Constants {
     public static final int OFFSET_FOR_SINGLE_LINE = 37;
     public static final String IOS = "IOS";
     public static final String PLUS = "+";
+    public static final String API = "API";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";

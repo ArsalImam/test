@@ -18,6 +18,9 @@ public class BatchBookingDropoff {
     @SerializedName("gps_address")
     @Expose
     private String gpsAddress;
+    @SerializedName("reroute_booking_id")
+    @Expose
+    private String rerouteBookingId;
 
     public double getLat() {
         return lat;
@@ -49,5 +52,13 @@ public class BatchBookingDropoff {
 
     public void setGpsAddress(String gpsAddress) {
         this.gpsAddress = gpsAddress;
+    }
+
+    public String getRerouteBookingId() {
+        return rerouteBookingId;
+    }
+
+    public void setRerouteBookingId(String rerouteBookingId) {
+        this.rerouteBookingId = rerouteBookingId;
     }
 }

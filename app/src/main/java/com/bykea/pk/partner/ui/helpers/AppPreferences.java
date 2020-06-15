@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -1656,5 +1657,15 @@ public class AppPreferences {
                 .edit()
                 .putLong(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT, value)
                 .apply();
+    }
+
+    public static void setLastSelectedMsgPosition(int position) {
+        mSharedPreferences
+                .edit()
+                .putInt(Keys.LAST_SELECTED_MSG_POSITION, position)
+                .apply();
+    }
+    public static int getLastSelectedMsgPosition() {
+        return mSharedPreferences.getInt(Keys.LAST_SELECTED_MSG_POSITION, DIGIT_ZERO);
     }
 }
