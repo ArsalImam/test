@@ -209,7 +209,8 @@
                         android:paddingTop="@dimen/_2sdp"
                         android:paddingRight="@dimen/_5sdp"
                         android:paddingBottom="@dimen/_2sdp"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <ImageView
                             android:layout_width="20dp"
@@ -235,10 +236,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@null"
-                                android:digits="@string/alphabets"
                                 android:hint="@string/enter_sender_name_hint"
                                 android:inputType="text"
-                                android:maxLength="24"
+                                android:maxLength="250"
                                 android:paddingTop="@dimen/_4sdp"
                                 android:textColor="@color/black"
                                 android:textColorHint="@drawable/hint_color_unselected"

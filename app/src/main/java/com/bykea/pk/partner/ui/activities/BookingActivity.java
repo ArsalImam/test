@@ -1582,13 +1582,16 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             int cashKiWasooliValue = callData.getCashKiWasooli();
             if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashJob)) {
                 cashKiWasooliValue = cashKiWasooliValue + Integer.valueOf(callData.getCodAmountNotFormatted().trim());
-                if (callData.getServiceCode() != null &&
-                        callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
-                        callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
-                    if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
-                        cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
-                    } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
-                        cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                if (AppPreferences.getSettings().getSettings().isCustomCalculationsAllowForEasyPaisa()
+                        && callData.getCreator_type().equalsIgnoreCase(Constants.API)) {
+                    if (callData.getServiceCode() != null &&
+                            callData.getServiceCode() == Constants.ServiceCode.MOBILE_WALLET &&
+                            callData.getActualPassWallet() > NumberUtils.INTEGER_ZERO) {
+                        if (callData.getActualPassWallet() < callData.getKraiKiKamai()) {
+                            cashKiWasooliValue = cashKiWasooliValue + callData.getActualPassWallet();
+                        } else if (callData.getActualPassWallet() >= callData.getKraiKiKamai()) {
+                            cashKiWasooliValue = cashKiWasooliValue + callData.getKraiKiKamai();
+                        }
                     }
                 }
             }
@@ -1611,7 +1614,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } else {
             tvFareAmount.setText(R.string.dash);
         }
-        updateWalletColor();
+        if (!callData.isDetectWallet()) tvCodAmount.setText(tvFareAmount.getText().toString());
     }
 
     private void updateWalletColor() {
@@ -1630,7 +1633,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void showDropOffPersonInfo() {
