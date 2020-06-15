@@ -842,6 +842,10 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Set custom title for toolbar in urdu and hide the english title
+     * @param urdu
+     */
     protected void setTitleCustomToolbarUrdu(String urdu) {
         FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
         FontTextView tvTitle = (FontTextView) findViewById(R.id.tvTitle);

@@ -42,6 +42,9 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * This activity is being used to add or update the batch booking.
+ */
 class AddEditDeliveryDetailsActivity : BaseActivity() {
     lateinit var binding: ActivityAddEditDeliveryDetailsBinding
     lateinit var viewModel: AddEditDeliveryDetailsViewModel
