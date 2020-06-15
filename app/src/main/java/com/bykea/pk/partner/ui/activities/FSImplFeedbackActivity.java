@@ -559,12 +559,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         totalCharges = callData.getTotalFare();
                         isJobSuccessful = false;
                     }
-
-                    if (isProofRequired() && selectedMsgPosition == 0) {
-                        ivTakeImage.setVisibility(View.VISIBLE);
-                    } else {
-                        ivTakeImage.setVisibility(View.GONE);
-                    }
+                }
+                if (isProofRequired() && selectedMsgPosition == 0) {
+                    ivTakeImage.setVisibility(View.VISIBLE);
+                } else {
+                    ivTakeImage.setVisibility(View.GONE);
                 }
             }
 
