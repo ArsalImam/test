@@ -44,7 +44,7 @@ class ListDeliveryDetailsActivity : BaseActivity() {
             passengerWalletUpdated.observe(this@ListDeliveryDetailsActivity, Observer {
                 if (it) {
                     viewModel.passengerWalletUpdated.value = false
-                    ivTopUp.visibility = View.INVISIBLE
+//                    ivTopUp.visibility = View.INVISIBLE
                     setPassengerWallet()
                 }
             })
@@ -161,8 +161,8 @@ class ListDeliveryDetailsActivity : BaseActivity() {
     private fun setVisibilityForTopUp() {
         viewModel.callData.value?.serviceCode?.let {
             if ((Utils.isNewBatchService(it)) &&
-                    TripStatus.ON_ARRIVED_TRIP.equals(viewModel.callData.value?.status, ignoreCase = true) &&
-                    AppPreferences.isTopUpPassengerWalletAllowed()) {
+                    ON_ARRIVED_TRIP.equals(viewModel.callData.value?.status, ignoreCase = true)/* &&
+                    AppPreferences.isTopUpPassengerWalletAllowed()*/) {
                 ivTopUp.visibility = View.VISIBLE
             } else {
                 ivTopUp.visibility = View.INVISIBLE
