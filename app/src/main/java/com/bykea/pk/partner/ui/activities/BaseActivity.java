@@ -618,13 +618,15 @@ public class BaseActivity extends AppCompatActivity {
     public void showRightIcon(@DrawableRes int drawable, @ColorRes int color, final View.OnClickListener onClick) {
         if (null != rightIv) {
             rightIv.setVisibility(View.VISIBLE);
-
-            if (color != NumberUtils.INTEGER_ZERO)
-                rightIv.setColorFilter(ContextCompat.getColor(BaseActivity.this, color),
-                        android.graphics.PorterDuff.Mode.MULTIPLY);
+            statusLayout.setVisibility(View.VISIBLE);
 
             rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, drawable));
             rightIv.setPadding(5, 5, 5, 5);
+
+            if (color != NumberUtils.INTEGER_ZERO)
+                rightIv.setColorFilter(ContextCompat.getColor(BaseActivity.this, color),
+                        android.graphics.PorterDuff.Mode.SRC_IN);
+
             rightIv.setOnClickListener(onClick);
         }
     }

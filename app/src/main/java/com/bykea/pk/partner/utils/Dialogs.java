@@ -849,7 +849,7 @@ public enum Dialogs {
             if (uri != null)
                 ivPicture.setImageURI(Uri.fromFile(uri));
             else
-                Picasso.get().load(Uri.parse(url));
+                Picasso.get().load(Uri.parse(url)).into(ivPicture);
 
             if (negativeClickListener == null)
                 cancelIv.setVisibility(View.GONE);
