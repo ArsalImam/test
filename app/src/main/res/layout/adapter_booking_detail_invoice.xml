@@ -50,6 +50,7 @@
                 app:showLineOverText="@{item.strike}"
                 app:hexTextColor="@{item.colour}"
                 tools:text="1.5"
+                android:textDirection="ltr"
                 tools:visibility="visible" />
 
             <RatingBar
