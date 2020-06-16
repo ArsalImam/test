@@ -5,17 +5,16 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
+import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.MAX_BATCH_BOOKING_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
-import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
 
@@ -138,6 +137,8 @@ public class Settings {
      */
     @SerializedName("partner_temperature_max_limit")
     private String partnerTemperatureMaxLimit;
+    @SerializedName("partner_how_it_works_url")
+    private String howItWorksUrl;
 
     /**
      * Max Batch Booking Limit
@@ -438,6 +439,7 @@ public class Settings {
     public void setBatchBookingInvoiceUrl(String batchBookingInvoiceUrl) {
         this.batchBookingInvoiceUrl = batchBookingInvoiceUrl;
     }
+
     /**
      * this key will manage whether calculations for easy paisa needs to be run on client or server side
      */
@@ -450,5 +452,13 @@ public class Settings {
      */
     public void setCustomCalculationsAllowForEasyPaisa(boolean customCalculationsAllowForEasyPaisa) {
         isCustomCalculationsAllowForEasyPaisa = customCalculationsAllowForEasyPaisa;
+    }
+
+    public String getHowItWorksUrl() {
+        return StringUtils.isEmpty(howItWorksUrl) ? HOW_IT_WORKS_WEB_URL : howItWorksUrl;
+    }
+
+    public void setHowItWorksUrl(String howItWorksUrl) {
+        this.howItWorksUrl = howItWorksUrl;
     }
 }
