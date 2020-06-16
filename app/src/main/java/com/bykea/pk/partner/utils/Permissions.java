@@ -1,13 +1,18 @@
 package com.bykea.pk.partner.utils;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bykea.pk.partner.DriverApp;
 
 
 @TargetApi(23)
@@ -124,5 +129,15 @@ public class Permissions {
 
     public static boolean hasPermission(Context context, String permission) {
         return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(context, permission);
+    }
+
+    /**
+     * This method checks if app has Audio Permissions or not
+     *
+     * @return true if app has permissions and false if it doesn't
+     */
+    public static boolean hasAudioPermissions() {
+        return ActivityCompat.checkSelfPermission(DriverApp.getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(DriverApp.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 }
