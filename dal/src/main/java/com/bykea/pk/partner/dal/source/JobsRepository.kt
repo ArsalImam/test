@@ -7,7 +7,8 @@ import com.bykea.pk.partner.dal.source.local.JobsLocalDataSource
 import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.JobsRemoteDataSource
 import com.bykea.pk.partner.dal.source.remote.request.*
-import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.*
@@ -133,12 +134,24 @@ class JobsRepository(
         jobsRemoteDataSource.arrivedAtJob(jobId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
+    override fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, callback: JobsDataSource.ArrivedAtJobCallback) {
+        jobsRemoteDataSource.arrivedAtJobForBatch(batchId, route, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
     override fun startJob(jobId: String, address: String, callback: JobsDataSource.StartJobCallback) {
         jobsRemoteDataSource.startJob(jobId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
     }
 
+    override fun startJobForBatch(batchId: String, address: String, callback: JobsDataSource.StartJobCallback) {
+        jobsRemoteDataSource.startJobForBatch(batchId, address, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
     override fun cancelJob(jobId: String, reason: String, callback: JobsDataSource.CancelJobCallback) {
         jobsRemoteDataSource.cancelJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
+    }
+
+    override fun cancelJobForBatch(jobId: String, reason: String, callback: JobsDataSource.CancelJobCallback) {
+        jobsRemoteDataSource.cancelJobForBatch(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), reason, callback)
     }
 
     override fun finishJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, endAddress: String?, callback: JobsDataSource.FinishJobCallback) {
@@ -162,6 +175,10 @@ class JobsRepository(
     override fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String, serviceCode: Int, callback: JobsDataSource.FareEstimationCallback) {
         jobsRemoteDataSource.requestFairEstimation(AppPref.getDriverId(pref), AppPref.getAccessToken(pref),
                 startLat, startLng, endLat, endLng, serviceCode, callback)
+    }
+
+    override fun updateBatchReturnRun(batchID: String, batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest, callback: JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse>) {
+        jobsRemoteDataSource.updateBatchReturnRun(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, batchUpdateReturnRunRequest, callback)
     }
 
     override fun requestOtpGenerate(phone: String, type: String, callback: JobsDataSource.OtpGenerateCallback) {
@@ -191,6 +208,10 @@ class JobsRepository(
      */
     override fun getInvoiceDetails(invoiceUrl: String, bookingId: String, callback: JobsDataSource.GetInvoiceCallback) {
         jobsRemoteDataSource.getInvoiceDetails(invoiceUrl.replace(BOOKING_ID_TO_REPLACE, bookingId), callback)
+    }
+
+    override fun getReturnRunBatchInvoice(batchInvoiceUrl: String, batchID: String, callback: JobsDataSource.GetInvoiceCallback) {
+        jobsRemoteDataSource.getReturnRunBatchInvoice(batchInvoiceUrl.replace(BOOKING_ID_TO_REPLACE, batchID), callback)
     }
 
     private fun getJobFromRemote(jobRequestId: Long, callback: JobsDataSource.GetJobRequestCallback) {
@@ -267,12 +288,17 @@ class JobsRepository(
         jobsRemoteDataSource.getAllDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, callback)
     }
 
-    override fun addDeliveryDetail(batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
-        jobsRemoteDataSource.addDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, deliveryDetailAddEditRequest, callback)
+    override fun getSingleBatchDeliveryDetails(batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailSingleTripResponse>) {
+        jobsRemoteDataSource.getSingleBatchDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, callback)
     }
 
-    override fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
-        jobsRemoteDataSource.updateDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, deliveryDetailAddEditRequest, callback)
+    override fun addDeliveryDetail(batchID: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        jobsRemoteDataSource.addDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, deliveryDetails, callback)
+    }
+
+
+    override fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        jobsRemoteDataSource.updateDeliveryDetails(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, bookingId, deliveryDetails, callback)
     }
 
     override fun removeDeliveryDetail(batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse>) {
@@ -282,6 +308,7 @@ class JobsRepository(
     override fun topUpPassengerWallet(batchID: String, amount: String, passengerId: String, callback: JobsDataSource.LoadDataCallback<TopUpPassengerWalletResponse>) {
         jobsRemoteDataSource.topUpPassengerWallet(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, amount, passengerId, callback)
     }
+
 
     companion object {
 

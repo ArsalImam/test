@@ -9,6 +9,7 @@ const val DRIVER_ID = "DRIVER_ID"
 const val ACCESS_TOKEN = "ACCESS_TOKEN"
 const val EMPTY_STRING = ""
 const val SERVICE_CODE_SEND = 21
+const val PARTNER_ANDROID = "PARTNER_ANDROID"
 
 val OTP_SMS = "sms"
 val OTP_CALL = "call"
@@ -42,7 +43,9 @@ val BOOKING_LIST_REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a"
 val BOOKING_ID_TO_REPLACE = ":id"
 
 val LABEL_NOT_AVAILABLE = "N/A"
+val NEGATIVE_DIGIT_ONE = -1
 val DIGIT_ZERO = 0
+val DIGIT_TWENTY = 20
 
 
 object RequestParams {

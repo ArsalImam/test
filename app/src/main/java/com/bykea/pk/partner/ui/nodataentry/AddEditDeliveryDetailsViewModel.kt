@@ -3,15 +3,17 @@ package com.bykea.pk.partner.ui.nodataentry
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
-import com.bykea.pk.partner.dal.source.pref.AppPref
-import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
+import com.bykea.pk.partner.dal.source.remote.response.BaseResponseError
 import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailAddEditResponse
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.models.response.NormalCallData
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants.ApiError.*
+import com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE
 import com.bykea.pk.partner.utils.Dialogs
 
 
@@ -20,7 +22,9 @@ import com.bykea.pk.partner.utils.Dialogs
  */
 class AddEditDeliveryDetailsViewModel : ViewModel() {
 
-    val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
+    var failedBookingId: String? = null
+
+    private val jobRespository: JobsRepository = Injection.provideJobsRepository(DriverApp.getContext())
 
     private var _deliveryDetails = MutableLiveData<DeliveryDetails>()
     val deliveryDetails: MutableLiveData<DeliveryDetails>
@@ -34,6 +38,18 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     val callData: MutableLiveData<NormalCallData>
         get() = _callData
 
+    private var _isCashLimitLow = MutableLiveData<Boolean>().apply { value = false }
+    val isCashLimitLow: MutableLiveData<Boolean>
+        get() = _isCashLimitLow
+
+    private var _isCashLimitLeftValue = MutableLiveData<Int>().apply { value = NEGATIVE_DIGIT_ONE }
+    val isCashLimitLeftValue: MutableLiveData<Int>
+        get() = _isCashLimitLeftValue
+
+    private var _isCustomerWalletTopUpRequired = MutableLiveData<Boolean>().apply { value = false }
+    val isCustomerWalletTopUpRequired: MutableLiveData<Boolean>
+        get() = _isCustomerWalletTopUpRequired
+
     /**
      * Get active trip from shared preferences
      */
@@ -44,18 +60,21 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     /**
      * Request add delivery detail item in list
      */
-    fun requestAddDeliveryDetails() {
-        val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
-        jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetailAddRequest,
+    fun requestAddDeliveryDetails(deliveryDetails: DeliveryDetails) {
+        failedBookingId?.let {
+            deliveryDetails.meta?.failed_booking_id = it
+        }
+        jobRespository.addDeliveryDetail(callData.value?.tripId.toString(), deliveryDetails,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _deliveryDetails.value = response.data
                         _isAddedOrUpdatedSuccessful.value = true
                         Dialogs.INSTANCE.dismissDialog()
                     }
 
-                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
-                        Dialogs.INSTANCE.showToast(reasonMsg)
+                    override fun onDataNotAvailable(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
+                        deliveryAddEditCodeSubCodeHandling(errorCode, errorBody, reasonMsg)
                     }
                 })
     }
@@ -63,19 +82,47 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
     /**
      * Request update delivery detail item in list
      */
-    fun requestEditDeliveryDetail() {
-        val deliveryDetailAddRequest = DeliveryDetailAddEditRequest()
+    fun requestEditDeliveryDetail(deliveryDetails: DeliveryDetails) {
         jobRespository.updateDeliveryDetail(callData.value?.tripId.toString(),
-                _deliveryDetails.value?.details?.trip_id.toString(), deliveryDetailAddRequest,
+                _deliveryDetails.value?.details?.trip_id.toString(), deliveryDetails,
                 object : JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse> {
                     override fun onDataLoaded(response: DeliveryDetailAddEditResponse) {
+                        _deliveryDetails.value = response.data
                         _isAddedOrUpdatedSuccessful.value = true
                         Dialogs.INSTANCE.dismissDialog()
                     }
 
-                    override fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+                    override fun onDataNotAvailable(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
+                        deliveryAddEditCodeSubCodeHandling(errorCode, errorBody, reasonMsg)
                     }
                 })
+    }
+
+    private fun deliveryAddEditCodeSubCodeHandling(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
+        if (errorCode == BUSINESS_LOGIC_ERROR) {
+            errorBody?.let {
+                it.subcode?.let { subCode ->
+                    when (subCode) {
+                        WALLET_EXCEED_THRESHOLD -> {
+                            _isCashLimitLeftValue.value = errorBody.remaining_limit
+                            _isCashLimitLow.value = true
+                        }
+                        INSUFFIECIENT_PASSENGER_WALLET -> {
+                            _isCustomerWalletTopUpRequired.value = true
+                        }
+                        else -> {
+                            Dialogs.INSTANCE.showToast(reasonMsg)
+                        }
+                    }
+                } ?: run {
+                    Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+                }
+            } ?: run {
+                Dialogs.INSTANCE.showToast(reasonMsg)
+            }
+        } else {
+            Dialogs.INSTANCE.showToast(reasonMsg)
+        }
     }
 }

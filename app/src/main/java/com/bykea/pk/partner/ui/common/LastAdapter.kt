@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.common
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -26,11 +27,11 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
     interface OnItemClickListener<T> {
         fun onItemClick(item: T)
         @JvmDefault
-        fun onSubItemOneClick(item: T) {
+        fun onSubItemOneClick(view: View, item: T) {
         }
 
         @JvmDefault
-        fun onSubItemTwoClick(item: T) {
+        fun onSubItemTwoClick(view: View, item: T) {
         }
 
         @JvmDefault
@@ -85,9 +86,7 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
     }
 
     fun addItem(item: T) {
-        if (!items.isNullOrEmpty()) {
-            items.add(item)
-        }
+        items.add(item)
         notifyDataSetChanged()
     }
 }

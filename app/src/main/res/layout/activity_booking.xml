@@ -38,6 +38,7 @@
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_6sdp"
                         android:layout_marginRight="@dimen/_8sdp"
+                        android:id="@+id/rLPWalletAmount"
                         android:background="@color/blue_light"
                         android:paddingLeft="@dimen/_5sdp"
                         android:paddingTop="@dimen/_5sdp"
@@ -67,6 +68,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
+                            android:id="@+id/tvPWalletAmountLabel"
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginLeft="@dimen/_8sdp"
                             android:gravity="end|center"
@@ -332,7 +334,7 @@
                         android:layout_height="@dimen/_36sdp"
                         android:padding="@dimen/_3sdp"
                         android:visibility="visible"
-                        app:srcCompat="@drawable/ic_chat_msg" />
+                        app:srcCompat="@drawable/ic_call_icon" />
 
                     <TextView
                         android:id="@+id/cartBadge"

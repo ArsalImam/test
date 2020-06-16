@@ -9,7 +9,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 
 /**
  * Created by Sibtain Raza on 5/11/2020.
- * smsibtainrn@gmail.com
  */
 class ViewDeliveryDetailViewsModel : ViewModel() {
 

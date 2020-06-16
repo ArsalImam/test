@@ -39,9 +39,15 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"/>
-        <activity android:name=".ui.nodataentry.ListDeliveryDetailsActivity" />
-        <activity android:name=".ui.nodataentry.ViewDeliveryDetailsActivity"/>
+        <activity
+            android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.nodataentry.ListDeliveryDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.nodataentry.ViewDeliveryDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -258,6 +264,9 @@
             android:exported="true" />
         <activity
             android:name=".ui.activities.MapDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.nodataentry.FinishBookingListingActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.ShahkarActivity"

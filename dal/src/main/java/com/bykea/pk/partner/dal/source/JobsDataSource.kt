@@ -5,6 +5,8 @@ import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 
@@ -95,6 +97,13 @@ interface JobsDataSource {
     fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
 
     /**
+     * Requests arrived at job
+     * @param jobId Job ID
+     * @param callback ArrivedAtJobCallback
+     */
+    fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
+
+    /**
      * Requests start job
      * @param jobId Job ID
      * @param address Address at which started the job
@@ -103,12 +112,28 @@ interface JobsDataSource {
     fun startJob(jobId: String, address: String, callback: StartJobCallback)
 
     /**
+     * Requests start job
+     * @param jobId Job ID
+     * @param address Address at which started the job
+     * @param callback StartJobCallback
+     */
+    fun startJobForBatch(batchId: String, address: String, callback: StartJobCallback)
+
+    /**
      * Requests to cancel job
      * @param jobId String
      * @param reason String
      * @param callback CancelJobCallback
      */
     fun cancelJob(jobId: String, reason: String, callback: CancelJobCallback)
+
+    /**
+     * Requests to cancel job
+     * @param jobId String
+     * @param reason String
+     * @param callback CancelJobCallback
+     */
+    fun cancelJobForBatch(jobId: String, reason: String, callback: CancelJobCallback)
 
     /**
      * Requests to finish job
@@ -476,16 +501,33 @@ interface JobsDataSource {
         fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
 
         }
+
+        @JvmDefault
+        fun onDataNotAvailable(errorCode: Int, subCode: Int?, reasonMsg: String) {
+
+        }
+
+
+        @JvmDefault
+        fun onDataNotAvailable(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
+
+        }
     }
 
     fun getAllDeliveryDetails(batchID: String, callback: LoadDataCallback<DeliveryDetailListResponse>)
 
-    fun addDeliveryDetail(batchID: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+    fun getSingleBatchDeliveryDetails(batchID: String, bookingId: String, callback: LoadDataCallback<DeliveryDetailSingleTripResponse>)
 
-    fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+    fun addDeliveryDetail(batchID: String, deliveryDetails: DeliveryDetails, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+
+    fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
 
     fun removeDeliveryDetail(batchID: String, bookingId: String, callback: LoadDataCallback<DeliveryDetailRemoveResponse>)
 
+    fun updateBatchReturnRun(batchID: String, batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest, callback: LoadDataCallback<BatchUpdateReturnRunResponse>)
+
     fun topUpPassengerWallet(batchID: String, amount: String, passengerId: String, callback: LoadDataCallback<TopUpPassengerWalletResponse>)
+
+    fun getReturnRunBatchInvoice(invoiceUrl: String, batchID: String, callback: GetInvoiceCallback)
 
 }

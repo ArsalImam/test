@@ -1,5 +1,8 @@
 package com.bykea.pk.partner.utils
 
+import android.view.View
+import android.widget.CompoundButton
+
 
 /**
  * Created by Sibtain Raza on 4/12/2020.
@@ -14,6 +17,8 @@ interface GenericListener {
      * Navigate to Place Search Activity
      */
     fun navigateToPlaceSearch() {}
+
+    fun navigateToPlaceSearch(view: View) {}
 
     /**
      * On user plays audio
@@ -37,10 +42,20 @@ interface GenericListener {
     /**
      * When user tap to add delivery details
      */
-    fun addDeliveryDetails() {}
+    fun addDeliveryDetails(view: View) {}
 
     /**
      * When user tap on passenger top up wallet
      */
     fun topUpPassengerWallet() {}
+
+    /**
+     * When user tap on call icon
+     */
+    fun showCallDialog() {}
+
+    /**
+     *  When use tap on checkbox
+     */
+    fun onCheckChangedListener(compoundButton: CompoundButton, isChecked: Boolean) {}
 }

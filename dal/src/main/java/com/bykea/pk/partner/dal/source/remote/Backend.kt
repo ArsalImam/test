@@ -3,9 +3,11 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
-import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.DIGIT_TWENTY
 import com.bykea.pk.partner.dal.util.RequestParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -162,6 +164,17 @@ interface Backend {
     fun arrivedForJob(@Path("job_id") jobId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
 
     /**
+     * Requests to mark arrived for active job
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/v2/batch/{batch_id}/arrived")
+    fun arrivedAtJobForBatch(@Header("x-app-partner-id") driverId: String,
+                             @Header("x-app-partner-token") token: String,
+                             @Path("batch_id") batchId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
+
+    /**
      * Requests to start active job
      * @param jobId Job ID
      * @param body AcceptJobRequest
@@ -171,12 +184,34 @@ interface Backend {
     fun startJob(@Path("job_id") jobId: String, @Body body: StartJobRequest): Call<StartJobResponse>
 
     /**
+     * Requests to start active job
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/v2/batch/{batch_id}/start")
+    fun startJobForBatch(@Header("x-app-partner-id") driverId: String,
+                         @Header("x-app-partner-token") token: String,
+                         @Path("batch_id") batchId: String, @Body body: StartJobRequest): Call<StartJobResponse>
+
+    /**
      * Requests to cancel active job
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/driver/cancel")
     fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobBadResponse>
+
+    /**
+     * Requests to cancel active job
+     * @param batchId batch id of the job
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @PUT("/v2/batch/{batch_id}/partner/cancel")
+    fun cancelJobForBatch(
+            @Header("x-app-partner-id") driverId: String, @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String, @Body body: CancelJobRequest): Call<CancelJobBadResponse>
 
     /**
      * Requests to finish active job
@@ -273,6 +308,9 @@ interface Backend {
     fun getInvoiceDetails(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String,
                           @Query(RequestParams.STATE) state: String): Call<FeedbackInvoiceResponse>
 
+    @GET
+    fun getReturnRunBatchInvoice(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String): Call<FeedbackInvoiceResponse>
+
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,
                               @Query("type") type: String?,
@@ -297,15 +335,24 @@ interface Backend {
     fun getAllDeliveryDetails(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
-            @Path("batch_id") batchId: String
+            @Path("batch_id") batchId: String,
+            @Query("limit") limit: Int = DIGIT_TWENTY
     ): Call<DeliveryDetailListResponse>
+
+    @GET("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun getSingleBatchDeliveryDetails(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String
+    ): Call<DeliveryDetailSingleTripResponse>
 
     @POST("/v2/batch/{batch_id}/bookings")
     fun addDeliveryDetail(
             @Header("x-app-partner-id") driverId: String,
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
-            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+            @Body deliveryDetails: DeliveryDetails
     ): Call<DeliveryDetailAddEditResponse>
 
     @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
@@ -314,7 +361,7 @@ interface Backend {
             @Header("x-app-partner-token") token: String,
             @Path("batch_id") batchId: String,
             @Path("booking_id") bookingId: String,
-            deliveryDetailAddEditRequest: DeliveryDetailAddEditRequest
+            @Body deliveryDetails: DeliveryDetails
     ): Call<DeliveryDetailAddEditResponse>
 
     @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")
@@ -325,6 +372,13 @@ interface Backend {
             @Path("booking_id") bookingId: String
     ): Call<DeliveryDetailRemoveResponse>
 
+    @PATCH("/v2/batch/{batch_id}/update-return-run")
+    fun updateBatchReturnRun(@Header("x-app-partner-id") driverId: String,
+                             @Header("x-app-partner-token") token: String,
+                             @Path("batch_id") batchId: String,
+                             @Body batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest
+    ): Call<BatchUpdateReturnRunResponse>
+
     @FormUrlEncoded
     @POST("/api/v1/driver/topupToPassenger")
     abstract fun topUpPassengerWallet(@Field("_id") _id: String,
@@ -333,6 +387,7 @@ interface Backend {
                                       @Field("amount") amount: String,
                                       @Field("pId") passId: String
     ): Call<TopUpPassengerWalletResponse>
+
 
     companion object {
 

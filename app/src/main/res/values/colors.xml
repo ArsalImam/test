@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="colorPrimary">#0EAA4B</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccentDark">#068629</color>
@@ -160,7 +160,12 @@
     <color name="color_yellow_fleet">#FCD40E</color>
     <color name="grey_d8d8d8">#d8d8d8</color>
     <color name="grey_dcdcdc">#dcdcdc</color>
+    <color name="grey_828683">#828683</color>
+<!--    <color name="grey_828683">#828683</color>-->
     <color name="grey_ececec">#ececec</color>
     <color name="grey_9d9d9d">#9d9d9d</color>
+    <color name="green_radio">#16ab4c</color>
+    <color name="drop_off_marker">#D30202</color>
     <color name="red">#f51c1c</color>
+    <color name="booking_red">#e40000</color>
 </resources>

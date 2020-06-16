@@ -1,11 +1,13 @@
 package com.bykea.pk.partner.ui.common
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +15,15 @@ import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.util.SEPERATOR
+import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
+import com.bykea.pk.partner.utils.TripStatus.*
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
@@ -40,6 +46,38 @@ object BindingAdapters {
         with(recyclerView.adapter as LastAdapter<Any>) {
             items = ArrayList(list)
         }
+    }
+
+    @BindingAdapter("app:hexTextColor")
+    @JvmStatic
+    fun setHexTextColor(textView: TextView, color: String?) {
+        textView.apply {
+            setTextColor(if (StringUtils.isNotEmpty(color)) {
+                Color.parseColor(color)
+            } else {
+                Color.BLACK
+            })
+        }
+    }
+
+    @BindingAdapter("app:fontType")
+    @JvmStatic
+    fun setFontType(textView: TextView, type: String?) {
+        type?.let {
+            if (type.equals("ur", false))
+                textView.typeface =
+                        FontUtils.getFonts(textView.context, "jameel_noori_nastaleeq.ttf")
+        }
+    }
+
+    @BindingAdapter("app:activeRadio")
+    @JvmStatic
+    fun activeRadio(imageView: ImageView, isActive: Boolean) {
+        imageView.setImageResource(if (isActive) {
+            R.drawable.selected_radio_button
+        } else {
+            R.drawable.unselected_radio_button
+        })
     }
 
     @BindingAdapter("app:items")
@@ -85,7 +123,7 @@ object BindingAdapters {
             SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
             RIDE, DISPATCH_RIDE -> imageView.setImageResource(R.drawable.ride_right)
             MART -> imageView.setImageResource(R.drawable.ic_purchase)
-            COURIER, MULTI_DELIVERY -> imageView.setImageResource(R.drawable.courier_no_caption)
+            COURIER, MULTI_DELIVERY, NEW_BATCH_DELIVERY -> imageView.setImageResource(R.drawable.courier_no_caption)
             MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
             MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
             FOOD -> imageView.setImageResource(R.drawable.ic_food)
@@ -224,6 +262,47 @@ object BindingAdapters {
                 }
                 is String -> {
                     fontTextView.text = String.format(DriverApp.getContext().getString(R.string.amount_rs), it)
+                }
+            }
+        }
+    }
+
+    @BindingAdapter("app:batchTripItemAccordingToStatus")
+    @JvmStatic
+    fun setBatchTripItemAccordingToStatus(view: View, deliveryDetails: DeliveryDetails?) {
+        val imageViewShowDetails: AppCompatImageView = view.findViewById(R.id.imageViewShowDetails)
+        val imageViewEdit: AppCompatImageView = view.findViewById(R.id.imageViewEdit)
+        val textViewStatus: FontTextView = view.findViewById(R.id.textViewStatus)
+
+        Util.safeLet(deliveryDetails,
+                deliveryDetails?.details,
+                deliveryDetails?.details?.status) { _, _, status ->
+            when (status.toLowerCase()) {
+                ON_START_TRIP.toLowerCase() -> {
+                    imageViewShowDetails.visibility = View.VISIBLE
+                    imageViewEdit.visibility = View.INVISIBLE
+                    textViewStatus.visibility = View.GONE
+                }
+                ON_FEEDBACK_TRIP.toLowerCase(), ON_COMPLETED_TRIP.toLowerCase(), ON_FINISH_TRIP.toLowerCase() -> {
+                    imageViewShowDetails.visibility = View.INVISIBLE
+                    imageViewEdit.visibility = View.INVISIBLE
+                    deliveryDetails?.details?.delivery_status?.let {
+                        textViewStatus.visibility = View.VISIBLE
+                        if (it) {
+                            textViewStatus.text = DriverApp.getContext().getText(R.string.successful)
+                            textViewStatus.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.color_blue_fleet))
+                        } else {
+                            textViewStatus.text = DriverApp.getContext().getText(R.string.unsuccessful)
+                            textViewStatus.setTextColor(ContextCompat.getColor(DriverApp.getContext(), R.color.booking_red))
+                        }
+                    } ?: run {
+                        textViewStatus.visibility = View.GONE
+                    }
+                }
+                else -> {
+                    imageViewShowDetails.visibility = View.VISIBLE
+                    imageViewEdit.visibility = View.VISIBLE
+                    textViewStatus.visibility = View.GONE
                 }
             }
         }
