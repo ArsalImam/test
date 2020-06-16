@@ -14,10 +14,10 @@ package com.bykea.pk.partner.dal.source.remote.request
  * @author Yousuf Sohail
  */
 data class CancelJobRequest(
-        val _id: String,
-        val token_id: String,
+        var _id: String? = null,
+        var token_id: String? = null,
         val lat: Double,
         val lng: Double,
-        val trip_id: String,
+        var trip_id: String? = null,
         val cancel_reason: String
 )

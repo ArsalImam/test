@@ -31,9 +31,15 @@ class BookingDetailActivity : BaseActivity() {
     private lateinit var invoiceAdapter: LastAdapter<Invoice>
 
     /**
+     * data source for batch invoice list
+     */
+    private lateinit var batchInvoiceAdapter: LastAdapter<Invoice>
+
+    /**
      * data source for customer feedback list
      */
     private lateinit var feedbackAdapter: LastAdapter<String>
+
     /**
      * Binding object between activity and xml file, it contains all objects
      * of UI components used by activity
@@ -85,7 +91,7 @@ class BookingDetailActivity : BaseActivity() {
 
     /**
      * This method is binding view model properties with view components
-     * through LiveData API available in Android MVVM
+     * through LiveData API available in Android mvvm
      *
      * @see [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
      */
@@ -99,6 +105,17 @@ class BookingDetailActivity : BaseActivity() {
             it?.let {
                 setToolbarTitle(it.bookingCode?.toUpperCase())
                 it.invoice?.let { invoiceAdapter.items = it }
+                it.batchInvoice?.let { batchInvoiceAdapter.items = it }
+                it.proofOfDelivery?.let {
+                    val url = it
+                    showRightIcon(R.drawable.ic_remove_red_eye_black_24dp, R.color.colorAccent) {
+                        //handle right icon
+                        Dialogs.INSTANCE.showChangeImageDialog(this@BookingDetailActivity, null, url,
+                                null, null)
+                    }
+                } ?: run {
+                    hideRightIcon()
+                }
                 it.rate?.driverFeedback?.let {
 
                     /**
@@ -115,8 +132,11 @@ class BookingDetailActivity : BaseActivity() {
 
             }
         })
+        batchInvoiceAdapter = LastAdapter(R.layout.adapter_booking_detail_invoice, object : LastAdapter.OnItemClickListener<Invoice> {
+            override fun onItemClick(item: Invoice) {
 
-
+            }
+        })
         feedbackAdapter = LastAdapter(R.layout.adapter_booking_detail_feedback, object : LastAdapter.OnItemClickListener<String> {
             override fun onItemClick(item: String) {
 
@@ -124,6 +144,7 @@ class BookingDetailActivity : BaseActivity() {
         })
         binding?.invoiceAdapter = invoiceAdapter
         binding?.feedbackAdapter = feedbackAdapter
+        binding?.batchInvoiceAdapter = batchInvoiceAdapter
     }
 
     /**

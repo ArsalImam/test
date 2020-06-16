@@ -56,8 +56,8 @@ class JobDetailActivity : BaseActivity() {
     private lateinit var mGoogleMap: GoogleMap
     private var driverMarker: Marker? = null
 
-    private var mediaPlayer: MediaPlayer? = null;
-    private val handler: Handler = Handler();
+    private var mediaPlayer: MediaPlayer? = null
+    private val handler: Handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,9 +81,9 @@ class JobDetailActivity : BaseActivity() {
                 } else {
                     AppPreferences.removeBookingVoiceNoteUrl()
                 }
-                if (!binding.viewmodel?.job?.value?.trip_type?.equals(Constants.TripTypes.BATCH_TYPE, true)!!)
+                if (Utils.isNewBatchService(binding.viewmodel?.job?.value?.service_code!!)) {
                     ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
-                else {
+                } else if (binding.viewmodel?.job?.value?.trip_type?.equals(Constants.TripTypes.BATCH_TYPE, true)!!) {
                     Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
                     Handler().postDelayed({
                         binding.viewmodel?.getTripDetails(object : UserDataHandler() {
@@ -102,6 +102,8 @@ class JobDetailActivity : BaseActivity() {
                             }
                         })
                     }, 3000)
+                } else {
+                    ActivityStackManager.getInstance().startJobActivity(this@JobDetailActivity, false)
                 }
             })
 

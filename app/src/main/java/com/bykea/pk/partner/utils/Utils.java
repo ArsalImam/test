@@ -93,6 +93,7 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -166,6 +167,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
@@ -176,6 +178,8 @@ import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY_COD;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
@@ -263,6 +267,30 @@ public class Utils {
                 storageDir      /* directory */
         );
         return image;
+    }
+
+    public static String getCallTypeByServiceCode(int bookingCode) {
+        switch (bookingCode) {
+            case Constants.ServiceCode.SEND_COD:
+                return Constants.CallType.COD;
+            case Constants.ServiceCode.SEND:
+                return Constants.CallType.NOD;
+            case Constants.ServiceCode.MART:
+                return Constants.CallType.PURCHASE;
+            default:
+                return Constants.CallType.SAWARI;
+        }
+    }
+
+    public static boolean containsReturnRunBooking(ArrayList<BatchBooking> bookingList) {
+        boolean containsReturnRun = false;
+        for (int i = 0; i < bookingList.size(); i++) {
+            BatchBooking batchBooking = bookingList.get(i);
+            if (batchBooking.getDisplayTag().equalsIgnoreCase("z")) {
+                containsReturnRun = true;
+            }
+        }
+        return containsReturnRun;
     }
 
 
@@ -676,6 +704,10 @@ public class Utils {
     }*/
 
     public static int getMapIcon(String type) {
+        if (type.equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+            return R.drawable.with_green_box_1;
+        }
+
         switch (AppPreferences.getTripStatus()) {
             case TripStatus.ON_ARRIVED_TRIP:
                 if (StringUtils.containsIgnoreCase(type, "van")) {
@@ -807,6 +839,64 @@ public class Utils {
     public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
         Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    public static BitmapDescriptor getDropOffBitmapDiscriptorForBooking(Context context, BatchBooking booking) {
+        Bitmap bmp = createDropOffMarkerForBooking(context, booking);
+        return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param booking The number of drop off.
+     *                <p>
+     *                By ignoring the constant, Time complexity of this function is O(n)^2
+     *                because this function execute in a loop.
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarkerForBooking(Context context, BatchBooking booking) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_batch_marker_layout, null);
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        ImageView imgView = marker.findViewById(R.id.drop_off_marker_img_view);
+        txt_name.setText(booking.getDisplayTag());
+        try {
+            if (booking.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                    booking.getStatus().equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
+                ViewCompat.setBackgroundTintList(imgView, ContextCompat
+                        .getColorStateList(context,
+                                R.color.multi_delivery_dropoff_completed));
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
     }
 
     /***
@@ -2162,6 +2252,12 @@ public class Utils {
         return isPurchaseService(callType, null);
     }
 
+    public static boolean isNewBatchService(Integer serviceCode) {
+        if (serviceCode == null)
+            return false;
+        return serviceCode == NEW_BATCH_DELIVERY || serviceCode == NEW_BATCH_DELIVERY_COD;
+    }
+
     public static boolean isPurchaseService(String callType, Integer serviceCode) {
         if (serviceCode == null)
             return StringUtils.containsIgnoreCase(callType, "Bring")
@@ -2280,6 +2376,7 @@ public class Utils {
                 return R.drawable.ic_food;
             case "courier":
             case "goods":
+            case Constants.CallType.NEW_BATCH:
                 return R.drawable.courier_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":
@@ -2684,7 +2781,7 @@ public class Utils {
         File f = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
         File[] files = f.listFiles();
-        Arrays.sort(files, new Comparator< Object >() {
+        Arrays.sort(files, new Comparator<Object>() {
             public int compare(Object o1, Object o2) {
 
                 if (((File) o1).lastModified() > ((File) o2).lastModified()) {
@@ -2699,6 +2796,7 @@ public class Utils {
         });
         files[0].delete();
     }
+
     public static Uri startCameraByIntent(Activity act, File photoFile) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -3347,6 +3445,26 @@ public class Utils {
     }
 
     /**
+     * Fetch drop down lat lng list.
+     *
+     * @param normalCallData The {@link MultiDeliveryCallDriverData} object.
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(NormalCallData
+                                                             normalCallData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (BatchBooking response : normalCallData.getBookingList()) {
+            latLngList.add(new LatLng(
+
+                    response.getDropoff().getLat(),
+                    response.getDropoff().getLng())
+            );
+        }
+
+        return latLngList;
+    }
+
+    /**
      * Multi Delivery Free Driver on Batch Complete.
      */
     public static void multiDeliveryFreeDriverOnBatchComplete() {
@@ -3487,12 +3605,28 @@ public class Utils {
      */
     public static ArrayList<ChatMessagesTranslated> getAllChatMessageTranslated(Context context) {
         ArrayList<ChatMessagesTranslated> chatMessagesTranslateds = new ArrayList<>();
-        String[] chatMessageInEnglish = Utils.getChatMessageInEnglish(context);
-        String[] chatMessageInUrdu = Utils.getChatMessageInUrdu(context);
 
-        for (int i = 0; i < chatMessageInEnglish.length; i++) {
-            if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
-                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
+        //adding default messages list by default
+        List<String> chatMessageInEnglish = Arrays.asList(Utils.getChatMessageInEnglish(context));
+        List<String> chatMessageInUrdu = Arrays.asList(Utils.getChatMessageInUrdu(context));
+
+        //checking for batch service
+        NormalCallData callData = AppPreferences.getCallData();
+        if (callData != null && isNewBatchService(callData.getServiceCode())) {
+            //messages for pre arrive condition
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_ur));
+            }
+            //messages for post arrive condition
+            else {
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_en));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_ur));
+            }
+        }
+        for (int i = 0; i < chatMessageInEnglish.size(); i++) {
+            if (StringUtils.isNotEmpty(chatMessageInEnglish.get(i)) && StringUtils.isNotEmpty(chatMessageInUrdu.get(i)))
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish.get(i), chatMessageInUrdu.get(i)));
         }
         return chatMessagesTranslateds;
     }
@@ -3684,6 +3818,7 @@ public class Utils {
         else
             return serviceCode == Constants.ServiceCode.SEND
                     || serviceCode == Constants.ServiceCode.SEND_COD
+                    || serviceCode == NEW_BATCH_DELIVERY
                     || serviceCode == Constants.ServiceCode.MART
                     || serviceCode == Constants.ServiceCode.MOBILE_TOP_UP
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET
@@ -3717,5 +3852,28 @@ public class Utils {
             maxFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMaxLimit();
         }
         return new Pair<>(minFahretheitLimit, maxFahretheitLimit);
+    }
+
+    /**
+     * Converts DP to Pixel
+     *
+     * @param dp value to be converted
+     * @return converted value in Px
+     */
+    public static float toPixel(float dp) {
+        DisplayMetrics metrics = DriverApp.getContext().getResources().getDisplayMetrics();
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     *
+     * @param view : View On Which To Stop Multiple Tap
+     */
+    public static void preventMultipleTap(View view) {
+        view.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            view.setEnabled(true);
+        }, DIGIT_THOUSAND);
     }
 }

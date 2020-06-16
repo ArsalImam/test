@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
@@ -10,8 +11,8 @@
     android:orientation="horizontal"
     android:theme="@style/toolbarIconColor"
     android:visibility="visible"
+    android:elevation="8dp"
     app:elevation="8dp">
-
 
     <ImageView
         android:id="@+id/ivBackBtn"
@@ -20,7 +21,6 @@
         android:paddingLeft="@dimen/_8sdp"
         android:paddingRight="@dimen/_8sdp"
         app:srcCompat="@drawable/ic_arrow_back_48px" />
-
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -33,8 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:maxLines="2"
             android:maxWidth="@dimen/_220sdp"
+            android:maxLines="2"
             android:textAllCaps="false"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/_14sdp"
@@ -48,8 +48,8 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/_4sdp"
             android:gravity="center"
-            android:maxLines="2"
             android:maxWidth="@dimen/_220sdp"
+            android:maxLines="2"
             android:textAllCaps="false"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/_14sdp"
@@ -59,18 +59,6 @@
 
 
     </LinearLayout>
-    <!--<com.bykea.pk.partner.widgets.FontTextView-->
-    <!--android:id="@+id/tvTitle"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:gravity="center"-->
-    <!--android:maxLines="2"-->
-    <!--android:maxWidth="@dimen/_220sdp"-->
-    <!--android:textAllCaps="false"-->
-    <!--android:textColor="@color/textColorPrimary"-->
-    <!--android:textSize="@dimen/_14sdp"-->
-    <!--app:fontName="roboto_regular.ttf" />-->
-
 
     <RelativeLayout
         android:layout_width="@dimen/_240sdp"
@@ -103,7 +91,6 @@
             app:fontName="jameel_noori_nastaleeq.ttf" />
     </RelativeLayout>
 
-
     <com.bykea.pk.partner.widgets.FontTextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -117,5 +104,28 @@
         android:textColor="@color/white"
         android:visibility="gone"
         app:fontName="jameel_noori_nastaleeq.ttf" />
+
+    <FrameLayout
+        android:id="@+id/fLLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginRight="@dimen/_8sdp"
+        android:visibility="gone">
+
+        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+            android:id="@+id/tVLocationAlphabet"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/ic_location_without_alphabet"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingBottom="@dimen/_10sdp"
+            android:textSize="@dimen/_14sdp"
+            app:fontName="open_sans_regular.ttf"
+            tools:text="A" />
+    </FrameLayout>
 
 </FrameLayout>

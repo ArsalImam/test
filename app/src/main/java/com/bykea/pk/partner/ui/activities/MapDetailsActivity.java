@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class MapDetailsActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar)
+    @BindView(R.id.map_toolbar)
     Toolbar mToolbar;
 
     @Override

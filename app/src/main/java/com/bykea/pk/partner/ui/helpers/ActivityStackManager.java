@@ -11,7 +11,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import com.bykea.pk.partner.DriverApp;
+import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.remote.data.ComplainReason;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails;
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.models.data.BankData;
@@ -56,6 +58,10 @@ import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailActivity;
+import com.bykea.pk.partner.ui.nodataentry.AddEditDeliveryDetailsActivity;
+import com.bykea.pk.partner.ui.nodataentry.FinishBookingListingActivity;
+import com.bykea.pk.partner.ui.nodataentry.ListDeliveryDetailsActivity;
+import com.bykea.pk.partner.ui.nodataentry.ViewDeliveryDetailsActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawThankyouActivity;
 import com.bykea.pk.partner.ui.withdraw.WithdrawalActivity;
 import com.bykea.pk.partner.utils.Constants;
@@ -66,8 +72,12 @@ import com.bykea.pk.partner.utils.Utils;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
+import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
+import static com.bykea.pk.partner.utils.Constants.Extras.FAILED_BOOKING_ID;
+import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_ID;
+import static com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_EDIT_DELIVERY_DETAILS;
 
 public class ActivityStackManager {
     private static final ActivityStackManager mActivityStack = new ActivityStackManager();
@@ -628,5 +638,80 @@ public class ActivityStackManager {
      */
     public void startComplainAddActivity(@NonNull Activity activity, @Nullable TripHistoryData tripDetails, @Nullable ComplainReason selectedReason) {
         ComplainAddActivity.Companion.openActivity(activity, Constants.REQUEST_CODE_SUBMIT_COMPLAIN, tripDetails, selectedReason);
+    }
+
+    /**
+     * Use to navigate to add edit delivery details activity.
+     *
+     * @param activity        : Context from which this needs to open
+     * @param flowFor         : Flow for is to handle add or edit
+     * @param deliveryDetails : Delivery Detail Object
+     */
+    public void startAddEditDeliveryDetails(Activity activity, int flowFor, DeliveryDetails deliveryDetails) {
+        startAddEditDeliveryDetails(activity, flowFor, deliveryDetails, null);
+    }
+
+    /**
+     * Use to navigate to add edit delivery details activity.
+     *
+     * @param activity        : Context from which this needs to open
+     * @param flowFor         : Flow for is to handle add or edit
+     * @param deliveryDetails : Delivery Detail Object
+     * @param failedBookingId : id of the failed booking against which re route's booking needs
+     *                          to be created
+     */
+    public void startAddEditDeliveryDetails(Activity activity, int flowFor, DeliveryDetails deliveryDetails, String failedBookingId) {
+        Intent intent = new Intent(activity, AddEditDeliveryDetailsActivity.class);
+        intent.putExtra(FLOW_FOR, flowFor);
+        if (deliveryDetails != null) {
+            intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
+        }
+        if (failedBookingId != null) {
+            intent.putExtra(FAILED_BOOKING_ID, failedBookingId);
+        }
+        activity.startActivityForResult(intent, RC_ADD_EDIT_DELIVERY_DETAILS);
+    }
+
+    /**
+     * Use to navigate to view delivery details activity.
+     *
+     * @param activity        : Context from which this needs to open
+     * @param deliveryDetails : Delivery Detail Object
+     */
+    public void startViewDeliveryDetails(Activity activity, DeliveryDetails deliveryDetails) {
+        Intent intent = new Intent(activity, ViewDeliveryDetailsActivity.class);
+        if (deliveryDetails != null) {
+            intent.putExtra(DELIVERY_DETAILS_OBJECT, deliveryDetails);
+        }
+        activity.startActivity(intent);
+    }
+
+    /**
+     * will open booking listings screen
+     *
+     * @param activity context
+     */
+    public void startNavigationDeliveryScreen(Activity activity) {
+        FinishBookingListingActivity.Companion.openActivity(activity,
+                activity.getResources().getString(R.string.button_text_navigation),
+                FinishBookingListingActivity.Companion.getTYPE_NAVIGATION()
+        );
+    }
+
+    /**
+     * will open booking listings screen
+     *
+     * @param activity context
+     */
+    public void startFinishDeliveryScreen(Activity activity) {
+        FinishBookingListingActivity.Companion.openActivity(activity,
+                activity.getResources().getString(R.string.button_text_finish),
+                FinishBookingListingActivity.Companion.getTYPE_FINISH()
+        );
+    }
+
+    public void startDeliveryListingActivity(Activity activity) {
+        Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
+        activity.startActivity(intent);
     }
 }

@@ -1558,6 +1558,29 @@ public class HomeFragment extends Fragment {
                         .getInstance()
                         .startFeedbackActivity(mCurrentActivity);
             }
+        } else if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+
+            AppPreferences.setDeliveryType(Constants.CallType.NEW_BATCH);
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+            NormalCallData callData = gson.fromJson(trip, type);
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+            if (!callData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                WebIORequestHandler
+                        .getInstance()
+                        .registerChatListener();
+                ActivityStackManager
+                        .getInstance()
+                        .startJobActivity(mCurrentActivity);
+            } else {
+                ActivityStackManager
+                        .getInstance()
+                        .startFeedbackActivity(mCurrentActivity);
+            }
         } else {
             AppPreferences.setDeliveryType(Constants.CallType.BATCH);
             String trip = gson.toJson(response.getData().getTrip());

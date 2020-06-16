@@ -6,6 +6,8 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.bykea.pk.partner.utils.Utils" />
+        <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
 
         <variable
             name="viewmodel"
@@ -45,11 +47,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgViewDelivery"
-                    android:layout_width="@dimen/_35sdp"
+                    android:layout_width="35dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_gravity="center_vertical"
                     app:serviceCode="@{viewmodel.job.service_code}"
                     tools:src="@drawable/bhejdo_no_caption" />
             </LinearLayout>
@@ -81,7 +83,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:text="@{`Rs. ` + (int)viewmodel.job.fare_est}"
+                    android:text="@{viewmodel.job.fare_est == 0 ? `?` : `Rs. ` + viewmodel.job.fare_est + (viewmodel.job.service_code == ServiceCode.NEW_BATCH_DELIVERY ? `+` : ``)}"
                     android:textColor="@color/color_06A833"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
@@ -343,7 +345,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{` ` + viewmodel.job.dropoff.zone_ur}"
+                                        android:text="@{Utils.isNewBatchService(viewmodel.job.service_code) ? ` ` + @string/customer_will_tell : ` ` + viewmodel.job.dropoff.zone_ur}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
@@ -354,7 +356,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Integer.toString(viewmodel.job.dropoff.distance/1000)}"
+                                        android:text="@{Utils.isNewBatchService(viewmodel.job.service_code) ? `?` : Integer.toString(viewmodel.job.dropoff.distance/1000)}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
@@ -367,6 +369,7 @@
                                         android:layout_height="wrap_content"
                                         android:gravity="center"
                                         android:text="@{` ` + @string/kilometer_ur}"
+                                        tools:text="@string/kilometer_ur"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_14sdp"
                                         app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -380,6 +383,7 @@
                                 android:layout_height="@dimen/_40sdp"
                                 android:layout_centerVertical="true"
                                 android:layout_marginEnd="@dimen/_5sdp"
+                                app:invisibleUnless="@{!Utils.isNewBatchService(viewmodel.job.service_code)}"
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"

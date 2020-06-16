@@ -182,7 +182,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     }
 
     private void init() {
-
         messageList = new ArrayList<>();
         callData = AppPreferences.getCallData();
         String details = callData.getDetails();

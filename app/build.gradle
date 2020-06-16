@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 82
-        versionName "7.49"
+        versionCode 83
+        versionName "7.50"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -72,7 +72,7 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.xyz\""
+                buildConfigField "String", "FLAVOR_URL", "\"http://52.184.193.109:3000\""
             }
             develop {
                 dimension "env"
@@ -230,6 +230,7 @@ dependencies {
     //Amazon client sdk to upload file
     implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
     implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
+    implementation 'io.supercharge:shimmerlayout:2.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
