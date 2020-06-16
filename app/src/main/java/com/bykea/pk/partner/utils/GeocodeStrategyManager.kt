@@ -151,9 +151,9 @@ class GeocodeStrategyManager
         lastReceivedLocation = strAddress
         val placeObject = PlacesResult(StringUtils.EMPTY, strAddress,
                 currentLatLng?.latitude!!, currentLatLng?.longitude!!)
-
-//        placesDataHandler.onPlacesResponse(placeObject)
-        placesDataHandler.onPlacesResponse(placeObject.address)
+        placeObject.address?.let {
+            placesDataHandler.onPlacesResponse(it)
+        }
     }
 
     /**
