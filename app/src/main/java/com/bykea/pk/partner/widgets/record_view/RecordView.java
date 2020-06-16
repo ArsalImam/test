@@ -26,6 +26,11 @@ import java.io.IOException;
 
 import io.supercharge.shimmerlayout.ShimmerLayout;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_EIGHT;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THIRTY;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
+
 /**
  * Custom class for Record View
  * Created by Devlomi on 24/08/2017.
@@ -34,15 +39,15 @@ import io.supercharge.shimmerlayout.ShimmerLayout;
  */
 public class RecordView extends RelativeLayout {
 
-    public static final int DEFAULT_CANCEL_BOUNDS = 8; //8dp
+    public static final int DEFAULT_CANCEL_BOUNDS = DIGIT_EIGHT; //8dp
     private AppCompatImageView smallBlinkingMic, basketImg;
     private Chronometer counterTime;
     private TextView slideToCancel;
     private ShimmerLayout slideToCancelLayout;
     private AppCompatImageView arrow;
-    private float initialX, basketInitialY, difX = 0;
+    private float initialX, basketInitialY, difX = DIGIT_ZERO;
     private float cancelBounds = DEFAULT_CANCEL_BOUNDS;
-    private long startTime, elapsedTime = 0;
+    private long startTime, elapsedTime = DIGIT_ZERO;
     private Context context;
     private OnRecordListener recordListener;
     private boolean isSwiped, isLessThanSecondAllowed = false;
@@ -61,7 +66,7 @@ public class RecordView extends RelativeLayout {
     public RecordView(Context context) {
         super(context);
         this.context = context;
-        init(context, null, -1, -1);
+        init(context, null, NEGATIVE_DIGIT_ONE, NEGATIVE_DIGIT_ONE);
     }
 
     /**
@@ -73,7 +78,7 @@ public class RecordView extends RelativeLayout {
     public RecordView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        init(context, attrs, -1, -1);
+        init(context, attrs, NEGATIVE_DIGIT_ONE, NEGATIVE_DIGIT_ONE);
     }
 
     /**
@@ -86,7 +91,7 @@ public class RecordView extends RelativeLayout {
     public RecordView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        init(context, attrs, defStyleAttr, -1);
+        init(context, attrs, defStyleAttr, NEGATIVE_DIGIT_ONE);
     }
 
     /**
@@ -115,25 +120,25 @@ public class RecordView extends RelativeLayout {
         hideViews(true);
 
 
-        if (attrs != null && defStyleAttr == -1 && defStyleRes == -1) {
+        if (attrs != null && defStyleAttr == NEGATIVE_DIGIT_ONE && defStyleRes == NEGATIVE_DIGIT_ONE) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RecordView,
                     defStyleAttr, defStyleRes);
 
 
-            int slideArrowResource = typedArray.getResourceId(R.styleable.RecordView_slide_to_cancel_arrow, -1);
+            int slideArrowResource = typedArray.getResourceId(R.styleable.RecordView_slide_to_cancel_arrow, NEGATIVE_DIGIT_ONE);
             String slideToCancelText = typedArray.getString(R.styleable.RecordView_slide_to_cancel_text);
-            int slideMarginRight = (int) typedArray.getDimension(R.styleable.RecordView_slide_to_cancel_margin_right, 30);
-            int counterTimeColor = typedArray.getColor(R.styleable.RecordView_counter_time_color, -1);
-            int arrowColor = typedArray.getColor(R.styleable.RecordView_slide_to_cancel_arrow_color, -1);
+            int slideMarginRight = (int) typedArray.getDimension(R.styleable.RecordView_slide_to_cancel_margin_right, DIGIT_THIRTY);
+            int counterTimeColor = typedArray.getColor(R.styleable.RecordView_counter_time_color, NEGATIVE_DIGIT_ONE);
+            int arrowColor = typedArray.getColor(R.styleable.RecordView_slide_to_cancel_arrow_color, NEGATIVE_DIGIT_ONE);
 
 
-            int cancelBounds = typedArray.getDimensionPixelSize(R.styleable.RecordView_slide_to_cancel_bounds, -1);
+            int cancelBounds = typedArray.getDimensionPixelSize(R.styleable.RecordView_slide_to_cancel_bounds, NEGATIVE_DIGIT_ONE);
 
-            if (cancelBounds != -1)
+            if (cancelBounds != NEGATIVE_DIGIT_ONE)
                 setCancelBounds(cancelBounds);//don't convert it to pixels since it's already in pixels
 
 
-            if (slideArrowResource != -1) {
+            if (slideArrowResource != NEGATIVE_DIGIT_ONE) {
                 Drawable slideArrow = AppCompatResources.getDrawable(getContext(), slideArrowResource);
                 arrow.setImageDrawable(slideArrow);
             }
@@ -141,11 +146,11 @@ public class RecordView extends RelativeLayout {
             if (slideToCancelText != null)
                 slideToCancel.setText(slideToCancelText);
 
-            if (counterTimeColor != -1)
+            if (counterTimeColor != NEGATIVE_DIGIT_ONE)
                 setCounterTimeColor(counterTimeColor);
 
 
-            if (arrowColor != -1)
+            if (arrowColor != NEGATIVE_DIGIT_ONE)
                 setSlideToCancelArrowColor(arrowColor);
 
 
@@ -198,7 +203,7 @@ public class RecordView extends RelativeLayout {
     private void playSound(int soundRes) {
 
         if (isSoundEnabled) {
-            if (soundRes == 0)
+            if (soundRes == DIGIT_ZERO)
                 return;
 
             try {
@@ -274,7 +279,7 @@ public class RecordView extends RelativeLayout {
 
         if (!isSwiped) {
             //Swipe To Cancel
-            if ((slideToCancelLayout.getX() != 0 && slideToCancelLayout.getX() <= counterTime.getRight() + cancelBounds) || MotionEvent.ACTION_CANCEL == motionEvent.getAction()) {
+            if ((slideToCancelLayout.getX() != DIGIT_ZERO && slideToCancelLayout.getX() <= counterTime.getRight() + cancelBounds) || MotionEvent.ACTION_CANCEL == motionEvent.getAction()) {
 
                 //if the time was less than one second then do not start basket animation
                 if (isLessThanOneSecond(time)) {
@@ -309,17 +314,17 @@ public class RecordView extends RelativeLayout {
                 if (motionEvent.getRawX() < initialX) {
                     recordBtn.animate()
                             .x(motionEvent.getRawX())
-                            .setDuration(0)
+                            .setDuration(DIGIT_ZERO)
                             .start();
 
 
-                    if (difX == 0)
+                    if (difX == DIGIT_ZERO)
                         difX = (initialX - slideToCancelLayout.getX());
 
 
                     slideToCancelLayout.animate()
                             .x(motionEvent.getRawX() - difX)
-                            .setDuration(0)
+                            .setDuration(DIGIT_ZERO)
                             .start();
 
 

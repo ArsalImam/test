@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
+import static com.bykea.pk.partner.utils.Constants.MAX_BATCH_BOOKING_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
@@ -33,6 +34,11 @@ public class Settings {
 
     @SerializedName("trip_support_max_days_driver")
     private String trip_support_max_days;
+    /**
+     * this key will manage whether calculations for easy paisa needs to be run on client or server side
+     */
+    @SerializedName("is_custom_calculations_allow_for_easy_paisa")
+    private Boolean isCustomCalculationsAllowForEasyPaisa;
     private String demand;
     private String notice;
     private String top_up_limit;
@@ -91,6 +97,11 @@ public class Settings {
     @SerializedName("kronos_get_bookings_by_id")
     private String bookingDetailByIdUrl;
 
+    /**
+     * kronos URL to get booking details by id. if null, will starts the older trip flow
+     */
+    @SerializedName("kronos_partner_batch_invoice")
+    private String batchBookingInvoiceUrl;
 
     /**
      * trip fees percentage taken by bykea
@@ -127,6 +138,12 @@ public class Settings {
      */
     @SerializedName("partner_temperature_max_limit")
     private String partnerTemperatureMaxLimit;
+
+    /**
+     * Max Batch Booking Limit
+     */
+    @SerializedName("batch_booking_limit")
+    private String batchBookingLimit;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -404,5 +421,34 @@ public class Settings {
         } catch (Exception e) {
             return MAX_FAHRENHEIT_VALUE;
         }
+    }
+
+    public int getBatchBookingLimit() {
+        try {
+            return Integer.parseInt(batchBookingLimit);
+        } catch (Exception e) {
+            return MAX_BATCH_BOOKING_LIMIT;
+        }
+    }
+
+    public String getBatchBookingInvoiceUrl() {
+        return batchBookingInvoiceUrl;
+    }
+
+    public void setBatchBookingInvoiceUrl(String batchBookingInvoiceUrl) {
+        this.batchBookingInvoiceUrl = batchBookingInvoiceUrl;
+    }
+    /**
+     * this key will manage whether calculations for easy paisa needs to be run on client or server side
+     */
+    public boolean isCustomCalculationsAllowForEasyPaisa() {
+        return isCustomCalculationsAllowForEasyPaisa == null ? true : isCustomCalculationsAllowForEasyPaisa;
+    }
+
+    /**
+     * this key will manage whether calculations for easy paisa needs to be run on client or server side
+     */
+    public void setCustomCalculationsAllowForEasyPaisa(boolean customCalculationsAllowForEasyPaisa) {
+        isCustomCalculationsAllowForEasyPaisa = customCalculationsAllowForEasyPaisa;
     }
 }

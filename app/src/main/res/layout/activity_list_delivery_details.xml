@@ -11,7 +11,7 @@
 
         <variable
             name="listener"
-            type="com.bykea.pk.partner.utils.GenericListeners" />
+            type="com.bykea.pk.partner.utils.GenericListener" />
     </data>
 
     <RelativeLayout
@@ -35,6 +35,7 @@
                 android:layout_weight="1">
 
                 <RelativeLayout
+                    android:id="@+id/rLPWalletAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_5sdp"
@@ -64,6 +65,7 @@
                         tools:text="Rs. 30" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvPWalletAmountLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -85,6 +87,7 @@
                     android:layout_width="@dimen/_18sdp"
                     android:layout_height="@dimen/_18sdp"
                     android:layout_gravity="left"
+                    android:onClick="@{()->listener.topUpPassengerWallet()}"
                     android:paddingStart="@dimen/_minus3sdp"
                     android:paddingLeft="@dimen/_minus3sdp"
                     android:paddingBottom="@dimen/_3sdp"
@@ -207,20 +210,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                app:goneUnless="@{viewModel.items.size() > 0}"
                 app:items="@{viewModel.items}"
-                tools:itemCount="10"
                 app:layoutManager="LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:itemCount="10"
                 tools:listitem="@layout/list_item_delivery_detail" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewAddDelivery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
                 android:minWidth="@dimen/_100sdp"
                 android:minHeight="@dimen/_100sdp"
-                android:onClick="@{()->listener.addDeliveryDetails()}"
+                android:onClick="@{(v)->listener.addDeliveryDetails(v)}"
+                app:goneUnless="@{viewModel.isAddBookingAllowed}"
                 app:srcCompat="@drawable/ic_add_delivery_detail" />
+
+            <LinearLayout
+                android:id="@+id/linLayoutReturnRun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:gravity="center_vertical"
+                app:goneUnless="@{viewModel.items.size() > 0 || viewModel.isReturnRunEnable}">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/return_booking"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_18sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBoxReturnRun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/check_box_active_inactive"
+                    android:onCheckedChanged="@{listener::onCheckChangedListener}" />
+            </LinearLayout>
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -230,6 +265,7 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="center"
             android:background="@drawable/button_green_square"
+            android:onClick="@{()->listener.onBackClicked()}"
             android:padding="@dimen/_6sdp"
             android:src="@drawable/check_mark" />
 

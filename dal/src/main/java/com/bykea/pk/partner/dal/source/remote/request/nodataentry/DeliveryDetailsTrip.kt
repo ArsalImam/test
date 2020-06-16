@@ -6,7 +6,6 @@ import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by Sibtain Raza on 4/14/2020.
- * smsibtainrn@gmail.com
  */
 
 @Parcelize

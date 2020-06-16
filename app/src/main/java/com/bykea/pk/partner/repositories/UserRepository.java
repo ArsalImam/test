@@ -1178,6 +1178,7 @@ public class UserRepository {
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("tid", tripId);
             jsonObject.put("user_type", "d");
+//            jsonObject.put("service_code", AppPreferences.getCallData().getServiceCode());
             jsonObject.put("driver_id", AppPreferences.getDriverId());
             jsonObject.put("passenger_id", passId);
         } catch (JSONException e) {
@@ -1195,6 +1196,7 @@ public class UserRepository {
             jsonObject.put("user_type", "d");
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("conversation_id", conversationId);
+//            jsonObject.put("service_code",  AppPreferences.getCallData().getServiceCode());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1274,6 +1276,7 @@ public class UserRepository {
             jsonObject.put("conversation_id", conversationId);
             jsonObject.put("message_type", messageType);
             jsonObject.put("message", message);
+            jsonObject.put("service_code", AppPreferences.getCallData().getServiceCode());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1675,6 +1678,9 @@ public class UserRepository {
                         break;
                     case "ZoneAreaResponse":
                         mUserCallback.onZoneAreasResponse((ZoneAreaResponse) object);
+                        break;
+                    case "TopUpPassengerWalletResponse":
+                        mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
                         break;
                     case "TopUpPassWalletResponse":
                         mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);

@@ -2,7 +2,9 @@ package com.bykea.pk.partner.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -17,16 +19,23 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.data.Invoice;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails;
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailsLocationInfoData;
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.source.remote.response.FeedbackInvoiceResponse;
 import com.bykea.pk.partner.dal.util.Injection;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.FeedbackResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -35,36 +44,67 @@ import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.common.LastAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.DeliveryMsgsSpinnerAdapter;
+import com.bykea.pk.partner.ui.nodataentry.BatchNaKamiyabDialog;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Util;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-public class FSImplFeedbackActivity extends BaseActivity {
+import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
+import static com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_EDIT_DELIVERY_DETAILS;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY_COD;
 
+public class FSImplFeedbackActivity extends BaseActivity {
+    private final String PERMISSION = "android.permission.CAMERA";
+
+    @BindView(R.id.llbatchNaKamiyabDelivery)
+    LinearLayout llbatchNaKamiyabDelivery;
+    @BindView(R.id.tvTotalRakmLabel)
+    TextView tvTotalRakmLabel;
+    @BindView(R.id.ivBatchInfo)
+    ImageView ivBatchInfo;
+    @BindView(R.id.goto_purchaser)
+    TextView tvGotoPurchaser;
+    @BindView(R.id.imageViewAddDelivery)
+    ImageView imageViewAddDelivery;
+    @BindView(R.id.llFailureDelivery)
+    LinearLayout llFailureDelivery;
+    @BindView(R.id.ivPickUpCustomerPhone)
+    ImageView ivPickUpCustomerPhone;
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
+    @BindView(R.id.ivTakeImage)
+    ImageView ivTakeImage;
+    @BindView(R.id.ivEyeView)
+    ImageView ivEyeView;
     @BindView(R.id.invoiceRecyclerView)
     RecyclerView invoiceRecyclerView;
     @BindView(R.id.startAddressTv)
@@ -104,6 +144,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @BindView(R.id.scrollView)
     ScrollView scrollView;
 
+    private int selectedMsgPosition = NumberUtils.INTEGER_ZERO;
     private ArrayList<Invoice> invoiceData = new ArrayList<>();
 
     private FSImplFeedbackActivity mCurrentActivity;
@@ -114,6 +155,18 @@ public class FSImplFeedbackActivity extends BaseActivity {
     int driverWallet;
     private boolean isJobSuccessful = true;
     private LastAdapter<Invoice> invoiceAdapter;
+    private File imageUri;
+    private File tempUri;
+    private boolean isNewBatchFlow;
+    private int batchServiceCode;
+    private String batchId;
+    private boolean isRerouteCreated = false;
+    private boolean mLastReturnRunBooking;
+    private ArrayList<Invoice> batchInvoiceList;
+
+    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
+    private NormalCallData callData;
+    private DeliveryDetails reRouteDeliveryDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +175,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ButterKnife.bind(this);
         repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
-
         try {
             driverWallet = Integer.parseInt(((DriverPerformanceResponse) AppPreferences.getObjectFromSharedPref(DriverPerformanceResponse.class)).getData().getTotalBalance());
         } catch (Exception e) {
@@ -137,7 +189,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         updateScroll();
         updateInvoice();
     }
-  
+
     /**
      * this method will update the invoice details of the current booking,
      * will populate the recycler view's adapter
@@ -163,13 +215,33 @@ public class FSImplFeedbackActivity extends BaseActivity {
         for (Invoice invoice : invoiceData) {
             if (invoice.getDeliveryStatus() == null) {
                 filtered.add(invoice);
-            } else if (selectedMsgPosition == 0 && invoice.getDeliveryStatus() == 1) {
+            } else if (selectedMsgPosition == NumberUtils.INTEGER_ZERO && invoice.getDeliveryStatus() == NumberUtils.INTEGER_ONE) {
                 filtered.add(invoice);
-            } else if (selectedMsgPosition != 0 && invoice.getDeliveryStatus() != 1) {
+            } else if (selectedMsgPosition != NumberUtils.INTEGER_ZERO && invoice.getDeliveryStatus() != NumberUtils.INTEGER_ONE) {
                 filtered.add(invoice);
             }
         }
+        if (!(mLastReturnRunBooking && containsCodBooking())) updateTotal(filtered);
         invoiceAdapter.setItems(filtered);
+    }
+
+    /**
+     * this will update ui for batch
+     *
+     * @param isKamiyabDelivery flag to check is kamiyab
+     */
+    private void handleInputInfoForBatch(boolean isKamiyabDelivery) {
+        if (!isNewBatchFlow) return;
+        llReceiverInfo.setVisibility(isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        llTotal.setVisibility(isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        callerRb.setVisibility(isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        llbatchNaKamiyabDelivery.setVisibility(!isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        imageViewAddDelivery.setVisibility(!isKamiyabDelivery ? View.VISIBLE : View.GONE);
+        llFailureDelivery.setVisibility(View.GONE);
+        feedbackBtn.setEnabled(isKamiyabDelivery);
+        if (reRouteDeliveryDetails != null) {
+            onRerouteCreated(reRouteDeliveryDetails);
+        }
     }
 
     /**
@@ -184,7 +256,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 return false;
             }
         });
-
         etReceiverName.requestFocus();
     }
 
@@ -207,6 +278,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
     void afterTextChanged(Editable editable) {
         if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
             if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
+                if (Utils.isNewBatchService(batchServiceCode)) {
+                    return;
+                }
                 if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
                         && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
                         !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
@@ -232,8 +306,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
-    private NormalCallData callData;
 
     private void initViews() {
         mCurrentActivity = this;
@@ -242,8 +314,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         });
         invoiceRecyclerView.setAdapter(invoiceAdapter);
         invoiceRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-
-        callData = AppPreferences.getCallData();
+        initCallData();
         isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
         isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
@@ -261,6 +332,31 @@ public class FSImplFeedbackActivity extends BaseActivity {
         endAddressTv.setText((StringUtils.isBlank(callData.getEndAddress())
                 ? "N/A" : callData.getEndAddress()));
 
+        if (Utils.isNewBatchService(batchServiceCode)) {
+            etReceiverName.setHint(R.string.consignees_name);
+
+            boolean hasCodBooking = containsCodBooking();
+
+            if (mLastReturnRunBooking && hasCodBooking) {
+                tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
+                ivBatchInfo.setVisibility(View.VISIBLE);
+                repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
+                        .getSettings().getBatchBookingInvoiceUrl(), batchId, new JobsDataSource.GetInvoiceCallback() {
+
+                    @Override
+                    public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
+                        batchInvoiceList = feedbackInvoiceResponse.getData();
+                        Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
+                        receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
+                    }
+
+                    @Override
+                    public void onInvoiceDataFailed(@Nullable String errorMessage) {
+                        Utils.appToast(errorMessage);
+                    }
+                });
+            }
+        }
         if (isBykeaCashType) {
             updateUIBykeaCash();
         } else if (isDeliveryType || isOfflineDeliveryType) {
@@ -269,6 +365,95 @@ public class FSImplFeedbackActivity extends BaseActivity {
             updateUIforPurcahseService();
         } else {
             receivedAmountEt.requestFocus();
+        }
+        //updating the visibility of camera icon
+        ivTakeImage.setVisibility(isProofRequired() ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * check whether contains cod booking
+     * @return contains or not
+     */
+    private boolean containsCodBooking() {
+        if (Utils.isNewBatchService(batchServiceCode)) {
+            for (BatchBooking batchBooking : callData.getBookingList())
+                if (batchBooking.getServiceCode() == Constants.ServiceCode.SEND_COD)
+                    return true;
+        }
+        return false;
+    }
+
+    /**
+     * this will update the total amount for invoice
+     * @param invoiceList list of fields in invoice
+     * @return total value
+     */
+    private String updateTotal(ArrayList<Invoice> invoiceList) {
+        String total = StringUtils.EMPTY;
+        for (Invoice invoice : invoiceList) {
+            if (invoice.getField() != null && invoice.getField().equalsIgnoreCase("total")) {
+                total = invoice.getValue();
+                break;
+            }
+        }
+        if (StringUtils.isNotEmpty(total)) {
+            totalCharges = total;
+            callData.setTotalFare(totalCharges);
+        }
+        return total;
+    }
+
+    /**
+     * this will initialize the call data object
+     */
+    private void initCallData() {
+        callData = AppPreferences.getCallData();
+        isNewBatchFlow = Utils.isNewBatchService(callData.getServiceCode());
+        //this will manage the single ride flow
+        if (!isNewBatchFlow) return;
+        //extracting batch service code
+        batchServiceCode = callData.getServiceCode();
+        batchId = callData.getTripId();
+        // check for finished trip
+        ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
+        //this will be the finished trip
+        BatchBooking trip = null;
+        for (BatchBooking tripData : bookingResponseList) {
+            // if trip status if "finished", getting trip details
+            if (tripData.getStatus().
+                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                trip = tripData;
+                break;
+            }
+        }
+        callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
+        callData.setTotalFare("0"); //this will automatically update through the invoice api
+        callData.setTripId(trip.getId());
+        callData.setTripNo(trip.getBookingCode());
+        callData.setServiceCode(trip.getServiceCode());
+        callData.setEndAddress(trip.getDropoff().getGpsAddress());
+        callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
+        callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
+
+        mLastReturnRunBooking = trip.getDisplayTag().equalsIgnoreCase("z");
+
+        //checking for reroute
+        if (StringUtils.isNotEmpty(trip.getDropoff().getRerouteBookingId())) {
+            //trip contains reroute
+            for (BatchBooking tripData : bookingResponseList) {
+                //find for routed booking
+                if (trip.getDropoff().getRerouteBookingId().equalsIgnoreCase(tripData.getId())) {
+                    //delivery data is mapping with failed data
+                    DeliveryDetails deliveryDetails = new DeliveryDetails();
+                    deliveryDetails.setDetails(new DeliveryDetailInfo());
+                    deliveryDetails.setDropoff(new DeliveryDetailsLocationInfoData());
+                    deliveryDetails.getDropoff().setZone_dropoff_name_urdu(tripData.getDropoff().getAddress());
+                    deliveryDetails.getDetails().setTrip_id(tripData.getId());
+                    reRouteDeliveryDetails = deliveryDetails;
+                    selectedMsgPosition = AppPreferences.getLastSelectedMsgPosition();
+                    break;
+                }
+            }
         }
     }
 
@@ -334,12 +519,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
         receivedAmountEt.requestFocus();
     }
 
-    private int selectedMsgPosition = 0;
 
     private void initAdapter(final NormalCallData callData) {
 
         String[] list;
         if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
+        else if (mLastReturnRunBooking) list = new String[]{getString(R.string.return_run_spinner)};
         else list = Utils.getDeliveryMsgsList(mCurrentActivity);
 
         final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
@@ -363,12 +548,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         }
                     });
                 }
+
+                if (reRouteDeliveryDetails != null && AppPreferences.getLastSelectedMsgPosition() != position) {
+                    spDeliveryStatus.setSelection(AppPreferences.getLastSelectedMsgPosition());
+                    return;
+                }
+                AppPreferences.setLastSelectedMsgPosition(position);
                 selectedMsgPosition = position;
-
-//                if (!isBykeaCashType) {
-                    updateAdapter();
-//                }
-
+                updateAdapter();
+                handleInputInfoForBatch(selectedMsgPosition == NumberUtils.INTEGER_ZERO);
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
@@ -379,6 +567,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         totalCharges = callData.getTotalFare();
                         isJobSuccessful = false;
                     }
+                }
+                if (isProofRequired() && selectedMsgPosition == NumberUtils.INTEGER_ZERO) {
+                    ivTakeImage.setVisibility(View.VISIBLE);
+                } else {
+                    ivTakeImage.setVisibility(View.GONE);
                 }
             }
 
@@ -393,116 +586,230 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private long mLastClickTime;
 
-    @OnClick(R.id.feedbackBtn)
-    public void onClick() {
+    @OnClick({R.id.ivTakeImage, R.id.ivEyeView,R.id.feedbackBtn, R.id.ivBatchInfo, R.id.ivPickUpCustomerPhone, R.id.imageViewAddDelivery})
+    public void onClick(View v) {
         if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
-        /*if (isPurchaseType && llTotal.getVisibility() != View.VISIBLE && StringUtils.isNotBlank(kharedariAmountEt.getText().toString())) {
-            llTotal.setVisibility(View.VISIBLE);
-        } else */
-        if (valid()) {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            logMPEvent();
 
-            JobsDataSource.ConcludeJobCallback jobCallback = new JobsDataSource.ConcludeJobCallback() {
-
-                @Override
-                public void onJobConcluded(@NotNull ConcludeJobBadResponse response) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(response.getMessage());
-                    Utils.setCallIncomingState();
-//                    AppPreferences.setWalletAmountIncreased(!response.isAvailable());
-//                    AppPreferences.setAvailableStatus(response.isAvailable());
-                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
-                    mCurrentActivity.finish();
+        switch (v.getId()) {
+            case R.id.ivTakeImage:
+                takePicture();
+                break;
+            case R.id.ivEyeView:
+                previewImage();
+                break;
+            case R.id.imageViewAddDelivery:
+                String tripId = callData.getTripId();
+                if (reRouteDeliveryDetails != null) {
+                    tripId = reRouteDeliveryDetails.getDetails().getTrip_id();
                 }
-
-
-                @Override
-                public void onJobConcludeFailed(@Nullable String message, @Nullable Integer code) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    if (code != null && code == HTTPStatus.UNAUTHORIZED) {
-                        EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
-                    } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
+                new BatchNaKamiyabDialog(batchId, tripId, new BatchNaKamiyabDialog.OnResult() {
+                    @Override
+                    public void onReturnRun() {
+                        callData.setReturnRun(true);
+                        updateFailureDeliveryLabel(null);
+                        feedbackBtn.setEnabled(true);
                     }
 
+                    @Override
+                    public void onReRoute() {
+                    }
+
+                }).show(getSupportFragmentManager());
+                break;
+            case R.id.ivPickUpCustomerPhone:
+                String phoneNumber = callData.getSenderPhone();
+                if (StringUtils.isNotBlank(phoneNumber)) {
+                    if (Utils.isAppInstalledWithPackageName(mCurrentActivity, Constants.ApplicationsPackageName.WHATSAPP_PACKAGE)) {
+                        Utils.openCallDialog(mCurrentActivity, callData, phoneNumber);
+                    } else {
+                        Utils.callingIntent(mCurrentActivity, phoneNumber);
+                    }
                 }
-            };
+                break;
+            case R.id.ivBatchInfo:
+                if (batchInvoiceList != null)
+                    Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
+                break;
 
-            boolean isLoadboardJob = Utils.isModernService(callData.getServiceCode());
-            if (isBykeaCashType) {
-                if (isLoadboardJob) {
-                    String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
-                    String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
+            case R.id.feedbackBtn:
+                repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
+                if (valid()) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                    logMPEvent();
+                    if (isProofRequired()) {
+                        uploadProofOfDelivery();
+                    } else {
+                        finishTrip();
+                    }
+                }
+                break;
+        }
+    }
 
-                    repo.concludeJob(
-                            callData.getTripId(),
-                            (int) callerRb.getRating(),
-                            Integer.parseInt(receivedAmountEt.getText().toString()),
-                            jobCallback,
-                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
-                            selectedMsgPosition == 0,
-                            null,
-                            name,
-                            number
-                    );
-                } else
-                    new UserRepository().requestFeedback(
-                            mCurrentActivity,
-                            handler,
-                            "",
-                            callerRb.getRating() + "",
-                            receivedAmountEt.getText().toString(),
-                            selectedMsgPosition == 0,
-                            Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
-                            etReceiverName.getText().toString(),
-                            etReceiverMobileNo.getText().toString()
-                    );
-            } else if (isDeliveryType || isOfflineDeliveryType) {
-                if (isLoadboardJob)
-                    repo.concludeJob(
-                            callData.getTripId(),
-                            (int) callerRb.getRating(),
-                            Integer.valueOf(receivedAmountEt.getText().toString()),
-                            jobCallback,
-                            Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
-                            selectedMsgPosition == 0,
-                            null,
-                            etReceiverName.getText().toString(),
-                            etReceiverMobileNo.getText().toString()
-                    );
-                else
-                    new UserRepository().requestFeedback(mCurrentActivity, handler,
-                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
-                            , selectedMsgPosition == 0, Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition], etReceiverName.getText().toString(),
-                            etReceiverMobileNo.getText().toString());
-            } else if (isPurchaseType) {
-                if (isLoadboardJob)
-                    repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()),
-                            jobCallback, null, null,
-                            Integer.valueOf(kharedariAmountEt.getText().toString()), null, null);
-                else
-                    new UserRepository().requestFeedback(mCurrentActivity, handler,
-                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
-                            kharedariAmountEt.getText().toString());
-            } else {
-                if (isLoadboardJob)
-                    repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()), jobCallback, null, null, null, null, null);
-                else
-                    new UserRepository().requestFeedback(mCurrentActivity, handler,
-                            "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
+    private void finishTrip() {
+
+        JobsDataSource.ConcludeJobCallback jobCallback = new JobsDataSource.ConcludeJobCallback() {
+
+            @Override
+            public void onJobConcluded(@NotNull ConcludeJobBadResponse response) {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(response.getMessage());
+                //handled old flow if not a batch service
+                if (allBookingInCompletedState()) {
+                    Utils.setCallIncomingState();
+                    ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
+                    mCurrentActivity.finish();
+                } else {
+                    //check if contains any pending booking or has any failed booking
+                    mCurrentActivity.finish();
+                }
             }
 
+
+            @Override
+            public void onJobConcludeFailed(@Nullable String message, @Nullable Integer code) {
+                Dialogs.INSTANCE.dismissDialog();
+                if (code != null && code == HTTPStatus.UNAUTHORIZED) {
+                    EventBus.getDefault().post(Keys.UNAUTHORIZED_BROADCAST);
+                } else {
+                    Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, message);
+                }
+            }
+        };
+
+        boolean isLoadboardJob = Utils.isModernService(callData.getServiceCode());
+        if (isBykeaCashType) {
+            if (isLoadboardJob) {
+                String name = callData.getSenderName() != null ? callData.getSenderName() : callData.getPassName();
+                String number = callData.getSenderPhone() != null ? callData.getSenderPhone() : callData.getPhoneNo();
+
+
+                repo.concludeJob(
+                        callData.getTripId(),
+                        (int) callerRb.getRating(),
+                        Integer.parseInt(receivedAmountEt.getText().toString()),
+                        jobCallback,
+                        Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                        selectedMsgPosition == 0,
+                        null,
+                        name,
+                        number
+                );
+            } else
+                new UserRepository().requestFeedback(
+                        mCurrentActivity,
+                        handler,
+                        StringUtils.EMPTY,
+                        callerRb.getRating() + StringUtils.EMPTY,
+                        receivedAmountEt.getText().toString(),
+                        selectedMsgPosition == NumberUtils.INTEGER_ZERO,
+                        Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
+                        etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString()
+                );
+        } else if (isDeliveryType || isOfflineDeliveryType) {
+            if (isLoadboardJob)
+                repo.concludeJob(
+                        callData.getTripId(),
+                        (int) callerRb.getRating(),
+                        Integer.valueOf(receivedAmountEt.getText().toString()),
+                        jobCallback,
+                        getDeliveryFeedback(),
+                        selectedMsgPosition == NumberUtils.INTEGER_ZERO,
+                        null,
+                        etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString()
+                );
+            else
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + StringUtils.EMPTY, receivedAmountEt.getText().toString()
+                        , selectedMsgPosition == NumberUtils.INTEGER_ZERO, getDeliveryFeedback(), etReceiverName.getText().toString(),
+                        etReceiverMobileNo.getText().toString());
+        } else if (isPurchaseType) {
+            if (isLoadboardJob)
+                repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()),
+                        jobCallback, null, null,
+                        Integer.valueOf(kharedariAmountEt.getText().toString()), null, null);
+            else
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + StringUtils.EMPTY, receivedAmountEt.getText().toString(),
+                        kharedariAmountEt.getText().toString());
+        } else {
+            if (isLoadboardJob)
+                repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()), jobCallback, null, null, null, null, null);
+            else
+                new UserRepository().requestFeedback(mCurrentActivity, handler,
+                        "Nice driver", callerRb.getRating() + StringUtils.EMPTY, receivedAmountEt.getText().toString());
         }
+
+
+    }
+
+    private void uploadProofOfDelivery() {
+        repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
+        //TODO need to handle image uploading here
+        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+            @Override
+            public void success(String obj) {
+                imageUri.delete();
+                repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                    @Override
+                    public void onSuccess() {
+                        finishTrip();
+                    }
+
+                    @Override
+                    public void onFail(int code, @Nullable String message) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Dialogs.INSTANCE.showToast(message);
+                    }
+                });
+            }
+
+            @Override
+            public void fail(int errorCode, @NotNull String errorMsg) {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+            }
+        }, Constants.Amazon.BUCKET_NAME);
+
+    }
+    private String getDeliveryFeedback() {
+        if (mLastReturnRunBooking) {
+            return getString(R.string.return_run_spinner);
+        }
+        return Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition];
+    }
+
+    private boolean allBookingInCompletedState() {
+        if (isNewBatchFlow) {
+            //saving foreach, if booking is not a return run
+            if (!callData.isReturnRun()) {
+                for (BatchBooking batchBooking : callData.getBookingList()) {
+                    if (!batchBooking.isCompleted()) {
+                        return true;
+                    }
+                }
+            }
+            //need to handle re-route case above return run
+            if (isRerouteCreated) {
+                return false;
+            }
+            //checking whether z's booking exist
+            if (callData.isReturnRun()) {
+                return Utils.containsReturnRunBooking(callData.getBookingList());
+            }
+            return false;
+        } else
+            return true;
     }
 
     private void logMPEvent() {
         try {
-            NormalCallData callData = AppPreferences.getCallData();
             JSONObject properties = new JSONObject();
             properties.put("TripID", callData.getTripId());
             properties.put("TripNo", callData.getTripNo());
@@ -567,7 +874,6 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     }
                 }
             });
-
         }
     };
 
@@ -587,6 +893,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
      * @return true if all the validation is true otherwise false
      */
     private boolean valid() {
+        if (isNewBatchFlow && selectedMsgPosition != NumberUtils.INTEGER_ZERO) {
+            receivedAmountEt.setText(String.valueOf(NumberUtils.INTEGER_ZERO));
+            return true;
+        }
         if (isPurchaseType && StringUtils.isBlank(kharedariAmountEt.getText().toString())) {
             kharedariAmountEt.setError(getString(R.string.enter_amount));
             kharedariAmountEt.requestFocus();
@@ -641,6 +951,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         } else if (callerRb.getRating() <= 0.0) {
             Dialogs.INSTANCE.showError(mCurrentActivity, feedbackBtn, getString(R.string.passenger_rating));
             return false;
+        } else if (isProofRequired() && imageUri == null) {
+            Dialogs.INSTANCE.showAlertDialogTick(mCurrentActivity, null, getString(R.string.valid_image_required), view -> Dialogs.INSTANCE.dismissDialog());
+            return false;
         } else if (StringUtils.isNotBlank(receivedAmountEt.getText().toString())) {
             try {
                 int receivedPrice = Integer.parseInt(receivedAmountEt.getText().toString());
@@ -654,6 +967,18 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         }
         return true;
+    }
+
+    private boolean isProofRequired() {
+        List<String> codes = AppPreferences.getSettings().getSettings().getPodServiceCodes();
+        boolean isRequired = false;
+        for (String code : codes) {
+            if (callData.getServiceCode() != null && code.equalsIgnoreCase(String.valueOf(callData.getServiceCode()))) {
+                isRequired = true;
+                break;
+            }
+        }
+        return isRequired && selectedMsgPosition == NumberUtils.INTEGER_ZERO;
     }
 
     private void setEtError(String error) {
@@ -693,6 +1018,119 @@ public class FSImplFeedbackActivity extends BaseActivity {
             else {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
+        } else if (requestCode == Constants.REQUEST_CAMERA) {
+            if (resultCode == RESULT_OK && tempUri != null && tempUri.exists()) {
+                imageUri = tempUri;
+                previewImage();
+                try {
+                    Utils.deleteLastPhotoFromGallery(FSImplFeedbackActivity.this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
+            if (resultCode == RESULT_OK) {
+                onRerouteCreated(data.getParcelableExtra(DELIVERY_DETAILS_OBJECT));
+            }
+        }
+    }
+
+    private void previewImage() {
+        ivEyeView.setVisibility(View.VISIBLE);
+        ivTakeImage.setVisibility(View.GONE);
+        Dialogs.INSTANCE.showChangeImageDialog(FSImplFeedbackActivity.this, imageUri, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialogs.INSTANCE.dismissDialog();
+            }
+        }, view -> {
+            Dialogs.INSTANCE.dismissDialog();
+            takePicture();
+        });
+    }
+
+    private void takePicture() {
+        try {
+            if (checkPermissions()) {
+                tempUri = Utils.createImageFile(FSImplFeedbackActivity.this, Constants.DOCS);
+                Utils.startCameraByIntent(mCurrentActivity, tempUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkPermissions() {
+        boolean hasPermission = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int location = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION);
+            if (location != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{PERMISSION}, 1011);
+            } else {
+                hasPermission = true;
+            }
+        } else {
+            hasPermission = true;
+        }
+        return hasPermission;
+    }
+
+    private void onPermissionResult() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(PERMISSION)) {
+                Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
+                        new StringCallBack() {
+                            @Override
+                            public void onCallBack(String msg) {
+                                checkPermissions();
+                            }
+                        }, null, getString(R.string.camera_permission)
+                        , getString(R.string.permissions_docs));
+            } else {
+                Dialogs.INSTANCE.showPermissionSettings(mCurrentActivity,
+                        1011, getString(R.string.permissions_required),
+                        getString(R.string.java_camera_permission_msg));
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull String[] permissions, @NonNull final int[] grantResults) {
+        if (mCurrentActivity != null) {
+            switch (requestCode) {
+                case Constants.REQ_IMAGE:
+                    if (grantResults.length > NumberUtils.INTEGER_ZERO) {
+                        if (grantResults[NumberUtils.INTEGER_ZERO] == PackageManager.PERMISSION_GRANTED) {
+                            ivTakeImage.performClick();
+                        } else {
+                            onPermissionResult();
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+    private void onRerouteCreated(DeliveryDetails data) {
+        isRerouteCreated = true;
+        feedbackBtn.setEnabled(true);
+        spDeliveryStatus.setEnabled(false);
+        spDeliveryStatus.setClickable(false);
+        reRouteDeliveryDetails = data;
+        updateFailureDeliveryLabel(data);
+    }
+
+    private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {
+        if (!isNewBatchFlow) return;
+        String formattedString = getResources().getString(R.string.problem_item);
+        if (deliveryDetails != null) {
+            llFailureDelivery.setVisibility(View.VISIBLE);
+            imageViewAddDelivery.setVisibility(View.GONE);
+            tvGotoPurchaser.setText(String.format(formattedString, deliveryDetails.getDropoff().getZone_dropoff_name_urdu()));
+        } else if (callData.isReturnRun()) {
+            llFailureDelivery.setVisibility(View.VISIBLE);
+            imageViewAddDelivery.setVisibility(View.GONE);
+            tvGotoPurchaser.setText(String.format(formattedString, getString(R.string.goto_purchaser)));
         }
     }
 }

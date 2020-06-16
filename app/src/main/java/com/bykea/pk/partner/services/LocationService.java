@@ -22,7 +22,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.DriverApp;
@@ -45,7 +44,6 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.StringUtils;
@@ -389,6 +387,13 @@ public class LocationService extends Service {
             if (StringUtils.isBlank(AppPreferences.getDeliveryType())) return StringUtils.EMPTY;
             if (AppPreferences.getDeliveryType().
                     equalsIgnoreCase(Constants.CallType.SINGLE)) {
+                NormalCallData callData = AppPreferences.getCallData();
+                if (callData != null) {
+                    tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
+                    status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
+                }
+            } else if (AppPreferences.getDeliveryType().
+                    equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
                 NormalCallData callData = AppPreferences.getCallData();
                 if (callData != null) {
                     tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;

@@ -122,7 +122,6 @@
             android:background="@drawable/ic_location_without_alphabet"
             android:gravity="center"
             android:maxLines="1"
-            android:maxLength="1"
             android:paddingBottom="@dimen/_10sdp"
             android:textSize="@dimen/_14sdp"
             app:fontName="open_sans_regular.ttf"

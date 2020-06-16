@@ -21,10 +21,18 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("initiate_time")
     private long sentTime;
 
+    @SerializedName("bookings_summary")
+    private String bookingsSummary;
+
+    @SerializedName("bookings")
+    private ArrayList<BatchBooking> bookingList;
+
     @SerializedName("trip_id")
     private String tripId;
     @SerializedName("trip_no")
     private String tripNo;
+    @SerializedName("batch_code")
+    private String batchCode;
     private String referenceId;
     @SerializedName("start_address")
     private String startAddress;
@@ -117,6 +125,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("receiver_address")
     private String receiverAddress;
 
+    @SerializedName("isDeductWallet")
+    private boolean isDetectWallet;
+
     @SerializedName("sender_name")
     private String senderName;
     @SerializedName("sender_phone")
@@ -197,6 +208,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         referenceId = in.readString();
         startAddress = in.readString();
         startLat = in.readString();
+        batchCode = in.readString();
         startLng = in.readString();
         endAddress = in.readString();
         endLat = in.readString();
@@ -878,6 +890,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         dest.writeLong(sentTime);
         dest.writeString(tripId);
         dest.writeString(tripNo);
+        dest.writeString(batchCode);
         dest.writeString(referenceId);
         dest.writeString(startAddress);
         dest.writeString(startLat);
@@ -955,5 +968,37 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     public void setRuleIds(ArrayList<String> ruleIds) {
         this.ruleIds = ruleIds;
+    }
+
+    public String getBatchCode() {
+        return batchCode;
+    }
+
+    public void setBatchCode(String batchCode) {
+        this.batchCode = batchCode;
+    }
+
+    public ArrayList<BatchBooking> getBookingList() {
+        return bookingList;
+    }
+
+    public void setBookingList(ArrayList<BatchBooking> bookingList) {
+        this.bookingList = bookingList;
+    }
+
+    public String getBookingsSummary() {
+        return bookingsSummary;
+    }
+
+    public void setBookingsSummary(String bookingsSummary) {
+        this.bookingsSummary = bookingsSummary;
+    }
+
+    public boolean isDetectWallet() {
+        return isDetectWallet;
+    }
+
+    public void setDetectWallet(boolean detectWallet) {
+        isDetectWallet = detectWallet;
     }
 }

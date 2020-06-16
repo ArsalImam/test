@@ -95,8 +95,6 @@ class JobListFragment : Fragment() {
                             relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
                     }
                 })
-
-
             }
 
             listener = object : JobListActionsListener {
