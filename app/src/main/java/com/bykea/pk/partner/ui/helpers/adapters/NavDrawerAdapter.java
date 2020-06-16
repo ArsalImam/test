@@ -34,7 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
@@ -74,6 +73,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         FontTextView newLabel;
 
         Context context;
+
         ViewHolder(View drawerItem, int itemType, Context context) {
 
             super(drawerItem);
@@ -131,13 +131,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         } else {
                             updateCurrentFragment(new BookingListingFragment(), screenFlag);
                         }
-
                         break;
                     case Constants.ScreenRedirections.WALLET_SCREEN_S:
                         updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN_S);
                         break;
                     case Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN_S:
-                        Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
+                        Utils.startCustomWebViewActivity(mainActivity, AppPreferences.getSettings().getSettings().getHowItWorksUrl(), context.getString(R.string.how_it_works));
                         break;
                     case Constants.ScreenRedirections.CONTACT_US_SCREEN_S:
                         updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN_S);
@@ -165,8 +164,9 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
     /**
      * Update Current Fragment With The Requested One
+     *
      * @param fragment : Replace Previous Fragment With The Fragment
-     * @param pos : Handle Toggle Icon Two Show Or Not
+     * @param pos      : Handle Toggle Icon Two Show Or Not
      */
     private void updateCurrentFragment(Fragment fragment, String pos) {
         fragmentManager
@@ -191,7 +191,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     /**
      * Replace current fragment with the offline fragment
      */
-    public void updateCurrentFragmentWithOffline(){
+    public void updateCurrentFragmentWithOffline() {
         updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES_S);
         notifyDataSetChanged();
     }

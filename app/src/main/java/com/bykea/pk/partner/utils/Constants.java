@@ -104,7 +104,7 @@ public class Constants {
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
-    public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
+    public static final String HOW_IT_WORKS_WEB_URL = "https://bykea.com/partner-videos.php";
     public static final String OFFLINE_KAMAI_WEB_URL = "https://www.bykea.com/offline-kamai";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
