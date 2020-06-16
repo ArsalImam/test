@@ -1617,6 +1617,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (!Utils.isNewBatchService(callData.getServiceCode()))
             if (!callData.isDetectWallet())
                 tvCodAmount.setText(tvFareAmount.getText().toString());
+
+        updateWalletColor();
     }
 
     private void updateWalletColor() {
