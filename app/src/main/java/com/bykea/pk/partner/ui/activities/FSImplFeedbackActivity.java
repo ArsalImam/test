@@ -144,7 +144,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @BindView(R.id.scrollView)
     ScrollView scrollView;
 
-    private int selectedMsgPosition = 0;
+    private int selectedMsgPosition = NumberUtils.INTEGER_ZERO;
     private ArrayList<Invoice> invoiceData = new ArrayList<>();
 
     private FSImplFeedbackActivity mCurrentActivity;
@@ -215,9 +215,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         for (Invoice invoice : invoiceData) {
             if (invoice.getDeliveryStatus() == null) {
                 filtered.add(invoice);
-            } else if (selectedMsgPosition == 0 && invoice.getDeliveryStatus() == 1) {
+            } else if (selectedMsgPosition == NumberUtils.INTEGER_ZERO && invoice.getDeliveryStatus() == NumberUtils.INTEGER_ONE) {
                 filtered.add(invoice);
-            } else if (selectedMsgPosition != 0 && invoice.getDeliveryStatus() != 1) {
+            } else if (selectedMsgPosition != NumberUtils.INTEGER_ZERO && invoice.getDeliveryStatus() != NumberUtils.INTEGER_ONE) {
                 filtered.add(invoice);
             }
         }
@@ -225,6 +225,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
         invoiceAdapter.setItems(filtered);
     }
 
+    /**
+     * this will update ui for batch
+     *
+     * @param isKamiyabDelivery flag to check is kamiyab
+     */
     private void handleInputInfoForBatch(boolean isKamiyabDelivery) {
         if (!isNewBatchFlow) return;
         llReceiverInfo.setVisibility(isKamiyabDelivery ? View.VISIBLE : View.GONE);
@@ -363,17 +368,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }
         //updating the visibility of camera icon
         ivTakeImage.setVisibility(isProofRequired() ? View.VISIBLE : View.GONE);
-        checkForRerouteUI();
     }
 
-    private void checkForRerouteUI() {
-//        if (reRouteDeliveryDetails != null) {
-////            spDeliveryStatus.setSelection(selectedMsgPosition);
-////            handleInputInfoForBatch(false);
-////            onRerouteCreated(reRouteDeliveryDetails);
-//        }
-    }
-
+    /**
+     * check whether contains cod booking
+     * @return contains or not
+     */
     private boolean containsCodBooking() {
         if (Utils.isNewBatchService(batchServiceCode)) {
             for (BatchBooking batchBooking : callData.getBookingList())
@@ -383,6 +383,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * this will update the total amount for invoice
+     * @param invoiceList list of fields in invoice
+     * @return total value
+     */
     private String updateTotal(ArrayList<Invoice> invoiceList) {
         String total = StringUtils.EMPTY;
         for (Invoice invoice : invoiceList) {
@@ -398,6 +403,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
         return total;
     }
 
+    /**
+     * this will initialize the call data object
+     */
     private void initCallData() {
         callData = AppPreferences.getCallData();
         isNewBatchFlow = Utils.isNewBatchService(callData.getServiceCode());
@@ -548,7 +556,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 AppPreferences.setLastSelectedMsgPosition(position);
                 selectedMsgPosition = position;
                 updateAdapter();
-                handleInputInfoForBatch(selectedMsgPosition == 0);
+                handleInputInfoForBatch(selectedMsgPosition == NumberUtils.INTEGER_ZERO);
                 if (StringUtils.isNotBlank(callData.getCodAmount()) && (callData.isCod() || isBykeaCashType)) {
                     if (position == 0) {
 //                        PARTNER_TOP_UP_NEGATIVE_LIMIT = AppPreferences.getSettings().getSettings().getTop_up_limit() + Integer.parseInt(callData.getCodAmountNotFormatted());
@@ -560,7 +568,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         isJobSuccessful = false;
                     }
                 }
-                if (isProofRequired() && selectedMsgPosition == 0) {
+                if (isProofRequired() && selectedMsgPosition == NumberUtils.INTEGER_ZERO) {
                     ivTakeImage.setVisibility(View.VISIBLE);
                 } else {
                     ivTakeImage.setVisibility(View.GONE);
@@ -695,10 +703,10 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 new UserRepository().requestFeedback(
                         mCurrentActivity,
                         handler,
-                        "",
-                        callerRb.getRating() + "",
+                        StringUtils.EMPTY,
+                        callerRb.getRating() + StringUtils.EMPTY,
                         receivedAmountEt.getText().toString(),
-                        selectedMsgPosition == 0,
+                        selectedMsgPosition == NumberUtils.INTEGER_ZERO,
                         Utils.getBykeaCashJobStatusMsgList(mCurrentActivity)[selectedMsgPosition],
                         etReceiverName.getText().toString(),
                         etReceiverMobileNo.getText().toString()
@@ -711,15 +719,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         Integer.valueOf(receivedAmountEt.getText().toString()),
                         jobCallback,
                         getDeliveryFeedback(),
-                        selectedMsgPosition == 0,
+                        selectedMsgPosition == NumberUtils.INTEGER_ZERO,
                         null,
                         etReceiverName.getText().toString(),
                         etReceiverMobileNo.getText().toString()
                 );
             else
                 new UserRepository().requestFeedback(mCurrentActivity, handler,
-                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString()
-                        , selectedMsgPosition == 0, getDeliveryFeedback(), etReceiverName.getText().toString(),
+                        "Nice driver", callerRb.getRating() + StringUtils.EMPTY, receivedAmountEt.getText().toString()
+                        , selectedMsgPosition == NumberUtils.INTEGER_ZERO, getDeliveryFeedback(), etReceiverName.getText().toString(),
                         etReceiverMobileNo.getText().toString());
         } else if (isPurchaseType) {
             if (isLoadboardJob)
@@ -728,14 +736,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         Integer.valueOf(kharedariAmountEt.getText().toString()), null, null);
             else
                 new UserRepository().requestFeedback(mCurrentActivity, handler,
-                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString(),
+                        "Nice driver", callerRb.getRating() + StringUtils.EMPTY, receivedAmountEt.getText().toString(),
                         kharedariAmountEt.getText().toString());
         } else {
             if (isLoadboardJob)
                 repo.concludeJob(callData.getTripId(), (int) callerRb.getRating(), Integer.valueOf(receivedAmountEt.getText().toString()), jobCallback, null, null, null, null, null);
             else
                 new UserRepository().requestFeedback(mCurrentActivity, handler,
-                        "Nice driver", callerRb.getRating() + "", receivedAmountEt.getText().toString());
+                        "Nice driver", callerRb.getRating() + StringUtils.EMPTY, receivedAmountEt.getText().toString());
         }
 
 
@@ -885,7 +893,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
      * @return true if all the validation is true otherwise false
      */
     private boolean valid() {
-        if (isNewBatchFlow && selectedMsgPosition != 0) {
+        if (isNewBatchFlow && selectedMsgPosition != NumberUtils.INTEGER_ZERO) {
             receivedAmountEt.setText(String.valueOf(NumberUtils.INTEGER_ZERO));
             return true;
         }
@@ -970,7 +978,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 break;
             }
         }
-        return isRequired && selectedMsgPosition == 0;
+        return isRequired && selectedMsgPosition == NumberUtils.INTEGER_ZERO;
     }
 
     private void setEtError(String error) {
@@ -1044,7 +1052,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void takePicture() {
         try {
             if (checkPermissions()) {
-                tempUri = Utils.createImageFile(FSImplFeedbackActivity.this, "doc");
+                tempUri = Utils.createImageFile(FSImplFeedbackActivity.this, Constants.DOCS);
                 Utils.startCameraByIntent(mCurrentActivity, tempUri);
             }
         } catch (IOException e) {
@@ -1091,9 +1099,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
                                            @NonNull String[] permissions, @NonNull final int[] grantResults) {
         if (mCurrentActivity != null) {
             switch (requestCode) {
-                case 1011:
-                    if (grantResults.length > 0) {
-                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                case Constants.REQ_IMAGE:
+                    if (grantResults.length > NumberUtils.INTEGER_ZERO) {
+                        if (grantResults[NumberUtils.INTEGER_ZERO] == PackageManager.PERMISSION_GRANTED) {
                             ivTakeImage.performClick();
                         } else {
                             onPermissionResult();
