@@ -5,7 +5,6 @@ import android.text.TextWatcher
 
 /**
  * Created by Sibtain Raza on 4/17/2020.
- * smsibtainrn@gmail.com
  */
 open class TextWatcherUtil : TextWatcher {
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {

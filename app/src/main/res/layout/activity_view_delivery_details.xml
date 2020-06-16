@@ -136,7 +136,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_16sdp"
                 app:fontName="open_sans_regular.ttf"
-                tools:text="Sibtain" />
+                tools:text="@string/app_name" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/_38sdp"
@@ -193,7 +193,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf"
-                        tools:text="University Road, between NipaChorangi , Hassan Square, near Bait-ul-Mukarram Masjid" />
+                        tools:text="@string/app_name" />
 
                 </LinearLayout>
 
@@ -225,7 +225,7 @@
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf"
                         app:goneUnless="@{viewModel.deliveryDetails.dropoff.gps_address != null}"
-                        tools:text="13 D, Gushan-e-Iqbal" />
+                        tools:text="@string/app_name" />
                 </LinearLayout>
 
                 <LinearLayout
