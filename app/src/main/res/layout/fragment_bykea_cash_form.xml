@@ -58,7 +58,7 @@
                 android:layout_height="0dp"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/_8sdp"
-                android:paddingRight="@dimen/_8sdp">
+                android:paddingRight="@dimen/_8sdp">b
 
                 <LinearLayout
                     android:id="@+id/linLayoutAccountNumber"
