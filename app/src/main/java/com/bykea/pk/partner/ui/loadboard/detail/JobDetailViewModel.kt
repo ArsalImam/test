@@ -155,7 +155,7 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     }
 
     override fun onJobRequestAcceptFailed(code: Int, message: String?) {
-        Dialogs.INSTANCE.dismissDialog()
+            Dialogs.INSTANCE.dismissDialog()
         if (code == 422) {
             _bookingTakenCommand.value = Event(Unit)
         } else {
