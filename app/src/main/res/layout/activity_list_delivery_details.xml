@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.bykea.pk.partner.ui.nodataentry.ListDeliveryDetailsViewModel" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.utils.GenericListener" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        tools:context=".ui.nodataentry.ListDeliveryDetailsActivity">
+
+        <LinearLayout
+            android:id="@+id/rlWallet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:padding="@dimen/_3sdp"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/rLPWalletAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:background="@color/blue_light"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp">
+
+                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                        android:id="@+id/tvPWalletAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:maxWidth="@dimen/_60sdp"
+                        android:maxLines="1"
+                        android:textAllCaps="false"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="@dimen/_12sdp"
+                        android:visibility="visible"
+                        tools:text="Rs. 30" />
+
+                    <com.bykea.pk.partner.widgets.FontTextView
+                        android:id="@+id/tvPWalletAmountLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginLeft="@dimen/_8sdp"
+                        android:gravity="end|center"
+                        android:maxLines="1"
+                        android:text="@string/wallet"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/ivTopUp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:layout_gravity="left"
+                    android:onClick="@{()->listener.topUpPassengerWallet()}"
+                    android:paddingStart="@dimen/_minus3sdp"
+                    android:paddingLeft="@dimen/_minus3sdp"
+                    android:paddingBottom="@dimen/_3sdp"
+                    android:src="@drawable/circle_plus"
+                    tools:ignore="RtlSymmetry" />
+            </FrameLayout>
+
+            <RelativeLayout
+                android:id="@+id/llTopMiddle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:background="@color/yellow"
+                android:gravity="center_vertical|end"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp">
+
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/tvCodAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:textAllCaps="false"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="visible"
+                    tools:text="Rs. 35000" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvCashWasooliLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:maxLines="1"
+                    android:text="@string/cash_on_delivery"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/llTopRight"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@color/color_grayf3f3f3"
+                android:gravity="center_vertical|end"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp">
+
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/tvFareAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:maxWidth="@dimen/_60sdp"
+                    android:maxLines="1"
+                    android:textAllCaps="false"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="visible"
+                    tools:text="Rs. 120" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:maxLines="1"
+                    android:text="@string/karaya_ur"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_below="@id/rlWallet"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:background="@color/color_grayc7c7c7" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/imgViewButton"
+            android:layout_below="@+id/view"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recViewDeliveries"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:goneUnless="@{viewModel.items.size() > 0}"
+                app:items="@{viewModel.items}"
+                app:layoutManager="LinearLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:itemCount="10"
+                tools:listitem="@layout/list_item_delivery_detail" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewAddDelivery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:minWidth="@dimen/_100sdp"
+                android:minHeight="@dimen/_100sdp"
+                android:onClick="@{(v)->listener.addDeliveryDetails(v)}"
+                app:goneUnless="@{viewModel.isAddBookingAllowed}"
+                app:srcCompat="@drawable/ic_add_delivery_detail" />
+
+            <LinearLayout
+                android:id="@+id/linLayoutReturnRun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:gravity="center_vertical"
+                app:goneUnless="@{viewModel.items.size() > 0 || viewModel.isReturnRunEnable}">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/return_booking"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_18sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/checkBoxReturnRun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/check_box_active_inactive"
+                    android:onCheckedChanged="@{listener::onCheckChangedListener}" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgViewButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height.xlarge"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:background="@drawable/button_green_square"
+            android:onClick="@{()->listener.onBackClicked()}"
+            android:padding="@dimen/_6sdp"
+            android:src="@drawable/check_mark" />
+
+    </RelativeLayout>
+</layout>

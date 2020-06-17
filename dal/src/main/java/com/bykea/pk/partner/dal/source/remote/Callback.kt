@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.source.remote.response.BaseResponse
+import com.bykea.pk.partner.dal.source.remote.response.BaseResponseError
 import com.bykea.pk.partner.dal.util.ERROR_PLEASE_TRY_AGAIN
 import com.bykea.pk.partner.dal.util.INTERNAL_SERVER_ERROR
 import com.google.gson.Gson
@@ -23,7 +24,12 @@ interface Callback<T : BaseResponse> : Callback<T> {
                 try {
                     val res = Gson().fromJson(response.errorBody()?.string(), BaseResponse::class.java)
 
-                    onFail(res.code, res.subcode, res.message)
+                    res.error?.let {
+                        onFail(res.code, it, res.message)
+                    } ?: run {
+                        onFail(res.code, res.subcode, res.message)
+                    }
+
                     onFail(res.code, res.message)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -75,4 +81,12 @@ interface Callback<T : BaseResponse> : Callback<T> {
      * @param message Server message
      */
     fun onFail(code: Int, subCode: Int?, message: String?) {}
+
+    /**
+     * Negative response callback; will be called on fail with server code and message
+     * @param code Server code
+     * @param errorBody Error Body
+     * @param message Server message
+     */
+    fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) {}
 }

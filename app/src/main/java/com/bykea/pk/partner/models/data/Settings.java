@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +12,9 @@ import java.util.List;
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
 import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
+import static com.bykea.pk.partner.utils.Constants.MAX_BATCH_BOOKING_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
-import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
 
@@ -97,6 +96,11 @@ public class Settings {
     @SerializedName("kronos_get_bookings_by_id")
     private String bookingDetailByIdUrl;
 
+    /**
+     * kronos URL to get booking details by id. if null, will starts the older trip flow
+     */
+    @SerializedName("kronos_partner_batch_invoice")
+    private String batchBookingInvoiceUrl;
 
     /**
      * trip fees percentage taken by bykea
@@ -135,6 +139,12 @@ public class Settings {
     private String partnerTemperatureMaxLimit;
     @SerializedName("partner_how_it_works_url")
     private String howItWorksUrl;
+
+    /**
+     * Max Batch Booking Limit
+     */
+    @SerializedName("batch_booking_limit")
+    private String batchBookingLimit;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -412,6 +422,22 @@ public class Settings {
         } catch (Exception e) {
             return MAX_FAHRENHEIT_VALUE;
         }
+    }
+
+    public int getBatchBookingLimit() {
+        try {
+            return Integer.parseInt(batchBookingLimit);
+        } catch (Exception e) {
+            return MAX_BATCH_BOOKING_LIMIT;
+        }
+    }
+
+    public String getBatchBookingInvoiceUrl() {
+        return batchBookingInvoiceUrl;
+    }
+
+    public void setBatchBookingInvoiceUrl(String batchBookingInvoiceUrl) {
+        this.batchBookingInvoiceUrl = batchBookingInvoiceUrl;
     }
 
     /**
