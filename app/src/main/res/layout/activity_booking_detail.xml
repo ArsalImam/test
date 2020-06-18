@@ -35,7 +35,52 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar" />
+        <!--<include layout="@layout/toolbar" />-->
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:background="@color/windowBackground"
+            android:fitsSystemWindows="true"
+            android:orientation="horizontal"
+            android:theme="@style/toolbarIconColor"
+            app:elevation="@dimen/elevation.toolbar"
+            app:titleTextColor="@color/textColorPrimary">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_arrow_back_48px"
+                    android:onClick="finishActivity"/>
+
+                <com.bykea.pk.partner.ui.helpers.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textSize="@dimen/_17sdp"
+                    android:id="@+id/titleTextView"
+                    tools:text="KHIU899"
+                    app:fontName="roboto_regular.ttf"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/ivRightIcon"
+                    android:onClick="onPodClick"
+                    android:layout_centerVertical="true"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

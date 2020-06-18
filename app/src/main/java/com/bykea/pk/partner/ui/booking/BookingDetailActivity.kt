@@ -2,15 +2,17 @@ package com.bykea.pk.partner.ui.booking
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.data.Invoice
 import com.bykea.pk.partner.databinding.ActivityBookingDetailBinding
-import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -23,7 +25,7 @@ import com.bykea.pk.partner.utils.Dialogs
  *
  * @author ArsalImam
  */
-class BookingDetailActivity : BaseActivity() {
+class BookingDetailActivity : AppCompatActivity() {
 
     /**
      * data source for invoice list
@@ -69,7 +71,6 @@ class BookingDetailActivity : BaseActivity() {
         binding?.lifecycleOwner = this
         binding?.viewModel = viewModel
 
-        updateToolbar()
         setupObservers()
     }
 
@@ -79,14 +80,6 @@ class BookingDetailActivity : BaseActivity() {
     public fun onComplainButtonClicked(view: View) {
         ActivityStackManager.getInstance()
                 .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
-    }
-
-    /**
-     * this will update toolbar for the booking detail activity
-     */
-    private fun updateToolbar() {
-        setBackNavigation()
-        hideToolbarLogo()
     }
 
     /**
@@ -103,18 +96,21 @@ class BookingDetailActivity : BaseActivity() {
 
         viewModel?.bookingDetailData?.observe(this, Observer {
             it?.let {
-                setToolbarTitle(it.bookingCode?.toUpperCase())
+                binding?.titleTextView?.text = it.bookingCode?.toUpperCase()
                 it.invoice?.let { invoiceAdapter.items = it }
                 it.batchInvoice?.let { batchInvoiceAdapter.items = it }
                 it.proofOfDelivery?.let {
                     val url = it
-                    showRightIcon(R.drawable.ic_remove_red_eye_black_24dp, R.color.colorAccent) {
-                        //handle right icon
-                        Dialogs.INSTANCE.showChangeImageDialog(this@BookingDetailActivity, null, url,
-                                null, null)
+                    binding?.ivRightIcon?.let {
+                        it.visibility = View.VISIBLE
+                        it.tag = url
+                        it.setImageDrawable(
+                                ContextCompat.getDrawable(this@BookingDetailActivity, R.drawable.ic_remove_red_eye_black_24dp))
+                        it.setColorFilter(ContextCompat.getColor(this@BookingDetailActivity, R.color.colorAccent),
+                                PorterDuff.Mode.SRC_IN)
                     }
                 } ?: run {
-                    hideRightIcon()
+                    binding?.ivRightIcon?.visibility = View.GONE
                 }
                 it.rate?.driverFeedback?.let {
 
@@ -154,6 +150,14 @@ class BookingDetailActivity : BaseActivity() {
      */
     fun finishActivity(v: View) {
         finish()
+    }
+
+    fun onPodClick(v: View) {
+        //handle right icon
+        v?.let {
+            Dialogs.INSTANCE.showChangeImageDialog(this@BookingDetailActivity, null, it.tag as String,
+                    null, null)
+        }
     }
 
     companion object {

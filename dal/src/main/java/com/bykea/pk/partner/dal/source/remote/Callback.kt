@@ -23,13 +23,11 @@ interface Callback<T : BaseResponse> : Callback<T> {
             if (response.errorBody() != null) {
                 try {
                     val res = Gson().fromJson(response.errorBody()?.string(), BaseResponse::class.java)
-
-                    res.error?.let {
-                        onFail(res.code, it, res.message)
-                    } ?: run {
+                    if (res.error is String) {
                         onFail(res.code, res.subcode, res.message)
+                    } else {
+                        onFail(res.code, Gson().fromJson(Gson().toJson(res.error), BaseResponseError::class.java), res.message)
                     }
-
                     onFail(res.code, res.message)
                 } catch (e: Exception) {
                     e.printStackTrace()
