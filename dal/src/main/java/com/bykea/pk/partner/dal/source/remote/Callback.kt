@@ -27,10 +27,14 @@ interface Callback<T : BaseResponse> : Callback<T> {
                 try {
                     val res = Gson().fromJson(response.errorBody()?.string(), BaseResponse::class.java)
                     if (isUserAuthorized(res.code)) {
-                        if (res.error is String) {
+                        res.error?.let {
+                            if (it is String) {
+                                onFail(res.code, res.subcode, res.message)
+                            } else {
+                                onFail(res.code, Gson().fromJson(Gson().toJson(it), BaseResponseError::class.java), res.message)
+                            }
+                        } ?: run {
                             onFail(res.code, res.subcode, res.message)
-                        } else {
-                            onFail(res.code, Gson().fromJson(Gson().toJson(res.error), BaseResponseError::class.java), res.message)
                         }
                         onFail(res.code, res.message)
                     }
