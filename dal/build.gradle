@@ -85,6 +85,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.greenrobot:eventbus:3.0.0'
 
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation ('commons-validator:commons-validator:1.5.0') {

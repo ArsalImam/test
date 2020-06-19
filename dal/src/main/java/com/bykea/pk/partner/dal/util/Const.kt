@@ -27,6 +27,9 @@ val SUB_CODE_1028 = 1028
 val SUB_CODE_1009 = 1009
 val SUB_CODE_1019 = 1019
 
+const val UNAUTHORIZED = 401
+const val UNAUTHORIZED_BROADCAST = "UNAUTHORIZED_USER"
+
 val SUB_CODE_1052_MSG = "Invalid phone number"
 val SUB_CODE_1054_MSG = "Driver has an active trip"
 val SUB_CODE_1055_MSG = "Customer has an active trip"
