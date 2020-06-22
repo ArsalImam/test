@@ -168,6 +168,7 @@ public class Constants {
     public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
     @NotNull
     public static final String COMMA = ",";
+    public static final String DOT = ".";
     public static final String COLON = ":";
     public static final String NEAR_LBL = "Near ";
     public static final int DIGIT_THREE = 3;
