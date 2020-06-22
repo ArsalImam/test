@@ -340,10 +340,10 @@ public class HomeFragment extends Fragment {
                                     jobsRepo.submitTemperature(Float.parseFloat(msg), new JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>() {
                                         @Override
                                         public void onDataLoaded(TemperatureSubmitResponse response) {
-                                            temperatureDialog.dismiss();
-                                            temperatureDialog = null;
+                                            Dialogs.INSTANCE.dismissDialog(temperatureDialog);
                                             AppPreferences.setLastPartnerTemperatureSubmitTime(System.currentTimeMillis());
                                             setDriverStatusActive();
+                                            temperatureDialog = null;
                                         }
 
                                         @Override
