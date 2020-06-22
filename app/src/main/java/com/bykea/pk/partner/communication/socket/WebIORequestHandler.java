@@ -755,7 +755,25 @@ public class WebIORequestHandler {
         public void call(Object... args) {
             String serverResponse = args[0].toString();
             Utils.redLog(TAG, serverResponse);
-            EventBus.getDefault().post(new Intent(BROADCAST_CANCEL_BATCH));
+            /*
+             * when Gps is off, we don't show Calling Screen so we don't need to show
+             * Cancel notification either if passenger cancels it before booking.
+             * If passenger has cancelled it after booking we will entertain this Cancel notification
+             * */
+            if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                AppPreferences.removeReceivedMessageCount();
+                Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
+                intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
+                Utils.setCallIncomingState();
+                if (AppPreferences.isJobActivityOnForeground() ||
+                        AppPreferences.isCallingActivityOnForeground()) {
+                    EventBus.getDefault().post(intent);
+                } else {
+                    EventBus.getDefault().post(intent);
+                    Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
+                }
+                getInstance().unRegisterChatListener();
+            }
         }
     }
 
