@@ -73,26 +73,32 @@ android {
             local {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://52.184.193.109:3000\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             develop {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://sandbox-lb-talos.bykea.net:3000\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             staging {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.xyz\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             jenkinsUrl {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"$rootProject.ext.jenkinsTalosUrl\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             livetesting {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"https://maps.bykea.net\""
             }
             production {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"https://maps.bykea.net\""
             }
         }
     }

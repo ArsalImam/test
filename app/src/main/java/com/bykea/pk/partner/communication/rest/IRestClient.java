@@ -18,6 +18,7 @@ import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -33,7 +34,6 @@ import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -348,10 +348,11 @@ interface IRestClient {
                                                        @Url String url);
 
 
-    @GET(ApiTags.PLACES_DISTANCE_MATRIX_EXT_URL)
-    Call<GoogleDistanceMatrixApi> callDistanceMatrixApi(@Query(Fields.GoogleDirectionApi.ORIGIN) String origin,
-                                                        @Query(Fields.GoogleDirectionApi.DESTINATION) String destination,
-                                                        @Query(Fields.GoogleDirectionApi.KEY) String key);
+    @GET
+    Call<BykeaDistanceMatrixResponse>
+                callDistanceMatrixApi(@Url String url,
+                          @Query("pickup_lat") double pickupLatitude, @Query("pickup_lng") double pickupLongitude,
+                          @Query("dropoff_lat") double destinationLatitude, @Query("dropoff_lng") double destinationLongitude);
 
 
     @FormUrlEncoded

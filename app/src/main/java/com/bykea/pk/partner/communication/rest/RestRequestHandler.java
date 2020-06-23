@@ -24,6 +24,7 @@ import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -41,7 +42,6 @@ import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -1247,7 +1247,7 @@ public class RestRequestHandler {
     /**
      * this method will execute api to get booking history stats from kronos
      *
-     * @param context of the activity
+     * @param context            of the activity
      * @param onResponseCallBack callback to send data back on the requested controllers
      */
     public void requestDriverVerifiedBookingStats(Context context, int weekStatus, IResponseCallback onResponseCallBack) {
@@ -1634,31 +1634,19 @@ public class RestRequestHandler {
         });
     }
 
-    public void getDistanceMatriax(String origin, String destination, final IResponseCallback mDataCallback, Context context) {
+    public void getDistanceMatrix(String origin, String destination, final IResponseCallback mDataCallback, Context context) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<GoogleDistanceMatrixApi> call = restClient.callDistanceMatrixApi(origin, destination, Utils.getApiKeyForDirections(mContext));
-        call.enqueue(new Callback<GoogleDistanceMatrixApi>() {
-            @Override
-            public void onResponse(Call<GoogleDistanceMatrixApi> call, Response<GoogleDistanceMatrixApi> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    mDataCallback.onResponse(response.body());
-                    if (Constants.INVALID_REQUEST.equalsIgnoreCase(response.body().getStatus()) ||
-                            Constants.OVER_QUERY_LIMIT.equalsIgnoreCase(response.body().getStatus())) {
-                        AppPreferences.setDirectionsApiKeyRequired(true);
-                    }
-                } else {
-                    AppPreferences.setDirectionsApiKeyRequired(true);
-                    mDataCallback.onError(0, "Could not get the distance matrix");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<GoogleDistanceMatrixApi> call, Throwable t) {
-                AppPreferences.setDirectionsApiKeyRequired(true);
-                mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + getErrorMessage(t));
-            }
-        });
+        LatLng originLatLng = Utils.getLatLngFromString(origin);
+        LatLng destinationLatLng = Utils.getLatLngFromString(destination);
+
+        Call<BykeaDistanceMatrixResponse> call =
+                restClient.callDistanceMatrixApi(ApiTags.BykeaMaps.DISTANCE_MATRIX,
+                        originLatLng.latitude, originLatLng.longitude,
+                        destinationLatLng.latitude, destinationLatLng.longitude);
+
+        call.enqueue(new GenericRetrofitCallBack<>(mDataCallback));
     }
 
 
