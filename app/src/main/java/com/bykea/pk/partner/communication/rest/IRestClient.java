@@ -351,8 +351,8 @@ interface IRestClient {
     @GET
     Call<BykeaDistanceMatrixResponse>
                 callDistanceMatrixApi(@Url String url,
-                          @Query("pickup_lat") double pickupLatitude, @Query("pickup_lng") double pickupLongitude,
-                          @Query("dropoff_lat") double destinationLatitude, @Query("dropoff_lng") double destinationLongitude);
+                          @Query(Fields.PICK_LAT) double pickupLatitude, @Query(Fields.PICK_LNG) double pickupLongitude,
+                          @Query(Fields.DROP_OFF_LAT) double destinationLatitude, @Query(Fields.DROP_OFF_LNG) double destinationLongitude);
 
 
     @FormUrlEncoded

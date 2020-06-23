@@ -13,6 +13,10 @@ public class Fields {
     public static final String STATE = "state";
     public static final String LIMIT = "limit";
     public static final String SORT = "sort";
+    public static final String PICK_LAT = "pickup_lat";
+    public static final String PICK_LNG = "pickup_lng";
+    public static final String DROP_OFF_LNG = "dropoff_lng";
+    public static final String DROP_OFF_LAT = "dropoff_lat";
 
     public static class AcceptCall {
         public static final String PHONE_NUMBER = "phone";
