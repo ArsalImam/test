@@ -18,7 +18,10 @@ data class Trip(
         val invoice_id: String,
         val status: String,
         val trip_time: String,
-        val wait_mins: Int
+        val wait_mins: Int,
+        val start_lat: Double,
+        val start_lng: Double,
+        val start_address: String
 )
 
 data class Invoice(
