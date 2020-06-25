@@ -17,9 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="top"
-            android:layout_marginBottom="@dimen/_4sdp"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:focusableInTouchMode="true"
             android:gravity="top"
             android:visibility="gone"
@@ -29,8 +29,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/ivStar"
                 android:layout_toStartOf="@+id/ivStar"
+                android:layout_toLeftOf="@+id/ivStar"
                 android:orientation="vertical">
 
                 <com.bykea.pk.partner.widgets.FontTextView
@@ -54,14 +54,14 @@
 
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/ivStar"
                 android:layout_width="@dimen/_34sdp"
                 android:layout_height="@dimen/_34sdp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_star_grey" />
+                android:src="@drawable/ic_star_grey"
+                android:visibility="gone" />
 
         </RelativeLayout>
 
@@ -70,9 +70,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="top"
-            android:layout_marginBottom="@dimen/_4sdp"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:background="@drawable/border_form"
             android:focusableInTouchMode="true"
             android:gravity="top"
@@ -86,8 +86,8 @@
                 android:id="@+id/autocomplete_places"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@+id/ivSearchIcon"
                 android:layout_toStartOf="@+id/ivSearchIcon"
+                android:layout_toLeftOf="@+id/ivSearchIcon"
                 android:background="@color/transparent"
                 android:drawablePadding="@dimen/padding.small"
                 android:dropDownAnchor="@+id/rlDropDown"
@@ -95,8 +95,8 @@
                 android:focusableInTouchMode="true"
                 android:hint="Search"
                 android:imeOptions="actionDone"
-                android:maxLines="1"
                 android:maxWidth="@dimen/_24sdp"
+                android:maxLines="1"
                 android:paddingLeft="@dimen/_6sdp"
                 android:paddingRight="@dimen/_10sdp"
                 android:scrollbars="vertical"
@@ -124,12 +124,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="-8dp"
             android:layout_marginTop="-4dp"
+            android:layout_marginBottom="-8dp"
             android:indeterminate="true" />
 
     </androidx.cardview.widget.CardView>
 
+    <com.bykea.pk.partner.widgets.FontTextView
+        android:id="@+id/tvFenceError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/color.error"
+        android:gravity="center"
+        android:padding="@dimen/_8sdp"
+        android:text="@string/fence_error"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10sdp"
+        android:visibility="gone"
+        app:fontName="roboto_regular.ttf" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -185,44 +198,44 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="40dp"
+            android:orientation="vertical"
             android:paddingBottom="@dimen/map.padding.bottom"
-            android:visibility="visible"
-            android:orientation="vertical">
+            android:visibility="visible">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="260dp"
                 android:layout_height="@dimen/_40sdp"
-                app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@color/white"
-                app:cardElevation="3dp"
                 app:cardCornerRadius="0dp"
-                app:cardPreventCornerOverlap="false">
+                app:cardElevation="3dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
 
 
-                    <com.bykea.pk.partner.widgets.AutoFitFontTextView
-                        android:id="@+id/tvFromName"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        android:paddingLeft="@dimen/_5sdp"
-                        android:paddingRight="@dimen/_5sdp"
-                        android:text="@string/set_pickup_location"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="@dimen/_11sdp"
-                        app:fontName="roboto_regular.ttf" />
+                <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                    android:id="@+id/tvFromName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_2sdp"
+                    android:text="@string/set_pickup_location"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/_11sdp"
+                    app:fontName="roboto_regular.ttf" />
 
             </androidx.cardview.widget.CardView>
 
             <View
                 android:layout_width="@dimen/_3sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginTop="-3dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="-3dp"
                 android:background="@color/black" />
 
         </LinearLayout>
@@ -231,14 +244,14 @@
             android:id="@+id/currentLocationIv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_56sdp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
-            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_56sdp"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_4sdp"
-            app:cardElevation="@dimen/_6sdp"
-            android:layout_gravity="end|bottom">
+            app:cardElevation="@dimen/_6sdp">
 
             <ImageView
                 android:layout_width="@dimen/_29sdp"

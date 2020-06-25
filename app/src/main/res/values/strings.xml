@@ -618,4 +618,5 @@
     <string name="parcel_value_cannot_greater">Parcel value can not be more than</string>
     <string name="customer_wallet_is_negative">\u0020کسٹمر کا والٹ منفی ہے۔ برائے مہربانی\u0020</string>
     <string name="top_up_customer_wallet">\u0020کسٹمر کا والٹ  ٹاپ آپ کریں۔\u0020</string>
+    <string name="fence_error">Non Service Area</string>
 </resources>

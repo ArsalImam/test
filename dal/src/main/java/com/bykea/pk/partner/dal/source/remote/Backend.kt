@@ -388,6 +388,12 @@ interface Backend {
                                       @Field("pId") passId: String
     ): Call<TopUpPassengerWalletResponse>
 
+    @GET("/api/v1/partner/fence/check")
+    fun checkFence(@Query("_id") id: String,
+                   @Query("token_id") tokenId: String,
+                   @Query("lat") lat: String,
+                   @Query("lng") lng: String): Call<FenceCheckResponse>
+
 
     companion object {
 
