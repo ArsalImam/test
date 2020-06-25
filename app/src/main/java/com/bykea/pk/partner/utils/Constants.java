@@ -16,6 +16,7 @@ public class Constants {
     public static final int DIGIT_SIXTY = 60;
     public static final int DIGIT_HUNDRED = 100;
     public static final int DIGIT_THOUSAND = 1000;
+    public static final double DECIMAL_THOUSAND = 1000.0;
     public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final int PRIORITY_ONE = 1;

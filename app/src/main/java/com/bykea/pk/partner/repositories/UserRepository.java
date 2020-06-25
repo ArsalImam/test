@@ -34,6 +34,7 @@ import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -56,7 +57,6 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -104,6 +104,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -483,22 +484,25 @@ public class UserRepository {
                 mContext,
                 new PlacesDataHandler() {
                     @Override
-                    public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                        if (response != null && response.getRows() != null && response.getRows().length > 0) {
+                    public void onDistanceMatrixResponse(BykeaDistanceMatrixResponse response) {
+                        if (response != null && response.getData() != null) {
                             counter[0] = 0;
-                            GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
-                            for (GoogleDistanceMatrixApi.Elements element : elements) {
-                                String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
-                                Log.d(TAG, tripID);
-                                int distance = element.getDistance().getValueInt();
-                                int duration = element.getDuration().getValueInt();
-                                MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
-                                remainingETA.setTripID(tripID);
-                                remainingETA.setRemainingDistance(distance);
-                                remainingETA.setRemainingTime(duration);
-                                trackingDataList.add(remainingETA);
-                                counter[0]++;
+                            String tripID = bookingResponseList.get(counter[NumberUtils.INTEGER_ZERO]).getTrip().getId();
+                            Log.d(TAG, tripID);
+                            MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
+
+                            if (response.getData().getDistance() != null) {
+                                remainingETA.setRemainingDistance(response.getData().getDistance().getValue());
                             }
+
+                            if (response.getData().getDuration() != null) {
+                                remainingETA.setRemainingTime(response.getData().getDuration().getValue());
+                            }
+
+                            remainingETA.setTripID(tripID);
+                            trackingDataList.add(remainingETA);
+                            counter[NumberUtils.INTEGER_ZERO]++;
+
                             locationRequest.setBatchBookings(trackingDataList);
                             mRestRequestHandler.sendDriverLocationUpdate(mContext,
                                     mDataCallback, locationRequest);
@@ -510,7 +514,6 @@ public class UserRepository {
                         Log.d(TAG, error);
                     }
                 });
-
     }
 
 

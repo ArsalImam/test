@@ -132,6 +132,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -167,6 +168,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.COMMA;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
@@ -291,6 +293,15 @@ public class Utils {
             }
         }
         return containsReturnRun;
+    }
+
+    public static LatLng getLatLngFromString(String origin) {
+        if (StringUtils.isNotEmpty(origin) && origin.contains(COMMA)) {
+            String[] originLocation = origin.split(COMMA);
+            return new LatLng(Double.valueOf(originLocation[NumberUtils.INTEGER_ZERO]),
+                    Double.valueOf(originLocation[NumberUtils.INTEGER_ONE]));
+        }
+        return new LatLng(NumberUtils.DOUBLE_ZERO, NumberUtils.DOUBLE_ZERO);
     }
 
 

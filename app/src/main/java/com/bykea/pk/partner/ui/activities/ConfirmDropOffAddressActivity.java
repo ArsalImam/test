@@ -17,7 +17,6 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.NearByResults;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Predictions;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
@@ -318,27 +317,6 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
                     }
                 }
             });
-        }
-
-        @Override
-        public void onDistanceMatrixResponse(final GoogleDistanceMatrixApi response) {
-//            stopLoadingAnimation();
-            if (mCurrentActivity != null && response != null && response.getStatus().equals("OK")) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finishLoading();
-                        if (response.getRows()[0].getElements()[0].getStatus().equals("OK")) {
-                            double distance = Math.ceil(Double.parseDouble(response.getRows()[0].getElements()[0].getDistance().getValue()) / 1000);
-                            int duration = (int) Math.ceil(Double.parseDouble(response.getRows()[0].getElements()[0].getDuration().getValue()) / 60);
-//                            timeTv.setText(duration + "\nmin");
-                        } else {
-                            Utils.redLog("Elements Status", response.getRows()[0].getElements()[0].getStatus());
-                        }
-                    }
-                });
-
-            }
         }
 
         @Override
