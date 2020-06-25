@@ -65,6 +65,7 @@ import static com.bykea.pk.partner.utils.Constants.COLON;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DOT;
 
 //import com.thefinestartist.Base;
 
@@ -1289,7 +1290,7 @@ public enum Dialogs {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     mEditTextTemperature.setError(null);
-                    if (s.toString().length() > DIGIT_ZERO && Double.parseDouble(s.toString()) > fahrenheitMinMaxLimit.second) {
+                    if (s.toString().trim().length() > DIGIT_ZERO && !s.toString().trim().equals(DOT) && Double.parseDouble(s.toString()) > fahrenheitMinMaxLimit.second) {
                         textViewError.setVisibility(View.VISIBLE);
                     } else {
                         textViewError.setVisibility(View.GONE);
@@ -1298,7 +1299,7 @@ public enum Dialogs {
             });
 
             mDialog.setOnShowListener(dialog -> mPositiveButton.setOnClickListener(v -> {
-                if (StringUtils.isEmpty(mEditTextTemperature.getText()) ||
+                if (StringUtils.isEmpty(mEditTextTemperature.getText()) || mEditTextTemperature.getText().toString().trim().equals(DOT) ||
                         Double.parseDouble(mEditTextTemperature.getText().toString()) < fahrenheitMinMaxLimit.first ||
                         Double.parseDouble(mEditTextTemperature.getText().toString()) > fahrenheitMinMaxLimit.second) {
                     mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error,
