@@ -240,8 +240,18 @@ public class PlacesSearchFragment extends Fragment {
 
     };
 
+    /**
+     * Call Near By Call To Set View Accordingly
+     */
     private void callNearByCallIfRequired() {
         enableAllViews();
+        checkFenceByApi();
+    }
+
+    /**
+     * Request to check fence by api
+     */
+    private void checkFenceByApi() {
         if (Utils.isConnected(mCurrentActivity, false)) {
             if (mGoogleMap != null && mGoogleMap.getCameraPosition().target != null) {
                 jobRespository.checkFence(
