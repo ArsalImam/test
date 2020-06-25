@@ -2,6 +2,7 @@ package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.request.*
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
@@ -488,4 +489,10 @@ class JobsRemoteDataSource {
         })
     }
 
+    fun checkFence(driverId: String, accessToken: String, lat: String, lng: String, callback: JobsDataSource.LoadDataCallback<FenceCheckResponse>) {
+        Backend.talos.checkFence(driverId, accessToken, lat, lng).enqueue(object : Callback<FenceCheckResponse> {
+            override fun onSuccess(response: FenceCheckResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
 }

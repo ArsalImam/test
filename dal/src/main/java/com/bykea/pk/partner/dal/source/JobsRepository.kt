@@ -309,6 +309,10 @@ class JobsRepository(
         jobsRemoteDataSource.topUpPassengerWallet(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), batchID, amount, passengerId, callback)
     }
 
+    override fun checkFence(lat: String, lng: String, callback: JobsDataSource.LoadDataCallback<FenceCheckResponse>) {
+        jobsRemoteDataSource.checkFence(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), lat, lng, callback)
+    }
+
 
     companion object {
 

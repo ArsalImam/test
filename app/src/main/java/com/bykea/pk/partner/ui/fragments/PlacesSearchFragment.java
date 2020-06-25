@@ -25,7 +25,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.response.FenceCheckResponse;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Predictions;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -58,6 +63,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -117,6 +123,9 @@ public class PlacesSearchFragment extends Fragment {
     @BindView(R.id.currentLocationIv)
     CardView currentLocationIv;
 
+    @BindView(R.id.tvFenceError)
+    FontTextView tvFenceError;
+
     private ArrayList<PlacesResult> cities;
     private String primaryText;
     private boolean isSavedPlace;
@@ -128,6 +137,7 @@ public class PlacesSearchFragment extends Fragment {
     private UserRepository mRepository;
     private GeocodeStrategyManager geocodeStrategyManager;
     private String selectedCity;
+    private JobsRepository jobRespository = Injection.INSTANCE.provideJobsRepository(DriverApp.getContext());
 
     public PlacesSearchFragment() {
         // Required empty public constructor
@@ -230,8 +240,48 @@ public class PlacesSearchFragment extends Fragment {
 
     };
 
+    /**
+     * Call Near By Call To Set View Accordingly
+     */
     private void callNearByCallIfRequired() {
         enableAllViews();
+        checkFenceByApi();
+    }
+
+    /**
+     * Request to check fence by api
+     */
+    private void checkFenceByApi() {
+        if (Utils.isConnected(mCurrentActivity, false)) {
+            if (mGoogleMap != null && mGoogleMap.getCameraPosition().target != null) {
+                jobRespository.checkFence(
+                        String.valueOf(mGoogleMap.getCameraPosition().target.latitude),
+                        String.valueOf(mGoogleMap.getCameraPosition().target.longitude),
+                        new JobsDataSource.LoadDataCallback<FenceCheckResponse>() {
+                            @Override
+                            public void onDataLoaded(FenceCheckResponse response) {
+                                if (mCurrentActivity != null && getView() != null) {
+                                    mCurrentActivity.runOnUiThread(() -> {
+                                        if (response.getData() != null && response.getData().getInFence()) {
+                                            tvFenceError.setVisibility(View.GONE);
+                                            confirmBtn.setEnabled(true);
+                                            confirmBtn.setBackground(ContextCompat.getDrawable(mCurrentActivity, R.drawable.button_green_square));
+                                        } else {
+                                            tvFenceError.setVisibility(View.VISIBLE);
+                                            confirmBtn.setEnabled(false);
+                                            confirmBtn.setBackgroundColor(ContextCompat.getColor(mCurrentActivity, R.color.color_A7A7A7));
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+
+                            }
+                        });
+            }
+        }
     }
 
     private void moveToCurrentLocation() {
