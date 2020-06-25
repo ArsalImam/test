@@ -23,6 +23,9 @@ public class BatchBooking {
     @SerializedName("dropoff")
     @Expose
     private BatchBookingDropoff dropoff;
+    @SerializedName("pickup")
+    @Expose
+    private BatchBookingDropoff pickup;
     private boolean selected;
 
     public String getId() {
@@ -83,5 +86,13 @@ public class BatchBooking {
 
     public void setServiceCode(int serviceCode) {
         this.serviceCode = serviceCode;
+    }
+
+    public BatchBookingDropoff getPickup() {
+        return pickup;
+    }
+
+    public void setPickup(BatchBookingDropoff pickup) {
+        this.pickup = pickup;
     }
 }
