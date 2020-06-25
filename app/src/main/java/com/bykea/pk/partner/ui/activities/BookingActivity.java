@@ -1039,45 +1039,48 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 shouldCameraFollowCurrentLocation = false;
                 break;
             case R.id.ivTopUp:
-                Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {
-                    @Override
-                    public void onCallBack(String msg) {
-                        if (StringUtils.isNotBlank(msg)) {
-                            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                            dataRepository.topUpPassengerWallet(mCurrentActivity, callData, msg, new UserDataHandler() {
-                                @Override
-                                public void onTopUpPassWallet(final TopUpPassWalletResponse response) {
-                                    if (mCurrentActivity != null) {
-                                        mCurrentActivity.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //allowing partner to perform top up only one time if
-                                                //he is in a ride service other than batch
-                                                AppPreferences.setTopUpPassengerWalletAllowed(Utils.isNewBatchService(callData.getServiceCode()));
+                if (callData != null) {
+                    Dialogs.INSTANCE.showTopUpDialog(mCurrentActivity, Utils.isCourierService(callData.getCallType()), new StringCallBack() {
+                        @Override
+                        public void onCallBack(String msg) {
+                            if (StringUtils.isNotBlank(msg)) {
+                                Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                dataRepository.topUpPassengerWallet(mCurrentActivity, callData, msg, new UserDataHandler() {
+                                    @Override
+                                    public void onTopUpPassWallet(final TopUpPassWalletResponse response) {
+                                        if (mCurrentActivity != null) {
+                                            mCurrentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    //allowing partner to perform top up only one time if
+                                                    //he is in a ride service other than batch
+                                                    AppPreferences.setTopUpPassengerWalletAllowed(Utils.isNewBatchService(callData.getServiceCode()));
 //                                                ivTopUp.setVisibility(View.INVISIBLE);
-                                                Dialogs.INSTANCE.dismissDialog();
-                                                Utils.appToast(response.getMessage());
-                                                if (response.getData() != null) {
-                                                    callData.setPassWallet(response.getData().getAmount());
-                                                    AppPreferences.setCallData(callData);
-                                                    tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
-                                                    updateWalletColor();
+                                                    Dialogs.INSTANCE.dismissDialog();
+                                                    Utils.appToast(response.getMessage());
+                                                    if (response.getData() != null) {
+                                                        callData.setPassWallet(response.getData().getAmount());
+                                                        AppPreferences.setCallData(callData);
+                                                        tvPWalletAmount.setText(String.format(getString(R.string.amount_rs), callData.getPassWallet()));
+                                                        updateWalletColor();
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
+
+
                                     }
 
-                                }
-
-                                @Override
-                                public void onError(int errorCode, String errorMessage) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                    Utils.appToast(errorMessage);
-                                }
-                            });
-                        }
-                    }
-                });
+                                    @Override
+                                    public void onError(int errorCode, String errorMessage) {
+                                        Dialogs.INSTANCE.dismissDialog();
+                                        Utils.appToast(errorMessage);
+                                    }
+                                });
+                            }
+                             }
+                    });
+                }
                 break;
             case R.id.tvDetailsBanner:
                 Utils.preventMultipleTap(view);

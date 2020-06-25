@@ -5,8 +5,8 @@ import android.content.Context;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
@@ -33,8 +33,8 @@ public class PlacesRepository {
         public void onResponse(Object object) {
             if (object instanceof String) {
                 mUserCallback.onPlacesResponse((String) object);
-            } else if (object instanceof GoogleDistanceMatrixApi) {
-                mUserCallback.onDistanceMatrixResponse((GoogleDistanceMatrixApi) object);
+            } else if (object instanceof BykeaDistanceMatrixResponse) {
+                mUserCallback.onDistanceMatrixResponse((BykeaDistanceMatrixResponse) object);
             } else if (object instanceof PlaceDetailsResponse) {
                 mUserCallback.onPlaceDetailsResponse((PlaceDetailsResponse) object);
             }else if (object instanceof PlaceAutoCompleteResponse) {
@@ -61,7 +61,7 @@ public class PlacesRepository {
 
     public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
-        mRestRequestHandler.getDistanceMatriax(origin, destination, mGeoCoderPlaces, context);
+        mRestRequestHandler.getDistanceMatrix(origin, destination, mGeoCoderPlaces, context);
     }
 
     /**

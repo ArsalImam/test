@@ -16,6 +16,7 @@ public class Constants {
     public static final int DIGIT_SIXTY = 60;
     public static final int DIGIT_HUNDRED = 100;
     public static final int DIGIT_THOUSAND = 1000;
+    public static final double DECIMAL_THOUSAND = 1000.0;
     public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final int PRIORITY_ONE = 1;
@@ -168,6 +169,7 @@ public class Constants {
     public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
     @NotNull
     public static final String COMMA = ",";
+    public static final String DOT = ".";
     public static final String COLON = ":";
     public static final String NEAR_LBL = "Near ";
     public static final int DIGIT_THREE = 3;
