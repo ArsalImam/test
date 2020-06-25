@@ -2244,8 +2244,14 @@ public class Utils {
         return StringUtils.containsIgnoreCase(callType, SAWARI) || StringUtils.containsIgnoreCase(callType, OFFLINE_RIDE);
     }
 
+    /**
+     * Check if the ride is of courier
+     * @param callType : Receive in active trip data
+     * @return true if the type is of courier else false
+     */
     public static boolean isCourierService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, GOODS_TYPE) || StringUtils.containsIgnoreCase(callType, COURIER_TYPE);
+        return (StringUtils.isEmpty(callType)) &&
+                (StringUtils.containsIgnoreCase(callType, GOODS_TYPE) || StringUtils.containsIgnoreCase(callType, COURIER_TYPE));
     }
 
     public static boolean isPurchaseService(String callType) {
