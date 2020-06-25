@@ -104,6 +104,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -486,7 +487,7 @@ public class UserRepository {
                     public void onDistanceMatrixResponse(BykeaDistanceMatrixResponse response) {
                         if (response != null && response.getData() != null) {
                             counter[0] = 0;
-                            String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
+                            String tripID = bookingResponseList.get(counter[NumberUtils.INTEGER_ZERO]).getTrip().getId();
                             Log.d(TAG, tripID);
                             MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
 
@@ -500,7 +501,7 @@ public class UserRepository {
 
                             remainingETA.setTripID(tripID);
                             trackingDataList.add(remainingETA);
-                            counter[0]++;
+                            counter[NumberUtils.INTEGER_ZERO]++;
 
                             locationRequest.setBatchBookings(trackingDataList);
                             mRestRequestHandler.sendDriverLocationUpdate(mContext,

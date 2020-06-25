@@ -47,6 +47,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -627,7 +628,7 @@ public class LocationService extends Service {
                                 String distance = StringUtils.EMPTY;
                                 if (response.getData().getDistance() != null) {
                                     distance = Utils.formatDecimalPlaces(
-                                            (response.getData().getDistance().getValue() / 1000.0) + StringUtils.EMPTY, 1);
+                                            (response.getData().getDistance().getValue() / Constants.DECIMAL_THOUSAND) + StringUtils.EMPTY, NumberUtils.INTEGER_ONE);
                                 }
                                 if (response.getData().getDuration() != null) {
                                     time = (response.getData().getDuration().getValue() / 60) + StringUtils.EMPTY;
