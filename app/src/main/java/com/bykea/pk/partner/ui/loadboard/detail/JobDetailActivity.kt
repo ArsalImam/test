@@ -114,6 +114,14 @@ class JobDetailActivity : BaseActivity() {
                                 this@JobDetailActivity.resources.getString(R.string.booking_already_taken_msg)
                         ) { finish() }
             })
+            driverBlockedByAdmin.observe(this@JobDetailActivity, Observer {
+                if (it) {
+                    binding.viewmodel?.driverBlockedByAdmin?.value = false
+                    Dialogs.INSTANCE.showRegionOutErrorDialog(this@JobDetailActivity,
+                            Utils.getSupportHelplineNumber(),
+                            getString(R.string.account_blocked_message_ur))
+                }
+            })
         }
         binding.listener = object : JobDetailActionsListener {
             override fun onPlayAudio(url: String?) {

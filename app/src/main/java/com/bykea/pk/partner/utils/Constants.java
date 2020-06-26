@@ -597,6 +597,7 @@ public class Constants {
         public static final int APP_FORCE_UPDATE = 1001;
         public static final int DRIVER_LAT_LNG_ZERO = 1002;
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
+        public static final int DRIVER_ACCOUNT_BLOCKED_BY_ADMIN = 1101;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
         public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
@@ -608,6 +609,7 @@ public class Constants {
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
         public static final int ERROR_MSG_CODE = 1050;
         public static final int INSUFFIECIENT_PASSENGER_WALLET = 1028;
+        public static final int BOOKING_ALREADY_TAKEN = 4005;
     }
 
     /**

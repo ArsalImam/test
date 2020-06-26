@@ -1,7 +1,9 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.os.Bundle;
+
 import androidx.core.content.ContextCompat;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -333,6 +335,11 @@ public class LoginActivity extends BaseActivity {
                         getString(R.string.region_out_message_ur));
                 break;
             case ApiError.DRIVER_ACCOUNT_BLOCKED:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        Utils.getSupportHelplineNumber(),
+                        getString(R.string.account_blocked_message_ur));
+                break;
+            case ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
                         Utils.getSupportHelplineNumber(),
                         getString(R.string.account_blocked_message_ur));

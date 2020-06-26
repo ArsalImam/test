@@ -284,7 +284,7 @@ interface JobsDataSource {
 
         fun onJobRequestAccepted()
 
-        fun onJobRequestAcceptFailed(code: Int, message: String?)
+        fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?)
     }
 
     /**

@@ -16,6 +16,8 @@ import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Constants.ApiError.BOOKING_ALREADY_TAKEN
+import com.bykea.pk.partner.utils.Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
@@ -75,6 +77,10 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     private val _showCOD = MutableLiveData<Boolean>()
     val showCOD: LiveData<Boolean>
         get() = _showCOD
+
+    private val _driverBlockedByAdmin = MutableLiveData<Boolean>().apply { value = false }
+    val driverBlockedByAdmin: MutableLiveData<Boolean>
+        get() = _driverBlockedByAdmin
 
     /**
      * Start the ViewModel by fetching the [Job] id
@@ -154,10 +160,24 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
         _acceptBookingCommand.value = Event(Unit)
     }
 
-    override fun onJobRequestAcceptFailed(code: Int, message: String?) {
-            Dialogs.INSTANCE.dismissDialog()
+    override fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?) {
+        Dialogs.INSTANCE.dismissDialog()
         if (code == 422) {
-            _bookingTakenCommand.value = Event(Unit)
+            subCode?.let {
+                when (it) {
+                    BOOKING_ALREADY_TAKEN -> {
+                        _bookingTakenCommand.value = Event(Unit)
+                    }
+                    DRIVER_ACCOUNT_BLOCKED_BY_ADMIN -> {
+                        _driverBlockedByAdmin.value = true
+                    }
+                    else -> {
+                        showSnackbarMessage(R.string.error_try_again)
+                    }
+                }
+            } ?: run {
+                showSnackbarMessage(R.string.error_try_again)
+            }
         } else {
             showSnackbarMessage(R.string.error_try_again)
         }
