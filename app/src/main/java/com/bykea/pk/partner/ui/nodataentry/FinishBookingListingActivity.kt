@@ -116,7 +116,7 @@ class FinishBookingListingActivity : BaseActivity() {
             }
 
             ActivityStackManager.getInstance()
-                    .startFeedbackActivity(this)
+                    .startFeedbackActivity(this, true)
             finish()
         }, 1000)
     }
