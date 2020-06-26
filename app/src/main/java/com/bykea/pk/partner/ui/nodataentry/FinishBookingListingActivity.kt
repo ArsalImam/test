@@ -98,12 +98,23 @@ class FinishBookingListingActivity : BaseActivity() {
         callData = AppPreferences.getCallData()
         Handler().postDelayed({
             callData?.ruleIds = data.trip.rule_ids
-            callData?.bookingList?.forEach {
-                if (it.id == selectedBooking?.id!!)
-                    it.status = TripStatus.ON_FINISH_TRIP
+            selectedBooking?.let {
+                var booking = it
+                callData?.bookingList?.forEach { singleBooking ->
+                    if (singleBooking.id == booking.id) {
+                        singleBooking.status = TripStatus.ON_FINISH_TRIP
+                        with(singleBooking.pickup) {
+                            address = data?.trip?.start_address
+                            gpsAddress = data?.trip?.start_address
+                            lat = data?.trip?.start_lat
+                            lng = data?.trip?.start_lng
+                        }
+                    }
+                }
+                AppPreferences.setCallData(callData)
+                AppPreferences.clearTripDistanceData()
             }
-            AppPreferences.setCallData(callData)
-            AppPreferences.clearTripDistanceData()
+
             ActivityStackManager.getInstance()
                     .startFeedbackActivity(this)
             finish()

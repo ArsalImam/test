@@ -372,6 +372,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     /**
      * check whether contains cod booking
+     *
      * @return contains or not
      */
     private boolean containsCodBooking() {
@@ -385,6 +386,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     /**
      * this will update the total amount for invoice
+     *
      * @param invoiceList list of fields in invoice
      * @return total value
      */
@@ -431,10 +433,16 @@ public class FSImplFeedbackActivity extends BaseActivity {
         callData.setTripId(trip.getId());
         callData.setTripNo(trip.getBookingCode());
         callData.setServiceCode(trip.getServiceCode());
-        callData.setEndAddress(trip.getDropoff().getGpsAddress());
-        callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
-        callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
-
+        if (trip.getDropoff() != null) {
+            callData.setEndAddress(trip.getDropoff().getGpsAddress());
+            callData.setEndLat(String.valueOf(trip.getDropoff().getLat()));
+            callData.setEndLng(String.valueOf(trip.getDropoff().getLng()));
+        }
+        if (trip.getPickup() != null) {
+            callData.setStartAddress(trip.getPickup().getGpsAddress());
+            callData.setStartLat(String.valueOf(trip.getPickup().getLat()));
+            callData.setStartLng(String.valueOf(trip.getPickup().getLng()));
+        }
         mLastReturnRunBooking = trip.getDisplayTag().equalsIgnoreCase("z");
 
         //checking for reroute
@@ -586,7 +594,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
 
     private long mLastClickTime;
 
-    @OnClick({R.id.ivTakeImage, R.id.ivEyeView,R.id.feedbackBtn, R.id.ivBatchInfo, R.id.ivPickUpCustomerPhone, R.id.imageViewAddDelivery})
+    @OnClick({R.id.ivTakeImage, R.id.ivEyeView, R.id.feedbackBtn, R.id.ivBatchInfo, R.id.ivPickUpCustomerPhone, R.id.imageViewAddDelivery})
     public void onClick(View v) {
         if (mLastClickTime != 0 && (SystemClock.elapsedRealtime() - mLastClickTime < 1000)) {
             return;
@@ -778,6 +786,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         }, Constants.Amazon.BUCKET_NAME);
 
     }
+
     private String getDeliveryFeedback() {
         if (mLastReturnRunBooking) {
             return getString(R.string.return_run_spinner);
@@ -1111,6 +1120,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         }
     }
+
     private void onRerouteCreated(DeliveryDetails data) {
         isRerouteCreated = true;
         feedbackBtn.setEnabled(true);
