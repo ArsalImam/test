@@ -249,9 +249,23 @@ public class ActivityStackManager {
         mContext.startActivity(intent);
     }
 
+    /**
+     * this will open feedback activity with taking care of backward compatibility
+     * @param mContext of the activity
+     */
     public void startFeedbackActivity(Context mContext) {
+        startFeedbackActivity(mContext, false);
+    }
+
+    /**
+     * this will open feedback activity with taking care of backward compatibility (dependent on the flag)
+     *
+     * @param mContext of the activity
+     * @param newFlow if true, will ignore backward compatibility
+     */
+    public void startFeedbackActivity(Context mContext, boolean newFlow) {
         NormalCallData callData = AppPreferences.getCallData();
-        if (callData != null && CollectionUtils.isNotEmpty(callData.getRuleIds())) {
+        if (newFlow || (callData != null && CollectionUtils.isNotEmpty(callData.getRuleIds()))) {
             startFeedbackFromResume(mContext, FSImplFeedbackActivity.class);
             return;
         }

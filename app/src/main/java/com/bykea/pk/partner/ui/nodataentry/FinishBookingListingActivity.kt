@@ -105,7 +105,7 @@ class FinishBookingListingActivity : BaseActivity() {
             AppPreferences.setCallData(callData)
             AppPreferences.clearTripDistanceData()
             ActivityStackManager.getInstance()
-                    .startFeedbackActivity(this)
+                    .startFeedbackActivity(this, true)
             finish()
         }, 1000)
     }
