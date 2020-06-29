@@ -36,6 +36,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.APP
+import com.bykea.pk.partner.utils.Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
@@ -82,6 +83,7 @@ class OfflineRidesFragment : Fragment() {
                     geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 }
             }
+
             override fun onOfflineKamaiClicked() {
                 Utils.startCustomWebViewActivity(mCurrentActivity, Constants.OFFLINE_KAMAI_WEB_URL, DriverApp.getContext().getString(R.string.offline_kamai));
             }
@@ -361,6 +363,11 @@ class OfflineRidesFragment : Fragment() {
                 SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
                 SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
                 SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
+                DRIVER_ACCOUNT_BLOCKED_BY_ADMIN -> {
+                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                            Utils.getSupportHelplineNumber(),
+                            getString(R.string.account_blocked_message_ur))
+                }
                 else -> Utils.appToast(getString(R.string.error_try_again))
             }
         } else {
