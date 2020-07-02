@@ -18,6 +18,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.ApiError.BOOKING_ALREADY_TAKEN
 import com.bykea.pk.partner.utils.Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN
+import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
@@ -163,8 +164,8 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
     override fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?) {
         Dialogs.INSTANCE.dismissDialog()
         if (code == 422) {
-            subCode?.let {
-                when (it) {
+            if (subCode != null && subCode != DIGIT_ZERO) {
+                when (subCode) {
                     BOOKING_ALREADY_TAKEN -> {
                         _bookingTakenCommand.value = Event(Unit)
                     }
@@ -172,14 +173,14 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
                         _driverBlockedByAdmin.value = true
                     }
                     else -> {
-                        showSnackbarMessage(R.string.error_try_again)
+                        Dialogs.INSTANCE.showToast(message)
                     }
                 }
-            } ?: run {
-                showSnackbarMessage(R.string.error_try_again)
+            } else {
+                Dialogs.INSTANCE.showToast(message)
             }
         } else {
-            showSnackbarMessage(R.string.error_try_again)
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.error_try_again))
         }
     }
 
