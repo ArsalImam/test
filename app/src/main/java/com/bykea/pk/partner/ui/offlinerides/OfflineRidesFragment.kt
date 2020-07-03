@@ -363,7 +363,7 @@ class OfflineRidesFragment : Fragment() {
                 DRIVER_ACCOUNT_BLOCKED_BY_ADMIN -> {
                     Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
                             Utils.getSupportHelplineNumber(),
-                            getString(R.string.account_blocked_message_ur))
+                            getString(R.string.account_blocked_wallet_amount_not_paid))
                 }
                 else -> Utils.appToast(getString(R.string.error_try_again))
             }

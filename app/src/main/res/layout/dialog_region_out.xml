@@ -16,10 +16,10 @@
         android:orientation="vertical">
 
 
-        <com.bykea.pk.partner.widgets.FontTextView
+        <com.bykea.pk.partner.widgets.AutoFitFontTextView
             android:id="@+id/messageTv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
