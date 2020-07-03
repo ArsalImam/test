@@ -36,6 +36,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.APP
+import com.bykea.pk.partner.utils.Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
@@ -356,13 +357,15 @@ class OfflineRidesFragment : Fragment() {
     private fun displayErrorToast(code: Int, subCode: Int?, message: String?) {
         if (subCode != null) {
             when (subCode) {
-                SUB_CODE_1009 -> Utils.appToast(message)
-                SUB_CODE_1019 -> Utils.appToast(message)
-                SUB_CODE_1028 -> Utils.appToast(message)
-                SUB_CODE_1051 -> Utils.appToast(message)
+                SUB_CODE_1009, SUB_CODE_1019, SUB_CODE_1028, SUB_CODE_1051 -> Utils.appToast(message)
                 SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
                 SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
                 SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
+                DRIVER_ACCOUNT_BLOCKED_BY_ADMIN -> {
+                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                            Utils.getSupportHelplineNumber(),
+                            getString(R.string.account_blocked_wallet_amount_not_paid))
+                }
                 else -> Utils.appToast(getString(R.string.error_try_again))
             }
         } else {

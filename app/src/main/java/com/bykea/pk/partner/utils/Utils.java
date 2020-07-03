@@ -3368,6 +3368,7 @@ public class Utils {
                 break;
             case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
             case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN:
                 AppPreferences.setAvailableStatus(false);
                 eventBus.post(Keys.INACTIVE_FENCE);
                 break;

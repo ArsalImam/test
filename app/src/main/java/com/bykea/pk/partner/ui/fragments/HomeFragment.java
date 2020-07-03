@@ -1013,6 +1013,11 @@ public class HomeFragment extends Fragment {
                         Utils.getSupportHelplineNumber(),
                         getString(R.string.account_blocked_message_ur));
                 break;
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        Utils.getSupportHelplineNumber(),
+                        getString(R.string.account_blocked_wallet_amount_not_paid));
+                break;
             case Constants.ApiError.APP_FORCE_UPDATE:
                 Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
                         getString(R.string.force_app_update_title),

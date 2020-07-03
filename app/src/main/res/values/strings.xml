@@ -619,4 +619,5 @@
     <string name="customer_wallet_is_negative">\u0020کسٹمر کا والٹ منفی ہے۔ برائے مہربانی\u0020</string>
     <string name="top_up_customer_wallet">\u0020کسٹمر کا والٹ  ٹاپ آپ کریں۔\u0020</string>
     <string name="fence_error">Non Service Area</string>
+    <string name="account_blocked_wallet_amount_not_paid">\u0020گزشتہ دن تک کا والٹ بیلنس جمع نہ کرنے کی وجہ سے آپ کا اکاؤنٹ بلاک ہو گیا ہے۔\u0020</string>
 </resources>

@@ -111,10 +111,9 @@ class JobsRepository(
                 callback.onJobRequestAccepted()
             }
 
-            override fun onJobRequestAcceptFailed(code: Int, message: String?) {
-                callback.onJobRequestAcceptFailed(code, message)
+            override fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?) {
+                callback.onJobRequestAcceptFailed(code, subCode, message)
             }
-
         })
     }
 
