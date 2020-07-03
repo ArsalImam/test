@@ -119,7 +119,7 @@ class JobDetailActivity : BaseActivity() {
                     binding.viewmodel?.driverBlockedByAdmin?.value = false
                     Dialogs.INSTANCE.showRegionOutErrorDialog(this@JobDetailActivity,
                             Utils.getSupportHelplineNumber(),
-                            getString(R.string.account_blocked_message_ur))
+                            getString(R.string.account_blocked_wallet_amount_not_paid))
                 }
             })
         }
