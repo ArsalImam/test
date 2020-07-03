@@ -34,16 +34,13 @@ import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
-import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.APP
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
-import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.GeocodeStrategyManager
-import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.FontTextView
 import kotlinx.android.synthetic.main.activity_ride_code_verification.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
@@ -82,8 +79,13 @@ class OfflineRidesFragment : Fragment() {
                     geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                 }
             }
+
             override fun onOfflineKamaiClicked() {
-                Utils.startCustomWebViewActivity(mCurrentActivity, Constants.OFFLINE_KAMAI_WEB_URL, DriverApp.getContext().getString(R.string.offline_kamai));
+                if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().settings.partnerOfflineRideDemo, DriverApp.getContext().getString(R.string.offline_kamai));
+                } else {
+                    Utils.startCustomWebViewActivity(mCurrentActivity, Constants.OFFLINE_KAMAI_WEB_URL, DriverApp.getContext().getString(R.string.offline_kamai));
+                }
             }
         }
         return binding.root
