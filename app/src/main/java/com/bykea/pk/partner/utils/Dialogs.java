@@ -1077,7 +1077,7 @@ public enum Dialogs {
                                                  View.OnClickListener negative, View.OnClickListener positive) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
-            mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            Dialog mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
             mDialog.setContentView(R.layout.dialog_alert_tick_cross_urdu);
 
             if (negative == null) {
@@ -1094,7 +1094,7 @@ public enum Dialogs {
             if (textSize > 0f) {
                 messageTv.setTextSize(textSize);
             }
-            showDialog();
+            showDialog(mDialog);
         }
     }
 
