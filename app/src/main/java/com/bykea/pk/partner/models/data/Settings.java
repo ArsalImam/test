@@ -15,6 +15,7 @@ import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.MAX_BATCH_BOOKING_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.OFFLINE_KAMAI_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_NEGATIVE_LIMIT_FALLBACK;
 import static com.bykea.pk.partner.utils.Constants.PARTNER_TOP_UP_POSITIVE_LIMIT_FALLBACK;
 
@@ -145,6 +146,12 @@ public class Settings {
      */
     @SerializedName("batch_booking_limit")
     private String batchBookingLimit;
+
+    /**
+     * Partner Offline Ride Demo URL
+     */
+    @SerializedName("partner_offline_ride_demo")
+    private String partnerOfflineRideDemo;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -460,5 +467,13 @@ public class Settings {
 
     public void setHowItWorksUrl(String howItWorksUrl) {
         this.howItWorksUrl = howItWorksUrl;
+    }
+
+    /**
+     * Get Offline Kamari Web Url
+     * @return String: If not recevied in setting return fallback
+     */
+    public String getPartnerOfflineRideDemo() {
+        return StringUtils.isEmpty(partnerOfflineRideDemo) ? OFFLINE_KAMAI_WEB_URL : partnerOfflineRideDemo;
     }
 }

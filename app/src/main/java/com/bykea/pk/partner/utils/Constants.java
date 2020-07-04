@@ -111,7 +111,7 @@ public class Constants {
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://bykea.com/partner-videos.php";
-    public static final String OFFLINE_KAMAI_WEB_URL = "https://www.bykea.com/offline-kamai";
+    public static final String OFFLINE_KAMAI_WEB_URL = "http://help.bykea.com/offline-kamai.php";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
@@ -597,6 +597,7 @@ public class Constants {
         public static final int APP_FORCE_UPDATE = 1001;
         public static final int DRIVER_LAT_LNG_ZERO = 1002;
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
+        public static final int DRIVER_ACCOUNT_BLOCKED_BY_ADMIN = 1101;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
         public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
@@ -608,6 +609,7 @@ public class Constants {
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
         public static final int ERROR_MSG_CODE = 1050;
         public static final int INSUFFIECIENT_PASSENGER_WALLET = 1028;
+        public static final int BOOKING_ALREADY_TAKEN = 4005;
     }
 
     /**

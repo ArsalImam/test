@@ -595,10 +595,10 @@ public enum Dialogs {
                                          final String msg) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
-            mDialog = new Dialog(context, R.style.actionSheetTheme);
+            Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_region_out);
             if (StringUtils.isNotBlank(msg)) {
-                ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
+                ((AutoFitFontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
             }
             mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -607,7 +607,7 @@ public enum Dialogs {
                     Utils.callingIntent(context, number);
                 }
             });
-            showDialog();
+            showDialog(mDialog);
         }
     }
 
