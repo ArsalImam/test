@@ -70,6 +70,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 import static com.bykea.pk.partner.DriverApp.getApplication;
+import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
 import static com.bykea.pk.partner.utils.Keys.BROADCAST_CANCEL_BATCH;
 
 public class WebIORequestHandler {
@@ -565,7 +566,7 @@ public class WebIORequestHandler {
                 if (payload.getTrip().getDispatch() != null || payload.getTrip().getDispatch()) {
                     Utils.appToastDebug("Job Dispatch Socket Received");
                     ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
-                } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase("single")) {
+                } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase(SINGLE)) {
                     JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override

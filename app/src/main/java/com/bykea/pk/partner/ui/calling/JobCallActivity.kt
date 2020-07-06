@@ -316,33 +316,41 @@ class JobCallActivity : BaseActivity() {
      * Inform server to assign job from loadboard
      */
     private fun assignJobFromLoadboard() {
-        val job = Job(jobCall.booking_id!!)
-        jobsRepo.pickJob(job, true,object : JobsDataSource.AcceptJobRequestCallback {
-            override fun onJobRequestAccepted() {
-                Dialogs.INSTANCE.dismissDialog()
-                AppPreferences.clearTripDistanceData()
-                AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
-                AppPreferences.setTripAcceptTime(System.currentTimeMillis())
-                Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed.toInt())
-                AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
-                AppPreferences.setIsOnTrip(true)
-                AppPreferences.setDeliveryType(CallType.SINGLE)
+        jobCall.booking_id?.let { bookingId ->
+            val job = Job(bookingId)
+            jobsRepo.pickJob(job, true, object : JobsDataSource.AcceptJobRequestCallback {
+                override fun onJobRequestAccepted() {
+                    Dialogs.INSTANCE.dismissDialog()
+                    AppPreferences.clearTripDistanceData()
+                    AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
+                    AppPreferences.setTripAcceptTime(System.currentTimeMillis())
+                    Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed.toInt())
+                    AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
+                    AppPreferences.setIsOnTrip(true)
+                    AppPreferences.setDeliveryType(CallType.SINGLE)
 
-                val callData = NormalCallData()
-                callData.status = TripStatus.ON_ACCEPT_CALL
-                callData.tripNo = jobCall.booking_no
-                AppPreferences.setCallData(callData)
+                    val callData = NormalCallData()
+                    callData.status = TripStatus.ON_ACCEPT_CALL
+                    callData.tripNo = jobCall.booking_no
+                    AppPreferences.setCallData(callData)
 
-                ActivityStackManager.getInstance().startJobActivity(this@JobCallActivity)
-                stopSound()
-                finishActivity()
-            }
+                    ActivityStackManager.getInstance().startJobActivity(this@JobCallActivity)
+                    stopSound()
+                    finishActivity()
+                }
 
-            override fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?) {
-                Dialogs.INSTANCE.dismissDialog()
-                message?.let { onAcceptFailed(it) } ?: run { onAcceptFailed("On Accept Failed") }
-            }
-        })
+                override fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?) {
+                    Dialogs.INSTANCE.dismissDialog()
+                    message?.let {
+                        onAcceptFailed(it)
+                    } ?: run {
+                        onAcceptFailed("On Accept Failed")
+                    }
+                }
+            })
+        } ?: run {
+            Dialogs.INSTANCE.dismissDialog()
+        }
     }
 
     /**
