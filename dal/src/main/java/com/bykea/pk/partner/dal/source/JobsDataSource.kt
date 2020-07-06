@@ -63,8 +63,9 @@ interface JobsDataSource {
      *
      * @param jobId Id of JobRequest to be accepted
      * @param callback Response callback
+     * @param isDispatch :
      */
-    fun pickJob(job: Job, callback: AcceptJobRequestCallback)
+    fun pickJob(job: Job, isDispatch:Boolean, callback: AcceptJobRequestCallback)
 
     /**
      * Post acknowledgement of job call

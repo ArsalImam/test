@@ -9,6 +9,7 @@ data class JobCallPayload(
 )
 
 data class JobCall(
+        val booking_id: Long?,
         val trip_id: String,
         val booking_no: String,
         val service_code: Int,
@@ -17,5 +18,6 @@ data class JobCall(
         val pickup: Stop,
         val dropoff: Stop?,
         val timer: Int,
-        val dt: String //ISO 8601
+        val dt: String,//ISO 8601
+        val dispatch: Boolean?
 ) : Serializable

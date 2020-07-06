@@ -561,8 +561,11 @@ public class WebIORequestHandler {
             Gson gson = new Gson();
             try {
                 JobCallPayload payload = gson.fromJson(serverResponse, JobCallPayload.class);
-                if (payload != null && AppPreferences.getAvailableStatus()) {
-                    JobCall jobCall = payload.getTrip();
+                JobCall jobCall = payload.getTrip();
+                if (payload.getTrip().getDispatch() != null || payload.getTrip().getDispatch()) {
+                    Utils.appToastDebug("Job Dispatch Socket Received");
+                    ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
+                } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase("single")) {
                     JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override
@@ -576,7 +579,6 @@ public class WebIORequestHandler {
                             Utils.appToastDebug("Job Call Acknowledgement Failed");
                         }
                     });
-
                 }
             } catch (
                     Exception e) {
@@ -620,27 +622,27 @@ public class WebIORequestHandler {
                 normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
             ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
         } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                /*
-                 * when Gps is off, we don't show Calling Screen so we don't need to show
-                 * Cancel notification either if passenger cancels it before booking.
-                 * If passenger has cancelled it after booking we will entertain this Cancel notification
-                 * */
-                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
-                    AppPreferences.removeReceivedMessageCount();
-                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-                    intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                    intent.putExtra("msg", normalCallData.getMessage());
-                    Utils.setCallIncomingState();
-                    if (AppPreferences.isJobActivityOnForeground() ||
-                            AppPreferences.isCallingActivityOnForeground()) {
+            /*
+             * when Gps is off, we don't show Calling Screen so we don't need to show
+             * Cancel notification either if passenger cancels it before booking.
+             * If passenger has cancelled it after booking we will entertain this Cancel notification
+             * */
+            if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                AppPreferences.removeReceivedMessageCount();
+                Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
+                intent.putExtra("msg", normalCallData.getMessage());
+                Utils.setCallIncomingState();
+                if (AppPreferences.isJobActivityOnForeground() ||
+                        AppPreferences.isCallingActivityOnForeground()) {
 //                                DriverApp.getContext().sendBroadcast(intent);
-                        EventBus.getDefault().post(intent);
-                    } else {
-                        EventBus.getDefault().post(intent);
+                    EventBus.getDefault().post(intent);
+                } else {
+                    EventBus.getDefault().post(intent);
 //                                DriverApp.getContext().sendBroadcast(intent);
-                        Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
-                    }
-                    getInstance().unRegisterChatListener();
+                    Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
+                }
+                getInstance().unRegisterChatListener();
             } else {
                 Utils.appToastDebug(normalCallData.getMessage());
             }

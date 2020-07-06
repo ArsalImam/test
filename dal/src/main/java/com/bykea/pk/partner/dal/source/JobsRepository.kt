@@ -104,10 +104,14 @@ class JobsRepository(
         jobsLocalDataSource.deleteJobRequest(jobRequestId)
     }
 
-    override fun pickJob(job: Job, callback: JobsDataSource.AcceptJobRequestCallback) {
-        jobsRemoteDataSource.pickJob(job.id, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.AcceptJobRequestCallback {
+    override fun pickJob(job: Job, isDispatch: Boolean, callback: JobsDataSource.AcceptJobRequestCallback) {
+        jobsRemoteDataSource.pickJob(job.id, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), isDispatch, object : JobsDataSource.AcceptJobRequestCallback {
             override fun onJobRequestAccepted() {
-                saveJob(job)
+                // THIS CHECK HAS BEEN MAINTAINED IF THE ASSIGN JOB IS CALL FROM CALLING ACTIVITY
+                // NOT CHANGE BECAUSE THE IMPACT WILL BE CHANGE
+                if (job.booking_no != null && job.trip_id != null) {
+                    saveJob(job)
+                }
                 callback.onJobRequestAccepted()
             }
 

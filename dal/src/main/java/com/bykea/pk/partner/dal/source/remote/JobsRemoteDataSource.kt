@@ -53,9 +53,10 @@ class JobsRemoteDataSource {
      * Accept job request
      *
      * @param jobRequestId Id of Booking to be accepted
+     * @param isDispatch : Server will check busy or not if it's false
      */
-    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng)).enqueue(object : Callback<PickJobResponse> {
+    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, isDispatch: Boolean, callback: JobsDataSource.AcceptJobRequestCallback) {
+        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng, isDispatch)).enqueue(object : Callback<PickJobResponse> {
             override fun onSuccess(response: PickJobResponse) = callback.onJobRequestAccepted()
             override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onJobRequestAcceptFailed(code, subCode, message)
         })

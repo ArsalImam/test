@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.Aog
+import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Stop
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
@@ -22,10 +23,12 @@ import com.bykea.pk.partner.models.response.RejectCallResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.common.Event
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
+import com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_job_call.*
@@ -196,7 +199,11 @@ class JobCallActivity : BaseActivity() {
         acceptCallBtn.setOnClickListener {
             stopSound()
             Dialogs.INSTANCE.showLoader(this@JobCallActivity)
-            acceptJob()
+            if (jobCall.dispatch == null || !jobCall.dispatch!!) {
+                acceptJob()
+            } else {
+                assignJobFromLoadboard()
+            }
             timer.cancel()
         }
     }
@@ -306,6 +313,39 @@ class JobCallActivity : BaseActivity() {
     }
 
     /**
+     * Inform server to assign job from loadboard
+     */
+    private fun assignJobFromLoadboard() {
+        val job = Job(jobCall.booking_id!!)
+        jobsRepo.pickJob(job, true,object : JobsDataSource.AcceptJobRequestCallback {
+            override fun onJobRequestAccepted() {
+                Dialogs.INSTANCE.dismissDialog()
+                AppPreferences.clearTripDistanceData()
+                AppPreferences.setTripStatus(TripStatus.ON_ACCEPT_CALL)
+                AppPreferences.setTripAcceptTime(System.currentTimeMillis())
+                Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed.toInt())
+                AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
+                AppPreferences.setIsOnTrip(true)
+                AppPreferences.setDeliveryType(CallType.SINGLE)
+
+                val callData = NormalCallData()
+                callData.status = TripStatus.ON_ACCEPT_CALL
+                callData.tripNo = jobCall.booking_no
+                AppPreferences.setCallData(callData)
+
+                ActivityStackManager.getInstance().startJobActivity(this@JobCallActivity)
+                stopSound()
+                finishActivity()
+            }
+
+            override fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?) {
+                Dialogs.INSTANCE.dismissDialog()
+                message?.let { onAcceptFailed(it) } ?: run { onAcceptFailed("On Accept Failed") }
+            }
+        })
+    }
+
+    /**
      * Acknowledge server to skip the job request
      */
     private fun skipJob() {
@@ -337,7 +377,7 @@ class JobCallActivity : BaseActivity() {
                     Aog.onJobCallAndJobAccept(jobCall, true, secondsEclipsed.toInt())
                     AppPreferences.addLocCoordinateInTrip(AppPreferences.getLatitude(), AppPreferences.getLongitude())
                     AppPreferences.setIsOnTrip(true)
-                    AppPreferences.setDeliveryType(Constants.CallType.SINGLE)
+                    AppPreferences.setDeliveryType(CallType.SINGLE)
 
                     val callData = NormalCallData()
                     callData.status = TripStatus.ON_ACCEPT_CALL
