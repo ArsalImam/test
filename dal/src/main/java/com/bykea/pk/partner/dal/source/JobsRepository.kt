@@ -46,9 +46,9 @@ class JobsRepository(
      */
     override fun getJobs(callback: JobsDataSource.LoadJobsCallback) {
 
-        if (cachedJobs.isNotEmpty()) {
+        /*if (cachedJobs.isNotEmpty()) {
             callback.onJobsLoaded(ArrayList(cachedJobs.values))
-        }
+        }*/
 
         var serviceCode: Int? = null
         if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
