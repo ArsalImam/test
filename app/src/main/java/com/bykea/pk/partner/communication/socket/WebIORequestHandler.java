@@ -565,7 +565,7 @@ public class WebIORequestHandler {
             try {
                 JobCallPayload payload = gson.fromJson(serverResponse, JobCallPayload.class);
                 JobCall jobCall = payload.getTrip();
-                if (payload.getTrip().getDispatch() != null || payload.getTrip().getDispatch()) {
+                if (payload.getTrip().getDispatch() != null && payload.getTrip().getDispatch()) {
                     Utils.appToastDebug("Job Dispatch Socket Received");
                     ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
                 } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase(SINGLE)) {
