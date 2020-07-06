@@ -70,7 +70,9 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 import static com.bykea.pk.partner.DriverApp.getApplication;
+import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
+import static com.bykea.pk.partner.utils.Constants.MSG;
 import static com.bykea.pk.partner.utils.Keys.BROADCAST_CANCEL_BATCH;
 
 public class WebIORequestHandler {
@@ -631,8 +633,8 @@ public class WebIORequestHandler {
             if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                 AppPreferences.removeReceivedMessageCount();
                 Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-                intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                intent.putExtra("msg", normalCallData.getMessage());
+                intent.putExtra(ACTION, Keys.BROADCAST_CANCEL_RIDE);
+                intent.putExtra(MSG, normalCallData.getMessage());
                 Utils.setCallIncomingState();
                 if (AppPreferences.isJobActivityOnForeground() ||
                         AppPreferences.isCallingActivityOnForeground()) {
