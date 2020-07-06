@@ -1,5 +1,7 @@
 package com.bykea.pk.partner.ui.loadboard.list
 
+import android.view.View
+
 /**
  * Listener used with data binding to process user actions of listing screen.
  *
@@ -17,5 +19,5 @@ interface JobListActionsListener {
      * On user taps refresh button to fetch data from remote data source
      *
      */
-    fun onRefreshClicked()
+    fun onRefreshClicked(view: View)
 }
