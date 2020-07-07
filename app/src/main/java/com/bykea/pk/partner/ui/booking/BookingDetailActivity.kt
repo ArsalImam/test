@@ -70,6 +70,7 @@ class BookingDetailActivity : AppCompatActivity() {
         viewModel = this.obtainViewModel(BookingDetailViewModel::class.java)
         binding?.lifecycleOwner = this
         binding?.viewModel = viewModel
+        binding?.ivBackButton?.setOnClickListener { finishActivity() }
 
         setupObservers()
     }
@@ -77,7 +78,7 @@ class BookingDetailActivity : AppCompatActivity() {
     /**
      * this method is binded with complain submit button and will trigger on its click
      */
-    public fun onComplainButtonClicked(view: View) {
+    fun onComplainButtonClicked(view: View) {
         ActivityStackManager.getInstance()
                 .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
     }
@@ -145,12 +146,8 @@ class BookingDetailActivity : AppCompatActivity() {
 
     /**
      * Removing activity from stack, this method is calling from view's onclick event
-     *
-     * @param v back button
      */
-    fun finishActivity(v: View) {
-        finish()
-    }
+    private fun finishActivity() = finish()
 
     fun onPodClick(v: View) {
         //handle right icon
