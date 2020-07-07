@@ -253,7 +253,8 @@ public class Utils {
     }
 
     public static File createImageFile(Context context, String type) throws IOException {
-        String imageFileName = "BykeaDocument" + type;
+        String imageFileName = Constants.BYKEA_DOCUMENTS + Constants.CHAR_HYPHEN +
+                System.nanoTime() + Constants.CHAR_HYPHEN + type;
 
         File storageDir = new File(context.getExternalFilesDir(null), ".bykea");
         if (!storageDir.exists()) storageDir.mkdir();
@@ -2257,6 +2258,7 @@ public class Utils {
 
     /**
      * Check if the ride is of courier
+     *
      * @param callType : Receive in active trip data
      * @return true if the type is of courier else false
      */
