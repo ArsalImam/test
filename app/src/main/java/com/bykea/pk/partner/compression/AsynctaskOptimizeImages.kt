@@ -4,16 +4,26 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.AsyncTask
+import org.apache.commons.lang3.math.NumberUtils
 import java.io.FileOutputStream
 import java.io.IOException
 
 /**
  * Created by ArsalImam on 8/19/2017.
+ *
+ * this can be used to optimize image files
+ *
+ * [path] image file path
+ * [onResult] callback to return to the main controller
  */
 open class AsynctaskOptimizeImages(
         private val path: String,
-        private val onApiResult: OnResult) : AsyncTask<String?, Void?, String?>() {
+        private val onResult: OnResult) : AsyncTask<String?, Void?, String?>() {
 
+    /**
+     * background execution of the thread
+     * [params] input params of this thread
+     */
     override fun doInBackground(vararg params: String?): String? {
         try {
             var optimizedBitmap = resize(BitmapFactory.decodeFile(this.path))
@@ -21,7 +31,7 @@ open class AsynctaskOptimizeImages(
             var out: FileOutputStream? = null
             try {
                 out = FileOutputStream(this.path)
-                optimizedBitmap?.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                optimizedBitmap?.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, out)
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -37,6 +47,10 @@ open class AsynctaskOptimizeImages(
         return null
     }
 
+    /**
+     * will resize bitmap with scaling value mentioned in [SCALE_VALUE]
+     * [img] bitmap to resize
+     */
     private fun resize(bitmap: Bitmap): Bitmap? {
         var resizedBitmap: Bitmap?
         val originalWidth = bitmap.width
@@ -56,6 +70,10 @@ open class AsynctaskOptimizeImages(
         return resizedBitmap
     }
 
+    /**
+     * will update the orientation of the image if required
+     * [img] bitmap to check
+     */
     private fun checkOrientationAndRotate(img: Bitmap?): Bitmap? {
         var image: Bitmap? = null
         img?.let {
@@ -63,8 +81,8 @@ open class AsynctaskOptimizeImages(
             val width = img.width
             image = if (width > height) {
                 val matrix = Matrix()
-                matrix.postRotate(90f)
-                Bitmap.createBitmap(img, 0, 0, width, height, matrix, false)
+                matrix.postRotate(ROTATE_ANGLE)
+                Bitmap.createBitmap(img, NumberUtils.INTEGER_ZERO, NumberUtils.INTEGER_ZERO, width, height, matrix, false)
             } else img
         }
 
@@ -73,14 +91,20 @@ open class AsynctaskOptimizeImages(
 
     override fun onPostExecute(s: String?) {
         super.onPostExecute(s)
-        this.onApiResult.onResult(this.path)
+        this.onResult.onResult(this.path)
     }
 
     companion object {
         private const val SCALE_VALUE = 1024
+        private const val IMAGE_QUALITY = 85
+        private const val ROTATE_ANGLE = 90f
     }
 
     interface OnResult {
+        /**
+         * callback method for this asynctask
+         * [path] of the output file
+         */
         fun onResult(path: String)
     }
 }
