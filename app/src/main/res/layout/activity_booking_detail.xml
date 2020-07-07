@@ -2,6 +2,33 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="com.bykea.pk.partner.utils.Utils" />
+
+        <import type="android.view.View" />
+
+        <import type="com.bykea.pk.partner.ui.helpers.AppPreferences" />
+
+        <import type="org.apache.commons.lang3.StringUtils" />
+
+        <variable
+            name="viewModel"
+            type="com.bykea.pk.partner.ui.booking.BookingDetailViewModel" />
+
+        <variable
+            name="invoiceAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
+
+        <variable
+            name="batchInvoiceAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
+
+        <variable
+            name="feedbackAdapter"
+            type="com.bykea.pk.partner.ui.common.LastAdapter" />
+    </data>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,30 +54,30 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivBackButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_5sdp"
-                    app:srcCompat="@drawable/ic_arrow_back_48px" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivRightIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:onClick="onPodClick"
                     android:paddingHorizontal="@dimen/_8sdp"
-                    android:paddingVertical="@dimen/_5sdp" />
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_arrow_back_48px"/>
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
-                    android:id="@+id/titleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:textSize="@dimen/_17sdp"
-                    app:fontName="roboto_regular.ttf"
-                    tools:text="KHIU899" />
+                    android:id="@+id/titleTextView"
+                    tools:text="KHIU899"
+                    app:fontName="roboto_regular.ttf"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/ivRightIcon"
+                    android:onClick="onPodClick"
+                    android:layout_centerVertical="true"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"/>
             </RelativeLayout>
         </LinearLayout>
 
@@ -108,13 +135,6 @@
                             android:gravity="center_vertical"
                             android:orientation="vertical">
 
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_1sdp"
-                                android:background="@color/secondaryColorDark"
-                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}" />
-
-
                             <com.bykea.pk.partner.widgets.FontTextView
                                 android:id="@+id/startAddressTv"
                                 android:layout_width="match_parent"
@@ -128,6 +148,13 @@
                                 android:textColor="@color/secondaryColorDark"
                                 android:textSize="@dimen/textsize.small.medium"
                                 app:fontName="roboto_light.ttf" />
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/secondaryColorDark"
+                                android:visibility="@{viewModel.bookingDetailData.dropoff.address == null ? View.GONE : View.VISIBLE}" />
 
                             <com.bykea.pk.partner.widgets.FontTextView
                                 android:id="@+id/endAddressTv"
@@ -232,21 +259,21 @@
                             android:gravity="left|center_vertical"
                             android:orientation="horizontal">
 
+                            <com.bykea.pk.partner.widgets.FontTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{viewModel.bookingDetailData.service.name}"
+                                android:textColor="@color/textColorPrimary"
+                                android:textSize="@dimen/textsize.normal"
+                                android:gravity="center_vertical"
+                                app:fontName="roboto_light.ttf"
+                                tools:text="Abc" />
+
                             <ImageView
                                 android:layout_width="@dimen/_15sdp"
                                 android:layout_height="@dimen/_15sdp"
                                 android:layout_marginLeft="@dimen/_3sdp"
                                 app:loadUrl="@{viewModel.bookingDetailData.priorTag}" />
-
-                            <com.bykea.pk.partner.widgets.FontTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:text="@{viewModel.bookingDetailData.service.name}"
-                                android:textColor="@color/textColorPrimary"
-                                android:textSize="@dimen/textsize.normal"
-                                app:fontName="roboto_light.ttf"
-                                tools:text="Abc" />
                         </LinearLayout>
 
 
@@ -263,19 +290,22 @@
                             app:fontName="jameel_noori_nastaleeq.ttf" />
 
                     </LinearLayout>
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height.large"
                         android:orientation="vertical"
-                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}"
-                        tools:visibility="visible">
+                        tools:visibility="visible"
+                        android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/divider" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/height.large"
                             android:layout_marginLeft="@dimen/_12sdp"
                             android:layout_marginRight="@dimen/margin.small"
+                            android:layout_height="@dimen/height.large"
                             android:gravity="center_vertical"
                             android:visibility="@{viewModel.bookingDetailData.status.equalsIgnoreCase(`cancelled`)  ? View.VISIBLE : View.GONE}">
 
@@ -305,11 +335,6 @@
                                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
                         </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_1sdp"
-                            android:background="@color/divider" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -356,31 +381,4 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>
-
-    <data>
-
-        <import type="com.bykea.pk.partner.utils.Utils" />
-
-        <import type="android.view.View" />
-
-        <import type="com.bykea.pk.partner.ui.helpers.AppPreferences" />
-
-        <import type="org.apache.commons.lang3.StringUtils" />
-
-        <variable
-            name="viewModel"
-            type="com.bykea.pk.partner.ui.booking.BookingDetailViewModel" />
-
-        <variable
-            name="invoiceAdapter"
-            type="com.bykea.pk.partner.ui.common.LastAdapter" />
-
-        <variable
-            name="batchInvoiceAdapter"
-            type="com.bykea.pk.partner.ui.common.LastAdapter" />
-
-        <variable
-            name="feedbackAdapter"
-            type="com.bykea.pk.partner.ui.common.LastAdapter" />
-    </data>
 </layout>
