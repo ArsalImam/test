@@ -219,7 +219,7 @@ dependencies {
     implementation deps.markerClustering
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':dal')
-
+    implementation 'com.tilismtech.tellotalksdk:tellotalksdk:2.1.4@aar'
 
     implementation "io.reactivex.rxjava2:rxjava:2.2.3"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
