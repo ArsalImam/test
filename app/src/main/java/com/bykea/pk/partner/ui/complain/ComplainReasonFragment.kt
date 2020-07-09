@@ -20,6 +20,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.adapters.ProblemItemsAdapter
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.TelloTalkManager
 import com.bykea.pk.partner.utils.Utils
 import com.zendesk.util.StringUtils
 import kotlinx.android.synthetic.main.fragment_complain_reason.*
@@ -119,14 +120,16 @@ class ComplainReasonFragment : Fragment() {
         rvProblemList?.itemAnimator = DefaultItemAnimator()
         rvProblemList?.adapter = mAdapter
 
-        mAdapter?.setMyOnItemClickListener { position, view, reason ->
+        mAdapter?.setMyOnItemClickListener { _, _, reason ->
             mCurrentActivity?.selectedReason = reason
-            if (AppPreferences.isEmailVerified()) {
-                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity!!,
-                        mCurrentActivity?.tripHistoryDate, mCurrentActivity?.selectedReason)
-            } else {
-                checkIsEmailUpdatedFromRemoteDataSource()
-            }
+
+            TelloTalkManager.instance().openCorporateChat(activity);
+//            if (AppPreferences.isEmailVerified()) {
+//                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity!!,
+//                        mCurrentActivity?.tripHistoryDate, mCurrentActivity?.selectedReason)
+//            } else {
+//                checkIsEmailUpdatedFromRemoteDataSource()
+//            }
         }
     }
 

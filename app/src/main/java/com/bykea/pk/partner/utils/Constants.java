@@ -188,6 +188,9 @@ public class Constants {
     public static int SHOW_VIEW_HANDLER_DELAY = 350;
     public static int HIDE_VIEW_HANDLER_DELAY = 550;
 
+    public static final String ACCESS_KEY_TELLO_TALK = "D1183D5BCC1348AA81B00157E28352";
+    public static final String PROJECT_TOKEN_TELLO_TALK = "F51072EAF508435C9C6F7987CCADEB";
+
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
@@ -204,6 +207,7 @@ public class Constants {
         public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
 
+        public static final String DATA_TYPE_TELLO = "tellotalk-content-available";
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
