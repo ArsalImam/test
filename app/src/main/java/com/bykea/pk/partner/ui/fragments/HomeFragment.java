@@ -987,14 +987,8 @@ public class HomeFragment extends Fragment {
                         });
                 break;
             case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
-                displayErrorMessage = getString(R.string.wallet_amount_exceed_error_ur);
-                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
-                        displayErrorMessage, 0f, null, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Dialogs.INSTANCE.dismissDialog();
-                            }
-                        });
+                Dialogs.INSTANCE.showAlertDialogUrduWithTick(mCurrentActivity,
+                        getString(R.string.wallet_amount_exceed_error_ur));
                 break;
             case Constants.ApiError.OUT_OF_SERVICE_REGION:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
