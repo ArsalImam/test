@@ -1439,4 +1439,23 @@ public enum Dialogs {
             dialog.show();
         }
     }
+
+    /**
+     * This method shows a pop up dialog with Urdu text and Tick as Positive Button
+     *
+     * @param context Calling Context
+     * @param message Message to display
+     */
+    public void showAlertDialogUrduWithTick(Context context, String message) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            Dialog mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            mDialog.setContentView(R.layout.dialog_alert_tick_cross_urdu);
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+            mDialog.findViewById(R.id.positiveBtn).setOnClickListener(v -> dismissDialog(mDialog));
+            FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
+            messageTv.setText(message);
+            showDialog(mDialog);
+        }
+    }
 }
