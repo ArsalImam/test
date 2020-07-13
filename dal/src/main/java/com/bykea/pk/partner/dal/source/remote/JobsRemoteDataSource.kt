@@ -57,7 +57,7 @@ class JobsRemoteDataSource {
     fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
         Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng)).enqueue(object : Callback<PickJobResponse> {
             override fun onSuccess(response: PickJobResponse) = callback.onJobRequestAccepted()
-            override fun onFail(code: Int, message: String?) = callback.onJobRequestAcceptFailed(code, message)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onJobRequestAcceptFailed(code, subCode, message)
         })
     }
 
