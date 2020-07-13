@@ -220,7 +220,6 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':dal')
-    implementation project(':tellotalk-sdk')
     implementation "io.reactivex.rxjava2:rxjava:2.2.3"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
@@ -237,6 +236,22 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-s3:2.2.22'
     implementation group: 'com.zendesk', name: 'support', version: '2.3.1'
     implementation 'io.supercharge:shimmerlayout:2.1.0'
+
+
+    implementation project(':tellotalk-sdk')
+
+
+    implementation 'pub.devrel:easypermissions:0.4.0'
+    implementation('com.theartofdev.edmodo:android-image-cropper:2.7.0') {
+        exclude module: 'appcompat-v7'
+    }
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.8.9'
+
+    implementation 'com.facebook.fresco:fresco:1.11.0'
+    implementation 'com.github.zomato:androidphotofilters:1.0.1'
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
+    implementation 'com.googlecode.ez-vcard:ez-vcard:0.10.4'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
