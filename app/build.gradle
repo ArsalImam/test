@@ -220,7 +220,6 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':dal')
-//    implementation(name:'tellotalk-sdk', ext:'aar')
     implementation project(':tellotalk-sdk')
     implementation "io.reactivex.rxjava2:rxjava:2.2.3"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'

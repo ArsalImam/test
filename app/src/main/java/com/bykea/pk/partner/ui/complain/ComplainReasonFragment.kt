@@ -124,12 +124,6 @@ class ComplainReasonFragment : Fragment() {
             mCurrentActivity?.selectedReason = reason
 
             TelloTalkManager.instance().openCorporateChat(activity);
-//            if (AppPreferences.isEmailVerified()) {
-//                ActivityStackManager.getInstance().startComplainAddActivity(mCurrentActivity!!,
-//                        mCurrentActivity?.tripHistoryDate, mCurrentActivity?.selectedReason)
-//            } else {
-//                checkIsEmailUpdatedFromRemoteDataSource()
-//            }
         }
     }
 
