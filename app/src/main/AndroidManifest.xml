@@ -38,7 +38,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="merge"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup,android:name">
         <activity
             android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"
             android:screenOrientation="portrait" />
@@ -125,7 +125,8 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
@@ -146,7 +147,8 @@
         <activity android:name=".ui.activities.FSImplFeedbackActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
+            android:theme="@style/Base.Theme.AppCompat"
+            tools:replace="android:theme" />
         <!--
               <activity
               android:name=".ui.activities.PlacesActivity"

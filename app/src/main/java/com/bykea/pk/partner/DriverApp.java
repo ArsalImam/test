@@ -15,6 +15,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.FileUtil;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.elvishew.xlog.LogConfiguration;
 import com.elvishew.xlog.LogLevel;
@@ -39,9 +40,6 @@ import java.io.File;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import zendesk.core.AnonymousIdentity;
-import zendesk.core.Identity;
-import zendesk.core.JwtIdentity;
 import zendesk.core.Zendesk;
 import zendesk.support.Support;
 
@@ -97,6 +95,8 @@ public class DriverApp extends MultiDexApplication {
                 .filterOtherGCMReceivers(true)
                 .init();
         setupLoggerConfigurations();
+
+        TelloTalkManager.instance();
     }
 
     private void setupZendeskConfiguration() {

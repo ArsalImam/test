@@ -31,6 +31,7 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -84,9 +85,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-
-        // Check if message contains a notification payload.
         if (remoteMessage.getData() != null && remoteMessage.getData()
+                .get(Constants.Notification.DATA_TYPE_TELLO) != null) {
+            TelloTalkManager.instance().onMessageReceived();
+        } else if (remoteMessage.getData() != null && remoteMessage.getData()
                 .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
             if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase("1")) {
