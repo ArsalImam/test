@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.compression.AsynctaskOptimizeImages;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.remote.data.Invoice;
@@ -649,13 +650,17 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     logMPEvent();
                     if (isProofRequired()) {
-                        uploadProofOfDelivery();
+                        optimizeAndUpload();
                     } else {
                         finishTrip();
                     }
                 }
                 break;
         }
+    }
+
+    private void optimizeAndUpload() {
+        new AsynctaskOptimizeImages(imageUri.toString(), path -> uploadProofOfDelivery()).execute();
     }
 
     private void finishTrip() {
@@ -1061,7 +1066,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void takePicture() {
         try {
             if (checkPermissions()) {
-                tempUri = Utils.createImageFile(FSImplFeedbackActivity.this, Constants.DOCS);
+                tempUri = Utils.createImageFile(FSImplFeedbackActivity.this, Constants.POD);
                 Utils.startCameraByIntent(mCurrentActivity, tempUri);
             }
         } catch (IOException e) {

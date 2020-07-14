@@ -107,6 +107,9 @@ public class Constants {
     public static final String API = "API";
     public static final String DOCS = "doc";
     public static final int REQ_IMAGE = 1011;
+    public static final String POD = "pod";
+    public static final String CHAR_HYPHEN = "-";
+    public static final String BYKEA_DOCUMENTS = "BykeaDocument";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
