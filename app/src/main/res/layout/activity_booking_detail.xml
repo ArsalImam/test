@@ -52,13 +52,13 @@
                 android:layout_height="match_parent">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivBackButton"
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:paddingVertical="@dimen/_5sdp"
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_arrow_back_48px"
-                    android:onClick="finishActivity"/>
+                    app:srcCompat="@drawable/ic_arrow_back_48px"/>
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:layout_width="wrap_content"
