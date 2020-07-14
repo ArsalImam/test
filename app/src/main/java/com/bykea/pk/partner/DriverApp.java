@@ -2,6 +2,8 @@ package com.bykea.pk.partner;
 
 import android.content.Context;
 
+import androidx.multidex.MultiDex;
+
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dagger2.component.BasicComponent;
@@ -155,6 +157,7 @@ public class DriverApp extends TelloApplication {
         if (mContext == null) {
             mContext = this;
         }
+        MultiDex.install(mContext);
     }
 
     private Emitter.Listener connectionListener = new Emitter.Listener() {
