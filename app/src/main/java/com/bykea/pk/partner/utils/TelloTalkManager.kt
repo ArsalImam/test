@@ -43,8 +43,12 @@ class TelloTalkManager {
      */
     fun performLogin(callback: (isLoggedIn: Boolean) -> Unit) {
         val user = AppPreferences.getPilotData()
-        telloApiClient.registerUser(user.id, user.fullName, user.phoneNo) { success ->
-            callback(success)
+        user.id?.let {
+            telloApiClient.registerUser(user.id, user.fullName, user.phoneNo) { success ->
+                callback(success)
+            }
+        } ?: kotlin.run {
+            callback(false)
         }
     }
 
