@@ -53,8 +53,8 @@ class TelloTalkManager {
      *
      * [activity] context of the activity from which it will open
      */
-    fun openCorporateChat(activity: Activity?) {
-        telloApiClient.openCorporateChat(activity)
+    fun openCorporateChat(activity: Activity?, template: String? = null) {
+        telloApiClient.openCorporateChat(activity, template)
     }
 
     /**
