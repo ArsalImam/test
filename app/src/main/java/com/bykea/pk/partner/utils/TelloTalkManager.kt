@@ -42,16 +42,9 @@ class TelloTalkManager {
      * [callback] this will return controll from tello to our app
      */
     fun performLogin(callback: (isLoggedIn: Boolean) -> Unit) {
-        telloApiClient.let {
-            it.login { isLoggedInUser ->
-                if (isLoggedInUser) callback(true)
-                else {
-                    val user = AppPreferences.getPilotData()
-                    it.registerUser(user.id, user.fullName, user.phoneNo) { success ->
-                        callback(success)
-                    }
-                }
-            }
+        val user = AppPreferences.getPilotData()
+        telloApiClient.registerUser(user.id, user.fullName, user.phoneNo) { success ->
+            callback(success)
         }
     }
 

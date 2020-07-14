@@ -2,8 +2,6 @@ package com.bykea.pk.partner;
 
 import android.content.Context;
 
-import androidx.multidex.MultiDexApplication;
-
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dagger2.component.BasicComponent;
@@ -30,6 +28,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
+import com.tilismtech.tellotalksdk.TelloApplication;
 import com.zendesk.logger.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +42,7 @@ import io.socket.emitter.Emitter;
 import zendesk.core.Zendesk;
 import zendesk.support.Support;
 
-public class DriverApp extends MultiDexApplication {
+public class DriverApp extends TelloApplication {
 
     private static DriverApp mContext;
     private BasicComponent mBasicComponent;
