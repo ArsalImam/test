@@ -71,14 +71,14 @@ class BookingDetailActivity : AppCompatActivity() {
         binding?.lifecycleOwner = this
         binding?.viewModel = viewModel
         binding?.ivBackButton?.setOnClickListener { finishActivity() }
-
+        binding?.btnProblem?.setOnClickListener { onComplainButtonClicked() }
         setupObservers()
     }
 
     /**
      * this method is binded with complain submit button and will trigger on its click
      */
-    fun onComplainButtonClicked(view: View) {
+    private fun onComplainButtonClicked() {
         ActivityStackManager.getInstance()
                 .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
     }
