@@ -1,1 +1,2 @@
+include ':tellotalk-sdk'
 include ':app', ':dal'

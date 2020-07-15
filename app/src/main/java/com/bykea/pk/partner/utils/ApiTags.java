@@ -162,6 +162,7 @@ public class ApiTags {
     public static final String UPDATE_DROP_OFF = "trip-endaddress";
     public static final String PLACES_DISTANCE_MATRIX_EXT_URL = "maps/api/distancematrix/json";
     public static final String SOCKET_ACCEPT_SCHEDULED_TRIP = "assign-driver";
+    public static final String BATCH_UPDATED = "BATCH_UPDATED";
 
     public class BykeaMaps {
         public static final String BASE_URL = BuildConfig.BYKEA_MAPS_URL;

@@ -23,6 +23,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 
 import butterknife.ButterKnife;
@@ -96,11 +97,12 @@ public class ContactUsFragment extends Fragment {
                 checkContactNumberAndCall(true);
                 break;
             case R.id.submittedComplains: {
-                if (AppPreferences.isEmailVerified()) {
-                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-                } else {
-                    checkIsEmailUpdatedFromRemoteDataSource();
-                }
+                TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null);
+//                if (AppPreferences.isEmailVerified()) {
+//                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
+//                } else {
+//                    checkIsEmailUpdatedFromRemoteDataSource();
+//                }
             }
             break;
             case R.id.reportComplain: {

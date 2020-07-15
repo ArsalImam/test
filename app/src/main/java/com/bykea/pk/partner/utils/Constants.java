@@ -107,6 +107,9 @@ public class Constants {
     public static final String API = "API";
     public static final String DOCS = "doc";
     public static final int REQ_IMAGE = 1011;
+    public static final String POD = "pod";
+    public static final String CHAR_HYPHEN = "-";
+    public static final String BYKEA_DOCUMENTS = "BykeaDocument";
 
     private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
     private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
@@ -188,6 +191,9 @@ public class Constants {
     public static int SHOW_VIEW_HANDLER_DELAY = 350;
     public static int HIDE_VIEW_HANDLER_DELAY = 550;
 
+    public static final String ACCESS_KEY_TELLO_TALK = "D1183D5BCC1348AA81B00157E28352";
+    public static final String PROJECT_TOKEN_TELLO_TALK = "F51072EAF508435C9C6F7987CCADEB";
+
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
@@ -204,6 +210,7 @@ public class Constants {
         public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
 
+        public static final String DATA_TYPE_TELLO = "tellotalk-content-available";
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
@@ -235,6 +242,7 @@ public class Constants {
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
     public final static String ACTION = "action";
+    public final static String MSG = "msg";
     public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
 
 
@@ -674,6 +682,8 @@ public class Constants {
 
         //PROD KEYS
         public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
+//        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+//        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
         public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
         public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
 

@@ -169,7 +169,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     @BindView(R.id.ivAddressEdit)
     AppCompatImageView ivAddressEdit;
     @BindView(R.id.tvCountDownEnd)
-    FontTextView tvCountDownEnd;
+    TextView tvCountDownEnd;
     @BindView(R.id.tvTripId)
     FontTextView tvTripId;
     @BindView(R.id.tvCodAmount)
@@ -1230,6 +1230,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         if (Utils.isDeliveryService(callData.getCallType()) || Utils.isDescriptiveAddressRequired(callData.getServiceCode()))
                             showDropOffPersonInfo();
                         showWalletAmount();
+                    }
+                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_BATCH_UPDATED)) {
+                        dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
                 }
             });

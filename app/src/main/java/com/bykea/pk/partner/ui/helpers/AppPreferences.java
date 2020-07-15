@@ -553,6 +553,17 @@ public class AppPreferences {
         return mSharedPreferences.getString(Keys.ADMIN_MSG, StringUtils.EMPTY);
     }
 
+    public static void setListDeliveryActivityOnForeground(boolean value) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(Keys.LIST_DELIVERY_ACTIVITY_FOREGROUND, value)
+                .apply();
+    }
+
+    public static boolean isListDeliveryOnForeground() {
+        return mSharedPreferences.getBoolean(Keys.LIST_DELIVERY_ACTIVITY_FOREGROUND, false);
+    }
+
     public static boolean isJobActivityOnForeground() {
         return mSharedPreferences.getBoolean(Keys.JOB_ACTIVITY_FOREGROUND, false);
     }

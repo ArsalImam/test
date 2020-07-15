@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.offlinerides.OfflineRidesFragment;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -153,6 +154,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                             UserRepository repository = new UserRepository();
                             repository.requestPilotLogout(context, new UserDataHandler());
                             Utils.logout(context);
+                            TelloTalkManager.instance().logout();
                         }
                     }
                 }, null);
