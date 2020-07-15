@@ -36,6 +36,19 @@ class TelloTalkManager {
         }
     }
 
+    fun logout() {
+        telloApiClient.let {client ->
+            client.logOff {
+                if(it) {
+                    client.ClearUserData {
+                        return@ClearUserData
+                    }
+                }
+                return@logOff
+            }
+        }
+    }
+
     /**
      * this will perform login to tello talk instance
      *

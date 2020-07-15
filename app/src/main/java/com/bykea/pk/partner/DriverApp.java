@@ -62,6 +62,7 @@ public class DriverApp extends TelloApplication {
     private Emitter.Listener mBatachCancelledListener = new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
     private Emitter.Listener mBatchCancelledByPassengerListener = new WebIORequestHandler.BatchCancelledByPassengerListener();
     private Emitter.Listener mDropOffChangeListener = new WebIORequestHandler.JobDropOffChangeListener();
+    private Emitter.Listener mBatchUpdatedListener = new WebIORequestHandler.BatchUpdatedListener();
 
     private static boolean isChatActivityVisible = false;
 
@@ -187,6 +188,7 @@ public class DriverApp extends TelloApplication {
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED, mBatachCancelledListener);
         WebIO.getInstance().on(ApiTags.ON_BATCH_BOOKING_CANCELLED, mBatchCancelledByPassengerListener);
         WebIO.getInstance().on(ApiTags.BOOKING_UPDATED_DROP_OFF, mDropOffChangeListener);
+        WebIO.getInstance().on(ApiTags.BATCH_UPDATED, mBatchUpdatedListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

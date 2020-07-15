@@ -43,6 +43,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
 
+import static com.bykea.pk.partner.utils.ApiTags.BATCH_UPDATED;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
 import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
@@ -201,6 +202,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 } else {
                     AppPreferences.setDropOffUpdateRequired(true);
                     Notifications.createDropOffUpdateNotification();
+                }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(BATCH_UPDATED))) {
+                if (AppPreferences.isJobActivityOnForeground()) {
+                    Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
+                    intent.putExtra(Constants.ACTION, Keys.BROADCAST_BATCH_UPDATED);
+                    EventBus.getDefault().post(intent);
+
+                    Utils.appToast(getString(R.string.batch_update_by_passenger));
+                } else {
+                    Notifications.createBatchUpdateNotification();
                 }
             }
         }

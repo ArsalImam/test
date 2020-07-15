@@ -242,6 +242,7 @@ public class Constants {
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
     public final static String ACTION = "action";
+    public final static String MSG = "msg";
     public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
 
 
