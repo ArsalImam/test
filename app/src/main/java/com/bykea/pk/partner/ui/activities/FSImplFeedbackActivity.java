@@ -277,34 +277,34 @@ public class FSImplFeedbackActivity extends BaseActivity {
     @OnTextChanged(value = R.id.receivedAmountEt,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterTextChanged(Editable editable) {
-        if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
-            if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
-                if (Utils.isNewBatchService(batchServiceCode)) {
-                    return;
-                }
-                if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
-                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
-                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
-                    //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
-                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
-                } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE) &&
-                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
-                    //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
-                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
-                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
-                } else if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT) &&
-                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
-                    //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
-                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
-                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)));
-                } else if (Integer.parseInt(editable.toString()) >= (AMOUNT_LIMIT + Constants.DIGIT_ONE)) {
-                    setEtError(getString(R.string.amount_error, AMOUNT_LIMIT));
-                }
-            } else {
-                Utils.appToast(getString(R.string.invalid_amout));
-            }
-        }
+//        if (StringUtils.isNotBlank(editable) && StringUtils.isNotBlank(totalCharges)) {
+//            if (editable.toString().matches(Constants.REG_EX_DIGIT)) {
+//                if (Utils.isNewBatchService(batchServiceCode)) {
+//                    return;
+//                }
+//                if (driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT
+//                        && Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
+//                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+//                    //WHEN THE WALLET IS LESS THAN ZERO, RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP NEGATIVE LIMIT)
+//                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT)));
+//                } else if ((driverWallet > PARTNER_TOP_UP_NEGATIVE_LIMIT && driverWallet < PARTNER_TOP_UP_POSITIVE_LIMIT) &&
+//                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + driverWallet + Constants.DIGIT_ONE) &&
+//                        !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
+//                    //WHEN THE WALLET IS GREATER THAN ZERO BUT LESS THAN THE MAX POSITIVE TOP UP LIMIT,
+//                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND WALLET)
+//                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + driverWallet)));
+//                } else if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode()) || driverWallet >= PARTNER_TOP_UP_POSITIVE_LIMIT) &&
+//                        Integer.parseInt(editable.toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT + Constants.DIGIT_ONE)) {
+//                    //WHEN THE WALLET IS GREATER THAN MAX POSITIVE TOP UP LIMIT,
+//                    //RECEIVED AMOUNT CAN NOT BE GREATER THAN THE SUM OF (TOTAL CHARGES AND PARTNER TOP UP POSITIVE LIMIT)
+//                    setEtError(getString(R.string.amount_error, (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_POSITIVE_LIMIT)));
+//                } else if (Integer.parseInt(editable.toString()) >= (AMOUNT_LIMIT + Constants.DIGIT_ONE)) {
+//                    setEtError(getString(R.string.amount_error, AMOUNT_LIMIT));
+//                }
+//            } else {
+//                Utils.appToast(getString(R.string.invalid_amout));
+//            }
+//        }
     }
 
 
@@ -646,7 +646,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
             case R.id.feedbackBtn:
                 repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
 
-                if (valid()) {
+//                if (valid()) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
                     logMPEvent();
                     if (isProofRequired()) {
@@ -654,7 +654,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     } else {
                         finishTrip();
                     }
-                }
+//                }
                 break;
         }
     }
