@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.utils
 
 import android.app.Activity
+import com.bykea.pk.partner.BuildConfig
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
@@ -22,8 +23,8 @@ class TelloTalkManager {
      */
     constructor() {
         val builder: TelloApiClient.Builder = TelloApiClient.Builder()
-                .accessKey(Constants.ACCESS_KEY_TELLO_TALK)
-                .projectToken(Constants.PROJECT_TOKEN_TELLO_TALK)
+                .accessKey(BuildConfig.ACCESS_KEY_TELLO_TALK)
+                .projectToken(BuildConfig.PROJECT_TOKEN_TELLO_TALK)
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
         telloApiClient = builder.build()
     }
