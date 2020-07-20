@@ -50,6 +50,7 @@ import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISS
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
+import static com.bykea.pk.partner.utils.Constants.Notification.DATA_TYPE_TELLO_VAL;
 
 //import com.bykea.pk.partner.utils.Constants.FCMEvents;
 
@@ -86,9 +87,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-        if (remoteMessage.getData() != null && remoteMessage.getData()
-                .get(Constants.Notification.DATA_TYPE_TELLO) != null) {
-            TelloTalkManager.instance().onMessageReceived();
+        if (remoteMessage.getData() != null) {
+            String value = remoteMessage.getData().get(Constants.Notification.DATA_TYPE_TELLO);
+            if (value != null && value.equalsIgnoreCase(DATA_TYPE_TELLO_VAL)) {
+                TelloTalkManager.instance().onMessageReceived();
+            }
         } else if (remoteMessage.getData() != null && remoteMessage.getData()
                 .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());

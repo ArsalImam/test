@@ -1,9 +1,11 @@
 package com.bykea.pk.partner.utils
 
 import android.app.Activity
+import com.bykea.pk.partner.BuildConfig
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
+import org.apache.commons.lang3.StringUtils
 
 /**
  * this is the utitlity manager class for tellotalk
@@ -21,8 +23,8 @@ class TelloTalkManager {
      */
     constructor() {
         val builder: TelloApiClient.Builder = TelloApiClient.Builder()
-                .accessKey(Constants.ACCESS_KEY_TELLO_TALK)
-                .projectToken(Constants.PROJECT_TOKEN_TELLO_TALK)
+                .accessKey(BuildConfig.ACCESS_KEY_TELLO_TALK)
+                .projectToken(BuildConfig.PROJECT_TOKEN_TELLO_TALK)
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
         telloApiClient = builder.build()
     }
@@ -32,14 +34,18 @@ class TelloTalkManager {
      */
     fun setupFcm() {
         telloApiClient.let {
-            if (it.isLoggedIn) it.updateFcmToken(AppPreferences.getRegId())
+            val registrationId = AppPreferences.getRegId()
+            if (StringUtils.isNotEmpty(registrationId)) it.updateFcmToken(registrationId)
         }
     }
 
+    /**
+     * this method will logout user from device and clear's sdk data
+     */
     fun logout() {
-        telloApiClient.let {client ->
+        telloApiClient.let { client ->
             client.logOff {
-                if(it) {
+                if (it) {
                     client.ClearUserData {
                         return@ClearUserData
                     }
@@ -78,8 +84,7 @@ class TelloTalkManager {
      * this will awake tello's client on fcm received for fcm
      */
     fun onMessageReceived() {
-        if (telloApiClient.isLoggedIn)
-            telloApiClient.onMessageNotificationReceived()
+        telloApiClient.onMessageNotificationReceived()
     }
 
     companion object {
