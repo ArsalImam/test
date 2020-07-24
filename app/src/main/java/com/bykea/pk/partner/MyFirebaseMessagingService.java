@@ -94,7 +94,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (value.equalsIgnoreCase(DATA_TYPE_TELLO_VAL)) {
                     TelloTalkManager.instance().onMessageReceived();
                 } else if (value.equalsIgnoreCase(CONTENT_AVAILABLE_CHANNEL)) {
-                    TelloTalkManager.instance().onMessageReceived(remoteMessage);
+                    TelloTalkManager.instance().onMessageReceived(remoteMessage.getData());
                 }
             }
         } else if (remoteMessage.getData() != null && remoteMessage.getData()
