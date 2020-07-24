@@ -273,16 +273,16 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'
 
-def branch = getGitRevParseInfo("--abbrev-ref")
-
-hockeyapp {
-    apiToken = "4faee174e5fb499bb2e40c358e5193a7"
-    notes = branch
-    tags = "bykeadevteam,mobinspire"
-}
-
-def getGitRevParseInfo(what) {
-    def cmd = "git rev-parse " + what + " HEAD"
-    def proc = cmd.execute()
-    proc.text.trim()
-}
+//def branch = getGitRevParseInfo("--abbrev-ref")
+//
+//hockeyapp {
+//    apiToken = "4faee174e5fb499bb2e40c358e5193a7"
+//    notes = branch
+//    tags = "bykeadevteam,mobinspire"
+//}
+//
+//def getGitRevParseInfo(what) {
+//    def cmd = "git rev-parse " + what + " HEAD"
+//    def proc = cmd.execute()
+//    proc.text.trim()
+//}
