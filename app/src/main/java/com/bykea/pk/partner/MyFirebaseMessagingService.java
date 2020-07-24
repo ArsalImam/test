@@ -51,6 +51,7 @@ import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
 import static com.bykea.pk.partner.utils.Constants.Notification.DATA_TYPE_TELLO_VAL;
+import static com.bykea.pk.partner.utils.Constants.Notification.CONTENT_AVAILABLE_CHANNEL;
 
 //import com.bykea.pk.partner.utils.Constants.FCMEvents;
 
@@ -89,8 +90,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (remoteMessage.getData() != null) {
             String value = remoteMessage.getData().get(Constants.Notification.DATA_TYPE_TELLO);
-            if (value != null && value.equalsIgnoreCase(DATA_TYPE_TELLO_VAL)) {
-                TelloTalkManager.instance().onMessageReceived();
+            if (value != null) {
+                if (value.equalsIgnoreCase(DATA_TYPE_TELLO_VAL)) {
+                    TelloTalkManager.instance().onMessageReceived();
+                } else if (value.equalsIgnoreCase(CONTENT_AVAILABLE_CHANNEL)) {
+                    TelloTalkManager.instance().onMessageReceived(remoteMessage);
+                }
             }
         } else if (remoteMessage.getData() != null && remoteMessage.getData()
                 .get(Constants.Notification.EVENT_TYPE) != null) {
