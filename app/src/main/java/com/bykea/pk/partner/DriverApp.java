@@ -53,6 +53,7 @@ public class DriverApp extends TelloApplication {
      */
     public static Printer globalFilePrinter;
 
+
     private Emitter.Listener mJobCallListener = new WebIORequestHandler.JobCallListener();
     private Emitter.Listener mJobCallOldListener = new WebIORequestHandler.JobCallOldListener();
     private Emitter.Listener mNewActiveJobListener = new WebIORequestHandler.NewActiveJobListener();
