@@ -377,15 +377,17 @@ class JobCallActivity : BaseActivity() {
      * Acknowledge server to skip the batch job request
      */
     private fun skipBatchJob() {
-        jobsRepo.skipBatchJob(jobCall.trip_id, object : JobsDataSource.SkipJobCallback {
-            override fun onJobSkip() {
-                //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
-            }
+        jobCall.booking_id?.let { bookingId ->
+            jobsRepo.skipBatchJob(jobCall.trip_id, bookingId, object : JobsDataSource.SkipJobCallback {
+                override fun onJobSkip() {
+                    //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
+                }
 
-            override fun onJobSkipFailed() {
-                //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
-            }
-        })
+                override fun onJobSkipFailed() {
+                    //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
+                }
+            })
+        }
     }
 
     /**

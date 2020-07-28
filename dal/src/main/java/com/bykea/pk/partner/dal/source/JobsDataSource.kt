@@ -65,7 +65,7 @@ interface JobsDataSource {
      * @param callback Response callback
      * @param isDispatch :
      */
-    fun pickJob(job: Job, isDispatch:Boolean, callback: AcceptJobRequestCallback)
+    fun pickJob(job: Job, isDispatch: Boolean, callback: AcceptJobRequestCallback)
 
     /**
      * Post acknowledgement of job call
@@ -475,9 +475,10 @@ interface JobsDataSource {
     /**
      * Requests to skip batch job
      * @param jobId String
+     * @param bookingId Long
      * @param callback CancelJobCallback
      */
-    fun skipBatchJob(jobId: String, callback: SkipJobCallback)
+    fun skipBatchJob(jobId: String, bookingId: Long, callback: SkipJobCallback)
 
     fun cancelMultiDeliveryBatchJob(id: String, batchID: String, callback: CancelBatchCallback)
 
