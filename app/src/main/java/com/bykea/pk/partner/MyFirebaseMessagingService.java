@@ -31,6 +31,7 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -42,6 +43,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
 
+import static com.bykea.pk.partner.utils.ApiTags.BATCH_UPDATED;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
 import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
@@ -49,6 +51,7 @@ import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
 import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
+import static com.bykea.pk.partner.utils.Constants.Notification.DATA_TYPE_TELLO_VAL;
 
 //import com.bykea.pk.partner.utils.Constants.FCMEvents;
 
@@ -85,9 +88,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-
-        // Check if message contains a notification payload.
-        if (remoteMessage.getData() != null && remoteMessage.getData()
+        if (remoteMessage.getData() != null) {
+            String value = remoteMessage.getData().get(Constants.Notification.DATA_TYPE_TELLO);
+            if (value != null && value.equalsIgnoreCase(DATA_TYPE_TELLO_VAL)) {
+                TelloTalkManager.instance().onMessageReceived();
+            }
+        } else if (remoteMessage.getData() != null && remoteMessage.getData()
                 .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
             if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase("1")) {
@@ -204,6 +210,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 } else {
                     AppPreferences.setDropOffUpdateRequired(true);
                     Notifications.createDropOffUpdateNotification();
+                }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(BATCH_UPDATED))) {
+                if (AppPreferences.isJobActivityOnForeground()) {
+                    Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
+                    intent.putExtra(Constants.ACTION, Keys.BROADCAST_BATCH_UPDATED);
+                    EventBus.getDefault().post(intent);
+
+                    Utils.appToast(getString(R.string.batch_update_by_passenger));
+                } else {
+                    Notifications.createBatchUpdateNotification();
                 }
             }
         }

@@ -1,9 +1,7 @@
 package com.bykea.pk.partner.ui.nodataentry
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
@@ -13,7 +11,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
-import com.bykea.pk.partner.dal.source.remote.response.DeliveryDetailListResponse
 import com.bykea.pk.partner.databinding.ActivityListDeliveryDetailsBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
@@ -22,14 +19,15 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.StringCallBack
 import com.bykea.pk.partner.utils.*
-import com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND
+import com.bykea.pk.partner.utils.Constants.ACTION
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
 import com.bykea.pk.partner.utils.Constants.Extras.*
-import com.bykea.pk.partner.utils.Constants.RequestCode.*
+import com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_EDIT_DELIVERY_DETAILS
 import com.bykea.pk.partner.utils.TripStatus.ON_ARRIVED_TRIP
 import com.bykea.pk.partner.utils.TripStatus.ON_START_TRIP
 import kotlinx.android.synthetic.main.activity_list_delivery_details.*
 import org.apache.commons.lang3.StringUtils
+import org.greenrobot.eventbus.Subscribe
 
 class ListDeliveryDetailsActivity : BaseActivity() {
     lateinit var binding: ActivityListDeliveryDetailsBinding
@@ -275,6 +273,28 @@ class ListDeliveryDetailsActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             if (requestCode == RC_ADD_EDIT_DELIVERY_DETAILS) {
+                Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
+                viewModel.getAllDeliveryDetails()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppPreferences.setListDeliveryActivityOnForeground(true)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        AppPreferences.setListDeliveryActivityOnForeground(false)
+    }
+
+    @Subscribe
+    fun onEvent(intent: Intent) {
+        if (intent?.extras == null) return
+        runOnUiThread {
+            if (intent.getStringExtra(ACTION).equals(Keys.BROADCAST_BATCH_UPDATED, ignoreCase = true)) {
                 Dialogs.INSTANCE.showLoader(this@ListDeliveryDetailsActivity)
                 viewModel.getAllDeliveryDetails()
             }

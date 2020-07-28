@@ -129,6 +129,7 @@ public class Keys {
     public static final String BROADCAST_CANCEL_BATCH = "BROADCAST_CANCEL_BATCH";
     public static final String BROADCAST_DROP_OFF_UPDATED = "BROADCAST_DROP_OFF_UPDATED";
     public static final String TRIP_DATA_UPDATED = "TRIP_DATA_UPDATED";
+    public static final String BROADCAST_BATCH_UPDATED = "BROADCAST_BATCH_UPDATED";
     public static final String BROADCAST_CANCEL_BY_ADMIN = "BROADCAST_CANCEL_BY_ADMIN";
     public static final String BROADCAST_COMPLETE_BY_ADMIN = "BROADCAST_COMPLETE_BY_ADMIN";
     public static final String BROADCAST_MESSAGE_RECEIVE = "BROADCAST_MESSAGE_RECEIVE_DRIVER";
@@ -212,4 +213,5 @@ public class Keys {
 
     public static final String LAST_PARTNER_TEMPERATURE_SUBMIT = "LAST_PARTNER_TEMPERATURE_SUBMIT";
     public static final String LAST_SELECTED_MSG_POSITION = "LAST_SELECTED_MSG_POSITION";
+    public static final String LIST_DELIVERY_ACTIVITY_FOREGROUND = "LIST_DELIVERY_ACTIVITY_FOREGROUND";
 }

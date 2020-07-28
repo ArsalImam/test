@@ -797,6 +797,27 @@ public class WebIORequestHandler {
 
     }
 
+    /**
+     * Socket listener for Batch Updated
+     */
+    public static class BatchUpdatedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            if (AppPreferences.isJobActivityOnForeground() || AppPreferences.isListDeliveryOnForeground()) {
+                Utils.redLog("Batch Booking Updated (Socket) ", serverResponse);
+                Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
+                intent.putExtra("action", Keys.BROADCAST_BATCH_UPDATED);
+                EventBus.getDefault().post(intent);
+
+                Utils.appToast(DriverApp.getApplication().getString(R.string.batch_update_by_passenger));
+            } else {
+                Notifications.createBatchUpdateNotification();
+            }
+        }
+    }
+
     private static IUserDataHandler handler = new UserDataHandler() {
         @Override
         public void onDriverAcknowledgeResponse(MultiDeliveryCallDriverAcknowledgeResponse
