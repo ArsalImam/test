@@ -273,6 +273,10 @@ class JobsRepository(
         jobsRemoteDataSource.skipJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
+    override fun skipBatchJob(jobId: String, callback: JobsDataSource.SkipJobCallback) {
+        jobsRemoteDataSource.skipBatchJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
     override fun pushTripDetails(jobId: String, filePath: String, callback: JobsDataSource.PushTripDetailCallback) {
         jobsRemoteDataSource.pushTripDetails(jobId, filePath, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }

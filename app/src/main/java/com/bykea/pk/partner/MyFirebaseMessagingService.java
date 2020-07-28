@@ -146,7 +146,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase(BOOKING_REQUEST))) {
                 JobCallPayload payload = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), JobCallPayload.class);
                 JobCall jobCall = payload.getTrip();
-
+                jobCall.setType(payload.getType());
                 if (payload.getTrip().getDispatch() != null && payload.getTrip().getDispatch()) {
                     Utils.appToastDebug("Job Dispatch FCM Received");
                     ActivityStackManager.getInstance().startCallingActivity(jobCall, true, mContext);

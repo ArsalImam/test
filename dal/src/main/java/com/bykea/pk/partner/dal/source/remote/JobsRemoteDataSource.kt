@@ -391,6 +391,20 @@ class JobsRemoteDataSource {
         })
     }
 
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param driverId String
+     * @param token String
+     * @param callback CancelJobCallback
+     */
+    fun skipBatchJob(jobId: String, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
+        Backend.talos.skipBatchJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
+            override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
+            override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
     fun pushTripDetails(jobId: String, filePath: String, driverId: String, accessToken: String, callback: JobsDataSource.PushTripDetailCallback) {
         Backend.talos.pushTripDetails(jobId, PushJobDetailsRequest(driverId, accessToken, arrayOf(filePath))).enqueue(object : Callback<BaseResponse> {
             override fun onSuccess(response: BaseResponse) = callback.onSuccess()

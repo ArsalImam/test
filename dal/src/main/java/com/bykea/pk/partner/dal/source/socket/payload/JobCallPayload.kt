@@ -20,4 +20,6 @@ data class JobCall(
         val timer: Int,
         val dt: String,//ISO 8601
         val dispatch: Boolean?
-) : Serializable
+) : Serializable {
+    var type: String? = null
+}

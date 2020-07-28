@@ -472,6 +472,13 @@ interface JobsDataSource {
      */
     fun skipJob(jobId: String, callback: SkipJobCallback)
 
+    /**
+     * Requests to skip batch job
+     * @param jobId String
+     * @param callback CancelJobCallback
+     */
+    fun skipBatchJob(jobId: String, callback: SkipJobCallback)
+
     fun cancelMultiDeliveryBatchJob(id: String, batchID: String, callback: CancelBatchCallback)
 
     /**

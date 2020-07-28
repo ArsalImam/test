@@ -29,6 +29,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR
+import com.bykea.pk.partner.utils.Constants.CallType.BATCH
 import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_job_call.*
@@ -190,7 +191,11 @@ class JobCallActivity : BaseActivity() {
                 AppPreferences.setIncomingCall(false)
                 AppPreferences.setTripStatus(TripStatus.ON_FREE)
                 stopSound()
-                skipJob()
+                if (::jobCall.isInitialized && !jobCall.type.isNullOrEmpty() && jobCall.type.equals(BATCH, ignoreCase = true)) {
+                    skipBatchJob()
+                } else {
+                    skipJob()
+                }
                 timer.cancel()
                 finishActivity()
             }
@@ -358,6 +363,21 @@ class JobCallActivity : BaseActivity() {
      */
     private fun skipJob() {
         jobsRepo.skipJob(jobCall.trip_id, object : JobsDataSource.SkipJobCallback {
+            override fun onJobSkip() {
+                //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
+            }
+
+            override fun onJobSkipFailed() {
+                //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
+            }
+        })
+    }
+
+    /**
+     * Acknowledge server to skip the batch job request
+     */
+    private fun skipBatchJob() {
+        jobsRepo.skipBatchJob(jobCall.trip_id, object : JobsDataSource.SkipJobCallback {
             override fun onJobSkip() {
                 //NOTHING TO HANDLE BECAUSE, ACTIVITY HAS BEEN DESTROYED
             }
