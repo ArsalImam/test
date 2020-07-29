@@ -35,6 +35,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 
@@ -47,6 +48,14 @@ public class AppPreferences {
                 .edit()
                 .clear()
                 .apply();
+    }
+
+    public static void clearExceptParticulars() {
+        for (Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
+            if (!Utils.isSharedPreferenceKeyPreserveRequired(entry.getKey())) {
+                mSharedPreferences.edit().remove(entry.getKey()).apply();
+            }
+        }
     }
 
     public static void saveSettingsData(SettingsData data) {

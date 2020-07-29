@@ -130,7 +130,7 @@ public class HomeActivity extends BaseActivity {
 
         Notifications.clearNotifications(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-        Utils.clearSharedPrefIfDirty(mCurrentActivity);
+        Utils.clearSharedPrefIfDirty();
 
         //logging in -- in tellotalk
         TelloTalkManager.instance().performLogin(success -> {
