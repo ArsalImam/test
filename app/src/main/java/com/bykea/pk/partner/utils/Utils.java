@@ -49,6 +49,7 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -3896,6 +3897,7 @@ public class Utils {
 
     /**
      * If Shared Preference Key Preserve Required
+     *
      * @param key : Shared Preference Key
      * @return true: If equals to the preserver required else false
      */
@@ -3906,6 +3908,6 @@ public class Utils {
                 key.equals(Keys.FCM_REGISTRATION_ID) || key.equals(Keys.LATITUDE) ||
                 key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
                 key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
-                key.equals(SignUpSettingsResponse.class.getName());
+                key.equals(Keys.LOGIN_STATUS) || key.equals(SignUpSettingsResponse.class.getName());
     }
 }

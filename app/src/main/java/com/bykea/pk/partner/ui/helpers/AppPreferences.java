@@ -51,9 +51,9 @@ public class AppPreferences {
     }
 
     public static void clearExceptParticulars() {
-        for (Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
-            if (!Utils.isSharedPreferenceKeyPreserveRequired(entry.getKey())) {
-                mSharedPreferences.edit().remove(entry.getKey()).apply();
+        for (String key : mSharedPreferences.getAll().keySet()) {
+            if (!Utils.isSharedPreferenceKeyPreserveRequired(key)) {
+                mSharedPreferences.edit().remove(key).apply();
             }
         }
     }
@@ -594,6 +594,7 @@ public class AppPreferences {
 
     /**
      * Set Mutlidelivery activity is visible or not
+     *
      * @param value : True or False
      */
     public static void setMultiDeliveryJobActivityOnForeground(boolean value) {
@@ -606,6 +607,7 @@ public class AppPreferences {
 
     /**
      * Check If Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     *
      * @return true if required else false
      */
     public static boolean isMultiDeliveryDistanceMatrixCalledRequired() {
@@ -614,6 +616,7 @@ public class AppPreferences {
 
     /**
      * Set Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     *
      * @param value : True or False
      */
     public static void setMultiDeliveryDistanceMatrixCalledRequired(boolean value) {
@@ -625,7 +628,8 @@ public class AppPreferences {
 
     /**
      * Check If Drop Of Update Is Required Or Not
-     * @return  True/False
+     *
+     * @return True/False
      */
     public static boolean isDropOffUpdateRequired() {
         return mSharedPreferences.getBoolean(Keys.DROP_OFF_UPDATE_REQUIRED, false);
@@ -635,6 +639,7 @@ public class AppPreferences {
      * Set Drop Off Update Required
      * If Application Is Running But Booking Activity Is In Background or Chat Activity Is In Foreground
      * Set To False After Execution Of True
+     *
      * @param value : True/False (On Behalf Of Above Decision)
      */
     public static void setDropOffUpdateRequired(boolean value) {
@@ -1643,6 +1648,7 @@ public class AppPreferences {
 
     /**
      * Set Booking Voice Note Url Available
+     *
      * @param voiceNoteUrl : Voice Note Url
      */
     public static void setBookingVoiceNoteUrlAvailable(String voiceNoteUrl) {
@@ -1662,6 +1668,7 @@ public class AppPreferences {
 
     /**
      * Get last partner submit time.
+     *
      * @return long : Time in milliseconds
      */
     public static long getLastPartnerTemperatureSubmitTime() {
@@ -1670,6 +1677,7 @@ public class AppPreferences {
 
     /**
      * Set last partner submit time.
+     *
      * @param value : Time in milliseconds
      */
     public static void setLastPartnerTemperatureSubmitTime(long value) {
@@ -1685,6 +1693,7 @@ public class AppPreferences {
                 .putInt(Keys.LAST_SELECTED_MSG_POSITION, position)
                 .apply();
     }
+
     public static int getLastSelectedMsgPosition() {
         return mSharedPreferences.getInt(Keys.LAST_SELECTED_MSG_POSITION, DIGIT_ZERO);
     }
