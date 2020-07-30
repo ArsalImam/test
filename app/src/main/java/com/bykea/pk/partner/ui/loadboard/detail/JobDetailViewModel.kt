@@ -100,7 +100,7 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
      */
     fun accept() {
         job.value?.let {
-            jobsRepository.pickJob(it, this)
+            jobsRepository.pickJob(it, false, this)
         }
     }
 
