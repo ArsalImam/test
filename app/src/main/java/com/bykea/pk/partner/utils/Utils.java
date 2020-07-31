@@ -3533,7 +3533,9 @@ public class Utils {
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
             AppPreferences.setAppVersionCode(currentVersionCode);
-            AppPreferences.clearExceptParticulars();
+            if (savedVersionCode > DIGIT_ZERO) {
+                AppPreferences.clearExceptParticulars();
+            }
         }
     }
 
