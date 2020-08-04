@@ -46,9 +46,9 @@ class JobsRepository(
      */
     override fun getJobs(callback: JobsDataSource.LoadJobsCallback) {
 
-        if (cachedJobs.isNotEmpty()) {
+        /*if (cachedJobs.isNotEmpty()) {
             callback.onJobsLoaded(ArrayList(cachedJobs.values))
-        }
+        }*/
 
         var serviceCode: Int? = null
         if (!AppPref.getIsCash(pref)) serviceCode = SERVICE_CODE_SEND
@@ -104,10 +104,14 @@ class JobsRepository(
         jobsLocalDataSource.deleteJobRequest(jobRequestId)
     }
 
-    override fun pickJob(job: Job, callback: JobsDataSource.AcceptJobRequestCallback) {
-        jobsRemoteDataSource.pickJob(job.id, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), object : JobsDataSource.AcceptJobRequestCallback {
+    override fun pickJob(job: Job, isDispatch: Boolean, callback: JobsDataSource.AcceptJobRequestCallback) {
+        jobsRemoteDataSource.pickJob(job.id, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), isDispatch, object : JobsDataSource.AcceptJobRequestCallback {
             override fun onJobRequestAccepted() {
-                saveJob(job)
+                // THIS CHECK HAS BEEN MAINTAINED IF THE ASSIGN JOB IS CALL FROM CALLING ACTIVITY
+                // NOT CHANGE BECAUSE THE IMPACT WILL BE CHANGE
+                if (job.booking_no != null && job.trip_id != null) {
+                    saveJob(job)
+                }
                 callback.onJobRequestAccepted()
             }
 
@@ -267,6 +271,10 @@ class JobsRepository(
 
     override fun skipJob(jobId: String, callback: JobsDataSource.SkipJobCallback) {
         jobsRemoteDataSource.skipJob(jobId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
+    override fun skipBatchJob(jobId: String, bookingId: Long, callback: JobsDataSource.SkipJobCallback) {
+        jobsRemoteDataSource.skipBatchJob(jobId, bookingId, AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
     override fun pushTripDetails(jobId: String, filePath: String, callback: JobsDataSource.PushTripDetailCallback) {

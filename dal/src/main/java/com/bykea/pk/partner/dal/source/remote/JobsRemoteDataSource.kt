@@ -53,9 +53,10 @@ class JobsRemoteDataSource {
      * Accept job request
      *
      * @param jobRequestId Id of Booking to be accepted
+     * @param isDispatch : Server will check busy or not if it's false
      */
-    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng)).enqueue(object : Callback<PickJobResponse> {
+    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, isDispatch: Boolean, callback: JobsDataSource.AcceptJobRequestCallback) {
+        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng, isDispatch)).enqueue(object : Callback<PickJobResponse> {
             override fun onSuccess(response: PickJobResponse) = callback.onJobRequestAccepted()
             override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onJobRequestAcceptFailed(code, subCode, message)
         })
@@ -385,6 +386,21 @@ class JobsRemoteDataSource {
      */
     fun skipJob(jobId: String, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
         Backend.talos.skipJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
+            override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
+            override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param bookingId Long
+     * @param driverId String
+     * @param token String
+     * @param callback CancelJobCallback
+     */
+    fun skipBatchJob(jobId: String, bookingId: Long, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
+        Backend.talos.skipBatchJobRequest(jobId, SkipJobRequest(driverId, token, bookingId)).enqueue(object : Callback<SkipJobResponse> {
             override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
             override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
         })

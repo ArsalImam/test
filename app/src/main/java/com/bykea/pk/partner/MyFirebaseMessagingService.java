@@ -48,6 +48,7 @@ import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
 import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
+import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
 import static com.bykea.pk.partner.utils.Constants.Notification.DATA_TYPE_TELLO_VAL;
@@ -151,7 +152,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase(BOOKING_REQUEST))) {
                 JobCallPayload payload = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), JobCallPayload.class);
                 JobCall jobCall = payload.getTrip();
-                if (payload.getType().equalsIgnoreCase("single")) {
+                jobCall.setType(payload.getType());
+                if (payload.getTrip().getDispatch() != null && payload.getTrip().getDispatch()) {
+                    Utils.appToastDebug("Job Dispatch FCM Received");
+                    ActivityStackManager.getInstance().startCallingActivity(jobCall, true, mContext);
+                } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase(SINGLE)) {
                     JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override
