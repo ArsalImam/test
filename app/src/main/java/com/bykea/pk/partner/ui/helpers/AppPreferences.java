@@ -50,6 +50,10 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * Clear Particulars Shared Preferences
+     * (Which are not required to preserve)
+     */
     public static void clearExceptParticulars() {
         for (String key : mSharedPreferences.getAll().keySet()) {
             if (!Utils.isSharedPreferenceKeyPreserveRequired(key)) {
