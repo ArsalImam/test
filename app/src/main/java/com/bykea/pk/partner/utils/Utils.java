@@ -95,6 +95,7 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
 import com.bykea.pk.partner.models.response.BatchBooking;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -3910,6 +3911,8 @@ public class Utils {
                 key.equals(Keys.FCM_REGISTRATION_ID) || key.equals(Keys.LATITUDE) ||
                 key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
                 key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
-                key.equals(Keys.LOGIN_STATUS) || key.equals(SignUpSettingsResponse.class.getName());
+                key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
+                key.equals(Keys.LOGIN_STATUS) || key.equals(SignUpSettingsResponse.class.getName()) ||
+                key.equals(DriverPerformanceResponse.class.getName());
     }
 }
