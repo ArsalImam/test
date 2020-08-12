@@ -3912,7 +3912,7 @@ public class Utils {
                 key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
                 key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
                 key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
-                key.equals(Keys.LOGIN_STATUS) || key.equals(SignUpSettingsResponse.class.getName()) ||
-                key.equals(DriverPerformanceResponse.class.getName());
+                key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
+                key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
     }
 }
