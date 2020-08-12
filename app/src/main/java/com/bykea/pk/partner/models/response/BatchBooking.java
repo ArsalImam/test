@@ -8,6 +8,15 @@ public class BatchBooking {
     @SerializedName("id")
     @Expose
     private String id;
+    @SerializedName("delivery_status")
+    @Expose
+    private boolean deliveryStatus;
+    @SerializedName("delivery_message")
+    @Expose
+    private String deliveryMessage;
+    @SerializedName("return_run")
+    @Expose
+    private boolean returnRun;
     @SerializedName("booking_code")
     @Expose
     private String bookingCode;
@@ -94,5 +103,29 @@ public class BatchBooking {
 
     public void setPickup(BatchBookingDropoff pickup) {
         this.pickup = pickup;
+    }
+
+    public boolean getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public void setDeliveryStatus(boolean deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
+
+    public String getDeliveryMessage() {
+        return deliveryMessage;
+    }
+
+    public void setDeliveryMessage(String deliveryMessage) {
+        this.deliveryMessage = deliveryMessage;
+    }
+
+    public boolean isReturnRun() {
+        return returnRun;
+    }
+
+    public void setReturnRun(boolean returnRun) {
+        this.returnRun = returnRun;
     }
 }
