@@ -437,6 +437,9 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 AppPreferences.setLastSelectedMsgPosition(Integer.valueOf(trip.getDeliveryMessage()), null);
                 selectedMsgPosition = position;
                 returnRunOnBooking = trip.isReturnRun();
+                if (returnRunOnBooking) {
+                    disableSpinner();
+                }
             } catch (Exception e) {
 
             }
