@@ -234,7 +234,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
             false
         } else if (editTextParcelValue.text.isNullOrEmpty() ||
-                (editTextParcelValue.text.toString().trim().toDouble() < (NumberUtils.DOUBLE_ZERO) &&
+                (editTextParcelValue.text.toString().trim().toDouble() < (NumberUtils.DOUBLE_ONE) &&
                         editTextParcelValue.text.toString().trim().toDouble() > (AMOUNT_LIMIT + DIGIT_ONE).toDouble())) {
             if (showError) {
                 editTextParcelValue.requestFocus()
