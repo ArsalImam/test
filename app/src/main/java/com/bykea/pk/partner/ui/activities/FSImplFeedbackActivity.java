@@ -605,17 +605,16 @@ public class FSImplFeedbackActivity extends BaseActivity {
         });
         spDeliveryStatus.setAdapter(adapter);
         spDeliveryStatus.setSelection(selectedMsgPosition);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (returnRunOnBooking) {
-                    callData.setReturnRun(true);
-                    updateFailureDeliveryLabel(null);
-                    feedbackBtn.setEnabled(true);
-                }
-            }
-        }, 1500);
 
+        //waiting to complete the execution of @{onItemSelected}
+        if (returnRunOnBooking) {
+            new Handler().postDelayed(() -> {
+                disableSpinner();
+                callData.setReturnRun(true);
+                updateFailureDeliveryLabel(null);
+                feedbackBtn.setEnabled(true);
+            }, 1500);
+        }
     }
 
     private long mLastClickTime;
@@ -645,6 +644,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         callData.setReturnRun(true);
                         updateFailureDeliveryLabel(null);
                         feedbackBtn.setEnabled(true);
+                        disableSpinner();
                     }
 
                     @Override
@@ -1154,10 +1154,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void onRerouteCreated(DeliveryDetails data) {
         isRerouteCreated = true;
         feedbackBtn.setEnabled(true);
-        spDeliveryStatus.setEnabled(false);
-        spDeliveryStatus.setClickable(false);
+        disableSpinner();
         reRouteDeliveryDetails = data;
         updateFailureDeliveryLabel(data);
+    }
+
+    private void disableSpinner() {
+        spDeliveryStatus.setEnabled(false);
+        spDeliveryStatus.setClickable(false);
     }
 
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {
