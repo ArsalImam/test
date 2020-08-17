@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+
 public class DecimalDigitsInputFilter implements InputFilter {
 
     private Pattern mPattern;
@@ -46,7 +48,7 @@ public class DecimalDigitsInputFilter implements InputFilter {
 
     private String deleteCharAtIndex(Spanned dest, int dstart) {
         StringBuilder builder = new StringBuilder(dest);
-        builder.deleteCharAt(dstart);
+        if (builder.length() > DIGIT_ZERO) builder.deleteCharAt(dstart);
         return builder.toString();
     }
 }

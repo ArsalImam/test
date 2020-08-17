@@ -39,6 +39,7 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.material.appbar.AppBarLayout;
@@ -129,7 +130,13 @@ public class HomeActivity extends BaseActivity {
 
         Notifications.clearNotifications(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-        Utils.clearSharedPrefIfDirty(mCurrentActivity);
+        Utils.clearSharedPrefIfDirty();
+
+        //logging in -- in tellotalk
+        TelloTalkManager.instance().performLogin(success -> {
+            if (success) TelloTalkManager.instance().setupFcm();
+            return null;
+        });
     }
 
     @Override

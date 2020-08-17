@@ -49,6 +49,7 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -94,6 +95,7 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
 import com.bykea.pk.partner.models.response.BatchBooking;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
@@ -253,7 +255,8 @@ public class Utils {
     }
 
     public static File createImageFile(Context context, String type) throws IOException {
-        String imageFileName = "BykeaDocument" + type;
+        String imageFileName = Constants.BYKEA_DOCUMENTS + Constants.CHAR_HYPHEN +
+                System.nanoTime() + Constants.CHAR_HYPHEN + type;
 
         File storageDir = new File(context.getExternalFilesDir(null), ".bykea");
         if (!storageDir.exists()) storageDir.mkdir();
@@ -2257,6 +2260,7 @@ public class Utils {
 
     /**
      * Check if the ride is of courier
+     *
      * @param callType : Receive in active trip data
      * @return true if the type is of courier else false
      */
@@ -3523,17 +3527,16 @@ public class Utils {
 
 
     /**
-     * Clears the Local Shared Pref in case of dirt
-     *
-     * @param context calling activity context
+     * Clears the Local Shared Pref in case of dirty
      */
-    public static void clearSharedPrefIfDirty(Context context) {
+    public static void clearSharedPrefIfDirty() {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
             AppPreferences.setAppVersionCode(currentVersionCode);
-            Utils.clearData(context);
-
+            if (savedVersionCode > DIGIT_ZERO) {
+                AppPreferences.clearExceptParticulars();
+            }
         }
     }
 
@@ -3909,5 +3912,23 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * If Shared Preference Key Preserve Required
+     *
+     * @param key : Shared Preference Key
+     * @return true: If equals to the preserver required else false
+     */
+    public static boolean isSharedPreferenceKeyPreserveRequired(String key) {
+        return key.equals(Keys.EMAIL) || key.equals(Keys.ACCESS_TOKEN) ||
+                key.equals(Keys.DRIVER_ID) || key.equals(Keys.PHONE_NUMBER) ||
+                key.equals(Keys.DRIVER_DATA) || key.equals(Keys.CASH_IN_HANDS_RANGE) ||
+                key.equals(Keys.FCM_REGISTRATION_ID) || key.equals(Keys.LATITUDE) ||
+                key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
+                key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
+                key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
+                key.equals(Keys.LOGIN_STATUS) || key.equals(SignUpSettingsResponse.class.getName()) ||
+                key.equals(DriverPerformanceResponse.class.getName());
     }
 }

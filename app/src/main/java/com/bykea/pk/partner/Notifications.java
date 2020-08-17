@@ -368,4 +368,28 @@ public class Notifications {
                         .bigText("" + receivedMessage.getData().getMessage()));
         return builder;
     }
+
+    /**
+     * Create Drop Off Batch Updated Notification
+     */
+    public static void createBatchUpdateNotification() {
+        NotificationManager nManager = (NotificationManager) DriverApp.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        ReceivedMessage receivedMessage = new ReceivedMessage();
+        receivedMessage.setMessage(DriverApp.getContext().getString(R.string.batch_update_by_passenger));
+        receivedMessage.setData(receivedMessage);
+
+        Uri soundUri = Uri.parse(ANDROID_RESOURCE_URI
+                + DriverApp.getContext().getPackageName() + SEPERATOR
+                + R.raw.notification_sound);
+        NotificationCompat.Builder builder;
+        builder = createNotificationForMessage(DriverApp.getContext(), receivedMessage, soundUri);
+
+        Intent targetIntent = new Intent(DriverApp.getContext(), BookingActivity.class);
+        targetIntent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(DriverApp.getContext(), DIGIT_ZERO, targetIntent, DIGIT_ZERO);
+        builder.setContentIntent(contentIntent);
+        nManager.notify(DIGIT_ZERO, builder.build());
+    }
+
 }
