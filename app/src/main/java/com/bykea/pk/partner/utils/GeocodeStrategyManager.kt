@@ -149,11 +149,7 @@ class GeocodeStrategyManager
 
     private fun performCallback(strAddress: String?) {
         lastReceivedLocation = strAddress
-        val placeObject = PlacesResult(StringUtils.EMPTY, strAddress,
-                currentLatLng?.latitude!!, currentLatLng?.longitude!!)
-        placeObject.address?.let {
-            placesDataHandler.onPlacesResponse(it)
-        }
+        placesDataHandler.onPlacesResponse(strAddress)
     }
 
     /**
