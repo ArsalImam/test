@@ -33,6 +33,13 @@ android {
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://52.184.193.109:3000\""
                 buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://52.184.193.109:4000\""
             }
+            sandbox {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://sandbox.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://52.212.154.126:4000\""
+                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
+                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
+            }
             develop {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://sandbox-lb-talos.bykea.net:3000\""
@@ -40,8 +47,8 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.xyz\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.xyz\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.org\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.org\""
             }
 
             jenkinsUrl {

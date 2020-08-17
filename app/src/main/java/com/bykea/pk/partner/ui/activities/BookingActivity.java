@@ -1078,7 +1078,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                     }
                                 });
                             }
-                             }
+                        }
                     });
                 }
                 break;
@@ -1689,7 +1689,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             tvDetailsBanner.setVisibility(View.VISIBLE);
 
-            if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+            if (CollectionUtils.isNotEmpty(callData.getBookingList()) && bookingsShouldHaveDropOffs()) {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
             } else {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
@@ -1699,6 +1699,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             updateBatchDropOffDetails();
         }
+    }
+
+    private boolean bookingsShouldHaveDropOffs() {
+        if (CollectionUtils.isEmpty(callData.getBookingList())) return false;
+        for (BatchBooking batchBooking : callData.getBookingList()) {
+            if (StringUtils.isNotEmpty(batchBooking.getDropoff().getGpsAddress()) && (batchBooking.getDropoff().getLat() == NumberUtils.DOUBLE_ZERO))
+                return false;
+        }
+        return true;
     }
 
     private void updateBatchDropOffDetails() {
@@ -1714,8 +1723,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateButtonState() {
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                jobBtn.setEnabled(CollectionUtils.isNotEmpty(callData.getBookingList()));
-                jobBtn.setBackgroundResource(CollectionUtils.isNotEmpty(callData.getBookingList())
+
+                boolean allBookingsContainDropOffs = bookingsShouldHaveDropOffs();
+
+                jobBtn.setEnabled(allBookingsContainDropOffs && CollectionUtils.isNotEmpty(callData.getBookingList()));
+                jobBtn.setBackgroundResource(allBookingsContainDropOffs && CollectionUtils.isNotEmpty(callData.getBookingList())
                         ? R.drawable.button_green
                         : R.drawable.button_grey
                 );
@@ -1779,7 +1791,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             tvDetailsBanner.setVisibility(View.VISIBLE);
 
-            if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+            if (CollectionUtils.isNotEmpty(callData.getBookingList()) && bookingsShouldHaveDropOffs()) {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
             } else {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
