@@ -38,6 +38,7 @@ import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.math.NumberUtils
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -82,6 +83,16 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
                 tVLocationAlphabet.text = viewModel.deliveryDetails.value?.details?.display_tag
                 fLLocation.visibility = View.VISIBLE
+            }
+        }
+
+        // handled case for open api
+        // if latitude/longitude is not exist but gps_address is available, need to ask user to
+        // reselect drop off location
+        // [ref] https://bykeapk.atlassian.net/browse/BS-5168
+        viewModel.deliveryDetails?.value?.let {
+            if (StringUtils.isNotEmpty(it.dropoff?.gps_address) && (it.dropoff?.lat == null || it.dropoff?.lat == NumberUtils.DOUBLE_ZERO)) {
+                it.dropoff?.gps_address = StringUtils.EMPTY
             }
         }
 
