@@ -3892,10 +3892,26 @@ public class Utils {
      * @param view : View On Which To Stop Multiple Tap
      */
     public static void preventMultipleTap(View view) {
-        view.setEnabled(false);
-        new Handler().postDelayed(() -> {
-            view.setEnabled(true);
-        }, DIGIT_THOUSAND);
+        preventMultipleTap(view, (long) DIGIT_THOUSAND);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     *
+     * @param view : View On Which To Stop Multiple Tap
+     * @param timeInMillis: Disable Time
+     */
+    public static void preventMultipleTap(View view, Long timeInMillis) {
+        try {
+            if (timeInMillis > DIGIT_ZERO) {
+                view.setEnabled(false);
+                new Handler().postDelayed(() -> {
+                    view.setEnabled(true);
+                }, timeInMillis);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
