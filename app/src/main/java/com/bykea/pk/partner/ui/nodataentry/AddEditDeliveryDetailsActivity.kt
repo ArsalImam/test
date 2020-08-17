@@ -38,6 +38,7 @@ import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.math.NumberUtils
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -225,7 +226,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Validate Parcel Value
      */
     private fun validateParcelValue(showError: Boolean = true): Boolean {
-        return if (editTextParcelValue.text.isNullOrEmpty() || editTextParcelValue.text.toString().trim().toInt() == DIGIT_ZERO) {
+        return if (editTextParcelValue.text.isNullOrEmpty() || editTextParcelValue.text.toString().trim().toDouble() == NumberUtils.DOUBLE_ZERO) {
             if (showError) {
                 editTextParcelValue.requestFocus()
                 editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
@@ -233,7 +234,8 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
             false
         } else if (editTextParcelValue.text.isNullOrEmpty() ||
-                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT + DIGIT_ONE) {
+                (editTextParcelValue.text.toString().trim().toDouble() < (NumberUtils.DOUBLE_ONE) &&
+                        editTextParcelValue.text.toString().trim().toDouble() > (AMOUNT_LIMIT + DIGIT_ONE).toDouble())) {
             if (showError) {
                 editTextParcelValue.requestFocus()
                 editTextParcelValue.error = String.format(getString(R.string.parcel_value_cannot_greater).plus(StringUtils.SPACE).plus(getString(R.string.amount_rs_int)), AMOUNT_LIMIT)
