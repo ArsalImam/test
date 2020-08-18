@@ -77,6 +77,13 @@ android {
                 buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
                 buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
             }
+            sandbox {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"https://sandbox.bykea.net\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://52.212.154.126:4000\""
+                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
+                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
+            }
             develop {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://sandbox-lb-talos.bykea.net:3000\""

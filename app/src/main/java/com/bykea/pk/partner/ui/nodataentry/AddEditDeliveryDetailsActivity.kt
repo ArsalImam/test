@@ -86,6 +86,16 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
         }
 
+        // handled case for open api
+        // if latitude/longitude is not exist but gps_address is available, need to ask user to
+        // reselect drop off location
+        // [ref] https://bykeapk.atlassian.net/browse/BS-5168
+        viewModel.deliveryDetails?.value?.let {
+            if (StringUtils.isNotEmpty(it.dropoff?.gps_address) && (it.dropoff?.lat == null || it.dropoff?.lat == NumberUtils.DOUBLE_ZERO)) {
+                it.dropoff?.gps_address = StringUtils.EMPTY
+            }
+        }
+
         setTitleCustomToolbarUrdu(getString(R.string.parcel_details))
 
         viewModel.getActiveTrip()
