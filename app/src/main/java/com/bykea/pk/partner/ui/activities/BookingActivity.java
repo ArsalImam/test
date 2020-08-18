@@ -1701,10 +1701,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         }
     }
 
+    /**
+     *  this will check whether the bookings contain drop offs
+     * @return
+     */
     private boolean bookingsShouldHaveDropOffs() {
         if (CollectionUtils.isEmpty(callData.getBookingList())) return false;
         for (BatchBooking batchBooking : callData.getBookingList()) {
-            if (StringUtils.isNotEmpty(batchBooking.getDropoff().getGpsAddress()) && (batchBooking.getDropoff().getLat() == NumberUtils.DOUBLE_ZERO))
+            if (batchBooking.getDropoff() != null && StringUtils.isNotEmpty(batchBooking.getDropoff().getGpsAddress()) && (batchBooking.getDropoff().getLat() == NumberUtils.DOUBLE_ZERO))
                 return false;
         }
         return true;
@@ -1712,7 +1716,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void updateBatchDropOffDetails() {
         ivAddressEdit.setVisibility(View.GONE);
-        if (CollectionUtils.isEmpty(callData.getBookingList())) {
+        if (CollectionUtils.isEmpty(callData.getBookingList()))
+        {
             llEndAddress.setVisibility(View.GONE);
         } else {
             llEndAddress.setVisibility(View.VISIBLE);
