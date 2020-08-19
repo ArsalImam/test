@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 92
-        versionName "7.59"
+        versionCode 94
+        versionName "7.61"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -74,6 +74,13 @@ android {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://52.184.193.109:3000\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
+                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
+                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
+            }
+            sandbox {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"https://sandbox.bykea.net\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://52.212.154.126:4000\""
                 buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
                 buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
             }

@@ -3818,10 +3818,26 @@ public class Utils {
      * @param view : View On Which To Stop Multiple Tap
      */
     public static void preventMultipleTap(View view) {
-        view.setEnabled(false);
-        new Handler().postDelayed(() -> {
-            view.setEnabled(true);
-        }, DIGIT_THOUSAND);
+        preventMultipleTap(view, (long) DIGIT_THOUSAND);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     *
+     * @param view : View On Which To Stop Multiple Tap
+     * @param timeInMillis: Disable Time
+     */
+    public static void preventMultipleTap(View view, Long timeInMillis) {
+        try {
+            if (timeInMillis > DIGIT_ZERO) {
+                view.setEnabled(false);
+                new Handler().postDelayed(() -> {
+                    view.setEnabled(true);
+                }, timeInMillis);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -3838,7 +3854,7 @@ public class Utils {
                 key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
                 key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
                 key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
-                key.equals(Keys.LOGIN_STATUS) || key.equals(SignUpSettingsResponse.class.getName()) ||
-                key.equals(DriverPerformanceResponse.class.getName());
+                key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
+                key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
     }
 }

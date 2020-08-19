@@ -67,7 +67,7 @@
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="center"
-                android:onClick="@{() -> listener.onRefreshClicked()}"
+                android:onClick="@{(v) -> listener.onRefreshClicked(v)}"
                 android:padding="@dimen/_10sdp"
                 app:srcCompat="@mipmap/icon_refresh" />
         </FrameLayout>

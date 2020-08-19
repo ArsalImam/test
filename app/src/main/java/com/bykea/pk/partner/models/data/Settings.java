@@ -11,6 +11,7 @@ import java.util.List;
 
 import static com.bykea.pk.partner.utils.Constants.AMOUNT_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.BYKEA_CASH_MAX_AMOUNT;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.MAX_BATCH_BOOKING_LIMIT;
 import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
@@ -158,6 +159,12 @@ public class Settings {
      */
     @SerializedName("partner_offline_ride_demo")
     private String partnerOfflineRideDemo;
+
+    /**
+     * Cool Down Load Board Timer
+     */
+    @SerializedName("cool_down_loadboard_timer")
+    private Long coolDownLoadboardTimer;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -477,6 +484,7 @@ public class Settings {
 
     /**
      * Get Offline Kamari Web Url
+     *
      * @return String: If not recevied in setting return fallback
      */
     public String getPartnerOfflineRideDemo() {
@@ -495,5 +503,13 @@ public class Settings {
      */
     public void setGoogleGeocodeEnable(boolean googleGeocodeEnable) {
         isGoogleGeocodeEnable = googleGeocodeEnable;
+    }
+    /**
+     * Cool Down Load Board Timer
+     *
+     * @return if exit else null
+     */
+    public Long getCoolDownLoadboardTimer() {
+        return coolDownLoadboardTimer == null ? DIGIT_ZERO : coolDownLoadboardTimer;
     }
 }

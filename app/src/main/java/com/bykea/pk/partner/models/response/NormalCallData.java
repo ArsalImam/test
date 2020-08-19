@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,10 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     private String icon;
     private NormalCallData data;
     private String trip_charges;
+
+    @SerializedName("delivery_message")
+    @Expose
+    private String deliveryMessage;
 
     @SerializedName("initiate_time")
     private long sentTime;
@@ -1000,5 +1005,13 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     public void setDetectWallet(boolean detectWallet) {
         isDetectWallet = detectWallet;
+    }
+
+    public String getDeliveryMessage() {
+        return deliveryMessage;
+    }
+
+    public void setDeliveryMessage(String deliveryMessage) {
+        this.deliveryMessage = deliveryMessage;
     }
 }
