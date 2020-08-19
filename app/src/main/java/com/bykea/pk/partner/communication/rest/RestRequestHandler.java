@@ -1503,10 +1503,10 @@ public class RestRequestHandler {
     /**
      * call osm reverse code api to get address from latitude/longitude (gps)
      *
-     * @param latitude of location from which address is required
-     * @param longitude of location from which address is required
+     * @param latitude      of location from which address is required
+     * @param longitude     of location from which address is required
      * @param mDataCallback callback to pass the control in case of success and failure
-     * @param context of the activity
+     * @param context       of the activity
      */
     public void callOSMGeoCoderApi(final String latitude, final String longitude,
                                    final IResponseCallback mDataCallback, Context context) {
@@ -1525,6 +1525,12 @@ public class RestRequestHandler {
                             && body.getAddress() != null) {
                         if (StringUtils.isNotEmpty(body.getAddress().getPostcode())) {
                             address += SPACE + body.getAddress().getPostcode();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getHouse_number())) {
+                            address += SPACE + body.getAddress().getHouse_number();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getRoad())) {
+                            address += SPACE + body.getAddress().getRoad();
                         }
                         if (StringUtils.isNotEmpty(body.getAddress().getTown())) {
                             address += SPACE + body.getAddress().getTown();

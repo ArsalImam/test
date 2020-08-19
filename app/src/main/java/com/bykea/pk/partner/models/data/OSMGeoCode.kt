@@ -25,5 +25,8 @@ data class Address(
         var county: String?,
         var postcode: String?,
         var state: String?,
-        var town: String?
+        var town: String?,
+        var house_number: String?,
+        var road: String?
+
 )
