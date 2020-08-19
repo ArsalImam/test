@@ -43,6 +43,7 @@ import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -1555,25 +1556,43 @@ public class HomeFragment extends Fragment {
                 .equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
 
             AppPreferences.setDeliveryType(Constants.CallType.NEW_BATCH);
+
             String trip = gson.toJson(response.getData().getTrip());
             Type type = new TypeToken<NormalCallData>() {
             }.getType();
+
             NormalCallData callData = gson.fromJson(trip, type);
+            if (StringUtils.isNotBlank(callData.getStarted_at())) {
+                AppPreferences.setStartTripTime(
+                        AppPreferences.getServerTimeDifference() +
+                                Utils.getTimeInMiles(
+                                        callData.getStarted_at())
+                );
+            }
             AppPreferences.setCallData(callData);
             AppPreferences.setTripStatus(callData.getStatus());
-            if (!callData.getStatus().
-                    equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
-                WebIORequestHandler
-                        .getInstance()
-                        .registerChatListener();
-                ActivityStackManager
-                        .getInstance()
-                        .startJobActivity(mCurrentActivity);
-            } else {
-                ActivityStackManager
-                        .getInstance()
-                        .startFeedbackActivity(mCurrentActivity);
+
+            // check for unfinished ride later
+            ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
+
+            boolean isFinishedStateFound = false;
+
+            for (BatchBooking tripData : bookingResponseList) {
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startFeedbackActivity(mCurrentActivity);
+                    break;
+                }
             }
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startJobActivity(mCurrentActivity);
+
         } else {
             AppPreferences.setDeliveryType(Constants.CallType.BATCH);
             String trip = gson.toJson(response.getData().getTrip());

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -168,6 +169,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
     private NormalCallData callData;
     private DeliveryDetails reRouteDeliveryDetails;
+    private boolean returnRunOnBooking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -311,13 +313,13 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void initViews() {
         mCurrentActivity = this;
         invoiceAdapter = new LastAdapter<>(R.layout.adapter_booking_detail_invoice, item -> {
-
         });
         invoiceRecyclerView.setAdapter(invoiceAdapter);
         invoiceRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         initCallData();
         isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
+
         isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
         isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
@@ -429,6 +431,19 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 break;
             }
         }
+        if (StringUtils.isNotEmpty(trip.getDeliveryMessage())) {
+            try {
+                Integer position = Integer.valueOf(trip.getDeliveryMessage());
+                AppPreferences.setLastSelectedMsgPosition(Integer.valueOf(trip.getDeliveryMessage()), null);
+                selectedMsgPosition = position;
+                returnRunOnBooking = trip.isReturnRun();
+                if (returnRunOnBooking) {
+                    disableSpinner();
+                }
+            } catch (Exception e) {
+
+            }
+        }
         callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
         callData.setTotalFare("0"); //this will automatically update through the invoice api
         callData.setTripId(trip.getId());
@@ -528,13 +543,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
         receivedAmountEt.requestFocus();
     }
 
+    private String[] getMessageList() {
+        if (isBykeaCashType) return Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
+        else if (mLastReturnRunBooking) return new String[]{getString(R.string.return_run_spinner)};
+        else return Utils.getDeliveryMsgsList(mCurrentActivity);
+    }
 
     private void initAdapter(final NormalCallData callData) {
 
-        String[] list;
-        if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
-        else if (mLastReturnRunBooking) list = new String[]{getString(R.string.return_run_spinner)};
-        else list = Utils.getDeliveryMsgsList(mCurrentActivity);
+        final String[] list = getMessageList();
 
         final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
 
@@ -562,7 +579,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     spDeliveryStatus.setSelection(AppPreferences.getLastSelectedMsgPosition());
                     return;
                 }
-                AppPreferences.setLastSelectedMsgPosition(position);
+                AppPreferences.setLastSelectedMsgPosition(position, list[position]);
                 selectedMsgPosition = position;
                 updateAdapter();
                 handleInputInfoForBatch(selectedMsgPosition == NumberUtils.INTEGER_ZERO);
@@ -590,7 +607,17 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         });
         spDeliveryStatus.setAdapter(adapter);
-        spDeliveryStatus.setSelection(0);
+        spDeliveryStatus.setSelection(selectedMsgPosition);
+
+        //waiting to complete the execution of @{onItemSelected}
+        if (returnRunOnBooking) {
+            new Handler().postDelayed(() -> {
+                disableSpinner();
+                callData.setReturnRun(true);
+                updateFailureDeliveryLabel(null);
+                feedbackBtn.setEnabled(true);
+            }, 1500);
+        }
     }
 
     private long mLastClickTime;
@@ -620,6 +647,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         callData.setReturnRun(true);
                         updateFailureDeliveryLabel(null);
                         feedbackBtn.setEnabled(true);
+                        disableSpinner();
                     }
 
                     @Override
@@ -1129,10 +1157,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void onRerouteCreated(DeliveryDetails data) {
         isRerouteCreated = true;
         feedbackBtn.setEnabled(true);
-        spDeliveryStatus.setEnabled(false);
-        spDeliveryStatus.setClickable(false);
+        disableSpinner();
         reRouteDeliveryDetails = data;
         updateFailureDeliveryLabel(data);
+    }
+
+    private void disableSpinner() {
+        spDeliveryStatus.setEnabled(false);
+        spDeliveryStatus.setClickable(false);
     }
 
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {

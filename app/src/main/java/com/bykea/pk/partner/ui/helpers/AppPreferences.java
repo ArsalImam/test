@@ -19,7 +19,6 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -30,7 +29,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -1691,14 +1689,24 @@ public class AppPreferences {
                 .apply();
     }
 
-    public static void setLastSelectedMsgPosition(int position) {
+    public static void setLastSelectedMsgPosition(int position, String message) {
         mSharedPreferences
                 .edit()
                 .putInt(Keys.LAST_SELECTED_MSG_POSITION, position)
                 .apply();
+        if (message != null) {
+            mSharedPreferences
+                    .edit()
+                    .putString(Keys.LAST_SELECTED_FEEDBACK_MSG, message)
+                    .apply();
+        }
     }
 
     public static int getLastSelectedMsgPosition() {
         return mSharedPreferences.getInt(Keys.LAST_SELECTED_MSG_POSITION, DIGIT_ZERO);
+    }
+
+    public static String getLastSelectedMsg() {
+        return mSharedPreferences.getString(Keys.LAST_SELECTED_FEEDBACK_MSG, StringUtils.EMPTY);
     }
 }
