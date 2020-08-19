@@ -8,6 +8,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -78,6 +79,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -92,6 +94,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
 
@@ -1517,6 +1521,49 @@ public class RestRequestHandler {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public void callOSMGeoCoderApi(final String latitude, final String longitude,
+                                   final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+
+        Call<OSMGeoCode> call = restClient.callOSMGeoCoderApi(String.format(ApiTags.GeocodeOSMApis.GEOCODER_URL, latitude, longitude));
+        call.enqueue(new Callback<OSMGeoCode>() {
+            @Override
+            public void onResponse(Call<OSMGeoCode> call, Response<OSMGeoCode> osmGeoCodeResponse) {
+                String address = StringUtils.EMPTY;
+
+                if (osmGeoCodeResponse != null && osmGeoCodeResponse.isSuccessful()) {
+                    OSMGeoCode body = osmGeoCodeResponse.body();
+                    if (body != null
+                            && body.getAddress() != null) {
+                        if (StringUtils.isNotEmpty(body.getAddress().getPostcode())) {
+                            address += SPACE + body.getAddress().getPostcode();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getTown())) {
+                            address += SPACE + body.getAddress().getTown();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getCity())) {
+                            address += SPACE + body.getAddress().getCity();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getState())) {
+                            address += SPACE + body.getAddress().getState();
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(address)) {
+                        mDataCallback.onResponse(address);
+                    } else {
+                        mDataCallback.onError(NumberUtils.INTEGER_ZERO, Constants.NO_ADDRESS_FOUND);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OSMGeoCode> call, Throwable t) {
+                Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
     }
 
     public void callGeoCoderApi(final String latitude, final String longitude,

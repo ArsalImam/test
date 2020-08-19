@@ -2,6 +2,7 @@ package com.bykea.pk.partner.communication.rest;
 
 
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -306,6 +307,9 @@ interface IRestClient {
     @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
     Call<GeocoderApi> callGeoCoderApi(@Query("latlng") String latLng,
                                       @Query("key") String key);
+
+    @GET
+    Call<OSMGeoCode> callOSMGeoCoderApi(@Url String url);
 
     @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
     Call<GeoCodeApiResponse> callGeoCoderApiWithPlaceId(@Query("place_id") String placeId, @Query("key") String key);

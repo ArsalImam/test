@@ -34,6 +34,9 @@ public class Settings {
 
     @SerializedName("trip_support_max_days_driver")
     private String trip_support_max_days;
+
+    @SerializedName("is_google_geocode_enable")
+    private boolean isGoogleGeocodeEnable = false;
     /**
      * this key will manage whether calculations for easy paisa needs to be run on client or server side
      */
@@ -475,5 +478,13 @@ public class Settings {
      */
     public String getPartnerOfflineRideDemo() {
         return StringUtils.isEmpty(partnerOfflineRideDemo) ? OFFLINE_KAMAI_WEB_URL : partnerOfflineRideDemo;
+    }
+
+    public boolean isGoogleGeocodeEnable() {
+        return isGoogleGeocodeEnable;
+    }
+
+    public void setGoogleGeocodeEnable(boolean googleGeocodeEnable) {
+        isGoogleGeocodeEnable = googleGeocodeEnable;
     }
 }
