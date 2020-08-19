@@ -168,4 +168,9 @@ public class ApiTags {
         public static final String BASE_URL = BuildConfig.BYKEA_MAPS_URL;
         public static final String DISTANCE_MATRIX = BASE_URL + "/v1/distance";
     }
+
+    public class GeocodeOSMApis {
+        public static final String BASE_SERVER_URL = "https://geocode-beta.bykea.net";
+        public static final String GEOCODER_URL = BASE_SERVER_URL + "/nominatim/reverse.php?lat=%s&lon=%s&format=json";
+    }
 }

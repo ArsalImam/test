@@ -8,6 +8,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -78,6 +79,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -92,6 +94,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
 
@@ -685,29 +689,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Call<ServiceTypeResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-    }
-
-    public void reverseGeoding(Context context, final IResponseCallback onResponseCallback,
-                               String latLng, String key) {
-        mContext = context;
-        mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getGooglePlaceApiClient();
-        Call<GeocoderApi> requestCall = mRestClient.callGeoCoderApi(latLng, key);
-        requestCall.enqueue(new Callback<GeocoderApi>() {
-            @Override
-            public void onResponse(Call<GeocoderApi> call, Response<GeocoderApi> response) {
-                if (response.body().getStatus().equalsIgnoreCase("ok")) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(0, "Address not found.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeocoderApi> call, Throwable t) {
-                mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
     }
@@ -1517,6 +1498,60 @@ public class RestRequestHandler {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    /**
+     * call osm reverse code api to get address from latitude/longitude (gps)
+     *
+     * @param latitude      of location from which address is required
+     * @param longitude     of location from which address is required
+     * @param mDataCallback callback to pass the control in case of success and failure
+     * @param context       of the activity
+     */
+    public void callOSMGeoCoderApi(final String latitude, final String longitude,
+                                   final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+
+        Call<OSMGeoCode> call = restClient.callOSMGeoCoderApi(String.format(ApiTags.GeocodeOSMApis.GEOCODER_URL, latitude, longitude));
+        call.enqueue(new Callback<OSMGeoCode>() {
+            @Override
+            public void onResponse(Call<OSMGeoCode> call, Response<OSMGeoCode> osmGeoCodeResponse) {
+                String address = StringUtils.EMPTY;
+
+                if (osmGeoCodeResponse != null && osmGeoCodeResponse.isSuccessful()) {
+                    OSMGeoCode body = osmGeoCodeResponse.body();
+                    if (body != null
+                            && body.getAddress() != null) {
+                        if (StringUtils.isNotEmpty(body.getAddress().getHouse_number())) {
+                            address += SPACE + body.getAddress().getHouse_number();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getRoad())) {
+                            address += SPACE + body.getAddress().getRoad();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getSuburb())) {
+                            address += SPACE + body.getAddress().getSuburb();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getTown())) {
+                            address += SPACE + body.getAddress().getTown();
+                        }
+                        if (StringUtils.isNotEmpty(body.getAddress().getCounty())) {
+                            address += SPACE + body.getAddress().getCounty();
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(address)) {
+                        mDataCallback.onResponse(address);
+                    } else {
+                        mDataCallback.onError(NumberUtils.INTEGER_ZERO, Constants.NO_ADDRESS_FOUND);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OSMGeoCode> call, Throwable t) {
+                Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
     }
 
     public void callGeoCoderApi(final String latitude, final String longitude,

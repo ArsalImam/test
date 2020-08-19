@@ -2689,6 +2689,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 dataRepository.requestEndRide(mCurrentActivity, response, driversDataHandler);
             }
         }
+
     };
 
     /**
