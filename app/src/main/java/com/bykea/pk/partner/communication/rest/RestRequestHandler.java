@@ -1538,9 +1538,6 @@ public class RestRequestHandler {
                         if (StringUtils.isNotEmpty(body.getAddress().getCity())) {
                             address += SPACE + body.getAddress().getCity();
                         }
-                        if (StringUtils.isNotEmpty(body.getAddress().getState())) {
-                            address += SPACE + body.getAddress().getState();
-                        }
                     }
                     if (StringUtils.isNotEmpty(address)) {
                         mDataCallback.onResponse(address);
