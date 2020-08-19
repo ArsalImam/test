@@ -1091,14 +1091,6 @@ public class UserRepository {
 
     }
 
-
-    public void requestReverseGeocoding(Context context, IUserDataHandler handler,
-                                        String latLng, String key) {
-        mUserCallback = handler;
-        mContext = context;
-        mRestRequestHandler.reverseGeoding(mContext, mDataCallback, latLng, key);
-    }
-
     public void requestWalletHistory(Context context, IUserDataHandler handler, String pageNo) {
         mContext = context;
         mUserCallback = handler;

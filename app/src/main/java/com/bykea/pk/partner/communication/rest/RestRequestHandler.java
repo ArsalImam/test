@@ -693,29 +693,6 @@ public class RestRequestHandler {
         });
     }
 
-    public void reverseGeoding(Context context, final IResponseCallback onResponseCallback,
-                               String latLng, String key) {
-        mContext = context;
-        mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getGooglePlaceApiClient();
-        Call<GeocoderApi> requestCall = mRestClient.callGeoCoderApi(latLng, key);
-        requestCall.enqueue(new Callback<GeocoderApi>() {
-            @Override
-            public void onResponse(Call<GeocoderApi> call, Response<GeocoderApi> response) {
-                if (response.body().getStatus().equalsIgnoreCase("ok")) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(0, "Address not found.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeocoderApi> call, Throwable t) {
-                mResponseCallBack.onError(0, getErrorMessage(t));
-            }
-        });
-    }
-
     public void requestSignUpSettings(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
