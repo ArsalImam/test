@@ -1500,6 +1500,14 @@ public class RestRequestHandler {
         }
     }
 
+    /**
+     * call osm reverse code api to get address from latitude/longitude (gps)
+     *
+     * @param latitude of location from which address is required
+     * @param longitude of location from which address is required
+     * @param mDataCallback callback to pass the control in case of success and failure
+     * @param context of the activity
+     */
     public void callOSMGeoCoderApi(final String latitude, final String longitude,
                                    final IResponseCallback mDataCallback, Context context) {
         mContext = context;

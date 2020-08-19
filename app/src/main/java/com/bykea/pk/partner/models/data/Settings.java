@@ -35,6 +35,9 @@ public class Settings {
     @SerializedName("trip_support_max_days_driver")
     private String trip_support_max_days;
 
+    /**
+     * this is the configuration flag to manage calls for geocode or nominatum
+     */
     @SerializedName("is_google_geocode_enable")
     private boolean isGoogleGeocodeEnable = false;
     /**
@@ -480,10 +483,16 @@ public class Settings {
         return StringUtils.isEmpty(partnerOfflineRideDemo) ? OFFLINE_KAMAI_WEB_URL : partnerOfflineRideDemo;
     }
 
+    /**
+     * this is the configuration flag to manage calls for geocode or nominatum
+     */
     public boolean isGoogleGeocodeEnable() {
         return isGoogleGeocodeEnable;
     }
 
+    /**
+     * this is the configuration flag to manage calls for geocode or nominatum
+     */
     public void setGoogleGeocodeEnable(boolean googleGeocodeEnable) {
         isGoogleGeocodeEnable = googleGeocodeEnable;
     }
