@@ -1523,20 +1523,20 @@ public class RestRequestHandler {
                     OSMGeoCode body = osmGeoCodeResponse.body();
                     if (body != null
                             && body.getAddress() != null) {
-                        if (StringUtils.isNotEmpty(body.getAddress().getPostcode())) {
-                            address += SPACE + body.getAddress().getPostcode();
-                        }
                         if (StringUtils.isNotEmpty(body.getAddress().getHouse_number())) {
                             address += SPACE + body.getAddress().getHouse_number();
                         }
                         if (StringUtils.isNotEmpty(body.getAddress().getRoad())) {
                             address += SPACE + body.getAddress().getRoad();
                         }
+                        if (StringUtils.isNotEmpty(body.getAddress().getSuburb())) {
+                            address += SPACE + body.getAddress().getSuburb();
+                        }
                         if (StringUtils.isNotEmpty(body.getAddress().getTown())) {
                             address += SPACE + body.getAddress().getTown();
                         }
-                        if (StringUtils.isNotEmpty(body.getAddress().getCity())) {
-                            address += SPACE + body.getAddress().getCity();
+                        if (StringUtils.isNotEmpty(body.getAddress().getCounty())) {
+                            address += SPACE + body.getAddress().getCounty();
                         }
                     }
                     if (StringUtils.isNotEmpty(address)) {
