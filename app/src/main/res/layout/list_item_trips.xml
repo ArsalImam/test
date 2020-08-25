@@ -47,6 +47,7 @@
                 android:background="@drawable/ic_location_without_alphabet"
                 android:gravity="center"
                 android:maxLines="1"
+                android:textColor="@color/black"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@{item.display_tag}"
                 android:textSize="@dimen/_10sdp"
