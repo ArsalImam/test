@@ -54,7 +54,7 @@
                     android:background="@drawable/gray_bordered_bg"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="@{booking.fare_est_str == null ? `Rs. ` + booking.fare_est : `Rs. ` + booking.fare_est_str}"
+                    android:text="@{booking.fare_est_str != null ? `Rs. ` + booking.fare_est_str : booking.fare_est == 0 ? `?` : `Rs. ` + booking.fare_est + (booking.service_code == ServiceCode.NEW_BATCH_DELIVERY ? `+` : ``)}"
                     android:textSize="@dimen/_13sdp"
                     app:fontName="open_sans_regular.ttf" />
             </LinearLayout>
