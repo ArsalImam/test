@@ -350,6 +350,7 @@
                                         android:text="@{` ` + viewmodel.job.dropoff.zone_ur}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
+                                        android:visibility="gone"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
                                         app:goneUnless="@{viewmodel.job.trips == null || viewmodel.job.trips.size() == 1}"
                                         tools:text="@string/nazimabad_ur" />
@@ -358,6 +359,7 @@
                                         android:id="@+id/recViewTrips"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:visibility="gone"
                                         app:goneUnless="@{viewmodel.job.trips != null  &amp;&amp;  viewmodel.job.trips.size() > 1}"
                                         app:items="@{viewmodel.job.trips}"
                                         app:layoutManager="LinearLayoutManager"
