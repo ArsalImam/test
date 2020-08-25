@@ -19,7 +19,7 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/_5sdp">
+        android:padding="@dimen/_4sdp">
 
         <com.bykea.pk.partner.widgets.AutoFitFontTextView
             android:id="@+id/tVFare"
