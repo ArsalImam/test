@@ -349,7 +349,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text='@{Util.INSTANCE.isBykeaCashJob(viewmodel.job.service_code) ? ` ` + viewmodel.job.pickup.zone_ur : viewmodel.job.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + viewmodel.job.dropoff.zone_ur}'
+                                        android:text='@{viewmodel.job.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + viewmodel.job.dropoff.zone_ur}'
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         android:visibility="gone"
