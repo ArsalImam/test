@@ -23,6 +23,8 @@ data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                val customer_name: String? = null,
                val creator_type: String? = null,
                val fare_est: Int? = null,
+               val fare_est_str: String? = null,
+               val service_icon: String? = null,
                val cod_value: Int? = null,
                val amount: Int? = null,
                val voice_note: String? = null,
@@ -31,7 +33,8 @@ data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
                @Embedded(prefix = "pick_") val pickup: Stop? = null,
                @Embedded(prefix = "drop_") val dropoff: Stop? = null,
                @Embedded(prefix = "receiver_") val receiver: Contact? = null,
-               @Embedded(prefix = "sender_") val sender: Contact? = null) {
+               @Embedded(prefix = "sender_") val sender: Contact? = null,
+               val trips: List<Trips>? = null) {
     var isComplete: Boolean = false
 }
 
@@ -44,4 +47,9 @@ data class Contact(
 
 data class Rules(
         val priority: Int?
+)
+
+data class Trips(
+        val display_tag: String?,
+        val zone_ur: String?
 )
