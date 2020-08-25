@@ -369,7 +369,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Utils.isNewBatchService(viewmodel.job.service_code) ? `?` : Integer.toString(viewmodel.job.dropoff.distance/1000)}"
+                                        android:text="@{viewmodel.job.dropoff.distance == null ? `?` : Integer.toString(viewmodel.job.dropoff.distance/1000)}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
