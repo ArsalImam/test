@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.common.LastAdapter.OnItemClickListener" />
+
+        <import type="android.view.View.OnClickListener" />
+
+        <import type="org.apache.commons.lang3.StringUtils" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@color/white"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
+
+        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+            android:id="@+id/tVFare"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:padding="@dimen/_3sdp"
+            android:text="@{(item.dropoff == null || StringUtils.isEmpty(item.dropoff.zone_dropoff_name_urdu)) ? `` : (` ` + item.dropoff.zone_dropoff_name_urdu)}"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            tools:text="@string/booking_ur" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp">
+
+            <com.bykea.pk.partner.widgets.AutoFitFontTextView
+                android:id="@+id/tVLocationAlphabet"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_21sdp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/ic_location_without_alphabet"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/_10sdp"
+                android:text="@{item.details.display_tag}"
+                android:textSize="@dimen/_10sdp"
+                app:fontName="open_sans_regular.ttf"
+                tools:text="A" />
+        </FrameLayout>
+
+    </LinearLayout>
+</layout>
