@@ -97,7 +97,7 @@
                     android:maxLines="1"
                     android:paddingStart="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_6sdp"
-                    android:text='@{` ` + booking.dropoff.zone_ur}'
+                    android:text='@{Util.INSTANCE.isBykeaCashJob(booking.service_code) ? ` ` + booking.pickup.zone_ur : booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
