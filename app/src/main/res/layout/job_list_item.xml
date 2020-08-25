@@ -54,7 +54,7 @@
                     android:background="@drawable/gray_bordered_bg"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="@{booking.fare_est == 0 ? `?` : `Rs. ` + booking.fare_est + (booking.service_code == ServiceCode.NEW_BATCH_DELIVERY ? `+` : ``)}"
+                    android:text="@{booking.fare_est_str}"
                     android:textSize="@dimen/_13sdp"
                     app:fontName="open_sans_regular.ttf" />
             </LinearLayout>
@@ -97,7 +97,7 @@
                     android:maxLines="1"
                     android:paddingStart="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_6sdp"
-                    android:text='@{Util.INSTANCE.isBykeaCashJob(booking.service_code) ? ` ` + booking.pickup.zone_ur : booking.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + booking.dropoff.zone_ur}'
+                    android:text='@{` ` + booking.dropoff.zone_ur}'
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
             </LinearLayout>
