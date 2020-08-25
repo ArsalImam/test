@@ -51,5 +51,6 @@ data class Rules(
 
 data class Trips(
         val display_tag: String?,
-        val zone_ur: String?
+        val zone_ur: String?,
+        val service_code: Int?
 )

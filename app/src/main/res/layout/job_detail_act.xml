@@ -355,6 +355,7 @@
                                         tools:text="@string/nazimabad_ur" />
 
                                     <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/recViewTrips"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         app:goneUnless="@{viewmodel.job.trips != null  &amp;&amp;  viewmodel.job.trips.size() > 1}"

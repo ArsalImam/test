@@ -43,8 +43,10 @@ object BindingAdapters {
     @BindingAdapter("app:items")
     @JvmStatic
     fun setItems(recyclerView: RecyclerView, list: List<Any>?) {
-        with(recyclerView.adapter as LastAdapter<Any>) {
-            items = ArrayList(list)
+        list?.let {
+            with(recyclerView.adapter as LastAdapter<Any>) {
+                items = ArrayList(it)
+            }
         }
     }
 
