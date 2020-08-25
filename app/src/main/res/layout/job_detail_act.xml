@@ -9,6 +9,8 @@
 
         <import type="com.bykea.pk.partner.utils.Utils" />
 
+        <import type="com.bykea.pk.partner.utils.Util" />
+
         <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
 
         <variable
@@ -347,7 +349,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Utils.isNewBatchService(viewmodel.job.service_code) ? ` ` + @string/customer_will_tell : ` ` + viewmodel.job.dropoff.zone_ur}"
+                                        android:text='@{Util.INSTANCE.isBykeaCashJob(viewmodel.job.service_code) ? ` ` + viewmodel.job.pickup.zone_ur : viewmodel.job.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + viewmodel.job.dropoff.zone_ur}'
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         android:visibility="gone"
