@@ -85,7 +85,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:text="@{viewmodel.job.fare_est_str == null ? `Rs. ` + viewmodel.job.fare_est : `Rs. ` + viewmodel.job.fare_est_str}"
+                    android:text="@{viewmodel.job.fare_est_str != null ? `Rs. ` + viewmodel.job.fare_est_str : viewmodel.job.fare_est == 0 ? `?` : `Rs. ` + viewmodel.job.fare_est + (viewmodel.job.service_code == ServiceCode.NEW_BATCH_DELIVERY ? `+` : ``)}"
                     android:textColor="@color/color_06A833"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
