@@ -42,8 +42,7 @@ class FinishBookingListingActivity : BaseActivity() {
 
 
     private val placesDataHandler: IPlacesDataHandler = object : PlacesDataHandler() {
-        override fun onPlacesResponse(response: String) {
-            super.onPlacesResponse(response)
+        override fun onPlacesResponse(response: String?) {
             finishJobRestApi(response)
         }
     }
@@ -51,7 +50,7 @@ class FinishBookingListingActivity : BaseActivity() {
     /**
      * Request finish job on Rest API
      */
-    private fun finishJobRestApi(endAddress: String) {
+    private fun finishJobRestApi(endAddress: String?) {
         AppPreferences.removeReceivedMessageCount()
         var endLatString = AppPreferences.getLatitude().toString() + StringUtils.EMPTY_STRING
         var endLngString = AppPreferences.getLongitude().toString() + StringUtils.EMPTY_STRING
