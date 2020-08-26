@@ -19,19 +19,23 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="@dimen/_4sdp">
+        android:paddingLeft="@dimen/_4sdp"
+        android:paddingTop="@dimen/_2sdp"
+        android:paddingRight="@dimen/_4sdp"
+        android:paddingBottom="@dimen/_2sdp">
 
-        <com.bykea.pk.partner.widgets.AutoFitFontTextView
+        <com.bykea.pk.partner.widgets.FontTextView
             android:id="@+id/tVFare"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@{` ` + item.zone_ur}"
             android:textColor="@color/black"
             android:textSize="@dimen/_13sdp"
             app:fontName="jameel_noori_nastaleeq.ttf"
-            tools:text="@string/booking_ur" />
+            tools:text="@string/booking_time_urdu" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -47,9 +51,9 @@
                 android:background="@drawable/ic_location_without_alphabet"
                 android:gravity="center"
                 android:maxLines="1"
-                android:textColor="@color/black"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@{item.display_tag}"
+                android:textColor="@color/black"
                 android:textSize="@dimen/_10sdp"
                 app:fontName="open_sans_regular.ttf"
                 tools:text="A" />
