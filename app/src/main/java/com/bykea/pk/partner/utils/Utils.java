@@ -2324,7 +2324,7 @@ public class Utils {
             case "courier":
             case "goods":
             case Constants.CallType.NEW_BATCH:
-                return R.drawable.courier_no_caption;
+                return R.drawable.bhejdo_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":
             case "bykeacash-banktransfer":
