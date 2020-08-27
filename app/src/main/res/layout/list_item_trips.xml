@@ -18,11 +18,7 @@
         android:background="@color/white"
         android:baselineAligned="false"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/_4sdp"
-        android:paddingTop="@dimen/_2sdp"
-        android:paddingRight="@dimen/_4sdp"
-        android:paddingBottom="@dimen/_2sdp">
+        android:orientation="horizontal">
 
         <com.bykea.pk.partner.widgets.AutoFitFontTextView
             android:id="@+id/tVFare"
@@ -40,6 +36,7 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_2sdp"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginLeft="@dimen/_5sdp">
 

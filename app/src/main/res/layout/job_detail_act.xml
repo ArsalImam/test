@@ -358,17 +358,16 @@
                                     <androidx.recyclerview.widget.RecyclerView
                                         android:id="@+id/recViewTrips"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="@dimen/_75sdp"
                                         android:layout_marginStart="@dimen/_40sdp"
                                         android:layout_marginLeft="@dimen/_40sdp"
                                         android:layout_marginTop="@dimen/_3sdp"
                                         android:layout_marginEnd="@dimen/_40sdp"
                                         android:layout_marginRight="@dimen/_40sdp"
-                                        android:visibility="gone"
                                         app:goneUnless="@{viewmodel.job.trips != null  &amp;&amp;  viewmodel.job.trips.size() > 1}"
                                         app:items="@{viewmodel.job.trips}"
                                         app:layoutManager="LinearLayoutManager"
-                                        tools:itemCount="2"
+                                        tools:itemCount="4"
                                         tools:listitem="@layout/list_item_trips" />
 
                                     <TextView
