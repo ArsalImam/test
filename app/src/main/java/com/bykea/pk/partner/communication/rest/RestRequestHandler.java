@@ -8,6 +8,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.data.Address;
 import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
@@ -79,7 +80,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1521,29 +1521,83 @@ public class RestRequestHandler {
 
                 if (osmGeoCodeResponse != null && osmGeoCodeResponse.isSuccessful()) {
                     OSMGeoCode body = osmGeoCodeResponse.body();
-                    if (body != null
-                            && body.getAddress() != null) {
-                        if (StringUtils.isNotEmpty(body.getAddress().getHouse_number())) {
-                            address += SPACE + body.getAddress().getHouse_number();
+                    if (body != null && body.getAddress() != null) {
+                        Address geocodeAddress = body.getAddress();
+
+                        String addressFirstPart = StringUtils.EMPTY;
+                        //Use one of these only from house_number, office, amenity or building
+                        if (StringUtils.isNotEmpty(geocodeAddress.getHouse_number())) {
+                            addressFirstPart = geocodeAddress.getHouse_number() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getOffice())) {
+                            addressFirstPart = geocodeAddress.getOffice() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getAmenity())) {
+                            addressFirstPart = geocodeAddress.getAmenity() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getBuilding())) {
+                            addressFirstPart = geocodeAddress.getBuilding() + SPACE;
                         }
-                        if (StringUtils.isNotEmpty(body.getAddress().getRoad())) {
-                            address += SPACE + body.getAddress().getRoad();
+                        address += addressFirstPart;
+
+                        //concat road if found
+                        String addressSecondPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getRoad())) {
+                            addressSecondPart = geocodeAddress.getRoad() + SPACE;
                         }
-                        if (StringUtils.isNotEmpty(body.getAddress().getSuburb())) {
-                            address += SPACE + body.getAddress().getSuburb();
+                        address += addressSecondPart;
+
+
+                        //concat neighbourhood if found
+                        String addressThirdPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getNeighbourhood())) {
+                            addressThirdPart = geocodeAddress.getNeighbourhood() + SPACE;
                         }
-                        if (StringUtils.isNotEmpty(body.getAddress().getTown())) {
-                            address += SPACE + body.getAddress().getTown();
+                        address += addressThirdPart;
+
+
+                        //concat town if found
+                        String addressFourthPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getTown())) {
+                            addressFourthPart = geocodeAddress.getTown() + SPACE;
                         }
-                        if (StringUtils.isNotEmpty(body.getAddress().getCounty())) {
-                            address += SPACE + body.getAddress().getCounty();
+                        address += addressFourthPart;
+
+
+                        //if nothing found from Address object from response, assign display_name
+                        //to address by checking its not empty
+                        if (StringUtils.isEmpty(address) && StringUtils.isNotEmpty(body.getDisplay_name())) {
+                            address = body.getDisplay_name();
+                        } else {
+
+
+                            //concat suburb if we found only one from first second or third part of address
+                            if ((address.trim().equals(addressFirstPart.trim()) ||
+                                    address.trim().equals(addressSecondPart.trim()) ||
+                                    address.trim().equals(addressThirdPart.trim())) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getSuburb())) {
+                                address += geocodeAddress.getSuburb() + SPACE;
+                            }
+
+                            //concat hamlet if we found only neighbourhood and no suburb
+                            if (address.trim().equals(addressThirdPart.trim()) &&
+                                    StringUtils.isEmpty(geocodeAddress.getSuburb()) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getHamlet())) {
+                                address += geocodeAddress.getHamlet();
+                            }
+
+                            //concat suburb before address if we found only town
+                            if (address.trim().equals(addressFourthPart.trim()) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getSuburb())) {
+                                address = geocodeAddress.getSuburb() + SPACE + address;
+                            }
+
                         }
                     }
                     if (StringUtils.isNotEmpty(address)) {
                         mDataCallback.onResponse(address);
                     } else {
-                        mDataCallback.onError(NumberUtils.INTEGER_ZERO, Constants.NO_ADDRESS_FOUND);
+                        mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, Constants.NO_ADDRESS_FOUND);
                     }
+                } else {
+                    mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, Constants.NO_ADDRESS_FOUND);
                 }
             }
 
