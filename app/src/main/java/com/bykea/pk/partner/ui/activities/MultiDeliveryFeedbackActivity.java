@@ -399,7 +399,8 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
         } else {
-            Utils.appToast(getString(R.string.error_uploading_file));
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(getString(R.string.settings_are_not_updated));
         }
     }
 

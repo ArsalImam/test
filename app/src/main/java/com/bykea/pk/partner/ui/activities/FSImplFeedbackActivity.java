@@ -201,6 +201,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
         if (AppPreferences.getDriverSettings() == null ||
                 AppPreferences.getDriverSettings().getData() == null ||
                 StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getFeedbackInvoiceListingUrl())) {
+            Utils.appToast(getString(R.string.settings_are_not_updated));
             return;
         }
 
@@ -352,6 +353,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 if (AppPreferences.getDriverSettings() == null ||
                         AppPreferences.getDriverSettings().getData() == null ||
                         StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBatchBookingInvoiceUrl())) {
+                    Utils.appToast(getString(R.string.settings_are_not_updated));
                     return;
                 }
                 repo.getReturnRunBatchInvoice(AppPreferences.getDriverSettings().getData().getBatchBookingInvoiceUrl(),
@@ -832,7 +834,8 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
         }else {
-            Utils.appToast(getString(R.string.error_uploading_file));
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(getString(R.string.settings_are_not_updated));
         }
     }
 

@@ -71,11 +71,12 @@ class BookingDetailViewModel
                 }
 
                 override fun onFail(code: Int, message: String?) {
-                    super.onFail(code, message)
                     _showLoader.value = false
                     Utils.appToast(message)
                 }
             })
+        }?:run{
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated))
         }
     }
 

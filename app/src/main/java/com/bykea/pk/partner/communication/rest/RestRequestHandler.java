@@ -1254,6 +1254,7 @@ public class RestRequestHandler {
             restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
         } else {
             Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
         }
     }
 

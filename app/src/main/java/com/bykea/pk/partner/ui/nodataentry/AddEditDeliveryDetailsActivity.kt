@@ -145,7 +145,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                                     }
                                 }, s3BucketVoiceNotes)
                             } ?: run {
-                                Utils.appToast(getString(R.string.error_uploading_file))
+                                Utils.appToast(getString(R.string.settings_are_not_updated))
                             }
                         } else {
                             callPostApiNow()

@@ -7,8 +7,12 @@ import com.amazonaws.services.s3.model.GetObjectRequest
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.services.s3.model.PutObjectResult
 import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.util.DIGIT_ZERO
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Util
+import com.bykea.pk.partner.utils.Utils
 import io.fabric.sdk.android.services.concurrency.AsyncTask
 import java.io.File
 import java.io.FileOutputStream
@@ -46,9 +50,13 @@ object BykeaAmazonClient {
     private class UploadFileToAmazon(var fileName: String, var callback: Callback<String>, val bucketName: String) : AsyncTask<File, Unit, PutObjectResult>() {
         override fun doInBackground(vararg files: File): PutObjectResult? {
             return try {
-                val p = PutObjectRequest(bucketName, fileName, files[0])
-                val client = AmazonS3Client(amazonCredential()) //creating Amazon client instance
-                client.putObject(p) //upload file to amazon now
+                amazonCredential()?.let {
+                    val p = PutObjectRequest(bucketName, fileName, files[DIGIT_ZERO])
+                    val client = AmazonS3Client(it) //creating Amazon client instance
+                    client.putObject(p) //upload file to amazon now
+                } ?: run {
+                    throw Exception()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
@@ -58,7 +66,6 @@ object BykeaAmazonClient {
         override fun onPostExecute(result: PutObjectResult?) {
             super.onPostExecute(result)
             if (result != null) {
-//                Utils.redLog(TAG, "Done > ${result?.versionId} > ${result?.contentMd5} > ${result?.eTag}")
                 callback.success(fileName)
             } else {
                 callback.fail(-1, "fail")
@@ -74,12 +81,15 @@ object BykeaAmazonClient {
             return try {
                 if (android.os.Debug.isDebuggerConnected())
                     android.os.Debug.waitForDebugger()
-                val s3Client = AmazonS3Client(amazonCredential())
-                val getRequest = GetObjectRequest(bucketName, fileName)
-                val getResponse = s3Client.getObject(getRequest)
-                val myObjectBytes = getResponse.objectContent
-                val f = takeInputStream(myObjectBytes)
-                return f
+                amazonCredential()?.let {
+                    val s3Client = AmazonS3Client(it)
+                    val getRequest = GetObjectRequest(bucketName, fileName)
+                    val getResponse = s3Client.getObject(getRequest)
+                    val myObjectBytes = getResponse.objectContent
+                    return takeInputStream(myObjectBytes)
+                } ?: run {
+                    throw Exception()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
@@ -122,12 +132,19 @@ object BykeaAmazonClient {
     /**
      * prepare amazon credentials for upload/download files on amazon
      */
-    private fun amazonCredential(): CognitoCachingCredentialsProvider {
+    private fun amazonCredential(): CognitoCachingCredentialsProvider? {
         //Amazon credential
-        return CognitoCachingCredentialsProvider(
-                DriverApp.getContext(), //context
-                AppPreferences.getDriverSettings().data?.s3PoolId, // pool id in amazon
-                Regions.fromName(AppPreferences.getDriverSettings().data?.s3BucketRegion)) // region
+        var cognitoCachingCredentialsProvider: CognitoCachingCredentialsProvider? = null
+        Util.safeLet(AppPreferences.getDriverSettings().data?.s3PoolId,
+                AppPreferences.getDriverSettings().data?.s3BucketRegion) { s3PoolId, s3BucketRegion ->
+            cognitoCachingCredentialsProvider = CognitoCachingCredentialsProvider(
+                    DriverApp.getContext(), //context
+                    AppPreferences.getDriverSettings().data?.s3PoolId, // pool id in amazon
+                    Regions.fromName(AppPreferences.getDriverSettings().data?.s3BucketRegion)) // region
+        } ?: run {
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated))
+        }
+        return cognitoCachingCredentialsProvider
     }
 
 }

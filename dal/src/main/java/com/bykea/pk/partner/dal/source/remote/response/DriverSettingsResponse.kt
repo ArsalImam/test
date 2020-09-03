@@ -8,10 +8,6 @@ data class DriverSettingsResponse(
 ) : BaseResponse()
 
 data class DriverSettings(
-        var access_key: String? = null,
-        var secret_access_key: String? = null,
-        var identity_pool_uid: String? = null,
-        var bucket_name: String? = null,
         @SerializedName("kronos_get_bookings_for_driver")
         var bookingLisitingForDriverUrl: String? = null,
         @SerializedName("kronos_get_bookings_by_id")

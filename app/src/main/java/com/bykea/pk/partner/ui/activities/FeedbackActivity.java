@@ -508,8 +508,9 @@ public class FeedbackActivity extends BaseActivity {
                     Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
-        }else {
-            Utils.appToast(getString(R.string.error_uploading_file));
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(getString(R.string.settings_are_not_updated));
         }
     }
 
