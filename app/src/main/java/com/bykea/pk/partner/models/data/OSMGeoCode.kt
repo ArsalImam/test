@@ -14,20 +14,23 @@ data class OSMGeoCode(
         var osm_type: String?,
         var place_id: Int?
 )
-
 /**
  * address model require from osm response model
  */
 data class Address(
+        var office: String?,
+        var amenity: String?,
+        var house_number: String?,
+        var building: String?,
+        var hamlet: String?,
+        var road: String?,
         var city: String?,
+        var neighbourhood: String?,
+        var suburb: String?,
         var country: String?,
         var country_code: String?,
         var county: String?,
         var postcode: String?,
         var state: String?,
-        var town: String?,
-        var house_number: String?,
-        var road: String?,
-        var suburb: String?
-
+        var town: String?
 )
