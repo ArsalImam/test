@@ -1702,7 +1702,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     }
 
     /**
-     *  this will check whether the bookings contain drop offs
+     * this will check whether the bookings contain drop offs
+     *
      * @return
      */
     private boolean bookingsShouldHaveDropOffs() {
@@ -1716,8 +1717,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private void updateBatchDropOffDetails() {
         ivAddressEdit.setVisibility(View.GONE);
-        if (CollectionUtils.isEmpty(callData.getBookingList()))
-        {
+        if (CollectionUtils.isEmpty(callData.getBookingList())) {
             llEndAddress.setVisibility(View.GONE);
         } else {
             llEndAddress.setVisibility(View.VISIBLE);
@@ -3103,35 +3103,42 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             startPlayProgressUpdater();
         } else {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            BykeaAmazonClient.INSTANCE.getFileObject(url, new com.bykea.pk.partner.utils.audio.Callback<File>() {
-                @Override
-                public void success(File obj) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_audio_stop));
-                    imgViewAudioPlay.setEnabled(false);
-                    progressBarForAudioPlay.setVisibility(View.VISIBLE);
-                    mediaPlayer = new MediaPlayer();
-                    try {
-                        mediaPlayer.setDataSource(new FileInputStream(obj).getFD());
-                        mediaPlayer.prepare();
-                        progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
-                        mediaPlayer.start();
-                        startPlayProgressUpdater();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (AppPreferences.getDriverSettings() != null &&
+                    AppPreferences.getDriverSettings().getData() != null &&
+                    StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getS3BucketVoiceNotes())) {
+                BykeaAmazonClient.INSTANCE.getFileObject(url, new com.bykea.pk.partner.utils.audio.Callback<File>() {
+                    @Override
+                    public void success(File obj) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_audio_stop));
+                        imgViewAudioPlay.setEnabled(false);
+                        progressBarForAudioPlay.setVisibility(View.VISIBLE);
+                        mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setDataSource(new FileInputStream(obj).getFD());
+                            mediaPlayer.prepare();
+                            progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
+                            mediaPlayer.start();
+                            startPlayProgressUpdater();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
 
-                @Override
-                public void fail(int errorCode, @NotNull String errorMsg) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
-                }
-            });
+                    @Override
+                    public void fail(int errorCode, @NotNull String errorMsg) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
+                    }
+                }, AppPreferences.getDriverSettings().getData().getS3BucketVoiceNotes());
+            } else {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
+            }
         }
     }
 

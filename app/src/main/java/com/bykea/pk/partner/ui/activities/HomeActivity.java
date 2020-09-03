@@ -24,6 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.Backend;
+import com.bykea.pk.partner.dal.source.remote.response.DriverSettingsResponse;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -46,6 +51,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +103,8 @@ public class HomeActivity extends BaseActivity {
     private BottomSheetBehavior bottomSheetBehavior;
 
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
+
+    private JobsRepository jobsRepository = Injection.INSTANCE.provideJobsRepository(HomeActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,6 +284,18 @@ public class HomeActivity extends BaseActivity {
                         ((HomeFragment) currentFragment).initRangeBar();
                     }
                 }
+            }
+        });
+
+        jobsRepository.getDriverSettings(new JobsDataSource.LoadDataCallback<DriverSettingsResponse>() {
+            @Override
+            public void onDataLoaded(DriverSettingsResponse response) {
+                AppPreferences.saveDriverSettingsData(response);
+            }
+
+            @Override
+            public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+
             }
         });
 

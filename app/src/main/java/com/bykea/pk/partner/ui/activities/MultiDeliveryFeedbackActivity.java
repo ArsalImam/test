@@ -361,39 +361,46 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
     private void uploadProofOfDelivery(int receivedAmount) {
         JobsRepository repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         //TODO need to handle image uploading here
-        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
-            @Override
-            public void success(String obj) {
-                imageUri.delete();
-                repo.pushTripDetails(tripInfo.getId(), obj, new JobsDataSource.PushTripDetailCallback() {
-                    @Override
-                    public void onSuccess() {
-                        repository.requestMultiDeliveryDriverFeedback(
-                                tripInfo.getId(),
-                                receivedAmount,
-                                callerRb.getRating(),
-                                true,
-                                selectedMsgPosition == 0,
-                                Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
-                                etReceiverName.getText().toString(),
-                                etReceiverMobileNo.getText().toString(),
-                                handler);
-                    }
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getS3BucketPod())) {
 
-                    @Override
-                    public void onFail(int code, @Nullable String message) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showToast(message);
-                    }
-                });
-            }
+            BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+                @Override
+                public void success(String obj) {
+                    imageUri.delete();
+                    repo.pushTripDetails(tripInfo.getId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                        @Override
+                        public void onSuccess() {
+                            repository.requestMultiDeliveryDriverFeedback(
+                                    tripInfo.getId(),
+                                    receivedAmount,
+                                    callerRb.getRating(),
+                                    true,
+                                    selectedMsgPosition == 0,
+                                    Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                                    etReceiverName.getText().toString(),
+                                    etReceiverMobileNo.getText().toString(),
+                                    handler);
+                        }
 
-            @Override
-            public void fail(int errorCode, @NotNull String errorMsg) {
-                Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
-            }
-        }, Constants.Amazon.BUCKET_NAME);
+                        @Override
+                        public void onFail(int code, @Nullable String message) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            Dialogs.INSTANCE.showToast(message);
+                        }
+                    });
+                }
+
+                @Override
+                public void fail(int errorCode, @NotNull String errorMsg) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+                }
+            }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
+        } else {
+            Utils.appToast(getString(R.string.error_uploading_file));
+        }
     }
 
     /**
@@ -544,7 +551,7 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
         boolean isRequired = false;
         for (String code : codes) {
             if (
-            code.equalsIgnoreCase(String.valueOf(tripInfo.getTripStatusCode()))) {
+                    code.equalsIgnoreCase(String.valueOf(tripInfo.getTripStatusCode()))) {
                 isRequired = true;
                 break;
             }

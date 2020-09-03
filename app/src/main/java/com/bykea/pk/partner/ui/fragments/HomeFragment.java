@@ -259,10 +259,10 @@ public class HomeFragment extends Fragment {
                 return;
             }
 
-            if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
-                    StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
-                String demandLink = AppPreferences.getSettings().getSettings().getDemand();
-//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
+            if (AppPreferences.getDriverSettings() != null &&
+                    AppPreferences.getDriverSettings().getData() != null &&
+                    StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getDemand())) {
+                String demandLink = AppPreferences.getDriverSettings().getData().getDemand();
                 String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
                 Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
             }

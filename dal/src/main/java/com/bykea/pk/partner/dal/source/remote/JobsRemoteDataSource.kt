@@ -511,4 +511,11 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
+
+    fun getDriverSettings(driverId: String, accessToken: String, callback: JobsDataSource.LoadDataCallback<DriverSettingsResponse>) {
+        Backend.talos.getDriverSettings(driverId, accessToken).enqueue(object : Callback<DriverSettingsResponse> {
+            override fun onSuccess(response: DriverSettingsResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
 }

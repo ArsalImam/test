@@ -7,6 +7,7 @@ import android.util.Log;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.source.remote.response.DriverSettingsResponse;
 import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -65,6 +66,28 @@ public class AppPreferences {
                 .edit()
                 .putString(Keys.SETTING_DATA, new Gson().toJson(data))
                 .apply();
+    }
+
+    /**
+     * Save Driver Settings Data
+     * @param data
+     */
+    public static void saveDriverSettingsData(DriverSettingsResponse data) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.DRIVER_SETTINGS, new Gson().toJson(data))
+                .apply();
+    }
+
+    public static DriverSettingsResponse getDriverSettings() {
+        String data = mSharedPreferences.getString(Keys.DRIVER_SETTINGS, StringUtils.EMPTY);
+        DriverSettingsResponse settingsData;
+        if (StringUtils.isBlank(data)) {
+            settingsData = new DriverSettingsResponse();
+        } else {
+            settingsData = new Gson().fromJson(data, DriverSettingsResponse.class);
+        }
+        return settingsData;
     }
 
 

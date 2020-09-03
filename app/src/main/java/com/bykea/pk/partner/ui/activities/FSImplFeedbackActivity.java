@@ -198,19 +198,25 @@ public class FSImplFeedbackActivity extends BaseActivity {
      * will populate the recycler view's adapter
      */
     private void updateInvoice() {
-        repo.getInvoiceDetails(AppPreferences.getSettings()
-                .getSettings().getFeedbackInvoiceListingUrl(), callData.getTripId(), new JobsDataSource.GetInvoiceCallback() {
-            @Override
-            public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse bookingDetailResponse) {
-                FSImplFeedbackActivity.this.invoiceData = bookingDetailResponse.getData();
-                updateAdapter();
-            }
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getFeedbackInvoiceListingUrl())) {
+            return;
+        }
 
-            @Override
-            public void onInvoiceDataFailed(@Nullable String errorMessage) {
-                Utils.appToast(errorMessage);
-            }
-        });
+        repo.getInvoiceDetails(AppPreferences.getDriverSettings().getData().getFeedbackInvoiceListingUrl(),
+                callData.getTripId(), new JobsDataSource.GetInvoiceCallback() {
+                    @Override
+                    public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse bookingDetailResponse) {
+                        FSImplFeedbackActivity.this.invoiceData = bookingDetailResponse.getData();
+                        updateAdapter();
+                    }
+
+                    @Override
+                    public void onInvoiceDataFailed(@Nullable String errorMessage) {
+                        Utils.appToast(errorMessage);
+                    }
+                });
     }
 
     private void updateAdapter() {
@@ -343,21 +349,26 @@ public class FSImplFeedbackActivity extends BaseActivity {
             if (mLastReturnRunBooking && hasCodBooking) {
                 tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
                 ivBatchInfo.setVisibility(View.VISIBLE);
-                repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
-                        .getSettings().getBatchBookingInvoiceUrl(), batchId, new JobsDataSource.GetInvoiceCallback() {
+                if (AppPreferences.getDriverSettings() == null ||
+                        AppPreferences.getDriverSettings().getData() == null ||
+                        StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBatchBookingInvoiceUrl())) {
+                    return;
+                }
+                repo.getReturnRunBatchInvoice(AppPreferences.getDriverSettings().getData().getBatchBookingInvoiceUrl(),
+                        batchId, new JobsDataSource.GetInvoiceCallback() {
 
-                    @Override
-                    public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
-                        batchInvoiceList = feedbackInvoiceResponse.getData();
-                        Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
-                        receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
-                    }
+                            @Override
+                            public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
+                                batchInvoiceList = feedbackInvoiceResponse.getData();
+                                Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
+                                receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
+                            }
 
-                    @Override
-                    public void onInvoiceDataFailed(@Nullable String errorMessage) {
-                        Utils.appToast(errorMessage);
-                    }
-                });
+                            @Override
+                            public void onInvoiceDataFailed(@Nullable String errorMessage) {
+                                Utils.appToast(errorMessage);
+                            }
+                        });
             }
         }
         if (isBykeaCashType) {
@@ -793,31 +804,36 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void uploadProofOfDelivery() {
         repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         //TODO need to handle image uploading here
-        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
-            @Override
-            public void success(String obj) {
-                imageUri.delete();
-                repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
-                    @Override
-                    public void onSuccess() {
-                        finishTrip();
-                    }
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getS3BucketPod())) {
+            BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+                @Override
+                public void success(String obj) {
+                    imageUri.delete();
+                    repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                        @Override
+                        public void onSuccess() {
+                            finishTrip();
+                        }
 
-                    @Override
-                    public void onFail(int code, @Nullable String message) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showToast(message);
-                    }
-                });
-            }
+                        @Override
+                        public void onFail(int code, @Nullable String message) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            Dialogs.INSTANCE.showToast(message);
+                        }
+                    });
+                }
 
-            @Override
-            public void fail(int errorCode, @NotNull String errorMsg) {
-                Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
-            }
-        }, Constants.Amazon.BUCKET_NAME);
-
+                @Override
+                public void fail(int errorCode, @NotNull String errorMsg) {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+                }
+            }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
+        }else {
+            Utils.appToast(getString(R.string.error_uploading_file));
+        }
     }
 
     private String getDeliveryFeedback() {

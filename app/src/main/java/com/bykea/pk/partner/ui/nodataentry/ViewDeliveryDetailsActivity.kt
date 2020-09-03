@@ -109,27 +109,32 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
             startPlayProgressUpdater()
         } else {
             Dialogs.INSTANCE.showLoader(this@ViewDeliveryDetailsActivity)
-            BykeaAmazonClient.getFileObject(url, object : Callback<File> {
-                override fun success(obj: File) {
-                    Dialogs.INSTANCE.dismissDialog()
+            AppPreferences.getDriverSettings()?.data?.s3BucketVoiceNotes?.let {
+                BykeaAmazonClient.getFileObject(url, object : Callback<File> {
+                    override fun success(obj: File) {
+                        Dialogs.INSTANCE.dismissDialog()
 
-                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(DriverApp.getContext(), R.drawable.ic_audio_stop))
-                    imgViewAudioPlay.isEnabled = false
-                    progressBarForAudioPlay.visibility = View.VISIBLE
+                        imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(DriverApp.getContext(), R.drawable.ic_audio_stop))
+                        imgViewAudioPlay.isEnabled = false
+                        progressBarForAudioPlay.visibility = View.VISIBLE
 
-                    mediaPlayer = MediaPlayer()
-                    mediaPlayer?.setDataSource(FileInputStream(obj).fd)
-                    mediaPlayer?.prepare()
-                    progressBarForAudioPlay.max = mediaPlayer?.duration!!
-                    mediaPlayer?.start()
-                    startPlayProgressUpdater()
-                }
+                        mediaPlayer = MediaPlayer()
+                        mediaPlayer?.setDataSource(FileInputStream(obj).fd)
+                        mediaPlayer?.prepare()
+                        progressBarForAudioPlay.max = mediaPlayer?.duration!!
+                        mediaPlayer?.start()
+                        startPlayProgressUpdater()
+                    }
 
-                override fun fail(errorCode: Int, errorMsg: String) {
-                    Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.no_voice_note_available))
-                    Dialogs.INSTANCE.dismissDialog()
-                }
-            })
+                    override fun fail(errorCode: Int, errorMsg: String) {
+                        Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.no_voice_note_available))
+                        Dialogs.INSTANCE.dismissDialog()
+                    }
+                }, it)
+            } ?: run {
+                Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+            }
         }
     }
 

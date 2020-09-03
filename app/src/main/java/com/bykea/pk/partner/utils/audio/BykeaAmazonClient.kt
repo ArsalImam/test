@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.services.s3.model.PutObjectResult
 import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import io.fabric.sdk.android.services.concurrency.AsyncTask
 import java.io.File
@@ -24,7 +25,7 @@ object BykeaAmazonClient {
      * @param file     audio file
      * @param callback callback for success/fail upload
      */
-    fun uploadFile(fileName: String, file: File, callback: Callback<String>, bucketName: String = Constants.Amazon.BUCKET_NAME) {
+    fun uploadFile(fileName: String, file: File, callback: Callback<String>, bucketName: String) {
         UploadFileToAmazon(fileName, callback, bucketName).execute(file)
     }
 
@@ -33,9 +34,10 @@ object BykeaAmazonClient {
      * get file from amazon
      * @param fileName fileName is to be used to fetch file from amazon bucket
      * @param callback callback for success/fail fetch
+     * @param bucketName Bucket Name
      */
-    fun getFileObject(fileName: String, callback: Callback<File>) {
-        RetrieveFileFromAmazon(fileName, callback).execute()
+    fun getFileObject(fileName: String, callback: Callback<File>, bucketName: String) {
+        RetrieveFileFromAmazon(fileName, callback, bucketName).execute()
     }
 
     /**
@@ -67,13 +69,13 @@ object BykeaAmazonClient {
     /**
      * AsyncTask to fetch file from Amazon
      */
-    private class RetrieveFileFromAmazon(var fileName: String, var callback: Callback<File>) : AsyncTask<Unit, InputStream, File?>() {
+    private class RetrieveFileFromAmazon(var fileName: String, var callback: Callback<File>, var bucketName: String) : AsyncTask<Unit, InputStream, File?>() {
         override fun doInBackground(vararg units: Unit): File? {
             return try {
                 if (android.os.Debug.isDebuggerConnected())
                     android.os.Debug.waitForDebugger()
                 val s3Client = AmazonS3Client(amazonCredential())
-                val getRequest = GetObjectRequest(Constants.Amazon.BUCKET_NAME, fileName)
+                val getRequest = GetObjectRequest(bucketName, fileName)
                 val getResponse = s3Client.getObject(getRequest)
                 val myObjectBytes = getResponse.objectContent
                 val f = takeInputStream(myObjectBytes)
@@ -124,8 +126,8 @@ object BykeaAmazonClient {
         //Amazon credential
         return CognitoCachingCredentialsProvider(
                 DriverApp.getContext(), //context
-                Constants.Amazon.IDENTITY_POOL_ID, // pool id in amazon
-                Regions.EU_WEST_1) // region
+                AppPreferences.getDriverSettings().data?.s3PoolId, // pool id in amazon
+                Regions.fromName(AppPreferences.getDriverSettings().data?.s3BucketRegion)) // region
     }
 
 }

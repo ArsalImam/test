@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.util.BOOKING_CURRENT_DATE_FORMAT
 import com.bykea.pk.partner.dal.util.BOOKING_ID_TO_REPLACE
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.zendesk.util.StringUtils
 import java.text.SimpleDateFormat
@@ -56,23 +57,26 @@ class BookingDetailViewModel
      * @param bookingId id of the booking
      */
     fun updateBookingDetailById(bookingId: String) {
-        _showLoader.value = true
+        Util.safeLet(AppPreferences.getDriverSettings(),
+                AppPreferences.getDriverSettings().data,
+                AppPreferences.getDriverSettings().data?.bookingDetailByIdUrl) { _, _, bookingDetailByIdUrl ->
+            _showLoader.value = true
 
-        val url = AppPreferences.getSettings().settings.bookingDetailByIdUrl
-                .replace(BOOKING_ID_TO_REPLACE, bookingId)
+            val url = bookingDetailByIdUrl.replace(BOOKING_ID_TO_REPLACE, bookingId)
 
-        jobsRepository.getBookingDetailsById(url, object : JobsDataSource.GetBookingDetailCallback {
-            override fun onSuccess(bookingDetailResponse: BookingDetailResponse) {
-                _showLoader.value = false
-                updateBookingDetailObject(bookingDetailResponse.data)
-            }
+            jobsRepository.getBookingDetailsById(url, object : JobsDataSource.GetBookingDetailCallback {
+                override fun onSuccess(bookingDetailResponse: BookingDetailResponse) {
+                    _showLoader.value = false
+                    updateBookingDetailObject(bookingDetailResponse.data)
+                }
 
-            override fun onFail(code: Int, message: String?) {
-                super.onFail(code, message)
-                _showLoader.value = false
-                Utils.appToast(message)
-            }
-        })
+                override fun onFail(code: Int, message: String?) {
+                    super.onFail(code, message)
+                    _showLoader.value = false
+                    Utils.appToast(message)
+                }
+            })
+        }
     }
 
     /**
