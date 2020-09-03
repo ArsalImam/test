@@ -463,6 +463,7 @@ public class RestRequestHandler {
                 AppPreferences.getDriverSettings().getData() == null ||
                 StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
             Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
             return;
         }
 
