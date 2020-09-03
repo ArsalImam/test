@@ -10,6 +10,7 @@ const val ACCESS_TOKEN = "ACCESS_TOKEN"
 const val EMPTY_STRING = ""
 const val SERVICE_CODE_SEND = 21
 const val PARTNER_ANDROID = "PARTNER_ANDROID"
+const val BYKEA_DOMAIN = "http://www.bykea.com"
 
 val OTP_SMS = "sms"
 val OTP_CALL = "call"

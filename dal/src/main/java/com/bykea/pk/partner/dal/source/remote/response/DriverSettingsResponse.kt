@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.dal.source.remote.response
 
+import com.bykea.pk.partner.dal.util.BYKEA_DOMAIN
 import com.google.gson.annotations.SerializedName
 
 data class DriverSettingsResponse(
@@ -32,7 +33,7 @@ data class DriverSettings(
     var demand: String? = null
         get() {
             return if (demand.isNullOrEmpty())
-                return "http://www.bykea.com"
+                return BYKEA_DOMAIN
             else
                 field
         }
