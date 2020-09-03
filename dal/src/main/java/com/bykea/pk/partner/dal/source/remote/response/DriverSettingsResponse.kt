@@ -18,11 +18,11 @@ data class DriverSettings(
         var feedbackInvoiceListingUrl: String? = null,
         @SerializedName("kronos_partner_batch_invoice")
         var batchBookingInvoiceUrl: String? = null,
-        @SerializedName("s3_pool_id")
+        @SerializedName("identity_pool_uid")
         var s3PoolId: String? = null,
         @SerializedName("s3_bucket_pod")
         var s3BucketPod: String? = null,
-        @SerializedName("s3_bucket_voice_notes")
+        @SerializedName("bucket_name")
         var s3BucketVoiceNotes: String? = null,
         @SerializedName("s3_bucket_region")
         var s3BucketRegion: String? = null) {

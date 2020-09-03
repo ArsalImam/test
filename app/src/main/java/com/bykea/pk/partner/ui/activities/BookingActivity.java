@@ -3137,7 +3137,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }, AppPreferences.getDriverSettings().getData().getS3BucketVoiceNotes());
             } else {
                 Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
+                Dialogs.INSTANCE.showToast(getString(R.string.settings_are_not_updated));
             }
         }
     }

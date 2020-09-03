@@ -145,7 +145,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                                     }
                                 }, s3BucketVoiceNotes)
                             } ?: run {
-                                Utils.appToast(getString(R.string.settings_are_not_updated))
+                                callPostApiNow()
                             }
                         } else {
                             callPostApiNow()
@@ -543,7 +543,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }, it)
         } ?: run {
             Dialogs.INSTANCE.dismissDialog()
-            Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+            Dialogs.INSTANCE.showToast(getString(R.string.settings_are_not_updated))
         }
     }
 

@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
@@ -104,7 +105,7 @@ public class HomeActivity extends BaseActivity {
 
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
 
-    private JobsRepository jobsRepository = Injection.INSTANCE.provideJobsRepository(HomeActivity.this);
+    private JobsRepository jobsRepository = Injection.INSTANCE.provideJobsRepository(DriverApp.getContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
