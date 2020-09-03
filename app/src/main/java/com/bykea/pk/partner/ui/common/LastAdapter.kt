@@ -16,7 +16,7 @@ import com.bykea.pk.partner.databinding.ListItemDeliveryDetailBinding
  *
  * @author: Yousuf Sohail
  */
-class LastAdapter<T> internal constructor(private val layout: Int, private val itemClickListener: OnItemClickListener<T>) : RecyclerView.Adapter<LastAdapter<T>.MyViewHolder>() {
+class LastAdapter<T> internal constructor(private val layout: Int, private val itemClickListener: OnItemClickListener<T>? = null) : RecyclerView.Adapter<LastAdapter<T>.MyViewHolder>() {
 
     var items: ArrayList<T> = ArrayList()
         set(value) {
@@ -47,7 +47,7 @@ class LastAdapter<T> internal constructor(private val layout: Int, private val i
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = items[position]
-        holder.itemView.setOnClickListener { itemClickListener.onItemClick(item) }
+        holder.itemView.setOnClickListener { itemClickListener?.onItemClick(item) }
         holder.bind(item)
     }
 

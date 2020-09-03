@@ -12,11 +12,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
+import com.bykea.pk.partner.dal.Trips
 import com.bykea.pk.partner.databinding.JobDetailActBinding
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.common.setupSnackbar
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -58,6 +60,7 @@ class JobDetailActivity : BaseActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
     private val handler: Handler = Handler()
+    private var lastAdapter: LastAdapter<Trips>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -188,6 +191,9 @@ class JobDetailActivity : BaseActivity() {
             }
         }
         AppPreferences.removeReceivedMessageCount();
+
+        lastAdapter = LastAdapter(R.layout.list_item_trips)
+        recViewTrips.adapter = lastAdapter
     }
 
     /**
