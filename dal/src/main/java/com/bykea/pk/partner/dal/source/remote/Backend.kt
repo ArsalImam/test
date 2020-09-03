@@ -397,7 +397,7 @@ interface Backend {
                    @Query("lat") lat: String,
                    @Query("lng") lng: String): Call<FenceCheckResponse>
 
-    @GET("/api/v1/partner/fence/check")
+    @GET("/api/v1/driver/settings")
     fun getDriverSettings(@Query("_id") id: String,
                    @Query("token_id") tokenId: String): Call<DriverSettingsResponse>
 
