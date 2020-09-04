@@ -127,9 +127,9 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S:
                         //TODO need to add backward compatibility here
                         String screenFlag = Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
-                        if (AppPreferences.getDriverSettings() != null &&
-                                AppPreferences.getDriverSettings().getData() != null &&
-                                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
+                        if (AppPreferences.getDriverSettings() == null ||
+                                AppPreferences.getDriverSettings().getData() == null ||
+                                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
                             updateCurrentFragment(new TripHistoryFragment(), screenFlag);
                         } else {
                             updateCurrentFragment(new BookingListingFragment(), screenFlag);
