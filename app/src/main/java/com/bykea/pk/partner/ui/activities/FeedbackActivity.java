@@ -504,8 +504,8 @@ public class FeedbackActivity extends BaseActivity {
 
                 @Override
                 public void fail(int errorCode, @NotNull String errorMsg) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+                    imageUri.delete();
+                    finishTrip();
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
         } else {
