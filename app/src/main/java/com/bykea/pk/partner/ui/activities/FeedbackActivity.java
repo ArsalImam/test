@@ -509,8 +509,7 @@ public class FeedbackActivity extends BaseActivity {
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
         } else {
-            Dialogs.INSTANCE.dismissDialog();
-            Utils.appToast(getString(R.string.settings_are_not_updated));
+            finishTrip();
         }
     }
 
