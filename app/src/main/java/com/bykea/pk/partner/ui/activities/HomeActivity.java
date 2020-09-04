@@ -292,6 +292,10 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onDataLoaded(DriverSettingsResponse response) {
                 AppPreferences.saveDriverSettingsData(response);
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).getDriverPerformanceData();
+                }
             }
 
             @Override

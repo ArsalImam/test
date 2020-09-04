@@ -456,7 +456,12 @@ public class HomeFragment extends Fragment {
         repository.requestDriverVerifiedBookingStats(mCurrentActivity, WEEK_STATUS, handler);
     }
 
-    private void getDriverPerformanceData() {
+    public void getDriverPerformanceData() {
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getKronosPartnerSummary())) {
+            return;
+        }
         try {
             updateVerifiedBookingStats();
 //            if (!isCalled) {
