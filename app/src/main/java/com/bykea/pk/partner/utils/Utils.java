@@ -49,7 +49,6 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -96,13 +95,10 @@ import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
 import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
-import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.Result;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.BookingCallListener;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -1566,23 +1562,25 @@ public class Utils {
      * @return Google place server API key
      */
     public static String getApiKeyForGeoCoder() {
-        return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
+        if (AppPreferences.isGeoCoderApiKeyRequired() && AppPreferences.isLoggedIn()) {
+            return AppPreferences.getDriverSettings().getData().getGooglePlacesServerApiKey();
+        }
+        return StringUtils.EMPTY;
     }
 
     /***
      *  Returns API key for Google Directions API if required.
      *  Will return Empty String if there's no error in Last
      *  Request while using API without any Key.
-     * @param context Calling Context.
      * @return Google place server API key
      */
-    public static String getApiKeyForDirections(Context context) {
+    public static String getApiKeyForDirections() {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
                 AppPreferences.setDirectionsApiKeyRequired(false);
                 return StringUtils.EMPTY;
             } else {
-                return Constants.GOOGLE_PLACE_SERVER_API_KEY;
+                return getApiKeyForGeoCoder();
             }
         } else {
             return StringUtils.EMPTY;
@@ -3824,7 +3822,7 @@ public class Utils {
     /**
      * Prevent Multiple Tap
      *
-     * @param view : View On Which To Stop Multiple Tap
+     * @param view          : View On Which To Stop Multiple Tap
      * @param timeInMillis: Disable Time
      */
     public static void preventMultipleTap(View view, Long timeInMillis) {

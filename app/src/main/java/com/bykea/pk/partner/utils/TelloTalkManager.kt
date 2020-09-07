@@ -16,24 +16,19 @@ class TelloTalkManager {
     /**
      * tello client instance
      */
-    private var telloApiClient: TelloApiClient
+    private var telloApiClient: TelloApiClient? = null
 
     /**
      * constructor to initialize tello sdk object
      */
     constructor() {
-        val builder: TelloApiClient.Builder = TelloApiClient.Builder()
-                .accessKey(BuildConfig.ACCESS_KEY_TELLO_TALK)
-                .projectToken(BuildConfig.PROJECT_TOKEN_TELLO_TALK)
-                .notificationIcon(R.drawable.ic_stat_onesignal_default)
-        telloApiClient = builder.build()
     }
 
     /**
      * this will configure tello fcm client
      */
     fun setupFcm() {
-        telloApiClient.let {
+        telloApiClient?.let {
             val registrationId = AppPreferences.getRegId()
             if (StringUtils.isNotEmpty(registrationId)) it.updateFcmToken(registrationId)
         }
@@ -43,7 +38,7 @@ class TelloTalkManager {
      * this method will logout user from device and clear's sdk data
      */
     fun logout() {
-        telloApiClient.let { client ->
+        telloApiClient?.let { client ->
             client.logOff {
                 if (it) {
                     client.ClearUserData {
@@ -63,7 +58,7 @@ class TelloTalkManager {
     fun performLogin(callback: (isLoggedIn: Boolean) -> Unit) {
         val user = AppPreferences.getPilotData()
         user.id?.let {
-            telloApiClient.registerUser(user.id, user.fullName, user.phoneNo) { success ->
+            telloApiClient?.registerUser(user.id, user.fullName, user.phoneNo) { success ->
                 callback(success)
             }
         } ?: kotlin.run {
@@ -77,14 +72,25 @@ class TelloTalkManager {
      * [activity] context of the activity from which it will open
      */
     fun openCorporateChat(activity: Activity?, template: String? = null) {
-        telloApiClient.openCorporateChat(activity, template)
+        telloApiClient?.openCorporateChat(activity, template)
     }
 
     /**
      * this will awake tello's client on fcm received for fcm
      */
     fun onMessageReceived() {
-        telloApiClient.onMessageNotificationReceived()
+        telloApiClient?.onMessageNotificationReceived()
+    }
+
+    fun build() {
+        if (AppPreferences.getDriverSettings() == null) return
+
+        val builder: TelloApiClient.Builder = TelloApiClient.Builder()
+                .accessKey(AppPreferences.getDriverSettings().data?.telloTalkAccessKey)
+                .projectToken(AppPreferences.getDriverSettings().data?.telloTalkProjectToken)
+                .notificationIcon(R.drawable.ic_stat_onesignal_default)
+
+        telloApiClient = builder.build()
     }
 
     companion object {

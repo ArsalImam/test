@@ -2240,8 +2240,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mRouteLatLng.clear();
                     }
                     Routing.Builder builder = new Routing.Builder();
-                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
-                        builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
+                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections())) {
+                        builder.key(Utils.getApiKeyForDirections());
                     }
                     builder.context(mCurrentActivity)
                             .waypoints(start, end)
