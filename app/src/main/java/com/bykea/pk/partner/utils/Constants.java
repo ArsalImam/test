@@ -117,7 +117,6 @@ public class Constants {
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
-
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
     public static final String REPLACE_CITY = "-replace-";

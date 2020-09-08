@@ -32,6 +32,8 @@ data class DriverSettings(
         var googleMapsApiKey: String? = null,
         @SerializedName("bucket_name")
         var s3BucketVoiceNotes: String? = null,
+        @SerializedName("google_autocomplete_api_key")
+        var googleAutoCompleteApiKey: String? = null,
         @SerializedName("s3_bucket_region")
         var s3BucketRegion: String? = null) {
     var demand: String? = null
