@@ -624,4 +624,5 @@
     <string name="batch_update_by_passenger" translatable="false">Batch has been Updated by Passenger.</string>
     <string name="reference">Reference</string>
     <string name="reference_ur">\u0020حوالہ\u0020</string>
+    <string name="city">\u0020شہر\u0020</string>
 </resources>

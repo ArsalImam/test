@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_4sdp"
                     android:paddingBottom="@dimen/_4sdp"
-                    android:text="موبائل نمبر"
+                    android:text="@string/mobile_number"
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_4sdp"
                     android:paddingBottom="@dimen/_4sdp"
-                    android:text="شناختی کارڈ نمبر"
+                    android:text="@string/cnic_number"
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -209,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_4sdp"
                     android:paddingBottom="@dimen/_4sdp"
-                    android:text="شہر"
+                    android:text="@string/city"
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
@@ -297,14 +297,14 @@
                 android:layout_toLeftOf="@id/llIv4"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
+                android:digits="@string/alphanumeric"
                 android:gravity="left|center"
                 android:hint="@string/reference"
-                android:digits="@string/alphanumeric"
                 android:maxLength="30"
+                android:paddingStart="@dimen/_6sdp"
                 android:paddingLeft="@dimen/_6sdp"
                 android:textColorHint="@color/secondaryColorLight"
-                android:textSize="@dimen/_20sdp"
-                android:paddingStart="@dimen/_6sdp" />
+                android:textSize="@dimen/_20sdp" />
 
             <View
                 android:layout_width="match_parent"
