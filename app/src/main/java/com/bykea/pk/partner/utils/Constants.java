@@ -112,19 +112,11 @@ public class Constants {
     public static final String BYKEA_DOCUMENTS = "BykeaDocument";
     public static final String NO_ADDRESS_FOUND = "No Address Found";
 
-//    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
-//    private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
     public static final String HOW_IT_WORKS_WEB_URL = "https://bykea.com/partner-videos.php";
     public static final String OFFLINE_KAMAI_WEB_URL = "http://help.bykea.com/offline-kamai.php";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
-//    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyALb6BDq-cw_kWWCaiNw50eIthPzI9wISA";
-//    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAafW-AwnS0kYt1F5VLVkeBQjWPlM6LDQA";
-
-
-//    public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_SERVER_API_KEY_DEBUG : GOOGLE_PLACE_SERVER_API_KEY_LIVE;
-//    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG : GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE;
 
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
