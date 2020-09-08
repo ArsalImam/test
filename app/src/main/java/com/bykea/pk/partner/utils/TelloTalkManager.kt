@@ -28,6 +28,9 @@ class TelloTalkManager {
      * this will configure tello fcm client
      */
     fun setupFcm() {
+        if (telloApiClient == null) {
+            build()
+        }
         telloApiClient?.let {
             val registrationId = AppPreferences.getRegId()
             if (StringUtils.isNotEmpty(registrationId)) it.updateFcmToken(registrationId)
@@ -38,6 +41,9 @@ class TelloTalkManager {
      * this method will logout user from device and clear's sdk data
      */
     fun logout() {
+        if (telloApiClient == null) {
+            build()
+        }
         telloApiClient?.let { client ->
             client.logOff {
                 if (it) {
@@ -56,6 +62,9 @@ class TelloTalkManager {
      * [callback] this will return controll from tello to our app
      */
     fun performLogin(callback: (isLoggedIn: Boolean) -> Unit) {
+        if (telloApiClient == null) {
+            build()
+        }
         val user = AppPreferences.getPilotData()
         user.id?.let {
             telloApiClient?.registerUser(user.id, user.fullName, user.phoneNo) { success ->
@@ -72,6 +81,9 @@ class TelloTalkManager {
      * [activity] context of the activity from which it will open
      */
     fun openCorporateChat(activity: Activity?, template: String? = null) {
+        if (telloApiClient == null) {
+            build()
+        }
         telloApiClient?.openCorporateChat(activity, template)
     }
 
@@ -79,6 +91,9 @@ class TelloTalkManager {
      * this will awake tello's client on fcm received for fcm
      */
     fun onMessageReceived() {
+        if (telloApiClient == null) {
+            build()
+        }
         telloApiClient?.onMessageNotificationReceived()
     }
 
