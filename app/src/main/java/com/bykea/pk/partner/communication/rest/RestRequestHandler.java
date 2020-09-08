@@ -1757,7 +1757,8 @@ public class RestRequestHandler {
     public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000", Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000",
+                AppPreferences.getDriverSettings().getData().getGoogleAutoCompleteApiKey());
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
             public void onResponse(Call<PlaceAutoCompleteResponse> call, Response<PlaceAutoCompleteResponse> response) {
@@ -1780,7 +1781,7 @@ public class RestRequestHandler {
     public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Utils.getApiKeyForGeoCoder());
         call.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {

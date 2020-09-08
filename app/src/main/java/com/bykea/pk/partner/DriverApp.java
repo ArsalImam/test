@@ -97,8 +97,6 @@ public class DriverApp extends TelloApplication {
                 .filterOtherGCMReceivers(true)
                 .init();
         setupLoggerConfigurations();
-
-        TelloTalkManager.instance();
     }
 
     private void setupZendeskConfiguration() {

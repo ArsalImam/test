@@ -141,11 +141,7 @@ public class HomeActivity extends BaseActivity {
         Utils.disableBatteryOptimization(this, mCurrentActivity);
         Utils.clearSharedPrefIfDirty();
 
-        //logging in -- in tellotalk
-        TelloTalkManager.instance().performLogin(success -> {
-            if (success) TelloTalkManager.instance().setupFcm();
-            return null;
-        });
+        TelloTalkManager.instance().build();
     }
 
     @Override
@@ -292,6 +288,12 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onDataLoaded(DriverSettingsResponse response) {
                 AppPreferences.saveDriverSettingsData(response);
+                //logging in -- in tellotalk
+                TelloTalkManager.instance().build();
+                TelloTalkManager.instance().performLogin(success -> {
+                    if (success) TelloTalkManager.instance().setupFcm();
+                    return null;
+                });
                 Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
                 if (currentFragment instanceof HomeFragment) {
                     ((HomeFragment) currentFragment).getDriverPerformanceData();
