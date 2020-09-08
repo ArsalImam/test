@@ -141,7 +141,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                                     }
 
                                     override fun fail(errorCode: Int, errorMsg: String) {
-                                        Utils.appToast(getString(R.string.error_uploading_file))
+                                        callPostApiNow()
                                     }
                                 }, s3BucketVoiceNotes)
                             } ?: run {

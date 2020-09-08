@@ -386,16 +386,33 @@ public class MultiDeliveryFeedbackActivity extends BaseActivity {
 
                         @Override
                         public void onFail(int code, @Nullable String message) {
-                            Dialogs.INSTANCE.dismissDialog();
-                            Dialogs.INSTANCE.showToast(message);
+                            imageUri.delete();
+                            repository.requestMultiDeliveryDriverFeedback(
+                                    tripInfo.getId(),
+                                    receivedAmount,
+                                    callerRb.getRating(),
+                                    true,
+                                    selectedMsgPosition == 0,
+                                    Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                                    etReceiverName.getText().toString(),
+                                    etReceiverMobileNo.getText().toString(),
+                                    handler);
                         }
                     });
                 }
 
                 @Override
                 public void fail(int errorCode, @NotNull String errorMsg) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
+                    repository.requestMultiDeliveryDriverFeedback(
+                            tripInfo.getId(),
+                            receivedAmount,
+                            callerRb.getRating(),
+                            true,
+                            selectedMsgPosition == 0,
+                            Utils.getDeliveryMsgsList(mCurrentActivity)[selectedMsgPosition],
+                            etReceiverName.getText().toString(),
+                            etReceiverMobileNo.getText().toString(),
+                            handler);
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
         } else {
