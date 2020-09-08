@@ -2,9 +2,11 @@ package com.bykea.pk.partner.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,9 @@ public class NumberRegistration extends Fragment {
 
     @BindView(R.id.tvCity)
     Spinner spCities;
+
+    @BindView(R.id.referenceEt)
+    FontEditText referenceEt;
 
     private RegistrationActivity mCurrentActivity;
     private ArrayList<SignUpCity> mServiceCities = new ArrayList<>();
@@ -240,8 +245,13 @@ public class NumberRegistration extends Fragment {
             case R.id.nextBtn:
                 if (isValidData()) {
                     Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                    mUserRepository.requestRegisterNumber(mCurrentActivity, phoneNumberEt.getText().toString(),
-                            mSelectedCity.get_id(), cnicEt.getText().toString(), mCallback);
+                    mUserRepository
+                            .requestRegisterNumber(mCurrentActivity,
+                                    phoneNumberEt.getText().toString(),
+                                    mSelectedCity.get_id(),
+                                    cnicEt.getText().toString(),
+                                    referenceEt.getText().toString(),
+                                    mCallback);
                 }
                 break;
             case R.id.llIv2:

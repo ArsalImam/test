@@ -1114,10 +1114,10 @@ public class UserRepository {
         mRestRequestHandler.requestSignUpSettings(mContext, mDataCallback);
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, String cnic, IUserDataHandler handler) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, String reference, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, mDataCallback);
+        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, reference, mDataCallback);
     }
 
     public void postOptionalSignupData(Context context, String id, String email, String referenceNo, IUserDataHandler handler) {

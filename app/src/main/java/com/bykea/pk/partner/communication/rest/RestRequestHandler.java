@@ -715,7 +715,7 @@ public class RestRequestHandler {
         });
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, String cnic, final IResponseCallback onResponseCallBack) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, String reference, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getBykeaSignUpApiClient();
@@ -733,7 +733,7 @@ public class RestRequestHandler {
 
 
         Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                phone, Utils.getDeviceId(context), Utils.getDeviceName(), Utils.getDeviceModel(), AppPreferences.getLatitude() + "," + AppPreferences.getLongitude(), cnic, city);
+                phone, Utils.getDeviceId(context), Utils.getDeviceName(), Utils.getDeviceModel(), AppPreferences.getLatitude() + "," + AppPreferences.getLongitude(), cnic, city, reference);
 
 
         requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {

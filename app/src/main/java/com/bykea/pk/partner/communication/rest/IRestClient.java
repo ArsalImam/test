@@ -169,7 +169,8 @@ interface IRestClient {
                                                         @Field("mobile_model") String mobile_model,
                                                         @Field("geoloc") String geoloc,
                                                         @Field("cnic") String cnic,
-                                                        @Field("city") String city);
+                                                        @Field("city") String city,
+                                                        @Field("reference") String reference);
 
     //    @POST(ApiTags.SIGN_UP_ADD_NUMBER)
 //    Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,

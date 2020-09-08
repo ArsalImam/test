@@ -65,8 +65,8 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/_4sdp"
                     android:paddingTop="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:text="موبائل نمبر"
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
@@ -86,8 +86,8 @@
                 android:id="@+id/phoneNumberEt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/llIv1"
                 android:layout_alignTop="@id/llIv1"
+                android:layout_alignBottom="@id/llIv1"
                 android:layout_toLeftOf="@id/llIv1"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
@@ -130,8 +130,8 @@
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/_4sdp"
                     android:paddingTop="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:text="شناختی کارڈ نمبر"
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
@@ -151,8 +151,8 @@
                 android:id="@+id/cnicEt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/llIv3"
                 android:layout_alignTop="@id/llIv3"
+                android:layout_alignBottom="@id/llIv3"
                 android:layout_toLeftOf="@id/llIv3"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
@@ -199,16 +199,16 @@
                     android:layout_height="@dimen/_16sdp"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
-                    android:layout_marginRight="@dimen/_3sdp"
                     android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginRight="@dimen/_3sdp"
                     android:padding="@dimen/_2sdp"
                     android:src="@drawable/polygon" />
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/_4sdp"
                     android:paddingTop="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:text="شہر"
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
@@ -226,8 +226,8 @@
                 android:id="@+id/tvCity"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_190sdp"
-                android:layout_alignBottom="@id/llIv2"
                 android:layout_alignTop="@id/llIv2"
+                android:layout_alignBottom="@id/llIv2"
                 android:layout_toLeftOf="@id/llIv2"
                 android:background="@color/transparent"
                 android:backgroundTint="@color/transparent"
@@ -244,6 +244,73 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
                 android:layout_below="@+id/tvCity"
+                android:background="@color/textColorSecondary"
+                android:visibility="visible" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_21sdp"
+            android:paddingRight="@dimen/_21sdp">
+
+            <LinearLayout
+                android:id="@+id/llIv4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="end">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:text="@string/reference_ur"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/_14sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf" />
+
+                <!--  <ImageView
+                      android:id="@+id/ivMobileNumber"
+                      android:layout_width="@dimen/_60sdp"
+                      android:layout_height="wrap_content"
+                      android:layout_centerInParent="true"
+                      android:padding="@dimen/_8sdp"
+                      android:scaleType="fitEnd"
+                      app:srcCompat="@drawable/ic_mobile_number_simple" />-->
+            </LinearLayout>
+
+            <com.bykea.pk.partner.widgets.FontEditText
+                android:id="@+id/referenceEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/llIv4"
+                android:layout_alignBottom="@id/llIv4"
+                android:layout_toStartOf="@id/llIv4"
+                android:layout_toLeftOf="@id/llIv4"
+                android:background="@color/transparent"
+                android:backgroundTint="@color/transparent"
+                android:gravity="left|center"
+                android:hint="@string/reference"
+                android:digits="@string/alphanumeric"
+                android:maxLength="30"
+                android:paddingLeft="@dimen/_6sdp"
+                android:textColorHint="@color/secondaryColorLight"
+                android:textSize="@dimen/_20sdp"
+                android:paddingStart="@dimen/_6sdp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_below="@+id/referenceEt"
+                android:layout_marginTop="-4dp"
                 android:background="@color/textColorSecondary"
                 android:visibility="visible" />
 
