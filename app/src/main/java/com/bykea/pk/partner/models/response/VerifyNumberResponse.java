@@ -8,6 +8,9 @@ public class VerifyNumberResponse extends CommonResponse {
     @SerializedName("support")
     private String supportNumber;
 
+    @SerializedName("data")
+    private RegistrationLinksToken registrationLinksToken;
+
     public String getLink() {
         return link;
     }
@@ -22,5 +25,9 @@ public class VerifyNumberResponse extends CommonResponse {
 
     public void setSupportNumber(String supportNumber) {
         this.supportNumber = supportNumber;
+    }
+
+    public RegistrationLinksToken getRegistrationLinksToken() {
+        return registrationLinksToken;
     }
 }

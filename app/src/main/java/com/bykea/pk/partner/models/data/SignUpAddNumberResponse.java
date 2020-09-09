@@ -11,6 +11,7 @@ public class SignUpAddNumberResponse {
     @SerializedName("status")
     private int code;
     private String message;
+    @SerializedName("id")
     private String _id;
     private boolean verification;
 

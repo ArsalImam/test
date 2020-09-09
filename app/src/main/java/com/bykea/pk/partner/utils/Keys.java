@@ -215,4 +215,5 @@ public class Keys {
     public static final String LAST_SELECTED_MSG_POSITION = "LAST_SELECTED_MSG_POSITION";
     public static final String LIST_DELIVERY_ACTIVITY_FOREGROUND = "LIST_DELIVERY_ACTIVITY_FOREGROUND";
     public static final String LAST_SELECTED_FEEDBACK_MSG = "LAST_SELECTED_FEEDBACK_MSG";
+    public static final String SIGNUP_LINKS_TOKENS = "SIGNUP_LINKS_TOKENS";
 }
