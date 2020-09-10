@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class SignUpSettingsResponse {
-    @SerializedName("status")
     private int code;
     private String main_video;
     private String image_base_url;

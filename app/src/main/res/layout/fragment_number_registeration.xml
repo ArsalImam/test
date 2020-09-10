@@ -213,13 +213,7 @@
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
-                <!-- <ImageView
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_centerInParent="true"
-                     android:padding="@dimen/_8sdp"
-                     android:scaleType="fitEnd"
-                     app:srcCompat="@drawable/ic_shehar" />-->
+
             </LinearLayout>
 
             <Spinner
@@ -276,15 +270,6 @@
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf" />
-
-                <!--  <ImageView
-                      android:id="@+id/ivMobileNumber"
-                      android:layout_width="@dimen/_60sdp"
-                      android:layout_height="wrap_content"
-                      android:layout_centerInParent="true"
-                      android:padding="@dimen/_8sdp"
-                      android:scaleType="fitEnd"
-                      app:srcCompat="@drawable/ic_mobile_number_simple" />-->
             </LinearLayout>
 
             <com.bykea.pk.partner.widgets.FontEditText
