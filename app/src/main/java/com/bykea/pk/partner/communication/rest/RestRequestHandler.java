@@ -459,8 +459,16 @@ public class RestRequestHandler {
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
 
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
+            return;
+        }
+
         Call<BookingListingResponse> restCall = mRestClient.getBookingListing(
-                AppPreferences.getSettings().getSettings().getBookingLisitingForDriverUrl(),
+                AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl(),
                 AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
                 Constants.BookingFetchingStates.END,
@@ -1232,16 +1240,23 @@ public class RestRequestHandler {
      * @param onResponseCallBack callback to send data back on the requested controllers
      */
     public void requestDriverVerifiedBookingStats(Context context, int weekStatus, IResponseCallback onResponseCallBack) {
-        mContext = context;
-        mRestClient = RestClient.getClient(mContext);
-        Call<DriverVerifiedBookingResponse> restCall =
-                mRestClient.requestDriverVerifiedBookingStats(
-                        AppPreferences.getSettings().getSettings().getKronosPartnerSummary(),
-                        AppPreferences.getDriverId(),
-                        AppPreferences.getAccessToken(),
-                        weekStatus);
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getKronosPartnerSummary())) {
+            mContext = context;
+            mRestClient = RestClient.getClient(mContext);
+            Call<DriverVerifiedBookingResponse> restCall =
+                    mRestClient.requestDriverVerifiedBookingStats(
+                            AppPreferences.getDriverSettings().getData().getKronosPartnerSummary(),
+                            AppPreferences.getDriverId(),
+                            AppPreferences.getAccessToken(),
+                            weekStatus);
 
-        restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
+            restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
+        }
     }
 
     public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {
@@ -1742,7 +1757,8 @@ public class RestRequestHandler {
     public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000", Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000",
+                AppPreferences.getDriverSettings().getData().getGoogleAutoCompleteApiKey());
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
             public void onResponse(Call<PlaceAutoCompleteResponse> call, Response<PlaceAutoCompleteResponse> response) {
@@ -1765,7 +1781,7 @@ public class RestRequestHandler {
     public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Utils.getApiKeyForGeoCoder());
         call.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {

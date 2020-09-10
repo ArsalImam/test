@@ -540,4 +540,6 @@ interface JobsDataSource {
     fun getReturnRunBatchInvoice(invoiceUrl: String, batchID: String, callback: GetInvoiceCallback)
 
     fun checkFence(lat: String, lng: String, callback: LoadDataCallback<FenceCheckResponse>)
+
+    fun getDriverSettings(callback: LoadDataCallback<DriverSettingsResponse>)
 }
