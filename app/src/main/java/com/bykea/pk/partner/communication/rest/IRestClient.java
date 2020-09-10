@@ -15,6 +15,7 @@ import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.request.RequestRegisterNumber;
+import com.bykea.pk.partner.models.request.SignUpOptionalDataRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -167,13 +168,10 @@ interface IRestClient {
                                                         @Header("x-api-key") String key,
                                                         @Body RequestRegisterNumber requestRegisterNumber);
 
-    @FormUrlEncoded
     @POST
     Call<SignUpOptionalDataResponse> postOptionalSignupData(@Url String signUpComplete,
-                                                            @Header("key") String key,
-                                                            @Field("_id") String id,
-                                                            @Field("email") String email,
-                                                            @Field("ref_number") String ref_number);
+                                                            @Header("x-api-key") String key,
+                                                            @Body SignUpOptionalDataRequest signUpOptionalDataRequest);
 
     @FormUrlEncoded
     @POST(ApiTags.SIGN_UP_BIOMETRIC_VERIFICATION)
@@ -185,8 +183,8 @@ interface IRestClient {
     @POST
     Call<SignupUplodaImgResponse> uplodaDocumentImage(@Url String signUpUploadDocument,
                                                       @Header("x-api-key") String key,
-                                                      @Header("x-driver-id") RequestBody description,
-                                                      @Header("x-image-type") RequestBody image_type,
+                                                      @Header("x-driver-id") String description,
+                                                      @Header("x-image-type") String image_type,
                                                       @Part("image\"; filename=\"BykeaDocument" + Constants.UPLOAD_IMG_EXT + "\" ")
                                                               RequestBody file);
 

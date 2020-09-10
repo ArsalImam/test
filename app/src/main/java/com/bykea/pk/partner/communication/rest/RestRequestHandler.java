@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
 import com.bykea.pk.partner.models.request.RequestRegisterNumber;
+import com.bykea.pk.partner.models.request.SignUpOptionalDataRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -95,7 +96,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Field;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
@@ -734,7 +737,7 @@ public class RestRequestHandler {
                 StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
 
             RequestRegisterNumber requestRegisterNumber = new RequestRegisterNumber();
-            requestRegisterNumber.setPhone(phone);
+            requestRegisterNumber.setPhone(Utils.phoneNumberForServer(phone));
             requestRegisterNumber.setImei(Utils.getDeviceId(context));
             requestRegisterNumber.setMobile_brand(Utils.getDeviceName());
             requestRegisterNumber.setMobile_model(Utils.getDeviceModel());
@@ -753,7 +756,8 @@ public class RestRequestHandler {
                     if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                         mResponseCallBack.onResponse(response.body());
                     } else {
-                        mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
+                        mResponseCallBack.onError(response.code(),
+                                StringUtils.isBlank(response.message()) ? response.message() : StringUtils.EMPTY);
                     }
                 }
 
@@ -778,17 +782,22 @@ public class RestRequestHandler {
                 StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupComplete()) &&
                 StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
 
+            SignUpOptionalDataRequest signUpOptionalDataRequest = new SignUpOptionalDataRequest();
+            signUpOptionalDataRequest.setEmail(StringUtils.isNotBlank(email) ? email : null);
+            signUpOptionalDataRequest.setRef_number(StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
+
             Call<SignUpOptionalDataResponse> requestCall = mRestClient.postOptionalSignupData(
                     AppPreferences.getRegistrationLinksToken().getSignupComplete(),
                     AppPreferences.getRegistrationLinksToken().getToken(),
-                    id, StringUtils.isNotBlank(email) ? email : null, StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
+                    signUpOptionalDataRequest);
+
             requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
                 @Override
                 public void onResponse(Call<SignUpOptionalDataResponse> call, Response<SignUpOptionalDataResponse> response) {
                     if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                         mResponseCallBack.onResponse(response.body());
                     } else {
-                        mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
+                        mResponseCallBack.onError(response.code(), response.message());
                     }
                 }
 
@@ -838,7 +847,7 @@ public class RestRequestHandler {
             Call<SignupUplodaImgResponse> requestCall = mRestClient.uplodaDocumentImage(
                     AppPreferences.getRegistrationLinksToken().getSignupDocuments(),
                     AppPreferences.getRegistrationLinksToken().getToken(),
-                    Utils.convertStringToRequestBody(id), Utils.convertStringToRequestBody(type), Utils.convertFileToRequestBody(file));
+                    id, type, Utils.convertFileToRequestBody(file));
 
             requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
                 @Override
