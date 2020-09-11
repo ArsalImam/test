@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
 import com.bykea.pk.partner.models.data.SignUpCity;
+import com.bykea.pk.partner.models.data.SignUpSettingsRecord;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
@@ -43,6 +44,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 
 public class NumberRegistration extends Fragment {
     @BindView(R.id.phoneNumberEt)
@@ -116,13 +119,8 @@ public class NumberRegistration extends Fragment {
     }
 
     private void setCitiesAdapter() {
-        SignUpSettingsResponse response = (SignUpSettingsResponse) AppPreferences.getObjectFromSharedPref(SignUpSettingsResponse.class);
-        if (response != null && Utils.isTimeWithInNDay(response.getTimeStamp(), 0.5)) {
-            mCallback.onSignUpSettingsResponse(response);
-        } else {
-            Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            mUserRepository.requestSignUpSettings(mCurrentActivity, mCallback);
-        }
+        Dialogs.INSTANCE.showLoader(mCurrentActivity);
+        mUserRepository.requestSignUpSettings(mCurrentActivity, mCallback);
     }
 
 
@@ -166,16 +164,14 @@ public class NumberRegistration extends Fragment {
         @Override
         public void onSignUpSettingsResponse(final SignUpSettingsResponse response) {
             if (mCurrentActivity != null && getView() != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mApiRespinse = response;
-                        mServiceCities.addAll(response.getCity());
-                        dataAdapter1 = new CityDropDownAdapter(mCurrentActivity, mServiceCities);
-                        VIDEO_ID = response.getMain_video();
-                        initAdapter();
-                        Dialogs.INSTANCE.dismissDialog();
-                    }
+                mCurrentActivity.runOnUiThread(() -> {
+                    mApiRespinse = response;
+                    mServiceCities.addAll(response.getCity());
+                    dataAdapter1 = new CityDropDownAdapter(mCurrentActivity, mServiceCities);
+                    VIDEO_ID = response.getMain_video();
+                    initAdapter();
+                    setSignUpDataRecords(response.getRecords());
+                    Dialogs.INSTANCE.dismissDialog();
                 });
             }
         }
@@ -202,6 +198,35 @@ public class NumberRegistration extends Fragment {
             }
         }
     };
+
+    /**
+     * Set SignUp Data Records
+     *
+     * @param records : SignUp Data Records If Received From Server
+     */
+    private void setSignUpDataRecords(SignUpSettingsRecord records) {
+        if (records != null) {
+            if (StringUtils.isNotBlank(records.getCity())) {
+                if (mServiceCities != null && mServiceCities.size() > 0) {
+                    for (int i = DIGIT_ZERO; i < mServiceCities.size(); i++) {
+                        if (StringUtils.isNotEmpty(mServiceCities.get(i).get_id()) &&
+                                mServiceCities.get(i).get_id().equals(records.getCity())) {
+                            if (spCities != null) {
+                                spCities.setSelection(i);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            if (StringUtils.isNotBlank(records.getCnic())) {
+                cnicEt.setText(records.getCnic());
+            }
+            if (StringUtils.isNotBlank(records.getReference())) {
+                referenceEt.setText(records.getReference());
+            }
+        }
+    }
 
     private void logAnalyticsEvent() {
         try {

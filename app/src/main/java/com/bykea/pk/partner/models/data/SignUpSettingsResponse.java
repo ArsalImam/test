@@ -11,6 +11,7 @@ public class SignUpSettingsResponse {
     private long timeStamp;
     @SerializedName("cities")
     private ArrayList<SignUpCity> city;
+    private SignUpSettingsRecord records;
 
     public ArrayList<SignUpCity> getCity() {
         return city;
@@ -50,5 +51,9 @@ public class SignUpSettingsResponse {
 
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public SignUpSettingsRecord getRecords() {
+        return records;
     }
 }

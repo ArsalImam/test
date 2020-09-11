@@ -1684,10 +1684,7 @@ public class UserRepository {
                         mUserCallback.onLocationUpdate((LocationResponse) object);
                         break;
                     case "SignUpSettingsResponse":
-                        SignUpSettingsResponse response = (SignUpSettingsResponse) object;
-                        response.setTimeStamp(System.currentTimeMillis());
-                        AppPreferences.setObjectToSharedPref(response);
-                        mUserCallback.onSignUpSettingsResponse(response);
+                        mUserCallback.onSignUpSettingsResponse((SignUpSettingsResponse) object);
                         break;
                     case "SignUpAddNumberResponse":
                         mUserCallback.onSignUpAddNumberResponse((SignUpAddNumberResponse) object);
