@@ -98,6 +98,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Field;
 
+import static com.bykea.pk.partner.utils.Constants.COMMA;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
@@ -741,10 +742,10 @@ public class RestRequestHandler {
             requestRegisterNumber.setImei(Utils.getDeviceId(context));
             requestRegisterNumber.setMobile_brand(Utils.getDeviceName());
             requestRegisterNumber.setMobile_model(Utils.getDeviceModel());
-            requestRegisterNumber.setGeoloc(AppPreferences.getLatitude() + "," + AppPreferences.getLongitude());
+            requestRegisterNumber.setGeoloc(AppPreferences.getLatitude() + COMMA + AppPreferences.getLongitude());
             requestRegisterNumber.setCnic(cnic);
             requestRegisterNumber.setCity(city);
-            requestRegisterNumber.setReference(reference);
+            requestRegisterNumber.setReference(StringUtils.isNotEmpty(reference) ? reference : null);
 
             Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(
                     AppPreferences.getRegistrationLinksToken().getSignupAddNumber(),
