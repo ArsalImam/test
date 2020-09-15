@@ -114,7 +114,10 @@ class TelloTalkManager {
      */
     fun onMessageReceived(data: Map<String, String>) {
         try {
-            telloApiClient.buildNotification(JSONObject(data))
+            if (telloApiClient == null) {
+                build()
+            }
+            telloApiClient?.buildNotification(JSONObject(data))
         } catch (e: Exception) {
             e.printStackTrace()
         }
