@@ -8,6 +8,8 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.data.Address;
+import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -92,6 +94,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
 
@@ -455,8 +459,16 @@ public class RestRequestHandler {
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
 
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
+            return;
+        }
+
         Call<BookingListingResponse> restCall = mRestClient.getBookingListing(
-                AppPreferences.getSettings().getSettings().getBookingLisitingForDriverUrl(),
+                AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl(),
                 AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
                 Constants.BookingFetchingStates.END,
@@ -685,29 +697,6 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Call<ServiceTypeResponse> call, Throwable t) {
                 mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
-    }
-
-    public void reverseGeoding(Context context, final IResponseCallback onResponseCallback,
-                               String latLng, String key) {
-        mContext = context;
-        mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getGooglePlaceApiClient();
-        Call<GeocoderApi> requestCall = mRestClient.callGeoCoderApi(latLng, key);
-        requestCall.enqueue(new Callback<GeocoderApi>() {
-            @Override
-            public void onResponse(Call<GeocoderApi> call, Response<GeocoderApi> response) {
-                if (response.body().getStatus().equalsIgnoreCase("ok")) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(0, "Address not found.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeocoderApi> call, Throwable t) {
-                mResponseCallBack.onError(0, getErrorMessage(t));
             }
         });
     }
@@ -1251,16 +1240,23 @@ public class RestRequestHandler {
      * @param onResponseCallBack callback to send data back on the requested controllers
      */
     public void requestDriverVerifiedBookingStats(Context context, int weekStatus, IResponseCallback onResponseCallBack) {
-        mContext = context;
-        mRestClient = RestClient.getClient(mContext);
-        Call<DriverVerifiedBookingResponse> restCall =
-                mRestClient.requestDriverVerifiedBookingStats(
-                        AppPreferences.getSettings().getSettings().getKronosPartnerSummary(),
-                        AppPreferences.getDriverId(),
-                        AppPreferences.getAccessToken(),
-                        weekStatus);
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getKronosPartnerSummary())) {
+            mContext = context;
+            mRestClient = RestClient.getClient(mContext);
+            Call<DriverVerifiedBookingResponse> restCall =
+                    mRestClient.requestDriverVerifiedBookingStats(
+                            AppPreferences.getDriverSettings().getData().getKronosPartnerSummary(),
+                            AppPreferences.getDriverId(),
+                            AppPreferences.getAccessToken(),
+                            weekStatus);
 
-        restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
+            restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
+        }
     }
 
     public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {
@@ -1519,6 +1515,114 @@ public class RestRequestHandler {
         }
     }
 
+    /**
+     * call osm reverse code api to get address from latitude/longitude (gps)
+     *
+     * @param latitude      of location from which address is required
+     * @param longitude     of location from which address is required
+     * @param mDataCallback callback to pass the control in case of success and failure
+     * @param context       of the activity
+     */
+    public void callOSMGeoCoderApi(final String latitude, final String longitude,
+                                   final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+
+        Call<OSMGeoCode> call = restClient.callOSMGeoCoderApi(String.format(ApiTags.GeocodeOSMApis.GEOCODER_URL, latitude, longitude));
+        call.enqueue(new Callback<OSMGeoCode>() {
+            @Override
+            public void onResponse(Call<OSMGeoCode> call, Response<OSMGeoCode> osmGeoCodeResponse) {
+                String address = StringUtils.EMPTY;
+
+                if (osmGeoCodeResponse != null && osmGeoCodeResponse.isSuccessful()) {
+                    OSMGeoCode body = osmGeoCodeResponse.body();
+                    if (body != null && body.getAddress() != null) {
+                        Address geocodeAddress = body.getAddress();
+
+                        String addressFirstPart = StringUtils.EMPTY;
+                        //Use one of these only from house_number, office, amenity or building
+                        if (StringUtils.isNotEmpty(geocodeAddress.getHouse_number())) {
+                            addressFirstPart = geocodeAddress.getHouse_number() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getOffice())) {
+                            addressFirstPart = geocodeAddress.getOffice() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getAmenity())) {
+                            addressFirstPart = geocodeAddress.getAmenity() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getBuilding())) {
+                            addressFirstPart = geocodeAddress.getBuilding() + SPACE;
+                        }
+                        address += addressFirstPart;
+
+                        //concat road if found
+                        String addressSecondPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getRoad())) {
+                            addressSecondPart = geocodeAddress.getRoad() + SPACE;
+                        }
+                        address += addressSecondPart;
+
+
+                        //concat neighbourhood if found
+                        String addressThirdPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getNeighbourhood())) {
+                            addressThirdPart = geocodeAddress.getNeighbourhood() + SPACE;
+                        }
+                        address += addressThirdPart;
+
+
+                        //concat town if found
+                        String addressFourthPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getTown())) {
+                            addressFourthPart = geocodeAddress.getTown() + SPACE;
+                        }
+                        address += addressFourthPart;
+
+
+                        //if nothing found from Address object from response, assign display_name
+                        //to address by checking its not empty
+                        if (StringUtils.isEmpty(address) && StringUtils.isNotEmpty(body.getDisplay_name())) {
+                            address = body.getDisplay_name();
+                        } else {
+
+
+                            //concat suburb if we found only one from first second or third part of address
+                            if ((address.trim().equals(addressFirstPart.trim()) ||
+                                    address.trim().equals(addressSecondPart.trim()) ||
+                                    address.trim().equals(addressThirdPart.trim())) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getSuburb())) {
+                                address += geocodeAddress.getSuburb() + SPACE;
+                            }
+
+                            //concat hamlet if we found only neighbourhood and no suburb
+                            if (address.trim().equals(addressThirdPart.trim()) &&
+                                    StringUtils.isEmpty(geocodeAddress.getSuburb()) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getHamlet())) {
+                                address += geocodeAddress.getHamlet();
+                            }
+
+                            //concat suburb before address if we found only town
+                            if (address.trim().equals(addressFourthPart.trim()) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getSuburb())) {
+                                address = geocodeAddress.getSuburb() + SPACE + address;
+                            }
+
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(address)) {
+                        mDataCallback.onResponse(address);
+                    } else {
+                        mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, Constants.NO_ADDRESS_FOUND);
+                    }
+                } else {
+                    mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, Constants.NO_ADDRESS_FOUND);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OSMGeoCode> call, Throwable t) {
+                Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
+    }
+
     public void callGeoCoderApi(final String latitude, final String longitude,
                                 final IResponseCallback mDataCallback, Context context) {
         mContext = context;
@@ -1653,7 +1757,8 @@ public class RestRequestHandler {
     public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000", Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000",
+                AppPreferences.getDriverSettings().getData().getGoogleAutoCompleteApiKey());
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
             public void onResponse(Call<PlaceAutoCompleteResponse> call, Response<PlaceAutoCompleteResponse> response) {
@@ -1676,7 +1781,7 @@ public class RestRequestHandler {
     public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Utils.getApiKeyForGeoCoder());
         call.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {

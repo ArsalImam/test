@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.bykea.pk.partner.dal.util.NEGATIVE_DIGIT_ONE
 
 /**
  * DAO class for Job Requests
@@ -12,25 +13,27 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "jobs")
 data class Job(@PrimaryKey @ColumnInfo(name = "id") val id: Long,
-               val state: String?,
-               val booking_no: String?,
-               val order_no: String?,
-               val trip_id: String?,
-               val trip_type: String?,
-               var service_code: Int,
-               val customer_id: String?,
-               val customer_name: String?,
-               val creator_type: String?,
-               val fare_est: Int,
-               val cod_value: Int?,
-               val amount: Int?,
-               val voice_note: String?,
-               val dt: String?,
-               @Embedded(prefix = "rules_") val rules: Rules?,
-               @Embedded(prefix = "pick_") val pickup: Stop?,
-               @Embedded(prefix = "drop_") val dropoff: Stop?,
-               @Embedded(prefix = "receiver_") val receiver: Contact?,
-               @Embedded(prefix = "sender_") val sender: Contact?) {
+               val state: String? = null,
+               val booking_no: String? = null,
+               val order_no: String? = null,
+               val trip_id: String? = null,
+               val trip_type: String? = null,
+               var service_code: Int? = null,
+               val customer_id: String? = null,
+               val customer_name: String? = null,
+               val creator_type: String? = null,
+               val fare_est: Int? = null,
+               val fare_est_str: String? = null,
+               val cod_value: Int? = null,
+               val amount: Int? = null,
+               val voice_note: String? = null,
+               val dt: String? = null,
+               @Embedded(prefix = "rules_") val rules: Rules? = null,
+               @Embedded(prefix = "pick_") val pickup: Stop? = null,
+               @Embedded(prefix = "drop_") val dropoff: Stop? = null,
+               @Embedded(prefix = "receiver_") val receiver: Contact? = null,
+               @Embedded(prefix = "sender_") val sender: Contact? = null,
+               val trips: List<Trips>? = null) {
     var isComplete: Boolean = false
 }
 
@@ -40,6 +43,13 @@ data class Contact(
         val phone: String?,
         val address: String?
 )
+
 data class Rules(
-    val priority:Int?
+        val priority: Int?
+)
+
+data class Trips(
+        val display_tag: String?,
+        val zone_ur: String?,
+        val service_code: Int?
 )

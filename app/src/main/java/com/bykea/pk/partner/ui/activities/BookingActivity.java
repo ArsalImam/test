@@ -1078,7 +1078,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                                     }
                                 });
                             }
-                             }
+                        }
                     });
                 }
                 break;
@@ -1689,7 +1689,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             tvDetailsBanner.setVisibility(View.VISIBLE);
 
-            if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+            if (CollectionUtils.isNotEmpty(callData.getBookingList()) && bookingsShouldHaveDropOffs()) {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
             } else {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
@@ -1699,6 +1699,20 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
             updateBatchDropOffDetails();
         }
+    }
+
+    /**
+     * this will check whether the bookings contain drop offs
+     *
+     * @return
+     */
+    private boolean bookingsShouldHaveDropOffs() {
+        if (CollectionUtils.isEmpty(callData.getBookingList())) return false;
+        for (BatchBooking batchBooking : callData.getBookingList()) {
+            if (batchBooking.getDropoff() != null && StringUtils.isNotEmpty(batchBooking.getDropoff().getGpsAddress()) && (batchBooking.getDropoff().getLat() == NumberUtils.DOUBLE_ZERO))
+                return false;
+        }
+        return true;
     }
 
     private void updateBatchDropOffDetails() {
@@ -1714,8 +1728,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
     private void updateButtonState() {
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ARRIVED_TRIP)) {
-                jobBtn.setEnabled(CollectionUtils.isNotEmpty(callData.getBookingList()));
-                jobBtn.setBackgroundResource(CollectionUtils.isNotEmpty(callData.getBookingList())
+
+                boolean allBookingsContainDropOffs = bookingsShouldHaveDropOffs();
+
+                jobBtn.setEnabled(allBookingsContainDropOffs && CollectionUtils.isNotEmpty(callData.getBookingList()));
+                jobBtn.setBackgroundResource(allBookingsContainDropOffs && CollectionUtils.isNotEmpty(callData.getBookingList())
                         ? R.drawable.button_green
                         : R.drawable.button_grey
                 );
@@ -1779,7 +1796,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             tvDetailsBanner.setVisibility(View.VISIBLE);
 
-            if (CollectionUtils.isNotEmpty(callData.getBookingList())) {
+            if (CollectionUtils.isNotEmpty(callData.getBookingList()) && bookingsShouldHaveDropOffs()) {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.colorAccent));
             } else {
                 tvDetailsBanner.setBackgroundColor(ContextCompat.getColor(BookingActivity.this, R.color.booking_red));
@@ -2223,8 +2240,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         mRouteLatLng.clear();
                     }
                     Routing.Builder builder = new Routing.Builder();
-                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections(mCurrentActivity))) {
-                        builder.key(Utils.getApiKeyForDirections(mCurrentActivity));
+                    if (StringUtils.isNotBlank(Utils.getApiKeyForDirections())) {
+                        builder.key(Utils.getApiKeyForDirections());
                     }
                     builder.context(mCurrentActivity)
                             .waypoints(start, end)
@@ -2672,6 +2689,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 dataRepository.requestEndRide(mCurrentActivity, response, driversDataHandler);
             }
         }
+
     };
 
     /**
@@ -3085,35 +3103,42 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             startPlayProgressUpdater();
         } else {
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
-            BykeaAmazonClient.INSTANCE.getFileObject(url, new com.bykea.pk.partner.utils.audio.Callback<File>() {
-                @Override
-                public void success(File obj) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_audio_stop));
-                    imgViewAudioPlay.setEnabled(false);
-                    progressBarForAudioPlay.setVisibility(View.VISIBLE);
-                    mediaPlayer = new MediaPlayer();
-                    try {
-                        mediaPlayer.setDataSource(new FileInputStream(obj).getFD());
-                        mediaPlayer.prepare();
-                        progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
-                        mediaPlayer.start();
-                        startPlayProgressUpdater();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (AppPreferences.getDriverSettings() != null &&
+                    AppPreferences.getDriverSettings().getData() != null &&
+                    StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getS3BucketVoiceNotes())) {
+                BykeaAmazonClient.INSTANCE.getFileObject(url, new com.bykea.pk.partner.utils.audio.Callback<File>() {
+                    @Override
+                    public void success(File obj) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        imgViewAudioPlay.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.ic_audio_stop));
+                        imgViewAudioPlay.setEnabled(false);
+                        progressBarForAudioPlay.setVisibility(View.VISIBLE);
+                        mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setDataSource(new FileInputStream(obj).getFD());
+                            mediaPlayer.prepare();
+                            progressBarForAudioPlay.setMax(mediaPlayer.getDuration());
+                            mediaPlayer.start();
+                            startPlayProgressUpdater();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
 
-                @Override
-                public void fail(int errorCode, @NotNull String errorMsg) {
-                    Dialogs.INSTANCE.dismissDialog();
-                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
-                }
-            });
+                    @Override
+                    public void fail(int errorCode, @NotNull String errorMsg) {
+                        Dialogs.INSTANCE.dismissDialog();
+                        Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available));
+                    }
+                }, AppPreferences.getDriverSettings().getData().getS3BucketVoiceNotes());
+            } else {
+                Dialogs.INSTANCE.dismissDialog();
+                Dialogs.INSTANCE.showToast(getString(R.string.settings_are_not_updated));
+            }
         }
     }
 

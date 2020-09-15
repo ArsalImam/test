@@ -17,6 +17,7 @@ import com.bykea.pk.partner.dal.util.DIGIT_ZERO
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.databinding.DialogBatchNaKamiyabBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Dialogs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -54,7 +55,7 @@ class BatchNaKamiyabDialog(private val batchId: String, private val tripId: Stri
 
     private fun updateReturnRun() {
         Dialogs.INSTANCE.showLoader(activity)
-        jobRespository.updateBatchReturnRun(batchId, BatchUpdateReturnRunRequest(true), object : JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse> {
+        jobRespository.updateBatchReturnRun(batchId, BatchUpdateReturnRunRequest(true, tripId, false, AppPreferences.getLastSelectedMsgPosition().toString()), object : JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse> {
             override fun onDataLoaded(response: BatchUpdateReturnRunResponse) {
                 Dialogs.INSTANCE.dismissDialog()
                 dismiss()

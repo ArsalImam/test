@@ -12,11 +12,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
+import com.bykea.pk.partner.dal.Trips
 import com.bykea.pk.partner.databinding.JobDetailActBinding
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.activities.BaseActivity
+import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.common.setupSnackbar
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -58,6 +60,7 @@ class JobDetailActivity : BaseActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
     private val handler: Handler = Handler()
+    private var lastAdapter: LastAdapter<Trips>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -188,6 +191,9 @@ class JobDetailActivity : BaseActivity() {
             }
         }
         AppPreferences.removeReceivedMessageCount();
+
+        lastAdapter = LastAdapter(R.layout.list_item_trips)
+        recViewTrips.adapter = lastAdapter
     }
 
     /**
@@ -205,27 +211,32 @@ class JobDetailActivity : BaseActivity() {
             startPlayProgressUpdater()
         } else {
             Dialogs.INSTANCE.showLoader(this@JobDetailActivity)
-            BykeaAmazonClient.getFileObject(url, object : Callback<File> {
-                override fun success(obj: File) {
-                    Dialogs.INSTANCE.dismissDialog()
+            AppPreferences.getDriverSettings()?.data?.s3BucketVoiceNotes?.let {
+                BykeaAmazonClient.getFileObject(url, object : Callback<File> {
+                    override fun success(obj: File) {
+                        Dialogs.INSTANCE.dismissDialog()
 
-                    imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
-                    imgViewAudioPlay.isEnabled = false
-                    progressBarForAudioPlay.visibility = View.VISIBLE
+                        imgViewAudioPlay.setImageDrawable(resources.getDrawable(R.drawable.ic_audio_stop))
+                        imgViewAudioPlay.isEnabled = false
+                        progressBarForAudioPlay.visibility = View.VISIBLE
 
-                    mediaPlayer = MediaPlayer()
-                    mediaPlayer?.setDataSource(FileInputStream(obj).fd);
-                    mediaPlayer?.prepare()
-                    progressBarForAudioPlay.setMax(mediaPlayer?.duration!!);
-                    mediaPlayer?.start()
-                    startPlayProgressUpdater()
-                }
+                        mediaPlayer = MediaPlayer()
+                        mediaPlayer?.setDataSource(FileInputStream(obj).fd);
+                        mediaPlayer?.prepare()
+                        progressBarForAudioPlay.setMax(mediaPlayer?.duration!!);
+                        mediaPlayer?.start()
+                        startPlayProgressUpdater()
+                    }
 
-                override fun fail(errorCode: Int, errorMsg: String) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    binding.viewmodel?.showSnackbarMessage(R.string.no_voice_note_available)
-                }
-            })
+                    override fun fail(errorCode: Int, errorMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        binding.viewmodel?.showSnackbarMessage(R.string.no_voice_note_available)
+                    }
+                }, it)
+            } ?: run {
+                Dialogs.INSTANCE.dismissDialog()
+                Dialogs.INSTANCE.showToast(getString(R.string.settings_are_not_updated))
+            }
         }
     }
 

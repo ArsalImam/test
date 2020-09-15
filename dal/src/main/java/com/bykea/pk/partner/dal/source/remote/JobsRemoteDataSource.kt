@@ -53,9 +53,10 @@ class JobsRemoteDataSource {
      * Accept job request
      *
      * @param jobRequestId Id of Booking to be accepted
+     * @param isDispatch : Server will check busy or not if it's false
      */
-    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng)).enqueue(object : Callback<PickJobResponse> {
+    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, isDispatch: Boolean, callback: JobsDataSource.AcceptJobRequestCallback) {
+        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng, isDispatch)).enqueue(object : Callback<PickJobResponse> {
             override fun onSuccess(response: PickJobResponse) = callback.onJobRequestAccepted()
             override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onJobRequestAcceptFailed(code, subCode, message)
         })
@@ -390,6 +391,21 @@ class JobsRemoteDataSource {
         })
     }
 
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param bookingId Long
+     * @param driverId String
+     * @param token String
+     * @param callback CancelJobCallback
+     */
+    fun skipBatchJob(jobId: String, bookingId: Long, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
+        Backend.talos.skipBatchJobRequest(jobId, SkipJobRequest(driverId, token, bookingId)).enqueue(object : Callback<SkipJobResponse> {
+            override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
+            override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
     fun pushTripDetails(jobId: String, filePath: String, driverId: String, accessToken: String, callback: JobsDataSource.PushTripDetailCallback) {
         Backend.talos.pushTripDetails(jobId, PushJobDetailsRequest(driverId, accessToken, arrayOf(filePath))).enqueue(object : Callback<BaseResponse> {
             override fun onSuccess(response: BaseResponse) = callback.onSuccess()
@@ -492,6 +508,13 @@ class JobsRemoteDataSource {
     fun checkFence(driverId: String, accessToken: String, lat: String, lng: String, callback: JobsDataSource.LoadDataCallback<FenceCheckResponse>) {
         Backend.talos.checkFence(driverId, accessToken, lat, lng).enqueue(object : Callback<FenceCheckResponse> {
             override fun onSuccess(response: FenceCheckResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun getDriverSettings(driverId: String, accessToken: String, callback: JobsDataSource.LoadDataCallback<DriverSettingsResponse>) {
+        Backend.talos.getDriverSettings(driverId, accessToken).enqueue(object : Callback<DriverSettingsResponse> {
+            override fun onSuccess(response: DriverSettingsResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }

@@ -42,9 +42,11 @@ object BindingAdapters {
 
     @BindingAdapter("app:items")
     @JvmStatic
-    fun setItems(recyclerView: RecyclerView, list: List<Any>) {
-        with(recyclerView.adapter as LastAdapter<Any>) {
-            items = ArrayList(list)
+    fun setItems(recyclerView: RecyclerView, list: List<Any>?) {
+        list?.let {
+            with(recyclerView.adapter as LastAdapter<Any>) {
+                items = ArrayList(it)
+            }
         }
     }
 
@@ -119,11 +121,10 @@ object BindingAdapters {
     @JvmStatic
     fun setServiceCode(imageView: ImageView, serviceCode: Int) {
         when (serviceCode) {
-            SEND -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
-            SEND_COD -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
+            SEND, SEND_COD, MULTI_DELIVERY, NEW_BATCH_DELIVERY -> imageView.setImageResource(R.drawable.bhejdo_no_caption)
             RIDE, DISPATCH_RIDE -> imageView.setImageResource(R.drawable.ride_right)
             MART -> imageView.setImageResource(R.drawable.ic_purchase)
-            COURIER, MULTI_DELIVERY, NEW_BATCH_DELIVERY -> imageView.setImageResource(R.drawable.courier_no_caption)
+            COURIER -> imageView.setImageResource(R.drawable.courier_no_caption)
             MOBILE_TOP_UP -> imageView.setImageResource(R.drawable.ic_pay)
             MOBILE_WALLET -> imageView.setImageResource(R.drawable.ic_pay)
             FOOD -> imageView.setImageResource(R.drawable.ic_food)

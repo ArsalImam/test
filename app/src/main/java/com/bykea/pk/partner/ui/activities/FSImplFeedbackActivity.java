@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -168,6 +169,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
     private NormalCallData callData;
     private DeliveryDetails reRouteDeliveryDetails;
+    private boolean returnRunOnBooking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,19 +198,26 @@ public class FSImplFeedbackActivity extends BaseActivity {
      * will populate the recycler view's adapter
      */
     private void updateInvoice() {
-        repo.getInvoiceDetails(AppPreferences.getSettings()
-                .getSettings().getFeedbackInvoiceListingUrl(), callData.getTripId(), new JobsDataSource.GetInvoiceCallback() {
-            @Override
-            public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse bookingDetailResponse) {
-                FSImplFeedbackActivity.this.invoiceData = bookingDetailResponse.getData();
-                updateAdapter();
-            }
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getFeedbackInvoiceListingUrl())) {
+            Utils.appToast(getString(R.string.settings_are_not_updated));
+            return;
+        }
 
-            @Override
-            public void onInvoiceDataFailed(@Nullable String errorMessage) {
-                Utils.appToast(errorMessage);
-            }
-        });
+        repo.getInvoiceDetails(AppPreferences.getDriverSettings().getData().getFeedbackInvoiceListingUrl(),
+                callData.getTripId(), new JobsDataSource.GetInvoiceCallback() {
+                    @Override
+                    public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse bookingDetailResponse) {
+                        FSImplFeedbackActivity.this.invoiceData = bookingDetailResponse.getData();
+                        updateAdapter();
+                    }
+
+                    @Override
+                    public void onInvoiceDataFailed(@Nullable String errorMessage) {
+                        Utils.appToast(errorMessage);
+                    }
+                });
     }
 
     private void updateAdapter() {
@@ -311,13 +320,13 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void initViews() {
         mCurrentActivity = this;
         invoiceAdapter = new LastAdapter<>(R.layout.adapter_booking_detail_invoice, item -> {
-
         });
         invoiceRecyclerView.setAdapter(invoiceAdapter);
         invoiceRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         initCallData();
         isBykeaCashType = Util.INSTANCE.isBykeaCashJob(callData.getServiceCode());
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
+
         isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
         isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
@@ -341,21 +350,27 @@ public class FSImplFeedbackActivity extends BaseActivity {
             if (mLastReturnRunBooking && hasCodBooking) {
                 tvTotalRakmLabel.setTextSize(getResources().getDimension(R.dimen._11sdp));
                 ivBatchInfo.setVisibility(View.VISIBLE);
-                repo.getReturnRunBatchInvoice(AppPreferences.getSettings()
-                        .getSettings().getBatchBookingInvoiceUrl(), batchId, new JobsDataSource.GetInvoiceCallback() {
+                if (AppPreferences.getDriverSettings() == null ||
+                        AppPreferences.getDriverSettings().getData() == null ||
+                        StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBatchBookingInvoiceUrl())) {
+                    Utils.appToast(getString(R.string.settings_are_not_updated));
+                    return;
+                }
+                repo.getReturnRunBatchInvoice(AppPreferences.getDriverSettings().getData().getBatchBookingInvoiceUrl(),
+                        batchId, new JobsDataSource.GetInvoiceCallback() {
 
-                    @Override
-                    public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
-                        batchInvoiceList = feedbackInvoiceResponse.getData();
-                        Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
-                        receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
-                    }
+                            @Override
+                            public void onInvoiceDataLoaded(@NotNull FeedbackInvoiceResponse feedbackInvoiceResponse) {
+                                batchInvoiceList = feedbackInvoiceResponse.getData();
+                                Dialogs.INSTANCE.showReturnRunInvoice(FSImplFeedbackActivity.this, batchInvoiceList, null);
+                                receivedAmountEt.setHint("Suggested Rs. " + updateTotal(batchInvoiceList));
+                            }
 
-                    @Override
-                    public void onInvoiceDataFailed(@Nullable String errorMessage) {
-                        Utils.appToast(errorMessage);
-                    }
-                });
+                            @Override
+                            public void onInvoiceDataFailed(@Nullable String errorMessage) {
+                                Utils.appToast(errorMessage);
+                            }
+                        });
             }
         }
         if (isBykeaCashType) {
@@ -427,6 +442,19 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                 trip = tripData;
                 break;
+            }
+        }
+        if (StringUtils.isNotEmpty(trip.getDeliveryMessage())) {
+            try {
+                Integer position = Integer.valueOf(trip.getDeliveryMessage());
+                AppPreferences.setLastSelectedMsgPosition(Integer.valueOf(trip.getDeliveryMessage()), null);
+                selectedMsgPosition = position;
+                returnRunOnBooking = trip.isReturnRun();
+                if (returnRunOnBooking) {
+                    disableSpinner();
+                }
+            } catch (Exception e) {
+
             }
         }
         callData.setCallType(batchServiceCode == NEW_BATCH_DELIVERY_COD ? Constants.CallType.COD : Constants.CallType.NOD);
@@ -528,13 +556,15 @@ public class FSImplFeedbackActivity extends BaseActivity {
         receivedAmountEt.requestFocus();
     }
 
+    private String[] getMessageList() {
+        if (isBykeaCashType) return Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
+        else if (mLastReturnRunBooking) return new String[]{getString(R.string.return_run_spinner)};
+        else return Utils.getDeliveryMsgsList(mCurrentActivity);
+    }
 
     private void initAdapter(final NormalCallData callData) {
 
-        String[] list;
-        if (isBykeaCashType) list = Utils.getBykeaCashJobStatusMsgList(mCurrentActivity);
-        else if (mLastReturnRunBooking) list = new String[]{getString(R.string.return_run_spinner)};
-        else list = Utils.getDeliveryMsgsList(mCurrentActivity);
+        final String[] list = getMessageList();
 
         final DeliveryMsgsSpinnerAdapter adapter = new DeliveryMsgsSpinnerAdapter(mCurrentActivity, list);
 
@@ -562,7 +592,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     spDeliveryStatus.setSelection(AppPreferences.getLastSelectedMsgPosition());
                     return;
                 }
-                AppPreferences.setLastSelectedMsgPosition(position);
+                AppPreferences.setLastSelectedMsgPosition(position, list[position]);
                 selectedMsgPosition = position;
                 updateAdapter();
                 handleInputInfoForBatch(selectedMsgPosition == NumberUtils.INTEGER_ZERO);
@@ -590,7 +620,17 @@ public class FSImplFeedbackActivity extends BaseActivity {
             }
         });
         spDeliveryStatus.setAdapter(adapter);
-        spDeliveryStatus.setSelection(0);
+        spDeliveryStatus.setSelection(selectedMsgPosition);
+
+        //waiting to complete the execution of @{onItemSelected}
+        if (returnRunOnBooking) {
+            new Handler().postDelayed(() -> {
+                disableSpinner();
+                callData.setReturnRun(true);
+                updateFailureDeliveryLabel(null);
+                feedbackBtn.setEnabled(true);
+            }, 1500);
+        }
     }
 
     private long mLastClickTime;
@@ -620,6 +660,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                         callData.setReturnRun(true);
                         updateFailureDeliveryLabel(null);
                         feedbackBtn.setEnabled(true);
+                        disableSpinner();
                     }
 
                     @Override
@@ -765,31 +806,36 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void uploadProofOfDelivery() {
         repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         //TODO need to handle image uploading here
-        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
-            @Override
-            public void success(String obj) {
-                imageUri.delete();
-                repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
-                    @Override
-                    public void onSuccess() {
-                        finishTrip();
-                    }
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getS3BucketPod())) {
+            BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+                @Override
+                public void success(String obj) {
+                    imageUri.delete();
+                    repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                        @Override
+                        public void onSuccess() {
+                            finishTrip();
+                        }
 
-                    @Override
-                    public void onFail(int code, @Nullable String message) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showToast(message);
-                    }
-                });
-            }
+                        @Override
+                        public void onFail(int code, @Nullable String message) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            Dialogs.INSTANCE.showToast(message);
+                        }
+                    });
+                }
 
-            @Override
-            public void fail(int errorCode, @NotNull String errorMsg) {
-                Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
-            }
-        }, Constants.Amazon.BUCKET_NAME);
-
+                @Override
+                public void fail(int errorCode, @NotNull String errorMsg) {
+                    imageUri.delete();
+                    finishTrip();
+                }
+            }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
+        }else {
+            finishTrip();
+        }
     }
 
     private String getDeliveryFeedback() {
@@ -1129,10 +1175,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private void onRerouteCreated(DeliveryDetails data) {
         isRerouteCreated = true;
         feedbackBtn.setEnabled(true);
-        spDeliveryStatus.setEnabled(false);
-        spDeliveryStatus.setClickable(false);
+        disableSpinner();
         reRouteDeliveryDetails = data;
         updateFailureDeliveryLabel(data);
+    }
+
+    private void disableSpinner() {
+        spDeliveryStatus.setEnabled(false);
+        spDeliveryStatus.setClickable(false);
     }
 
     private void updateFailureDeliveryLabel(DeliveryDetails deliveryDetails) {

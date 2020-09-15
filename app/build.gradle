@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 90
-        versionName "7.57"
+        versionCode 97
+        versionName "7.64"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -74,43 +74,36 @@ android {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://52.184.193.109:3000\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
-                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
-                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
+            }
+            sandbox {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL", "\"https://sandbox.bykea.net\""
+                buildConfigField "String", "BYKEA_MAPS_URL", "\"http://52.212.154.126:4000\""
             }
             develop {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"http://sandbox-lb-talos.bykea.net:3000\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
-                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
-                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
             }
             staging {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.org\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
-                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
-                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
             }
             jenkinsUrl {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"$rootProject.ext.jenkinsTalosUrl\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
-                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", dev_tellotalk_access_key
-                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", dev_tellotalk_project_token
             }
             livetesting {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3001\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"https://maps.bykea.net\""
-                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", live_tellotalk_access_key
-                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", live_tellotalk_project_token
             }
             production {
                 dimension "env"
                 buildConfigField "String", "FLAVOR_URL", "\"https://secure.bykea.net:3000\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"https://maps.bykea.net\""
-                buildConfigField 'String', "ACCESS_KEY_TELLO_TALK", live_tellotalk_access_key
-                buildConfigField 'String', "PROJECT_TOKEN_TELLO_TALK", live_tellotalk_project_token
             }
         }
     }

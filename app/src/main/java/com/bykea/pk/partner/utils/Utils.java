@@ -94,13 +94,11 @@ import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
 import com.bykea.pk.partner.models.response.BatchBooking;
-import com.bykea.pk.partner.models.response.GeocoderApi;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.Result;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.BookingCallListener;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -1457,80 +1455,6 @@ public class Utils {
         });
     }
 
-    /**
-     * Get Address From Reverse Geo Coder API
-     *
-     * @param lat                     : Latitude
-     * @param lng                     : Longtitude
-     * @param activity                : Calling Activity
-     * @param locationAddressCallback : Interface For Location Address CallBack
-     */
-    public static void getLocationAddress(String lat, String lng, Activity activity, LocationAddressCallback locationAddressCallback) {
-        StringBuilder reverseGeoCodeAddress = new StringBuilder(StringUtils.EMPTY);
-        UserRepository repository = new UserRepository();
-        Dialogs.INSTANCE.showLoader(activity);
-        repository.requestReverseGeocoding(activity, new UserDataHandler() {
-            @Override
-            public void onReverseGeocode(GeocoderApi geocoderApiResponse) {
-                if (activity != null) {
-                    if (geocoderApiResponse != null
-                            && geocoderApiResponse.getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
-                            && geocoderApiResponse.getResults().length > 0) {
-                        String address = StringUtils.EMPTY;
-                        String subLocality = StringUtils.EMPTY;
-                        String cityName = StringUtils.EMPTY;
-                        GeocoderApi.Address_components[] address_componentses = geocoderApiResponse.getResults()[0].getAddress_components();
-                        for (GeocoderApi.Address_components addressComponent : address_componentses) {
-                            String[] types = addressComponent.getTypes();
-                            for (String type : types) {
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_CITY))
-                                    cityName = addressComponent.getLong_name();
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS) || type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_1))
-                                    address = addressComponent.getLong_name();
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_SUB_LOCALITY))
-                                    subLocality = addressComponent.getLong_name();
-                                if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality))
-                                    break;
-                            }
-                            if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality))
-                                break;
-                        }
-                        if (StringUtils.isNotBlank(subLocality)) {
-                            if (StringUtils.isNotBlank(address))
-                                address = address + " " + subLocality;
-                            else
-                                address = subLocality;
-                        }
-                        if (StringUtils.isNotBlank(address))
-                            reverseGeoCodeAddress.append(address);
-                        if (StringUtils.isNotBlank(address) && StringUtils.isNotBlank(cityName))
-                            reverseGeoCodeAddress.append(address).append(", ").append(cityName);
-
-                        if (StringUtils.isNotBlank(reverseGeoCodeAddress.toString())) {
-                            locationAddressCallback.onSuccess(reverseGeoCodeAddress.toString());
-                        } else {
-                            AppPreferences.setGeoCoderApiKeyRequired(true);
-                            locationAddressCallback.onFail();
-                        }
-                    } else {
-                        locationAddressCallback.onFail();
-                        AppPreferences.setGeoCoderApiKeyRequired(true);
-                    }
-                } else {
-                    locationAddressCallback.onFail();
-                }
-                Dialogs.INSTANCE.dismissDialog();
-            }
-
-            @Override
-            public void onError(int errorCode, String errorMessage) {
-                AppPreferences.setGeoCoderApiKeyRequired(true);
-                locationAddressCallback.onFail();
-                Dialogs.INSTANCE.dismissDialog();
-            }
-        }, lat + "," + lng, Utils.getApiKeyForGeoCoder());
-    }
-
     public static String calculateDistanceInKm(double newLat, double newLon, double prevLat,
                                                double prevLon) {
         return "" + Math.round(((calculateDistance(newLat,
@@ -1638,23 +1562,25 @@ public class Utils {
      * @return Google place server API key
      */
     public static String getApiKeyForGeoCoder() {
-        return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
+        if (AppPreferences.isGeoCoderApiKeyRequired() && AppPreferences.isLoggedIn()) {
+            return AppPreferences.getDriverSettings().getData().getGooglePlacesServerApiKey();
+        }
+        return StringUtils.EMPTY;
     }
 
     /***
      *  Returns API key for Google Directions API if required.
      *  Will return Empty String if there's no error in Last
      *  Request while using API without any Key.
-     * @param context Calling Context.
      * @return Google place server API key
      */
-    public static String getApiKeyForDirections(Context context) {
+    public static String getApiKeyForDirections() {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
                 AppPreferences.setDirectionsApiKeyRequired(false);
                 return StringUtils.EMPTY;
             } else {
-                return Constants.GOOGLE_PLACE_SERVER_API_KEY;
+                return getApiKeyForGeoCoder();
             }
         } else {
             return StringUtils.EMPTY;
@@ -2396,7 +2322,7 @@ public class Utils {
             case "courier":
             case "goods":
             case Constants.CallType.NEW_BATCH:
-                return R.drawable.courier_no_caption;
+                return R.drawable.bhejdo_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":
             case "bykeacash-banktransfer":
@@ -3525,17 +3451,16 @@ public class Utils {
 
 
     /**
-     * Clears the Local Shared Pref in case of dirt
-     *
-     * @param context calling activity context
+     * Clears the Local Shared Pref in case of dirty
      */
-    public static void clearSharedPrefIfDirty(Context context) {
+    public static void clearSharedPrefIfDirty() {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
             AppPreferences.setAppVersionCode(currentVersionCode);
-            Utils.clearData(context);
-
+            if (savedVersionCode > DIGIT_ZERO) {
+                AppPreferences.clearExceptParticulars();
+            }
         }
     }
 
@@ -3891,9 +3816,43 @@ public class Utils {
      * @param view : View On Which To Stop Multiple Tap
      */
     public static void preventMultipleTap(View view) {
-        view.setEnabled(false);
-        new Handler().postDelayed(() -> {
-            view.setEnabled(true);
-        }, DIGIT_THOUSAND);
+        preventMultipleTap(view, (long) DIGIT_THOUSAND);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     *
+     * @param view          : View On Which To Stop Multiple Tap
+     * @param timeInMillis: Disable Time
+     */
+    public static void preventMultipleTap(View view, Long timeInMillis) {
+        try {
+            if (timeInMillis > DIGIT_ZERO) {
+                view.setEnabled(false);
+                new Handler().postDelayed(() -> {
+                    view.setEnabled(true);
+                }, timeInMillis);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * If Shared Preference Key Preserve Required
+     *
+     * @param key : Shared Preference Key
+     * @return true: If equals to the preserver required else false
+     */
+    public static boolean isSharedPreferenceKeyPreserveRequired(String key) {
+        return key.equals(Keys.EMAIL) || key.equals(Keys.ACCESS_TOKEN) ||
+                key.equals(Keys.DRIVER_ID) || key.equals(Keys.PHONE_NUMBER) ||
+                key.equals(Keys.DRIVER_DATA) || key.equals(Keys.CASH_IN_HANDS_RANGE) ||
+                key.equals(Keys.FCM_REGISTRATION_ID) || key.equals(Keys.LATITUDE) ||
+                key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
+                key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
+                key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
+                key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
+                key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
     }
 }

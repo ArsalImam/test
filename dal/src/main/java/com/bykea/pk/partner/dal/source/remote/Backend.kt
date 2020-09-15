@@ -322,6 +322,9 @@ interface Backend {
     @POST("/api/v1/trips/{job_id}/skip")
     fun skipJobRequest(@Path("job_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
 
+    @POST("/api/v1/batch/{batch_id}/skip")
+    fun skipBatchJobRequest(@Path("batch_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
+
     @PUT("/api/v1/trips/{job_id}/details")
     fun pushTripDetails(@Path("job_id") jobId: String, @Body bodyObject: PushJobDetailsRequest): Call<BaseResponse>
 
@@ -393,6 +396,10 @@ interface Backend {
                    @Query("token_id") tokenId: String,
                    @Query("lat") lat: String,
                    @Query("lng") lng: String): Call<FenceCheckResponse>
+
+    @GET("/api/v1/driver/settings")
+    fun getDriverSettings(@Query("_id") id: String,
+                   @Query("token_id") tokenId: String): Call<DriverSettingsResponse>
 
 
     companion object {

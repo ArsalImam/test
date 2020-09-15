@@ -6,6 +6,7 @@ public class Keys {
      * PREFERENCE KEYS *
      *******************/
     public static final String SETTING_DATA = "SETTING_DATA";
+    public static final String DRIVER_SETTINGS = "DRIVER_SETTINGS";
     public static final String DRIVER_DATA = "DRIVER_DATA";
     public static final String DRIVER_ID = "DRIVER_ID";
     public static final String USER_STATUS = "user_status";
@@ -214,4 +215,5 @@ public class Keys {
     public static final String LAST_PARTNER_TEMPERATURE_SUBMIT = "LAST_PARTNER_TEMPERATURE_SUBMIT";
     public static final String LAST_SELECTED_MSG_POSITION = "LAST_SELECTED_MSG_POSITION";
     public static final String LIST_DELIVERY_ACTIVITY_FOREGROUND = "LIST_DELIVERY_ACTIVITY_FOREGROUND";
+    public static final String LAST_SELECTED_FEEDBACK_MSG = "LAST_SELECTED_FEEDBACK_MSG";
 }

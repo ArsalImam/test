@@ -7,6 +7,7 @@ import android.util.Log;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.source.remote.response.DriverSettingsResponse;
 import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.CitiesData;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -19,7 +20,6 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
-import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -30,11 +30,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 
@@ -49,11 +49,45 @@ public class AppPreferences {
                 .apply();
     }
 
+    /**
+     * Clear Particulars Shared Preferences
+     * (Which are not required to preserve)
+     */
+    public static void clearExceptParticulars() {
+        for (String key : mSharedPreferences.getAll().keySet()) {
+            if (!Utils.isSharedPreferenceKeyPreserveRequired(key)) {
+                mSharedPreferences.edit().remove(key).apply();
+            }
+        }
+    }
+
     public static void saveSettingsData(SettingsData data) {
         mSharedPreferences
                 .edit()
                 .putString(Keys.SETTING_DATA, new Gson().toJson(data))
                 .apply();
+    }
+
+    /**
+     * Save Driver Settings Data
+     * @param data
+     */
+    public static void saveDriverSettingsData(DriverSettingsResponse data) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.DRIVER_SETTINGS, new Gson().toJson(data))
+                .apply();
+    }
+
+    public static DriverSettingsResponse getDriverSettings() {
+        String data = mSharedPreferences.getString(Keys.DRIVER_SETTINGS, StringUtils.EMPTY);
+        DriverSettingsResponse settingsData;
+        if (StringUtils.isBlank(data)) {
+            settingsData = new DriverSettingsResponse();
+        } else {
+            settingsData = new Gson().fromJson(data, DriverSettingsResponse.class);
+        }
+        return settingsData;
     }
 
 
@@ -585,6 +619,7 @@ public class AppPreferences {
 
     /**
      * Set Mutlidelivery activity is visible or not
+     *
      * @param value : True or False
      */
     public static void setMultiDeliveryJobActivityOnForeground(boolean value) {
@@ -597,6 +632,7 @@ public class AppPreferences {
 
     /**
      * Check If Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     *
      * @return true if required else false
      */
     public static boolean isMultiDeliveryDistanceMatrixCalledRequired() {
@@ -605,6 +641,7 @@ public class AppPreferences {
 
     /**
      * Set Distance Matrix Is Required To Call For Mutlidelivery Or Not
+     *
      * @param value : True or False
      */
     public static void setMultiDeliveryDistanceMatrixCalledRequired(boolean value) {
@@ -616,7 +653,8 @@ public class AppPreferences {
 
     /**
      * Check If Drop Of Update Is Required Or Not
-     * @return  True/False
+     *
+     * @return True/False
      */
     public static boolean isDropOffUpdateRequired() {
         return mSharedPreferences.getBoolean(Keys.DROP_OFF_UPDATE_REQUIRED, false);
@@ -626,6 +664,7 @@ public class AppPreferences {
      * Set Drop Off Update Required
      * If Application Is Running But Booking Activity Is In Background or Chat Activity Is In Foreground
      * Set To False After Execution Of True
+     *
      * @param value : True/False (On Behalf Of Above Decision)
      */
     public static void setDropOffUpdateRequired(boolean value) {
@@ -1634,6 +1673,7 @@ public class AppPreferences {
 
     /**
      * Set Booking Voice Note Url Available
+     *
      * @param voiceNoteUrl : Voice Note Url
      */
     public static void setBookingVoiceNoteUrlAvailable(String voiceNoteUrl) {
@@ -1653,6 +1693,7 @@ public class AppPreferences {
 
     /**
      * Get last partner submit time.
+     *
      * @return long : Time in milliseconds
      */
     public static long getLastPartnerTemperatureSubmitTime() {
@@ -1661,6 +1702,7 @@ public class AppPreferences {
 
     /**
      * Set last partner submit time.
+     *
      * @param value : Time in milliseconds
      */
     public static void setLastPartnerTemperatureSubmitTime(long value) {
@@ -1670,13 +1712,24 @@ public class AppPreferences {
                 .apply();
     }
 
-    public static void setLastSelectedMsgPosition(int position) {
+    public static void setLastSelectedMsgPosition(int position, String message) {
         mSharedPreferences
                 .edit()
                 .putInt(Keys.LAST_SELECTED_MSG_POSITION, position)
                 .apply();
+        if (message != null) {
+            mSharedPreferences
+                    .edit()
+                    .putString(Keys.LAST_SELECTED_FEEDBACK_MSG, message)
+                    .apply();
+        }
     }
+
     public static int getLastSelectedMsgPosition() {
         return mSharedPreferences.getInt(Keys.LAST_SELECTED_MSG_POSITION, DIGIT_ZERO);
+    }
+
+    public static String getLastSelectedMsg() {
+        return mSharedPreferences.getString(Keys.LAST_SELECTED_FEEDBACK_MSG, StringUtils.EMPTY);
     }
 }

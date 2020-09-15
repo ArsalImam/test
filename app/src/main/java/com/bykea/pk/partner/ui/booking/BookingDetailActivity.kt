@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.data.Invoice
 import com.bykea.pk.partner.databinding.ActivityBookingDetailBinding
+import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
@@ -25,7 +26,7 @@ import com.bykea.pk.partner.utils.Dialogs
  *
  * @author ArsalImam
  */
-class BookingDetailActivity : AppCompatActivity() {
+class BookingDetailActivity : BaseActivity() {
 
     /**
      * data source for invoice list

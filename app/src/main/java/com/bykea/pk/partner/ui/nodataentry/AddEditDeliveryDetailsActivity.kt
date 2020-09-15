@@ -38,6 +38,7 @@ import com.bykea.pk.partner.widgets.record_view.OnRecordListener
 import kotlinx.android.synthetic.main.activity_add_edit_delivery_details.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.math.NumberUtils
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -85,6 +86,16 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
         }
 
+        // handled case for open api
+        // if latitude/longitude is not exist but gps_address is available, need to ask user to
+        // reselect drop off location
+        // [ref] https://bykeapk.atlassian.net/browse/BS-5168
+        viewModel.deliveryDetails?.value?.let {
+            if (StringUtils.isNotEmpty(it.dropoff?.gps_address) && (it.dropoff?.lat == null || it.dropoff?.lat == NumberUtils.DOUBLE_ZERO)) {
+                it.dropoff?.gps_address = StringUtils.EMPTY
+            }
+        }
+
         setTitleCustomToolbarUrdu(getString(R.string.parcel_details))
 
         viewModel.getActiveTrip()
@@ -120,16 +131,22 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                         Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
                         if (audioPlayRL.visibility == View.VISIBLE && isFileUploadToAmazonRequired) {
                             //voice note is recorded by user.. upload to amazon
-                            BykeaAmazonClient.uploadFile(fileNameToBeUploadedToAmazon(), createAudioFile(), object : Callback<String> {
-                                override fun success(obj: String) {
-                                    voiceNoteUploadUrl = obj
-                                    callPostApiNow()
-                                }
+                            Util.safeLet(AppPreferences.getDriverSettings(),
+                                    AppPreferences.getDriverSettings().data,
+                                    AppPreferences.getDriverSettings().data?.s3BucketVoiceNotes) { _, _, s3BucketVoiceNotes ->
+                                BykeaAmazonClient.uploadFile(fileNameToBeUploadedToAmazon(), createAudioFile(), object : Callback<String> {
+                                    override fun success(obj: String) {
+                                        voiceNoteUploadUrl = obj
+                                        callPostApiNow()
+                                    }
 
-                                override fun fail(errorCode: Int, errorMsg: String) {
-                                    Utils.appToast(getString(R.string.error_uploading_file))
-                                }
-                            })
+                                    override fun fail(errorCode: Int, errorMsg: String) {
+                                        callPostApiNow()
+                                    }
+                                }, s3BucketVoiceNotes)
+                            } ?: run {
+                                callPostApiNow()
+                            }
                         } else {
                             callPostApiNow()
                         }
@@ -225,7 +242,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
      * Validate Parcel Value
      */
     private fun validateParcelValue(showError: Boolean = true): Boolean {
-        return if (editTextParcelValue.text.isNullOrEmpty() || editTextParcelValue.text.toString().trim().toInt() == DIGIT_ZERO) {
+        return if (editTextParcelValue.text.isNullOrEmpty() || editTextParcelValue.text.toString().trim().toDouble() == NumberUtils.DOUBLE_ZERO) {
             if (showError) {
                 editTextParcelValue.requestFocus()
                 editTextParcelValue.error = getString(R.string.enter_correct_parcel_value)
@@ -233,7 +250,8 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
             }
             false
         } else if (editTextParcelValue.text.isNullOrEmpty() ||
-                editTextParcelValue.text.toString().trim().toInt() !in (DIGIT_ONE) until AMOUNT_LIMIT + DIGIT_ONE) {
+                (editTextParcelValue.text.toString().trim().toDouble() < (NumberUtils.DOUBLE_ONE) &&
+                        editTextParcelValue.text.toString().trim().toDouble() > (AMOUNT_LIMIT + DIGIT_ONE).toDouble())) {
             if (showError) {
                 editTextParcelValue.requestFocus()
                 editTextParcelValue.error = String.format(getString(R.string.parcel_value_cannot_greater).plus(StringUtils.SPACE).plus(getString(R.string.amount_rs_int)), AMOUNT_LIMIT)
@@ -500,27 +518,33 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         if (isShowOrHideLoader) {
             Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
         }
-        BykeaAmazonClient.getFileObject(url, object : Callback<File> {
-            override fun success(obj: File) {
-                mMediaPlayerHolder.loadFile(obj)
-                mMediaPlayerHolder.mMediaPlayer?.duration?.let { duration ->
-                    recordedAudioTime = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()).toInt()
-                    audioSeekTimeTV.text = getFormattedTime(recordedAudioTime)
-                }
-                isFileDownloadFromAmazon = true
-                if (isShowOrHideLoader) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    mMediaPlayerHolder.play()
-                }
-            }
 
-            override fun fail(errorCode: Int, errorMsg: String) {
-                if (isShowOrHideLoader) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+        AppPreferences.getDriverSettings().data?.s3BucketVoiceNotes?.let {
+            BykeaAmazonClient.getFileObject(url, object : Callback<File> {
+                override fun success(obj: File) {
+                    mMediaPlayerHolder.loadFile(obj)
+                    mMediaPlayerHolder.mMediaPlayer?.duration?.let { duration ->
+                        recordedAudioTime = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()).toInt()
+                        audioSeekTimeTV.text = getFormattedTime(recordedAudioTime)
+                    }
+                    isFileDownloadFromAmazon = true
+                    if (isShowOrHideLoader) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        mMediaPlayerHolder.play()
+                    }
                 }
-            }
-        })
+
+                override fun fail(errorCode: Int, errorMsg: String) {
+                    if (isShowOrHideLoader) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+                    }
+                }
+            }, it)
+        } ?: run {
+            Dialogs.INSTANCE.dismissDialog()
+            Dialogs.INSTANCE.showToast(getString(R.string.settings_are_not_updated))
+        }
     }
 
     /**
