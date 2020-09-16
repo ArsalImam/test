@@ -285,7 +285,7 @@
                 android:digits="@string/alphanumeric"
                 android:gravity="left|center"
                 android:hint="@string/reference"
-                android:maxLength="30"
+                android:maxLength="20"
                 android:paddingStart="@dimen/_6sdp"
                 android:paddingLeft="@dimen/_6sdp"
                 android:textColorHint="@color/secondaryColorLight"
