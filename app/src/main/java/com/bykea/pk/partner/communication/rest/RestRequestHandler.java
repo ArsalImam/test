@@ -865,7 +865,12 @@ public class RestRequestHandler {
                     if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
                         mResponseCallBack.onResponse(response.body());
                     } else {
-                        mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
                     }
                 }
 
