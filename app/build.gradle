@@ -161,13 +161,6 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
     maven { url 'https://zendesk.jfrog.io/zendesk/repo' }
-    /*maven {
-        url 'http://artifactory.paysyslabs.com/instascan-complete'
-        credentials {
-            username = "jsbank-developer"
-            password = "AP9N3fsG4oAMheeKJuxJDhNVQaE"
-        }
-    }*/
 }
 dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.10'
@@ -228,7 +221,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:2.2.3"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
-//    implementation project(path: ':loadboard')
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
     kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
@@ -261,17 +253,3 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'
-
-//def branch = getGitRevParseInfo("--abbrev-ref")
-//
-//hockeyapp {
-//    apiToken = "4faee174e5fb499bb2e40c358e5193a7"
-//    notes = branch
-//    tags = "bykeadevteam,mobinspire"
-//}
-//
-//def getGitRevParseInfo(what) {
-//    def cmd = "git rev-parse " + what + " HEAD"
-//    def proc = cmd.execute()
-//    proc.text.trim()
-//}
