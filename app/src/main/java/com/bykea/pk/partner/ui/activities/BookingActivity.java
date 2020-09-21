@@ -1988,8 +1988,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         mGoogleMap.clear();
         driverMarker = null;
-        updateDriverMarker(mCurrentLocation.getLatitude() + "",
-                mCurrentLocation.getLongitude() + "");
+
+        if (mCurrentLocation != null) {
+            updateDriverMarker(mCurrentLocation.getLatitude() + "",
+                    mCurrentLocation.getLongitude() + "");
+        }
 
         if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) /*||
