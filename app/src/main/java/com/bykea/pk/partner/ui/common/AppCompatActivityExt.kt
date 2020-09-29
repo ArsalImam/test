@@ -83,19 +83,11 @@ fun AppCompatActivity.gotoGoogleMapOnDesiredLocation(
     } else {
         "$GOOGLE_MAP_ADDRESS$lat,$lng"
     }
-    val intent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(link)
-    )
-    intent.setPackage(GOOGLE_MAP_PACKAGE)
+
     try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
         startActivity(intent)
     } catch (e: Exception) {
-        try {
-            val forceIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
-            startActivity(forceIntent)
-        } catch (e: Exception) {
-            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.install_google_map))
-        }
+        Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.install_google_map))
     }
 }
