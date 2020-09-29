@@ -85,8 +85,7 @@ fun AppCompatActivity.gotoGoogleMapOnDesiredLocation(
     }
 
     try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
-        startActivity(intent)
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
     } catch (e: Exception) {
         Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.install_google_map))
     }
