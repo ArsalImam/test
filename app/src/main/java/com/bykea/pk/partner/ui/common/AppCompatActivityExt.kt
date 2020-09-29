@@ -4,12 +4,20 @@ package com.bykea.pk.partner.ui.common
  * Various extension functions for AppCompatActivity.
  */
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.R
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants.*
+import com.bykea.pk.partner.utils.Dialogs
+import org.apache.commons.lang3.StringUtils
 
 
 /**
@@ -56,4 +64,32 @@ private inline fun FragmentManager.transact(action: FragmentTransaction.() -> Un
     beginTransaction().apply {
         action()
     }.commit()
+}
+
+
+fun AppCompatActivity.gotoGoogleMapOnDesiredLocation(
+        lat: String,
+        lng: String,
+        wayPoints: String = StringUtils.EMPTY
+) {
+    val link: String = if (wayPoints.isNotEmpty()) {
+        "${GOOGLE_MAP_ADDRESS_WITH_WAY_POINTS}$ORIGIN${AppPreferences.getLatitude()},${AppPreferences.getLongitude()}$DESTINATION$lat,$lng$WAY_POINTS$wayPoints"
+    } else {
+        "$GOOGLE_MAP_ADDRESS$lat,$lng"
+    }
+    val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(link)
+    )
+    intent.setPackage(GOOGLE_MAP_PACKAGE)
+    try {
+        startActivity(intent)
+    } catch (e: Exception) {
+        try {
+            val forceIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+            startActivity(forceIntent)
+        } catch (e: Exception) {
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.install_google_map))
+        }
+    }
 }

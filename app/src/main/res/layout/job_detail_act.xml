@@ -405,8 +405,7 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
-                                android:onClick="@{() -> listener.onNavigateToMap(false,viewmodel.job.pickup.lat, viewmodel.job.pickup.lng, viewmodel.job.dropoff.lat, viewmodel.job.dropoff.lng)}"
-                                app:invisibleUnless="@{!Utils.isNewBatchService(viewmodel.job.service_code)}"
+                                android:onClick="@{() -> listener.onNavigateToMap()}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>

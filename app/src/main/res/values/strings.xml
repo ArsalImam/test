@@ -623,4 +623,5 @@
     <string name="tello_trip_template">Trip #%s,\n%s</string>
     <string name="batch_update_by_passenger" translatable="false">Batch has been Updated by Passenger.</string>
     <string name="settings_are_not_updated">Settings are not updated. please re-login</string>
+    <string name="install_google_map">Please Install Google Map</string>
 </resources>

@@ -183,6 +183,13 @@ public class Constants {
     public static int SHOW_VIEW_HANDLER_DELAY = 350;
     public static int HIDE_VIEW_HANDLER_DELAY = 550;
 
+    public static String GOOGLE_MAP_ADDRESS = "http://maps.google.com/maps?daddr=";
+    public static String GOOGLE_MAP_ADDRESS_WITH_WAY_POINTS = "https://www.google.com/maps/dir/?api=1";
+    public static String ORIGIN = "&origin=";
+    public static String DESTINATION = "&destination=";
+    public static String WAY_POINTS = "&waypoints=";
+    public static String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
+
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
@@ -672,7 +679,7 @@ public class Constants {
 
         //PROD KEYS
         public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
-//        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+        //        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
 //        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
         public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
         public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
