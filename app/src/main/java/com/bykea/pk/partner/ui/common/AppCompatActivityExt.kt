@@ -66,7 +66,13 @@ private inline fun FragmentManager.transact(action: FragmentTransaction.() -> Un
     }.commit()
 }
 
-
+/**
+ * Extension function to navigate to google map with destination and waypoints
+ *
+ * @param lat Destination Latitude
+ * @param lng Destination Longitude
+ * @param wayPoints WayPoints (Optional)
+ */
 fun AppCompatActivity.gotoGoogleMapOnDesiredLocation(
         lat: String,
         lng: String,
