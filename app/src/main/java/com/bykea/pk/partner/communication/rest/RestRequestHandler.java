@@ -1161,8 +1161,8 @@ public class RestRequestHandler {
         @Override
         public void onResponse(Call<T> call, Response<T> response) {
             if (response == null || response.body() == null) {
-                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
-                        mContext.getString(R.string.error_try_again) + " ");
+                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, StringUtils.EMPTY +
+                        DriverApp.getContext().getString(R.string.error_try_again) + SPACE);
                 return;
             }
             if (response.body().isSuccess()) {
