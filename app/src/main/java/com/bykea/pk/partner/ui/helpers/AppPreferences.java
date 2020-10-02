@@ -20,6 +20,7 @@ import com.bykea.pk.partner.models.data.TrackingData;
 import com.bykea.pk.partner.models.data.ZoneData;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
+import com.bykea.pk.partner.models.response.RegistrationLinksToken;
 import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
@@ -1731,5 +1732,33 @@ public class AppPreferences {
 
     public static String getLastSelectedMsg() {
         return mSharedPreferences.getString(Keys.LAST_SELECTED_FEEDBACK_MSG, StringUtils.EMPTY);
+    }
+
+    /**
+     * Save RegistrationLinksToken in shared preference.
+     *
+     * @param response The {@link RegistrationLinksToken} object.
+     */
+    public static void setRegistrationLinksToken(RegistrationLinksToken response) {
+        mSharedPreferences
+                .edit()
+                .putString(Keys.SIGNUP_LINKS_TOKENS, new Gson().toJson(response))
+                .apply();
+    }
+
+    /**
+     * Fetch the RegistrationLinksToken from shared preference.
+     *
+     * @return The {@link RegistrationLinksToken} object.
+     */
+    public static RegistrationLinksToken getRegistrationLinksToken() {
+        Gson gson = new Gson();
+        try {
+            return gson.fromJson(
+                    mSharedPreferences.getString(Keys.SIGNUP_LINKS_TOKENS, StringUtils.EMPTY),
+                    RegistrationLinksToken.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

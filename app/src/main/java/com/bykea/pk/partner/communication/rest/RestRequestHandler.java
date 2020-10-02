@@ -21,6 +21,8 @@ import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
+import com.bykea.pk.partner.models.request.RequestRegisterNumber;
+import com.bykea.pk.partner.models.request.SignUpOptionalDataRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -94,7 +96,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Field;
 
+import static com.bykea.pk.partner.utils.Constants.COMMA;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
@@ -704,85 +709,125 @@ public class RestRequestHandler {
     public void requestSignUpSettings(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignUpSettingsResponse> requestCall = mRestClient.requestSignUpSettings(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API);
-        requestCall.enqueue(new Callback<SignUpSettingsResponse>() {
-            @Override
-            public void onResponse(Call<SignUpSettingsResponse> call, Response<SignUpSettingsResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
+        mRestClient = RestClient.getClient(context);
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupSettings()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
+            Call<SignUpSettingsResponse> requestCall = mRestClient.requestSignUpSettings(AppPreferences.getRegistrationLinksToken().getSignupSettings(),
+                    AppPreferences.getRegistrationLinksToken().getToken());
+            requestCall.enqueue(new Callback<SignUpSettingsResponse>() {
+                @Override
+                public void onResponse(Call<SignUpSettingsResponse> call, Response<SignUpSettingsResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<SignUpSettingsResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+                @Override
+                public void onFailure(Call<SignUpSettingsResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, String cnic, final IResponseCallback onResponseCallBack) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, String reference, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-//        ArrayList<Double> loc = new ArrayList<>();
-//        loc.add(AppPreferences.getLatitude());
-//        loc.add(AppPreferences.getLongitude());
-//        SignupAddRequest request = new SignupAddRequest();
-//        request.setCity(city);
-//        request.setGeoloc(loc);
-//        request.setImei(Utils.getDeviceId(context));
-//        request.setPhone(phone);
-//        request.setMobile_brand(Utils.getDeviceName());
-//        request.setMobile_model(Utils.getDeviceModel());
-//        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API, request);
+        mRestClient = RestClient.getClient(context);
 
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupAddNumber()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
 
-        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                phone, Utils.getDeviceId(context), Utils.getDeviceName(), Utils.getDeviceModel(), AppPreferences.getLatitude() + "," + AppPreferences.getLongitude(), cnic, city);
+            RequestRegisterNumber requestRegisterNumber = new RequestRegisterNumber();
+            requestRegisterNumber.setPhone(Utils.phoneNumberForServer(phone));
+            requestRegisterNumber.setImei(Utils.getDeviceId(context));
+            requestRegisterNumber.setMobile_brand(Utils.getDeviceName());
+            requestRegisterNumber.setMobile_model(Utils.getDeviceModel());
+            requestRegisterNumber.setGeoloc(AppPreferences.getLatitude() + COMMA + AppPreferences.getLongitude());
+            requestRegisterNumber.setCnic(cnic);
+            requestRegisterNumber.setCity(city);
+            requestRegisterNumber.setReference(StringUtils.isNotEmpty(reference) ? reference : null);
 
+            Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(
+                    AppPreferences.getRegistrationLinksToken().getSignupAddNumber(),
+                    AppPreferences.getRegistrationLinksToken().getToken(), requestRegisterNumber);
 
-        requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
-            @Override
-            public void onResponse(Call<SignUpAddNumberResponse> call, Response<SignUpAddNumberResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
+            requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
+                @Override
+                public void onResponse(Call<SignUpAddNumberResponse> call, Response<SignUpAddNumberResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<SignUpAddNumberResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+                @Override
+                public void onFailure(Call<SignUpAddNumberResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
 
     public void postOptionalSignupData(Context context, String id, String email, String referenceNo, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignUpOptionalDataResponse> requestCall = mRestClient.postOptionalSignupData(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                id, StringUtils.isNotBlank(email) ? email : null, StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
-        requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
-            @Override
-            public void onResponse(Call<SignUpOptionalDataResponse> call, Response<SignUpOptionalDataResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
-                }
-            }
+        mRestClient = RestClient.getClient(context);
 
-            @Override
-            public void onFailure(Call<SignUpOptionalDataResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupComplete()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
+
+            SignUpOptionalDataRequest signUpOptionalDataRequest = new SignUpOptionalDataRequest();
+            signUpOptionalDataRequest.setEmail(StringUtils.isNotBlank(email) ? email : null);
+            signUpOptionalDataRequest.setRef_number(StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
+
+            Call<SignUpOptionalDataResponse> requestCall = mRestClient.postOptionalSignupData(
+                    AppPreferences.getRegistrationLinksToken().getSignupComplete(),
+                    AppPreferences.getRegistrationLinksToken().getToken(),
+                    signUpOptionalDataRequest);
+
+            requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
+                @Override
+                public void onResponse(Call<SignUpOptionalDataResponse> call, Response<SignUpOptionalDataResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SignUpOptionalDataResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
     public void postBiometricVerification(Context context, String id, boolean isVerified, final IResponseCallback onResponseCallBack) {
@@ -811,24 +856,41 @@ public class RestRequestHandler {
     public void uploadDocumentImage(Context context, String id, String type, File file, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignupUplodaImgResponse> requestCall = mRestClient.uplodaDocumentImage(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                Utils.convertStringToRequestBody(id), Utils.convertStringToRequestBody(type), Utils.convertFileToRequestBody(file));
-        requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
-            @Override
-            public void onResponse(Call<SignupUplodaImgResponse> call, Response<SignupUplodaImgResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
-                }
-            }
+        mRestClient = RestClient.getClient(context);
 
-            @Override
-            public void onFailure(Call<SignupUplodaImgResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupDocuments()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
+
+            Call<SignupUplodaImgResponse> requestCall = mRestClient.uplodaDocumentImage(
+                    AppPreferences.getRegistrationLinksToken().getSignupDocuments(),
+                    AppPreferences.getRegistrationLinksToken().getToken(),
+                    id, type, Utils.convertFileToRequestBody(file));
+
+            requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
+                @Override
+                public void onResponse(Call<SignupUplodaImgResponse> call, Response<SignupUplodaImgResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SignupUplodaImgResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
     public void getSettings(Context context, final IResponseCallback onResponseCallBack) {

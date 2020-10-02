@@ -14,6 +14,8 @@ import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
+import com.bykea.pk.partner.models.request.RequestRegisterNumber;
+import com.bykea.pk.partner.models.request.SignUpOptionalDataRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
@@ -63,6 +65,7 @@ import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Fields;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
@@ -157,29 +160,18 @@ interface IRestClient {
     @GET(ApiTags.GET_SETTINGS)
     Call<SettingsResponse> getSettings(@Query(Fields.USER_TYPE) String userTyp);
 
-    @GET(ApiTags.SIGN_UP_SETTINGS)
-    Call<SignUpSettingsResponse> requestSignUpSettings(@Header("key") String key);
+    @GET
+    Call<SignUpSettingsResponse> requestSignUpSettings(@Url String settingsUrl, @Header("x-api-key") String key);
 
-    @FormUrlEncoded
-    @POST(ApiTags.SIGN_UP_ADD_NUMBER)
-    Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
-                                                        @Field("phone") String phone,
-                                                        @Field("imei") String imei,
-                                                        @Field("mobile_brand") String mobile_brand,
-                                                        @Field("mobile_model") String mobile_model,
-                                                        @Field("geoloc") String geoloc,
-                                                        @Field("cnic") String cnic,
-                                                        @Field("city") String city);
+    @POST
+    Call<SignUpAddNumberResponse> requestRegisterNumber(@Url String signUpAddNumber,
+                                                        @Header("x-api-key") String key,
+                                                        @Body RequestRegisterNumber requestRegisterNumber);
 
-    //    @POST(ApiTags.SIGN_UP_ADD_NUMBER)
-//    Call<SignUpAddNumberResponse> requestRegisterNumber(@Header("key") String key,
-//                                                        @Body SignupAddRequest body);
-    @FormUrlEncoded
-    @POST(ApiTags.SIGN_UP_COMPLETE)
-    Call<SignUpOptionalDataResponse> postOptionalSignupData(@Header("key") String key,
-                                                            @Field("_id") String id,
-                                                            @Field("email") String email,
-                                                            @Field("ref_number") String ref_number);
+    @POST
+    Call<SignUpOptionalDataResponse> postOptionalSignupData(@Url String signUpComplete,
+                                                            @Header("x-api-key") String key,
+                                                            @Body SignUpOptionalDataRequest signUpOptionalDataRequest);
 
     @FormUrlEncoded
     @POST(ApiTags.SIGN_UP_BIOMETRIC_VERIFICATION)
@@ -187,29 +179,12 @@ interface IRestClient {
                                                          @Field("_id") String id,
                                                          @Field("verification_status") boolean verification_status);
 
-    @FormUrlEncoded
-    @POST(ApiTags.SIGN_UP_OPTIONAL_DATA)
-    Call<SignUpOptionalDataResponse> postOptionalSignupDataJustRefNo(@Header("key") String key,
-                                                                     @Field("_id") String id,
-                                                                     @Field("ref_number") String ref_number);
-
-    @FormUrlEncoded
-    @POST(ApiTags.SIGN_UP_OPTIONAL_DATA)
-    Call<SignUpOptionalDataResponse> postOptionalSignupDataJustEmail(@Header("key") String key,
-                                                                     @Field("_id") String id,
-                                                                     @Field("email") String email);
-
-    @FormUrlEncoded
-    @POST(ApiTags.SIGN_UP_COMPLETE)
-    Call<SignUpCompleteResponse> requestCompleteSignupData(@Header("key") String key,
-                                                           @Field("_id") String id);
-
-
     @Multipart
-    @POST(ApiTags.SIGN_UP_UPLOAD_DOCUMENT)
-    Call<SignupUplodaImgResponse> uplodaDocumentImage(@Header("key") String key,
-                                                      @Part("_id") RequestBody description,
-                                                      @Part("image_type") RequestBody image_type,
+    @POST
+    Call<SignupUplodaImgResponse> uplodaDocumentImage(@Url String signUpUploadDocument,
+                                                      @Header("x-api-key") String key,
+                                                      @Header("x-driver-id") String description,
+                                                      @Header("x-image-type") String image_type,
                                                       @Part("image\"; filename=\"BykeaDocument" + Constants.UPLOAD_IMG_EXT + "\" ")
                                                               RequestBody file);
 
@@ -354,7 +329,7 @@ interface IRestClient {
 
     @GET
     Call<BykeaDistanceMatrixResponse>
-                callDistanceMatrixApi(@Url String url,
+    callDistanceMatrixApi(@Url String url,
                           @Query(Fields.PICK_LAT) double pickupLatitude, @Query(Fields.PICK_LNG) double pickupLongitude,
                           @Query(Fields.DROP_OFF_LAT) double destinationLatitude, @Query(Fields.DROP_OFF_LNG) double destinationLongitude);
 
