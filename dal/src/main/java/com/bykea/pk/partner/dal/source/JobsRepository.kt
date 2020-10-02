@@ -320,6 +320,10 @@ class JobsRepository(
         jobsRemoteDataSource.checkFence(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), lat, lng, callback)
     }
 
+    override fun getDriverSettings(callback: JobsDataSource.LoadDataCallback<DriverSettingsResponse>) {
+        jobsRemoteDataSource.getDriverSettings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
+    }
+
 
     companion object {
 

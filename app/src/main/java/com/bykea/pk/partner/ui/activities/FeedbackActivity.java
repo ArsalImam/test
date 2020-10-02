@@ -481,31 +481,36 @@ public class FeedbackActivity extends BaseActivity {
     private void uploadProofOfDelivery() {
         repo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
         //TODO need to handle image uploading here
-        BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
-            @Override
-            public void success(String obj) {
-                imageUri.delete();
-                repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
-                    @Override
-                    public void onSuccess() {
-                        finishTrip();
-                    }
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getS3BucketPod())) {
+            BykeaAmazonClient.INSTANCE.uploadFile(imageUri.getName(), imageUri, new com.bykea.pk.partner.utils.audio.Callback<String>() {
+                @Override
+                public void success(String obj) {
+                    imageUri.delete();
+                    repo.pushTripDetails(callData.getTripId(), obj, new JobsDataSource.PushTripDetailCallback() {
+                        @Override
+                        public void onSuccess() {
+                            finishTrip();
+                        }
 
-                    @Override
-                    public void onFail(int code, @Nullable String message) {
-                        Dialogs.INSTANCE.dismissDialog();
-                        Dialogs.INSTANCE.showToast(message);
-                    }
-                });
-            }
+                        @Override
+                        public void onFail(int code, @Nullable String message) {
+                            Dialogs.INSTANCE.dismissDialog();
+                            Dialogs.INSTANCE.showToast(message);
+                        }
+                    });
+                }
 
-            @Override
-            public void fail(int errorCode, @NotNull String errorMsg) {
-                Dialogs.INSTANCE.dismissDialog();
-                Dialogs.INSTANCE.showToast(getString(R.string.no_file_available));
-            }
-        }, Constants.Amazon.BUCKET_NAME);
-
+                @Override
+                public void fail(int errorCode, @NotNull String errorMsg) {
+                    imageUri.delete();
+                    finishTrip();
+                }
+            }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
+        } else {
+            finishTrip();
+        }
     }
 
     private void finishTrip() {

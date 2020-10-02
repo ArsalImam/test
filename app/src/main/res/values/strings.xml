@@ -622,6 +622,7 @@
     <string name="account_blocked_wallet_amount_not_paid">\u0020گزشتہ دن تک کا والٹ بیلنس جمع نہ کرنے کی وجہ سے آپ کا اکاؤنٹ بلاک ہو گیا ہے۔\u0020</string>
     <string name="tello_trip_template">Trip #%s,\n%s</string>
     <string name="batch_update_by_passenger" translatable="false">Batch has been Updated by Passenger.</string>
+    <string name="settings_are_not_updated">Settings are not updated. please re-login</string>
     <string name="reference">Reference</string>
     <string name="reference_ur">\u0020حوالہ\u0020</string>
     <string name="city">\u0020شہر\u0020</string>

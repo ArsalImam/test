@@ -6,6 +6,7 @@ public class Keys {
      * PREFERENCE KEYS *
      *******************/
     public static final String SETTING_DATA = "SETTING_DATA";
+    public static final String DRIVER_SETTINGS = "DRIVER_SETTINGS";
     public static final String DRIVER_DATA = "DRIVER_DATA";
     public static final String DRIVER_ID = "DRIVER_ID";
     public static final String USER_STATUS = "user_status";

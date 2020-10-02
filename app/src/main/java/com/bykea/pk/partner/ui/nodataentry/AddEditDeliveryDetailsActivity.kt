@@ -131,16 +131,22 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                         Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
                         if (audioPlayRL.visibility == View.VISIBLE && isFileUploadToAmazonRequired) {
                             //voice note is recorded by user.. upload to amazon
-                            BykeaAmazonClient.uploadFile(fileNameToBeUploadedToAmazon(), createAudioFile(), object : Callback<String> {
-                                override fun success(obj: String) {
-                                    voiceNoteUploadUrl = obj
-                                    callPostApiNow()
-                                }
+                            Util.safeLet(AppPreferences.getDriverSettings(),
+                                    AppPreferences.getDriverSettings().data,
+                                    AppPreferences.getDriverSettings().data?.s3BucketVoiceNotes) { _, _, s3BucketVoiceNotes ->
+                                BykeaAmazonClient.uploadFile(fileNameToBeUploadedToAmazon(), createAudioFile(), object : Callback<String> {
+                                    override fun success(obj: String) {
+                                        voiceNoteUploadUrl = obj
+                                        callPostApiNow()
+                                    }
 
-                                override fun fail(errorCode: Int, errorMsg: String) {
-                                    Utils.appToast(getString(R.string.error_uploading_file))
-                                }
-                            })
+                                    override fun fail(errorCode: Int, errorMsg: String) {
+                                        callPostApiNow()
+                                    }
+                                }, s3BucketVoiceNotes)
+                            } ?: run {
+                                callPostApiNow()
+                            }
                         } else {
                             callPostApiNow()
                         }
@@ -512,27 +518,33 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
         if (isShowOrHideLoader) {
             Dialogs.INSTANCE.showLoader(this@AddEditDeliveryDetailsActivity)
         }
-        BykeaAmazonClient.getFileObject(url, object : Callback<File> {
-            override fun success(obj: File) {
-                mMediaPlayerHolder.loadFile(obj)
-                mMediaPlayerHolder.mMediaPlayer?.duration?.let { duration ->
-                    recordedAudioTime = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()).toInt()
-                    audioSeekTimeTV.text = getFormattedTime(recordedAudioTime)
-                }
-                isFileDownloadFromAmazon = true
-                if (isShowOrHideLoader) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    mMediaPlayerHolder.play()
-                }
-            }
 
-            override fun fail(errorCode: Int, errorMsg: String) {
-                if (isShowOrHideLoader) {
-                    Dialogs.INSTANCE.dismissDialog()
-                    Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+        AppPreferences.getDriverSettings().data?.s3BucketVoiceNotes?.let {
+            BykeaAmazonClient.getFileObject(url, object : Callback<File> {
+                override fun success(obj: File) {
+                    mMediaPlayerHolder.loadFile(obj)
+                    mMediaPlayerHolder.mMediaPlayer?.duration?.let { duration ->
+                        recordedAudioTime = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()).toInt()
+                        audioSeekTimeTV.text = getFormattedTime(recordedAudioTime)
+                    }
+                    isFileDownloadFromAmazon = true
+                    if (isShowOrHideLoader) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        mMediaPlayerHolder.play()
+                    }
                 }
-            }
-        })
+
+                override fun fail(errorCode: Int, errorMsg: String) {
+                    if (isShowOrHideLoader) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        Dialogs.INSTANCE.showToast(getString(R.string.no_voice_note_available))
+                    }
+                }
+            }, it)
+        } ?: run {
+            Dialogs.INSTANCE.dismissDialog()
+            Dialogs.INSTANCE.showToast(getString(R.string.settings_are_not_updated))
+        }
     }
 
     /**
