@@ -166,7 +166,7 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
      */
     private fun getSenderNumber(): String {
         if (!viewModel.deliveryDetails.value?.pickup?.phone.isNullOrEmpty()) {
-            return viewModel.deliveryDetails.value?.dropoff?.phone.toString()
+            return viewModel.deliveryDetails.value?.pickup?.phone.toString()
         }
         return StringUtils.EMPTY_STRING
     }
