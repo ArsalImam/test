@@ -168,6 +168,7 @@ import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.COMMA;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_TWO;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
@@ -3854,5 +3855,14 @@ public class Utils {
                 key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
                 key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
                 key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
+    }
+
+    /**
+     * Check if number is even
+     * @param number : Number to check
+     * @return true if number is even else false
+     */
+    public static boolean isEvenNumber(int number) {
+        return number % DIGIT_TWO == DIGIT_ZERO;
     }
 }
