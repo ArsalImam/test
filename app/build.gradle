@@ -60,6 +60,8 @@ android {
             // defines rules to ignore some packages/classes/methods while obfuscating or removing classes
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
+
+            resValue("bool", "FIREBASE_PERFORMANCE_LOGCAT", "false")
         }
 
         debug {
@@ -67,7 +69,7 @@ android {
             resValue "string", "google_api_client_key", '"AIzaSyA6B_GPXhDZRAzbo9J5cVMgn4GEvIYU9i8"'
             //Latest staging 9 Feb
             signingConfig signingConfigs.debug
-
+            resValue("bool", "FIREBASE_PERFORMANCE_LOGCAT", "true")
         }
 
         flavorDimensions "env"
