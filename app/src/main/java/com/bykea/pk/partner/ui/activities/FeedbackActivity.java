@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.response.BookingUpdated;
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -52,6 +53,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
@@ -247,7 +249,7 @@ public class FeedbackActivity extends BaseActivity {
         }
     }
 
-    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
+    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType, isPaid;
     private NormalCallData callData;
 
     private void initViews() {
@@ -258,6 +260,7 @@ public class FeedbackActivity extends BaseActivity {
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
         isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
         isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
+        isPaid = callData.isPaid();
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
@@ -716,7 +719,7 @@ public class FeedbackActivity extends BaseActivity {
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError(getString(R.string.error_invalid_amount));
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
+        } else if (!isPaid && totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)
                 && (!isBykeaCashType || isJobSuccessful)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
@@ -905,5 +908,15 @@ public class FeedbackActivity extends BaseActivity {
                         getString(R.string.java_camera_permission_msg));
             }
         }
+    }
+
+    /**
+     * Event Received from Socket (BOOKING_UPDATED)
+     *
+     * @param response updated data
+     */
+    @Subscribe
+    public void onEvent(BookingUpdated response) {
+        callData.setPaid(response.isPaid());
     }
 }
