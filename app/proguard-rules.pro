@@ -28,7 +28,6 @@
 -keep class com.bykea.pk.partner.models.** { *; }
 -keep class com.bykea.pk.partner.utils.audio.** { *; }
 -keep class com.bykea.pk.partner.dal.** { *; }
--keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class id.zelory.** { *; }
 -keep class io.reactivex.** { *; }
