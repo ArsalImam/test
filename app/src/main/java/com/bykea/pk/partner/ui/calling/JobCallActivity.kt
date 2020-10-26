@@ -95,11 +95,6 @@ class JobCallActivity : BaseActivity() {
 
     override fun onDestroy() {
         stopSound()
-        if (AppPreferences.isOnTrip()) {
-            AppPreferences.setIncomingCall(false)
-        } else {
-            AppPreferences.setIncomingCall(true)
-        }
         AppPreferences.setCallingActivityOnForeground(false)
         Utils.unbindDrawables(activity_calling)
         super.onDestroy()
@@ -110,7 +105,7 @@ class JobCallActivity : BaseActivity() {
         isCancelledByPassenger = true
         this@JobCallActivity.runOnUiThread {
             if (null != intent && null != intent.extras) {
-                if (intent.getStringExtra(KEY_ACTION).equals(Keys.BROADCAST_CANCEL_RIDE, ignoreCase = true) || intent.getStringExtra(KEY_ACTION).equals(Keys.BROADCAST_CANCEL_BY_ADMIN, ignoreCase = true)) {
+                if (intent.getStringExtra(ACTION).equals(Keys.BROADCAST_CANCEL_RIDE, ignoreCase = true) || intent.getStringExtra(ACTION).equals(Keys.BROADCAST_CANCEL_BY_ADMIN, ignoreCase = true)) {
                     onJobCallCancelled()
                 }
             }
@@ -188,7 +183,6 @@ class JobCallActivity : BaseActivity() {
 
         skipJobiV.setOnClickListener {
             runOnUiThread {
-                AppPreferences.setIncomingCall(false)
                 AppPreferences.setTripStatus(TripStatus.ON_FREE)
                 stopSound()
                 if (::jobCall.isInitialized && !jobCall.type.isNullOrEmpty() && jobCall.type.equals(BATCH, ignoreCase = true)) {
@@ -437,10 +431,7 @@ class JobCallActivity : BaseActivity() {
         runOnUiThread {
             Dialogs.INSTANCE.showToast(message)
             if (AppPreferences.isOnTrip()) {
-                AppPreferences.setIncomingCall(false)
                 AppPreferences.setTripStatus(TripStatus.ON_FREE)
-            } else {
-                AppPreferences.setIncomingCall(true)
             }
             ActivityStackManager.getInstance().startHomeActivity(true, this@JobCallActivity)
             stopSound()
@@ -498,7 +489,6 @@ class JobCallActivity : BaseActivity() {
 
     companion object {
         var TAG: String = JobCallActivity::class.java.simpleName
-        var KEY_ACTION = "action"
         var KEY_CALL_DATA = "KEY_CALL_DATA"
         var KEY_IS_FROM_PUSH = "isGcm"
     }

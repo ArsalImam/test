@@ -91,7 +91,6 @@ public class AppPreferences {
         return settingsData;
     }
 
-
     /**
      * @param key : Required Key
      * @return : true if key is present in shared preferences
@@ -111,26 +110,6 @@ public class AppPreferences {
         return settingsData;
     }
 
-    public static void setDropOffData(String address, double lat, double lng) {
-        SharedPreferences.Editor ed = mSharedPreferences.edit();
-        ed.putString("dropOffAddress", address);
-        ed.putString("dropOffLat", lat + "");
-        ed.putString("dropOffLng", lng + "");
-        ed.apply();
-    }
-
-    public static String getDropOffAddress() {
-        return mSharedPreferences.getString("dropOffAddress", "");
-    }
-
-    public static String getDropOffLat() {
-        return mSharedPreferences.getString("dropOffLat", "0");
-    }
-
-    public static String getDropOffLng() {
-        return mSharedPreferences.getString("dropOffLng", "0");
-    }
-
     public static void setPilotData(PilotData user) {
         if (null != user) {
             SharedPreferences.Editor ed = mSharedPreferences.edit();
@@ -142,10 +121,10 @@ public class AppPreferences {
             ed.apply();
         } else {
             SharedPreferences.Editor ed = mSharedPreferences.edit();
-            ed.putString(Keys.EMAIL, "");
-            ed.putString(Keys.ACCESS_TOKEN, "");
-            ed.putString(Keys.DRIVER_ID, "");
-            ed.putString(Keys.DRIVER_DATA, "");
+            ed.putString(Keys.EMAIL, StringUtils.EMPTY);
+            ed.putString(Keys.ACCESS_TOKEN, StringUtils.EMPTY);
+            ed.putString(Keys.DRIVER_ID, StringUtils.EMPTY);
+            ed.putString(Keys.DRIVER_DATA, StringUtils.EMPTY);
             ed.apply();
         }
     }
@@ -161,29 +140,29 @@ public class AppPreferences {
 
     public static void setEta(String eta) {
         SharedPreferences.Editor ed = mSharedPreferences.edit();
-        ed.putString("eta", eta);
-        ed.putLong("etaTime", System.currentTimeMillis());
+        ed.putString(Keys.ETA, eta);
+        ed.putLong(Keys.ETA_TIME, System.currentTimeMillis());
         ed.apply();
     }
 
     public static String getEta() {
         return mSharedPreferences
-                .getString("eta", "0");
+                .getString(Keys.ETA, "0");
     }
 
     public static long getEtaUpdatedTime() {
-        return mSharedPreferences.getLong("etaTime", 0);
+        return mSharedPreferences.getLong(Keys.ETA_TIME, 0);
     }
 
     public static void setEstimatedDistance(String value) {
         mSharedPreferences
                 .edit()
-                .putString("distance", value)
+                .putString(Keys.DISTANCE, value)
                 .apply();
     }
 
     public static String getEstimatedDistance() {
-        return mSharedPreferences.getString("distance", "0");
+        return mSharedPreferences.getString(Keys.DISTANCE, "0");
     }
 
     public static void setPhoneNumber(String phone) {
@@ -280,18 +259,6 @@ public class AppPreferences {
         return mSharedPreferences.getString(Keys.ACCESS_TOKEN, StringUtils.EMPTY);
     }
 
-    public static void savePhoneNumberVerified(boolean value) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.PHONE_NUMBER_VERIFIED, value)
-                .apply();
-    }
-
-    public static boolean isPhoneNumberVerified() {
-        return mSharedPreferences.getBoolean(Keys.PHONE_NUMBER_VERIFIED, false);
-    }
-
-
     public static void setAvailableStatus(boolean status) {
         mSharedPreferences
                 .edit()
@@ -304,10 +271,6 @@ public class AppPreferences {
                 .edit()
                 .putBoolean(Keys.AVAILABLE_STATUS_API_CALL, status)
                 .apply();
-    }
-
-    public static boolean isAvailableStatusAPICalling() {
-        return mSharedPreferences.getBoolean(Keys.AVAILABLE_STATUS_API_CALL, false);
     }
 
     public static boolean getAvailableStatus() {
@@ -355,9 +318,7 @@ public class AppPreferences {
             ed.apply();
             updateTrackingData(location);
         }
-
     }
-
 
     private static void updateTrackingData(LatLng location) {
         if (isOnTrip()) {
@@ -365,8 +326,6 @@ public class AppPreferences {
             latLng.setLat(location.latitude + "");
             latLng.setLng(location.longitude + "");
             ArrayList<TrackingData> prevLatLngList = getTrackingData();
-//            int size = prevLatLngList.size();
-//            if (size > 0 && prevLatLngList.get(size - 1))
             prevLatLngList.add(latLng);
             String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<TrackingData>>() {
             }.getType());
@@ -397,19 +356,6 @@ public class AppPreferences {
             ed.putFloat(Keys.LOCATION_ACCURACY, 10);
             ed.apply();
         }
-    }
-
-    public static void saveLocationFromLogin(Context context, LatLng location, String bearing, float accuracy, boolean isMock) {
-        if (location.latitude != 0.0 && location.longitude != 0.0 /*&& accuracy < 100f*/) {
-            SharedPreferences.Editor ed = mSharedPreferences.edit();
-            ed.putString(Keys.LATITUDE, location.latitude + "");
-            ed.putString(Keys.LONGITUDE, location.longitude + "");
-            ed.putString(Keys.BEARING, bearing + "");
-            ed.putBoolean(Keys.IS_MOCK_LOCATION, isMock);
-            ed.putFloat(Keys.LOCATION_ACCURACY, accuracy);
-            ed.apply();
-        }
-
     }
 
     public static double getLatitude() {
@@ -481,37 +427,6 @@ public class AppPreferences {
         return mSharedPreferences.getString(Keys.TRIP_STATUS, TripStatus.ON_FREE);
     }
 
-    public static void setBeginTrip(boolean value) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.ON_BEGIN_TRIP, value)
-                .apply();
-        Utils.redLog(Constants.APP_NAME + " BeginTripStatus", value + "");
-    }
-
-    public static boolean isOnBeginTrip() {
-        Utils.redLog(Constants.APP_NAME + " isOnBeginTripStatus", mSharedPreferences.getBoolean(Keys.ON_BEGIN_TRIP, false) + "");
-        return mSharedPreferences.getBoolean(Keys.ON_BEGIN_TRIP, false);
-    }
-
-    public static void setEndTrip(boolean value) {
-        SharedPreferences.Editor ed = mSharedPreferences.edit();
-        ed.putBoolean(Keys.ON_END_TRIP, value);
-        ed.apply();
-        // Clear distance only on begin trip not on end trip
-        if (value) {
-            ed.putFloat(Keys.TRIP_TOTAL_DISTANCE, 0.0f);
-        }
-        // It makes sure that no time and distance is being added
-        AppPreferences.setBeginTrip(false);
-        Utils.redLog(Constants.APP_NAME + " isOnEndTripStatus", value + "");
-    }
-
-    public static boolean isOnEndTrip() {
-        Utils.redLog(Constants.APP_NAME + " isOnEndTripStatus", mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false) + "");
-        return mSharedPreferences.getBoolean(Keys.ON_END_TRIP, false);
-    }
-
     /**
      * Fetch TRIP_ACCEPT_TIME from App Shared Pref
      *
@@ -542,28 +457,6 @@ public class AppPreferences {
                 .edit()
                 .putLong(Keys.TRIP_START_TIME, startTime)
                 .apply();
-    }
-
-    public static void setIncomingCall(boolean flag) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.INCOMING_CALL, flag)
-                .apply();
-    }
-
-    public static boolean isIncomingCall() {
-        return mSharedPreferences.getBoolean(Keys.INCOMING_CALL, true);
-    }
-
-    public static void setCallType(String callType) {
-        mSharedPreferences
-                .edit()
-                .putString(Keys.CALL_TYPE, callType)
-                .apply();
-    }
-
-    public static String getCallType() {
-        return mSharedPreferences.getString(Keys.CALL_TYPE, "");
     }
 
     public static void setLastMessageID(String value) {
@@ -686,17 +579,6 @@ public class AppPreferences {
                 .apply();
     }
 
-    public static boolean isHomeActivityOnForeground() {
-        return mSharedPreferences.getBoolean(Keys.HOME_ACTIVITY_FOREGROUND, false);
-    }
-
-    public static void setHomeActivityOnForeground(boolean value) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.HOME_ACTIVITY_FOREGROUND, value)
-                .apply();
-    }
-
     public static boolean isCallingActivityOnForeground() {
         return mSharedPreferences.getBoolean(Keys.CALLING_ACTIVITY_FOREGROUND, false);
     }
@@ -713,7 +595,6 @@ public class AppPreferences {
         if (location.latitude != 0.0 && location.longitude != 0.0) {
             ed.putString(Keys.LATITUDE_LAST_UPDATED, location.latitude + "");
             ed.putString(Keys.LONGITUDE_LAST_UPDATED, location.longitude + "");
-            ed.putString(Keys.TIME_LAST_UPDATED, "0");
         }
         ed.apply();
     }
@@ -725,24 +606,6 @@ public class AppPreferences {
     public static String getLastUpdatedLongitude() {
         return mSharedPreferences.getString(Keys.LONGITUDE_LAST_UPDATED, "0.0");
     }
-
-    public static String getLastUpdatedTime() {
-        return mSharedPreferences.getString(Keys.TIME_LAST_UPDATED, "0");
-    }
-
-    public static void saveLocationAccuracy(LatLng location) {
-        SharedPreferences.Editor ed = mSharedPreferences.edit();
-        if (location.latitude != 0.0 && location.longitude != 0.0) {
-            ed.putString(Keys.LATITUDE_LAST_UPDATED, location.latitude + "");
-            ed.putString(Keys.LONGITUDE_LAST_UPDATED, location.longitude + "");
-        }
-        ed.apply();
-    }
-
-    public static float getLocationAccuracy() {
-        return mSharedPreferences.getFloat(Keys.LOCATION_ACCURACY, 200f);
-    }
-
 
     /*
      * Sync Server Time with Device Time.
@@ -839,17 +702,6 @@ public class AppPreferences {
         ed.apply();
     }
 
-    public static void setVersionCheckTime(long value) {
-        mSharedPreferences
-                .edit()
-                .putLong(Keys.VERSION_CHECK_TIME, value)
-                .apply();
-    }
-
-    public static long getVersionCheckTime() {
-        return mSharedPreferences.getLong(Keys.VERSION_CHECK_TIME, 0);
-    }
-
     public static void setPrevDistanceLatLng(double lat, double lon, boolean updatePrevTime) {
         SharedPreferences.Editor ed = mSharedPreferences.edit();
         if (lat != 0.0 && lon != 0.0) {
@@ -924,17 +776,6 @@ public class AppPreferences {
         mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
     }
 
-    public static void addLocCoordinateInTrip(ArrayList<LocCoordinatesInTrip> routeLatLngList, int index) {
-        ArrayList<LocCoordinatesInTrip> prevLatLngList = getLocCoordinatesInTrip();
-        if (index < prevLatLngList.size()) {
-            prevLatLngList.addAll(index, routeLatLngList);
-            String value = new Gson().toJson(prevLatLngList, new TypeToken<ArrayList<LocCoordinatesInTrip>>() {
-            }.getType());
-            mSharedPreferences.edit().putString(Keys.IN_TRIP_LAT_LNG_ARRAY, value).apply();
-        }
-    }
-
-
     public static ArrayList<LocCoordinatesInTrip> getLocCoordinatesInTrip() {
         String placesJson = mSharedPreferences.getString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
         ArrayList<LocCoordinatesInTrip> latLngList = new ArrayList<>();
@@ -943,10 +784,6 @@ public class AppPreferences {
             }.getType());
         }
         return latLngList;
-    }
-
-    public static String getLocCoordinatesInTripString() {
-        return mSharedPreferences.getString(Keys.IN_TRIP_LAT_LNG_ARRAY, StringUtils.EMPTY);
     }
 
     public static void setLastStatsApiCallTime(long value) {
@@ -1014,7 +851,6 @@ public class AppPreferences {
         return mSharedPreferences.getBoolean(Keys.IS_DIRECTIONS_API_KEY_REQUIRED, false);
     }
 
-
     public static void setAvailableCities(GetCitiesResponse response) {
         SharedPreferences.Editor ed = mSharedPreferences.edit();
         ArrayList<PlacesResult> placesResults = new ArrayList<>();
@@ -1027,7 +863,6 @@ public class AppPreferences {
         }.getType());
         ed.putLong(Keys.AVAILABLE_CITIES_API_CALL_TIME, System.currentTimeMillis());
         ed.putString(Keys.AVAILABLE_CITIES, value);
-        ed.putString(Keys.SERVICE_CITIES, new Gson().toJson(response));
         ed.apply();
     }
 
@@ -1044,7 +879,6 @@ public class AppPreferences {
         }
         return citiesData;
     }
-
 
     public static void setADID(String value) {
         mSharedPreferences
@@ -1131,56 +965,6 @@ public class AppPreferences {
                 .apply();
     }
 
-
-    /**
-     * Sets updated value for location response received count.
-     * when we don't receive location response from socket event we update response counter.
-     * upon certain counts we make driver offline forcefully.
-     * If socket received counter is reset to zero.
-     *
-     * @param responseCounter updated value for response counter.
-     */
-    public static void setLocationSocketNotReceivedCount(int responseCounter) {
-        mSharedPreferences
-                .edit()
-                .putInt(Keys.LOCATION_RESPONSE_NOT_RECEIVED_COUNT, responseCounter)
-                .apply();
-    }
-
-    /***
-     * Get updated value store against socket response not received.
-     *
-     * @return return int of currently stored socket response not received.
-     */
-    public static int getSocketResponseNotReceivedCount() {
-        return mSharedPreferences
-                .getInt(Keys.LOCATION_RESPONSE_NOT_RECEIVED_COUNT, 0);
-    }
-
-
-    /***
-     * Update value for driver offline forcefully when location response is not received.
-     *
-     * @param driverOffline latest value for driver status offline
-     */
-    public static void setDriverOfflineForcefully(boolean driverOffline) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.DRIVER_OFFLINE_FORCEFULLY, driverOffline)
-                .apply();
-    }
-
-    /***
-     * Validate driver offline forcefully when location socket
-     * event is not returned with response after allowed retry window.
-     *
-     * @return True if response not received after retry windows count, else False;
-     */
-    public static boolean makeDriverOfflineForcefully() {
-        return mSharedPreferences.getBoolean(Keys.DRIVER_OFFLINE_FORCEFULLY, false);
-    }
-
-
     public static int getCashInHands() {
         return mSharedPreferences.getInt(Keys.CASH_IN_HANDS, 0);
     }
@@ -1200,7 +984,6 @@ public class AppPreferences {
             return new int[]{0, 500, 1000, 1500, 2000};
         }
     }
-
 
     public static void setTripDelay(long value) {
         mSharedPreferences
@@ -1230,19 +1013,6 @@ public class AppPreferences {
         }
         return destData;
     }
-
-
-    public static void setLastMixPanelDistId(String value) {
-        mSharedPreferences
-                .edit()
-                .putString(Keys.MIX_PANEL_DIST_ID, value)
-                .apply();
-    }
-
-    public static String getLastMixPanelDistId() {
-        return mSharedPreferences.getString(Keys.MIX_PANEL_DIST_ID, StringUtils.EMPTY);
-    }
-
 
     public static void setRecentPlaces(PlacesResult place) {
         ArrayList<PlacesResult> recentPlaces = new ArrayList<>();
@@ -1278,7 +1048,6 @@ public class AppPreferences {
         }.getType());
         return places;
     }
-
 
     public static void setSavedPlace(SavedPlaces place) {
         ArrayList<SavedPlaces> recentPlaces = new ArrayList<>();
@@ -1340,16 +1109,6 @@ public class AppPreferences {
     public static boolean isSavedPlacesAPICalled() {
         return mSharedPreferences
                 .getBoolean(Keys.IS_SAVED_PLACES_API_CALLED, false);
-    }
-
-
-    public static GetCitiesResponse getServiceCities() {
-        String jsonString = mSharedPreferences.getString(Keys.SERVICE_CITIES, StringUtils.EMPTY);
-        GetCitiesResponse citiesData = null;
-        if (StringUtils.isNotBlank(jsonString)) {
-            citiesData = new Gson().fromJson(jsonString, GetCitiesResponse.class);
-        }
-        return citiesData;
     }
 
     public static void setObjectToSharedPref(Object object) {
@@ -1465,75 +1224,6 @@ public class AppPreferences {
         mSharedPreferences
                 .edit()
                 .putInt(Keys.APP_VERSION_CODE, value)
-                .apply();
-    }
-
-    /**
-     * This method saves a flag when shared pref is recently clear in case of dirty shared pref.
-     *
-     * @param value isAlreadyCleared
-     */
-    public static void setIsAlreadyCleared(boolean value) {
-        mSharedPreferences
-                .edit()
-                .putBoolean(Keys.IS_ALREADY_CLEAR, value)
-                .apply();
-    }
-
-    /**
-     * @return This method returns a flag when shared pref is recently clear in case of dirty shared pref.
-     */
-    public static boolean getIsAlreadyCleared() {
-        return mSharedPreferences.getBoolean(Keys.IS_ALREADY_CLEAR, false);
-    }
-
-    /***
-     * Clear preference when driver is unauthoried.
-     */
-    public static void clearForUnauthorized() {
-        saveLoginStatus(false);
-        setIncomingCall(false);
-        setCallData(null);
-        setTripStatus("");
-        setPilotData(null);
-    }
-
-    /**
-     * save selected zone data for loadboard to local storage
-     *
-     * @param key      Pickup/Dropoff key
-     * @param zoneData selected zone data
-     */
-    public static void setSelectedLoadboardZoneData(String key, ZoneData zoneData) {
-        mSharedPreferences
-                .edit()
-                .putString(key, new Gson().toJson(zoneData))
-                .apply();
-    }
-
-    /**
-     * get selected zone data for loadboard to local storage
-     *
-     * @param key Pickup/Dropoff ket
-     * @return ZoneData
-     */
-    public static ZoneData getSelectedLoadboardZoneData(String key) {
-        String data = mSharedPreferences.getString(key, StringUtils.EMPTY);
-        ZoneData zoneData = null;
-        if (StringUtils.isNotBlank(data)) {
-            zoneData = new Gson().fromJson(data, ZoneData.class);
-        }
-        return zoneData;
-    }
-
-    /**
-     * clear only loadboard selected zone data
-     */
-    public static void clearLoadboardSelectedZoneData() {
-        mSharedPreferences
-                .edit()
-                .putString(Keys.LOADBOARD_SELECTED_PICKUP_ZONE, null)
-                .putString(Keys.LOADBOARD_SELECTED_DROPOFF_ZONE, null)
                 .apply();
     }
 
@@ -1718,20 +1408,10 @@ public class AppPreferences {
                 .edit()
                 .putInt(Keys.LAST_SELECTED_MSG_POSITION, position)
                 .apply();
-        if (message != null) {
-            mSharedPreferences
-                    .edit()
-                    .putString(Keys.LAST_SELECTED_FEEDBACK_MSG, message)
-                    .apply();
-        }
     }
 
     public static int getLastSelectedMsgPosition() {
         return mSharedPreferences.getInt(Keys.LAST_SELECTED_MSG_POSITION, DIGIT_ZERO);
-    }
-
-    public static String getLastSelectedMsg() {
-        return mSharedPreferences.getString(Keys.LAST_SELECTED_FEEDBACK_MSG, StringUtils.EMPTY);
     }
 
     /**

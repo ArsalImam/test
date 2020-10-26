@@ -79,6 +79,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS_FOR_MULTIDELIVERY;
 
 /***
@@ -1002,7 +1003,7 @@ public class MultipleDeliveryBookingActivity extends BaseActivity implements Rou
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BATCH)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_BATCH)) {
                         cancelByPassenger();
                     }
                 }

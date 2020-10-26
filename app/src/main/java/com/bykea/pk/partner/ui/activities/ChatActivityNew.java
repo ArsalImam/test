@@ -79,6 +79,8 @@ import butterknife.OnClick;
 import top.oply.opuslib.OpusEvent;
 import top.oply.opuslib.OpusRecorder;
 
+import static com.bykea.pk.partner.utils.Constants.ACTION;
+import static com.bykea.pk.partner.utils.Constants.MSG;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Utils.openCallDialog;
 //import top.oply.opuslib.OpusService;
@@ -650,34 +652,22 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_MESSAGE_RECEIVE)
-                            && null != intent.getSerializableExtra("msg")) {
-                        ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra("msg"));
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_MESSAGE_RECEIVE)
+                            && null != intent.getSerializableExtra(MSG)) {
+                        ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra(MSG));
                         messageList.add(makeMsg(chatMessage.getData().getMessage(), chatMessage.getData().getMessageType(),
                                 chatMessage.getData().getSender(), "", "", true));
                         chatAdapter.notifyDataSetChanged();
                         scrollDown();
                     }
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                            || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
+                            || intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                         cancelRide();
                     }
                 }
             });
         }
     }
-//    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if (null != intent && null != intent.getSerializableExtra("msg")) {
-//                ReceivedMessage chatMessage = (ReceivedMessage) (intent.getSerializableExtra("msg"));
-//                messageList.add(makeMsg(chatMessage.getData().getMessage(), chatMessage.getData().getMessageType(),
-//                        chatMessage.getData().getSender(), "", "", true));
-//                chatAdapter.notifyDataSetChanged();
-//                scrollDown();
-//            }
-//        }
-//    };
 
     private ChatMessage makeMsg(String msg, String type, String senderid, String senderName,
                                 String senderImage, boolean isReceived) {

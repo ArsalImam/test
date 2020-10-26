@@ -145,8 +145,6 @@ public class LocationService extends Service {
         public void onLocationUpdate(LocationResponse response) {
             super.onLocationUpdate(response);
             if (response.isSuccess()) {
-                AppPreferences.setDriverOfflineForcefully(false);
-                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
                 mBus.post(Keys.ACTIVE_FENCE);
             } else {
                 handleLocationErrorUseCase(response);
