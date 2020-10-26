@@ -823,7 +823,7 @@ public class WebIORequestHandler {
         @Override
         public void call(Object... args) {
             String serverResponse = args[0].toString();
-            Utils.redLog("NEW ACTIVE JOB (Socket) ", serverResponse);
+            Utils.redLog("BOOKING UPDATED (Socket) ", serverResponse);
             Gson gson = new Gson();
             try {
                 BookingUpdated response = gson.fromJson(serverResponse, BookingUpdated.class);
