@@ -260,7 +260,9 @@ public class FeedbackActivity extends BaseActivity {
         isDeliveryType = Utils.isDeliveryService(callData.getCallType());
         isOfflineDeliveryType = callData.getServiceCode() != null && callData.getServiceCode() == Constants.ServiceCode.OFFLINE_DELIVERY;
         isPurchaseType = Utils.isPurchaseService(callData.getCallType(), callData.getServiceCode());
-        isPaid = callData.isPaid();
+        if (callData.getExtraParams() != null) {
+            isPaid = callData.getExtraParams().isPaid();
+        }
         etReceiverMobileNo.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         receivedAmountEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         tvTripId.setText(callData.getTripNo());
@@ -917,6 +919,8 @@ public class FeedbackActivity extends BaseActivity {
      */
     @Subscribe
     public void onEvent(BookingUpdated response) {
-        callData.setPaid(response.isPaid());
+        if (callData.getExtraParams() != null) {
+            callData.getExtraParams().setPaid(response.isPaid());
+        }
     }
 }

@@ -199,9 +199,6 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("extra_params")
     private ExtraParams extraParams;
 
-    @SerializedName("is_paid")
-    private boolean isPaid;
-
     public NormalCallData() {
     }
 
@@ -281,7 +278,6 @@ public class NormalCallData extends CommonResponse implements Parcelable {
             serviceCode = in.readInt();
         }
         extraParams = in.readParcelable(ExtraParams.class.getClassLoader());
-        isPaid = in.readByte() != 0;
     }
 
     public static final Creator<NormalCallData> CREATOR = new Creator<NormalCallData>() {
@@ -969,7 +965,6 @@ public class NormalCallData extends CommonResponse implements Parcelable {
             dest.writeInt(serviceCode);
         }
         dest.writeParcelable(extraParams, flags);
-        dest.writeByte((byte) (isPaid ? 1 : 0));
     }
 
     public ArrayList<String> getRuleIds() {
@@ -1018,13 +1013,5 @@ public class NormalCallData extends CommonResponse implements Parcelable {
 
     public void setDeliveryMessage(String deliveryMessage) {
         this.deliveryMessage = deliveryMessage;
-    }
-
-    public void setPaid(boolean paid) {
-        isPaid = paid;
-    }
-
-    public boolean isPaid() {
-        return isPaid;
     }
 }
