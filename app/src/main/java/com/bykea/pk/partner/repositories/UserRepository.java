@@ -264,16 +264,6 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.getMissedTripHistory(mContext, mDataCallback, pageNo);
     }
-/*
-
-    public void requestUploadFile(Context context, IUserDataHandler handler, File file) {
-        if (Connectivity.isConnectedFast(context)) {
-            mContext = context;
-            mUserCallback = handler;
-            mRestRequestHandler.uplaodDriverDocument(context, mDataCallback, file);
-        }
-    }
-*/
 
     public void uploadAudioFile(Context context, IUserDataHandler handler, File file) {
         if (Connectivity.isConnectedFast(context)) {
@@ -290,61 +280,12 @@ public class UserRepository {
             mUserCallback = handler;
             mRestRequestHandler.uploadImageFile(mContext, mDataCallback, file);
         }
-
-    }
-
-    public void requestGetServiceTypes(Context context, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.getServiceTypes(context, mDataCallback);
-    }
-
-    public void requestPhoneNumberVerification(Context context, IUserDataHandler handler,
-                                               String phoneNumber) {
-        mContext = context;
-        mUserCallback = handler;
-        // 1 is for rider change it to 2 for driver
-        mRestRequestHandler.sendPhoneNumberVerificationRequest(context, mDataCallback, phoneNumber, 1);
-    }
-
-    public void requestCodeAuthentication(Context context, IUserDataHandler handler, String code,
-                                          String phone) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.sendCodeVerificationRequest(context, mDataCallback, code,
-                phone);
     }
 
     public void getCities(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.getCities(mContext, mDataCallback);
-    }
-
-    /*public void requestHeatMapData(Context context, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            if (AppPreferences.getPilotData() != null) {
-                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())) {
-                    jsonObject.put("service_type", AppPreferences.getPilotData().getService_type());
-                }
-                if (AppPreferences.getPilotData().getCity() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().getId()))
-                    jsonObject.put("city", AppPreferences.getPilotData().getCity().getId());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        mWebIORequestHandler.requestHeatmap(jsonObject, mDataCallback);
-    }*/
-    public void requestHeatMapData(Context context, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.requestHeatMap(context, mDataCallback);
     }
 
     /***
