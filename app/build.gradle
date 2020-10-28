@@ -87,7 +87,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.dev\""
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.org\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             jenkinsUrl {
@@ -213,6 +213,7 @@ dependencies {
     }
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
+    implementation 'top.oply.opuslib:opuslib:1.0.2'
     implementation deps.markerClustering
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
