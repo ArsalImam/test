@@ -36,6 +36,7 @@ public class PlaceAutocompleteAdapter
     private ArrayList<Predictions> mResultList;
     private String city;
     private PlacesRepository mRepository = new PlacesRepository();
+    private String previousConstraintStr = StringUtils.EMPTY;
     private int previousConstaint = DIGIT_ZERO;
 
     public PlaceAutocompleteAdapter(Context context, String city) {
@@ -94,11 +95,12 @@ public class PlaceAutocompleteAdapter
                 final FilterResults results = new FilterResults();
                 // Skip the autocomplete query if no constraints are given.
                 if (constraint != null) {
-                    if (constraint.length() >= DIGIT_FOUR && Utils.isEvenNumber(constraint.length())) {
+                    if (constraint.toString().trim().length() >= DIGIT_FOUR && Utils.isEvenNumber(constraint.toString().trim().length()) && !constraint.toString().trim().equalsIgnoreCase(previousConstraintStr)) {
                         autocompleteHandler.removeMessages(DIGIT_ZERO);
-                        if (constraint.length() < previousConstaint) {
+                        if (constraint.length() <= previousConstaint) {
                             previousConstaint = constraint.length();
-                        } else if (constraint.length() >= previousConstaint) {
+                        } else if (constraint.length() > previousConstaint) {
+                            previousConstraintStr = constraint.toString().trim();
                             previousConstaint = constraint.length();
                             autocompleteHandler.postDelayed(new Runnable() {
                                 @Override
@@ -141,7 +143,8 @@ public class PlaceAutocompleteAdapter
                     }
                 } else if (mResultList != null) {
                     autocompleteHandler.removeMessages(0);
-//                    mResultList.clear();
+                    mResultList.clear();
+                    previousConstraintStr = StringUtils.EMPTY;
                 }
                 return results;
             }
