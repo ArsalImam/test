@@ -45,8 +45,8 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.dev\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.dev\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.org\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.org\""
             }
 
             jenkinsUrl {

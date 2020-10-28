@@ -1,7 +1,13 @@
 package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.SpannableStringBuilder;
+import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.ChatMessage;
 import com.bykea.pk.partner.models.data.ChatMessagesTranslated;
@@ -22,12 +26,11 @@ import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Utils;
-import com.bykea.pk.partner.utils.audio.MediaPlayerHolder;
-import com.bykea.pk.partner.utils.audio.PlaybackInfoListener;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
 import com.bykea.pk.partner.widgets.Fonts;
@@ -38,66 +41,41 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import top.oply.opuslib.OpusEvent;
+import top.oply.opuslib.OpusPlayer;
+
+import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 
 public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.ViewHolder> {
 
     private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";//2016-05-20T12:37:58.508Z
+    private final String REQUIRED_FORMAT = "EEEE, MMM dd, hh:mm aa";
     private final List<ChatMessage> chatMessages;
     private Context context;
+    private String image;
     private boolean isMsgPlaying;
     private ViewHolder prevViewHolder;
-    private MediaPlayerHolder mPlayer; // Opus Players
+    //    private Player mPlayer; // OpenPlayer
+    private OpusPlayer mPlayer; // Opus Player
     private String selectedUrl = StringUtils.EMPTY;
     private StringCallBack onStopCallBack;
-    PlaybackInfoListener playbackHandler = new PlaybackInfoListener()
-    {
-        @Override
-        public void onDurationChanged(int duration) {
-            super.onDurationChanged(duration);
 
-            prevViewHolder.audioLength.setText((duration)/Constants.DIGIT_THOUSAND + " sec");
-            Utils.redLog("AUDIO FILE LENGTH: ", (duration / Constants.DIGIT_THOUSAND) + " / " +
-                    (duration/ Constants.DIGIT_THOUSAND));
-            prevViewHolder.seekBar.setMax(duration);
-        }
-
-        @Override
-        public void onPlaybackCompleted() {
-            super.onPlaybackCompleted();
-
-            updateUIOnStop();
-            mPlayer.release();
-            if (onStopCallBack != null) {
-                onStopCallBack.onCallBack("Successfully Stopped");
-            }
-            Utils.redLog("Playback event", "EVENT_COMPLETED");
-        }
-
-        @Override
-        public void onStateChanged(int state) {
-            super.onStateChanged(state);
-        }
-
-        @Override
-        public void onPositionChanged(int position) {
-            super.onPositionChanged(position);
-            if (isMsgPlaying) {
-                prevViewHolder.seekBar.setProgress(position);
-            }
-        }
-    };
+    private final int FILE_LENGTH_SECONDS = -1; //-1 for live streaming
+    private ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList;
 
     @SuppressWarnings("deprecation")
     public ChatAdapterNewDF(Context context, List<ChatMessage> chatMessages, ArrayList<ChatMessagesTranslated> chatMessagesTranslatedArrayList) {
         this.context = context;
         this.chatMessages = chatMessages;
+        this.chatMessagesTranslatedArrayList = chatMessagesTranslatedArrayList;
     }
 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if (viewType == 0) {
             View itemLayout = layoutInflater.inflate(R.layout.chat_message_in, parent, false);
             return new ViewHolder(itemLayout, viewType, context);
@@ -105,6 +83,8 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             View itemHeader = layoutInflater.inflate(R.layout.chat_message_out, parent, false);
             return new ViewHolder(itemHeader, viewType, context);
         }
+
+
         return null;
     }
 
@@ -238,22 +218,20 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
                     setPlayIcon(prevViewHolder.txtMessageVoice, true);
                     final String url = Utils.getFileLink(chatMessages.get(position)
                             .getMessage());
-                    mPlayer = new MediaPlayerHolder(context);
-//                    mPlayer.setEventSender(new OpusEvent(context));
-//                    ((ChatActivityNew) context).setCallBack(playbackHandler);
+                    mPlayer = OpusPlayer.getInstance();
+                    mPlayer.setEventSender(new OpusEvent(context));
+                    ((ChatActivityNew) context).setCallBack(playbackHandler);
                     selectedUrl = url;
                     new UserRepository().downloadAudioFile(context, url, new UserDataHandler() {
                         @Override
                         public void onDownloadAudio(DownloadAudioFileResponse response) {
                             if (selectedUrl.equalsIgnoreCase(response.getLink())
                                     && ((ChatActivityNew) context).isInFront()) {
-                                onStateReady();
-                                mPlayer.loadUri(response.getPath());
-                                mPlayer.play();
-
+                                mPlayer.play(response.getPath());
                             }
                         }
                     });
+
                 }
 
 
@@ -263,13 +241,81 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
 
                 private synchronized void onStateReady() {
                     setPlayIcon(prevViewHolder.txtMessageVoice, true);
-                    mPlayer.setPlaybackInfoListener(playbackHandler);
+                    Utils.redLog("AUDIO FILE LENGTH: ", (mPlayer.getDuration() / 1000) + " / " +
+                            (mPlayer.getDuration() / 1000));
                     prevViewHolder.loader.setVisibility(View.GONE);
                     prevViewHolder.txtMessageVoice.setVisibility(View.VISIBLE);
                     prevViewHolder.audioLength.setVisibility(View.VISIBLE);
+                    prevViewHolder.audioLength.setText((mPlayer.getDuration()) + " sec");
+                    prevViewHolder.seekBar.setMax((int) mPlayer.getDuration());
                 }
+
+                OpusPlayerCallBack playbackHandler = new OpusPlayerCallBack() {
+                    @Override
+                    public void onCallBack(int position, Bundle bundle) {
+                        switch (position) {
+                            case OpusEvent.CONVERT_FINISHED:
+                                break;
+                            case OpusEvent.CONVERT_FAILED:
+                                break;
+                            case OpusEvent.CONVERT_STARTED:
+                                break;
+                            case OpusEvent.RECORD_FAILED:
+                                break;
+                            case OpusEvent.RECORD_FINISHED:
+                                break;
+                            case OpusEvent.RECORD_STARTED:
+                                break;
+                            case OpusEvent.RECORD_PROGRESS_UPDATE:
+                                break;
+                            case OpusEvent.PLAY_PROGRESS_UPDATE:
+                                if (isMsgPlaying) {
+                                    /*long currentPosition = bundle.getLong(OpusEvent.EVENT_PLAY_PROGRESS_POSITION);
+                                    long duration = bundle.getLong(OpusEvent.EVENT_PLAY_DURATION);
+                                    Utils.AudioTime t = new Utils.AudioTime();
+                                    t.setTimeInSecond(currentPosition);
+                                    t.setTimeInSecond(duration);
+                                    if (duration != 0) {
+                                        int progress = (int) (10 * currentPosition / duration);
+                                        prevViewHolder.seekBar.setProgress(progress);
+                                        Utils.redLog("OpusCallBack", "PROGRESS " + progress);
+                                        Utils.redLog("OpusCallBack", "(int) mPlayer.getPosition()" + (int) mPlayer.getPosition());
+                                    }*/
+                                    prevViewHolder.seekBar.setProgress((int) mPlayer.getPosition());
+                                }
+                                Utils.redLog("OpusCallBack", "OpusEvent.PLAY_PROGRESS_UPDATE");
+                                break;
+                            case OpusEvent.PLAY_GET_AUDIO_TRACK_INFO:
+                                break;
+                            case OpusEvent.PLAYING_FAILED:
+                                onPlayerError();
+                                Utils.redLog("OpusCallBack", "OpusEvent.PLAYING_FAILED");
+                                break;
+                            case OpusEvent.PLAYING_FINISHED:
+                                updateUIOnStop();
+                                if (onStopCallBack != null) {
+                                    onStopCallBack.onCallBack("Successfully Stopped");
+                                }
+                                Utils.redLog("OpusCallBack", "OpusEvent.PLAYING_FINISHED");
+                                break;
+                            case OpusEvent.PLAYING_PAUSED:
+                                break;
+                            case OpusEvent.PLAYING_STARTED:
+                                onStateReady();
+                                Utils.redLog("OpusCallBack", "OpusEvent.PLAYING_STARTED");
+                                break;
+                            default:
+                                Utils.redLog("ChatNew", "Invalid request,discarded");
+                                break;
+                        }
+
+                    }
+                };
             });
+
+
         }
+
     }
 
     private void updateUIOnStop() {
@@ -285,13 +331,13 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
     public synchronized void stopPlayingAudio() {
         if (mPlayer != null) {
             onStopCallBack = null;
-            mPlayer.pause();
+            mPlayer.stop();
         }
     }
 
     public synchronized void stopPlayingAudio(StringCallBack callBack) {
         if (mPlayer != null) {
-            mPlayer.pause();
+            mPlayer.stop();
             onStopCallBack = callBack;
         }
     }
@@ -374,4 +420,19 @@ public class ChatAdapterNewDF extends RecyclerView.Adapter<ChatAdapterNewDF.View
             txtMessageSecond = itemView.findViewById(R.id.txtMessageSecond);
         }
     }
+
+    public void setListener(OnItemClickListener listener) {
+        OnItemClickListener listener1 = listener;
+    }
+
+    interface OnItemClickListener {
+
+        void onClickItem(View view, int position);
+
+    }
+
+
+    private final String TAG = "OnePlayerCB";
+
+
 }
