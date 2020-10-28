@@ -38,6 +38,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="merge"
+        android:requestLegacyExternalStorage="true"
         tools:replace="android:allowBackup,android:name">
         <activity
             android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"
