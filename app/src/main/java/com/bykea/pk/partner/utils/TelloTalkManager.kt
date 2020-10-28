@@ -6,6 +6,7 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
 import org.apache.commons.lang3.StringUtils
+import org.json.JSONObject
 
 /**
  * this is the utitlity manager class for tellotalk
@@ -67,7 +68,7 @@ class TelloTalkManager {
         }
         val user = AppPreferences.getPilotData()
         user.id?.let {
-            telloApiClient?.registerUser(user.id, user.fullName, user.phoneNo) { success ->
+            telloApiClient?.registerUser(user.id, user.fullName, user.phoneNo, "Partner") { success ->
                 callback(success)
             }
         } ?: kotlin.run {
@@ -106,6 +107,20 @@ class TelloTalkManager {
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
 
         telloApiClient = builder.build()
+    }
+
+    /**
+     * this will awake tello's client on fcm received for fcm
+     */
+    fun onMessageReceived(data: Map<String, String>) {
+        try {
+            if (telloApiClient == null) {
+                build()
+            }
+            telloApiClient?.buildNotification(JSONObject(data))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     companion object {

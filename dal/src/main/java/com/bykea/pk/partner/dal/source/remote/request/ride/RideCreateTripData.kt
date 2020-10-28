@@ -5,11 +5,11 @@ import android.os.Parcelable
 import com.bykea.pk.partner.dal.util.EMPTY_STRING
 
 open class RideCreateTripData(
-        var code: String = EMPTY_STRING,
+        var code: String? = EMPTY_STRING,
         var service_code: Int = -1,
-        var creator: String = EMPTY_STRING,
-        var lat: String = EMPTY_STRING,
-        var lng: String = EMPTY_STRING):Parcelable {
+        var creator: String? = EMPTY_STRING,
+        var lat: String? = EMPTY_STRING,
+        var lng: String? = EMPTY_STRING):Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readInt(),

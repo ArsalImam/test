@@ -80,7 +80,7 @@ class AddEditDeliveryDetailsActivity : BaseActivity() {
                 viewModel.failedBookingId = intent?.extras!!.get(FAILED_BOOKING_ID) as String
             }
             if (intent?.extras!!.containsKey(DELIVERY_DETAILS_OBJECT)) {
-                viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(DELIVERY_DETAILS_OBJECT) as DeliveryDetails
+                viewModel.deliveryDetails.value = intent?.extras?.getParcelable(DELIVERY_DETAILS_OBJECT)
                 tVLocationAlphabet.text = viewModel.deliveryDetails.value?.details?.display_tag
                 fLLocation.visibility = View.VISIBLE
             }
