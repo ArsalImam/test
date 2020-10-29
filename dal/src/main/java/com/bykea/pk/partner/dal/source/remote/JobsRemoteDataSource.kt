@@ -474,6 +474,7 @@ class JobsRemoteDataSource {
         Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetails).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
             override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) = callback.onDataNotAvailable(code, errorBody, message.toString())
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onDataNotAvailable(code, subCode, message.toString())
         })
     }
 
@@ -481,6 +482,7 @@ class JobsRemoteDataSource {
         Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetails).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
             override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) = callback.onDataNotAvailable(code, errorBody, message.toString())
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onDataNotAvailable(code, subCode, message.toString())
         })
     }
 

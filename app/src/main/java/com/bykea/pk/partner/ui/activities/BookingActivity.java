@@ -136,6 +136,7 @@ import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
 import static com.bykea.pk.partner.utils.Constants.PLUS;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.DISPATCH_RIDE;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE;
@@ -882,7 +883,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         ActivityStackManager.getInstance()
                                 .startChatActivity(callData.getPassName(), "", true, mCurrentActivity);
                     } else {
-                        if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.IOS))
+                        if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.IOS) ||
+                                (callData.getServiceCode() != null && callData.getServiceCode() == DISPATCH_RIDE))
                             Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
                         else
                             Utils.sendSms(mCurrentActivity, callData.getSenderPhone());
@@ -1988,8 +1990,11 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
         mGoogleMap.clear();
         driverMarker = null;
-        updateDriverMarker(mCurrentLocation.getLatitude() + "",
-                mCurrentLocation.getLongitude() + "");
+
+        if (mCurrentLocation != null) {
+            updateDriverMarker(mCurrentLocation.getLatitude() + "",
+                    mCurrentLocation.getLongitude() + "");
+        }
 
         if (callData.getPickupStop() != null && StringUtils.isNotEmpty(callData.getStartLat()) && StringUtils.isNotEmpty(callData.getStartLng())) {
             if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) /*||

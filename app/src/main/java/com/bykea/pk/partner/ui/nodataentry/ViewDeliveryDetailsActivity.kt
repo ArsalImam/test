@@ -165,24 +165,8 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
      * @return Phone number for Sender
      */
     private fun getSenderNumber(): String {
-        viewModel.callData.value?.let {
-            return if (!it.phoneNo.isNullOrEmpty() && !it.senderPhone.isNullOrEmpty()) {
-                var passengerPhoneNumber = it.phoneNo
-                var senderPhoneNumber = it.senderPhone
-                if (passengerPhoneNumber.startsWith(MOBILE_COUNTRY_STANDARD))
-                    passengerPhoneNumber = Utils.phoneNumberToShow(it.phoneNo)
-                if (senderPhoneNumber.startsWith(MOBILE_COUNTRY_STANDARD))
-                    senderPhoneNumber = Utils.phoneNumberToShow(it.senderPhone)
-
-                if (passengerPhoneNumber.equals(senderPhoneNumber, ignoreCase = true))
-                    passengerPhoneNumber
-                else
-                    senderPhoneNumber
-            } else if (!it.phoneNo.isNullOrEmpty()) {
-                it.phoneNo
-            } else {
-                return StringUtils.EMPTY_STRING
-            }
+        if (!viewModel.deliveryDetails.value?.pickup?.phone.isNullOrEmpty()) {
+            return viewModel.deliveryDetails.value?.pickup?.phone.toString()
         }
         return StringUtils.EMPTY_STRING
     }

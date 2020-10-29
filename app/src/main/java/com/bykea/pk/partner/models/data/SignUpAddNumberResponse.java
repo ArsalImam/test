@@ -8,9 +8,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class SignUpAddNumberResponse {
-    @SerializedName("status")
     private int code;
     private String message;
+    @SerializedName("id")
     private String _id;
     private boolean verification;
 
