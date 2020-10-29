@@ -124,7 +124,7 @@ class BookingDetailActivity : BaseActivity() {
                 }
             }
         })
-        viewModel?.updateBookingDetailById(intent.extras[EXTRA_BOOKING_DETAIL_ID].toString())
+        viewModel?.updateBookingDetailById(intent.getStringExtra(EXTRA_BOOKING_DETAIL_ID))
         invoiceAdapter = LastAdapter(R.layout.adapter_booking_detail_invoice, object : LastAdapter.OnItemClickListener<Invoice> {
             override fun onItemClick(item: Invoice) {
 
