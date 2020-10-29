@@ -116,6 +116,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -123,6 +124,7 @@ import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.onesignal.OneSignal;
@@ -2339,7 +2341,7 @@ public class Utils {
      * @return boolean true/false
      */
     public static boolean isFcmIdUpdateRequired(boolean isLoggedIn) {
-        AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken()); //on Android 8, sometimes onNewToken gets called 2 times and 2nd one is not latest(Unexpected behaviour). That's why updating SP with latest FCM Token
+        Utils.requestFCMID(); //on Android 8, sometimes onNewToken gets called 2 times and 2nd one is not latest(Unexpected behaviour). That's why updating SP with latest FCM Token
         boolean required = false;
         if (isLoggedIn && StringUtils.isNotBlank(AppPreferences.getRegId())
                 && AppPreferences.getPilotData() != null && !AppPreferences.getRegId().equalsIgnoreCase(AppPreferences.getPilotData().getReg_id())) {
@@ -3854,5 +3856,16 @@ public class Utils {
                 key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
                 key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
                 key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
+    }
+
+    /**
+     * Requesting for FCM Id and Save In Shared Preferences
+     */
+    public static void requestFCMID() {
+        try {
+            FirebaseMessaging.getInstance().getToken().addOnSuccessListener(AppPreferences::setRegId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
