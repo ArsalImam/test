@@ -12,15 +12,15 @@ data class RideCreateRequestObject(
         var user_type: String = EMPTY_STRING,
         var token_id: String = EMPTY_STRING,
         var customer_name: String? = null) : Parcelable {
+
     constructor(parcel: Parcel) : this(
-            parcel.readParcelable(RideCreateTripData::class.java.classLoader),
+            parcel.readParcelable(RideCreateTripData::class.java.classLoader)!!,
+            parcel.readParcelable(RideCreateLocationInfoData::class.java.classLoader)!!,
             parcel.readParcelable(RideCreateLocationInfoData::class.java.classLoader),
-            parcel.readParcelable(RideCreateLocationInfoData::class.java.classLoader),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString()) {
-    }
+            parcel.readString()!!,
+            parcel.readString()!!,
+            parcel.readString()!!,
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(trip, flags)

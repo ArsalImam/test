@@ -47,13 +47,15 @@ class RideCodeVerificationActivity : BaseActivity() {
         initDonutProgress()
         animateDonutProgress()
 
-        if (intent != null && intent.extras != null) {
-            if (intent.extras.containsKey(Constants.Extras.PHONE_NUMBER)) {
-                mobileNumber = intent.extras.getString(Constants.Extras.PHONE_NUMBER)
+        intent?.extras?.let {
+            if (it.containsKey(Constants.Extras.PHONE_NUMBER)) {
+                mobileNumber = it.getString(Constants.Extras.PHONE_NUMBER)
                 titleMsg.text = mobileNumber
             }
-            if (intent.extras.containsKey(Constants.Extras.RIDE_CREATE_DATA)) {
-                rideCreateRequestObject = intent.extras.getParcelable(Constants.Extras.RIDE_CREATE_DATA)
+            if (it.containsKey(Constants.Extras.RIDE_CREATE_DATA)) {
+                it.getParcelable<RideCreateRequestObject>(Constants.Extras.RIDE_CREATE_DATA)?.let { data ->
+                    rideCreateRequestObject = data
+                }
             }
         }
         resendTv.setOnClickListener {
