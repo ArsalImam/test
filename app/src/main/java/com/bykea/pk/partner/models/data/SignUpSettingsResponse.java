@@ -1,21 +1,17 @@
 package com.bykea.pk.partner.models.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class SignUpSettingsResponse {
-    @SerializedName("status")
     private int code;
     private String main_video;
     private String image_base_url;
     private long timeStamp;
-
-
+    @SerializedName("cities")
     private ArrayList<SignUpCity> city;
+    private SignUpSettingsRecord records;
 
     public ArrayList<SignUpCity> getCity() {
         return city;
@@ -57,27 +53,7 @@ public class SignUpSettingsResponse {
         this.timeStamp = timeStamp;
     }
 
-    public class Videocity {
-        private String video;
-
-        private String city;
-
-        public String getVideo() {
-            return video;
-        }
-
-        public void setVideo(String video) {
-            this.video = video;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
+    public SignUpSettingsRecord getRecords() {
+        return records;
     }
-
 }

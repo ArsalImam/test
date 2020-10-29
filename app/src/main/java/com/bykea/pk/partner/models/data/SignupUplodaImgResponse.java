@@ -3,7 +3,6 @@ package com.bykea.pk.partner.models.data;
 import com.google.gson.annotations.SerializedName;
 
 public class SignupUplodaImgResponse {
-    @SerializedName("status")
     private int code;
     private String message;
     @SerializedName("image_type")

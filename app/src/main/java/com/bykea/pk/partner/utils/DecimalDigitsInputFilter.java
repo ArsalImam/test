@@ -47,8 +47,13 @@ public class DecimalDigitsInputFilter implements InputFilter {
     }
 
     private String deleteCharAtIndex(Spanned dest, int dstart) {
-        StringBuilder builder = new StringBuilder(dest);
-        if (builder.length() > DIGIT_ZERO) builder.deleteCharAt(dstart);
-        return builder.toString();
+        try {
+            StringBuilder builder = new StringBuilder(dest);
+            if (builder.length() > DIGIT_ZERO) builder.deleteCharAt(dstart);
+            return builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return StringUtils.EMPTY;
+        }
     }
 }

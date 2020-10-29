@@ -8,7 +8,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class SignUpOptionalDataResponse {
-    @SerializedName("status")
     private int code;
     private String message;
     private String _id;

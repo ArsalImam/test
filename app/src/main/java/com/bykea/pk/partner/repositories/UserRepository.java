@@ -1055,10 +1055,10 @@ public class UserRepository {
         mRestRequestHandler.requestSignUpSettings(mContext, mDataCallback);
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, String cnic, IUserDataHandler handler) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, String reference, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, mDataCallback);
+        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, reference, mDataCallback);
     }
 
     public void postOptionalSignupData(Context context, String id, String email, String referenceNo, IUserDataHandler handler) {
@@ -1625,10 +1625,7 @@ public class UserRepository {
                         mUserCallback.onLocationUpdate((LocationResponse) object);
                         break;
                     case "SignUpSettingsResponse":
-                        SignUpSettingsResponse response = (SignUpSettingsResponse) object;
-                        response.setTimeStamp(System.currentTimeMillis());
-                        AppPreferences.setObjectToSharedPref(response);
-                        mUserCallback.onSignUpSettingsResponse(response);
+                        mUserCallback.onSignUpSettingsResponse((SignUpSettingsResponse) object);
                         break;
                     case "SignUpAddNumberResponse":
                         mUserCallback.onSignUpAddNumberResponse((SignUpAddNumberResponse) object);

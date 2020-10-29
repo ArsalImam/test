@@ -42,10 +42,6 @@ public class ApiTags {
 
     //    public static final String BASE_SERVER_URL_SIGN_UP = "http://54.189.207.7:5050";
     public static final String BASE_SERVER_URL_SIGN_UP_X_API = "2151d3fd63118e4f7bcef56e8b488b079cbc8052afdb45252febdaa2b9868416";
-    public static final String SIGN_UP_SETTINGS = "/online_reg/setting";
-    public static final String SIGN_UP_ADD_NUMBER = "/online_reg/add";
-    public static final String SIGN_UP_UPLOAD_DOCUMENT = "/online_reg/image";
-    public static final String SIGN_UP_COMPLETE = "/online_reg/complete";
     public static final String SIGN_UP_OPTIONAL_DATA = "/online_reg/optional";
     public static final String SIGN_UP_BIOMETRIC_VERIFICATION = "/online_reg/biometric";
 
