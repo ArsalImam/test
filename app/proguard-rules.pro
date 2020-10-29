@@ -65,6 +65,13 @@
     @org.greenrobot.eventbus.Subscribe <methods>;
 }
 -keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.tilismtech.tellotalksdk.eventbus.Subscribe <methods>;
+}
+-keep enum com.tilismtech.tellotalksdk.eventbus.ThreadMode { *; }
+
 -keepattributes Exceptions, Signature, InnerClasses
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();
