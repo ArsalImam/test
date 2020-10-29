@@ -455,8 +455,8 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                                                                       if (isRecording &&
                                                                               event.getRawX() > 400 &&
                                                                               elapsedMillis >= Constants.MINIMUM_VOICE_RECORDING) {
-                                                                          stopRecording();
                                                                           shouldUploadFile = true;
+                                                                          stopRecording();
                                                                       } else {
                                                                           stopRecording();
                                                                       }
