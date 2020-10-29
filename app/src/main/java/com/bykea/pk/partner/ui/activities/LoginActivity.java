@@ -267,6 +267,7 @@ public class LoginActivity extends BaseActivity {
                 }
                 case ApiError.DRIVER_NOT_REGISTER: {
                     ActivityStackManager.getInstance().startRegisterationActiivty(mCurrentActivity);
+                    AppPreferences.setRegistrationLinksToken(verifyNumberResponse.getRegistrationLinksToken());
                     break;
                 }
                 default: {

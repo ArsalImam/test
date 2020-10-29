@@ -76,6 +76,11 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                         Dialogs.INSTANCE.dismissDialog()
                         deliveryAddEditCodeSubCodeHandling(errorCode, errorBody, reasonMsg)
                     }
+
+                    override fun onDataNotAvailable(errorCode: Int, subCode: Int?, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        deliveryAddEditCodeSubCodeHandling(errorCode, null, reasonMsg)
+                    }
                 })
     }
 
@@ -95,6 +100,11 @@ class AddEditDeliveryDetailsViewModel : ViewModel() {
                     override fun onDataNotAvailable(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
                         Dialogs.INSTANCE.dismissDialog()
                         deliveryAddEditCodeSubCodeHandling(errorCode, errorBody, reasonMsg)
+                    }
+
+                    override fun onDataNotAvailable(errorCode: Int, subCode: Int?, reasonMsg: String) {
+                        Dialogs.INSTANCE.dismissDialog()
+                        deliveryAddEditCodeSubCodeHandling(errorCode, null, reasonMsg)
                     }
                 })
     }
