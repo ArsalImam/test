@@ -133,22 +133,6 @@
 
         </FrameLayout>
 
-        <!--<com.bykea.pk.partner.widgets.FontTextView
-            android:id="@+id/demandBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/margin.normal"
-            android:background="@drawable/button_plane"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="ڈیمانڈ"
-            android:textColor="@color/Color_DarkRed"
-            android:textSize="@dimen/_20sdp"
-            android:visibility="visible"
-            android:clickable="true"
-            app:fontName="jameel_noori_nastaleeq.ttf" />-->
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -189,7 +173,8 @@
             android:layout_width="@dimen/margin.xlarge"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:visibility="gone">
+            android:visibility="gone"
+            tool:visibility="visible">
 
 
             <com.bykea.pk.partner.widgets.FontTextView

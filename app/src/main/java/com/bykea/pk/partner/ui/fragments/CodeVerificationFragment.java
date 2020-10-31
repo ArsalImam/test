@@ -158,6 +158,7 @@ public class CodeVerificationFragment extends Fragment implements GoogleApiClien
      * This method sets required listeners with verificationCodeEt
      */
     private void initVerificationEditText() {
+        Utils.showSoftKeyboard(mCurrentActivity, verificationCodeEt);
         verificationCodeEt.setTransformationMethod(new NumericKeyBoardTransformationMethod());
         verificationCodeEt.setOnTouchListener(new View.OnTouchListener() {
             @Override

@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.bykea.pk.partner.models.data.Stop;
 import com.bykea.pk.partner.utils.Utils;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 
 public class NormalCallData extends CommonResponse implements Parcelable {
 
@@ -16,13 +19,25 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     private NormalCallData data;
     private String trip_charges;
 
+    @SerializedName("delivery_message")
+    @Expose
+    private String deliveryMessage;
+
     @SerializedName("initiate_time")
     private long sentTime;
+
+    @SerializedName("bookings_summary")
+    private String bookingsSummary;
+
+    @SerializedName("bookings")
+    private ArrayList<BatchBooking> bookingList;
 
     @SerializedName("trip_id")
     private String tripId;
     @SerializedName("trip_no")
     private String tripNo;
+    @SerializedName("batch_code")
+    private String batchCode;
     private String referenceId;
     @SerializedName("start_address")
     private String startAddress;
@@ -115,6 +130,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("receiver_address")
     private String receiverAddress;
 
+    @SerializedName("isDeductWallet")
+    private boolean isDetectWallet;
+
     @SerializedName("sender_name")
     private String senderName;
     @SerializedName("sender_phone")
@@ -169,6 +187,9 @@ public class NormalCallData extends CommonResponse implements Parcelable {
     @SerializedName("pickup")
     private Stop pickupStop;
 
+    @SerializedName("rule_ids")
+    private ArrayList<String> ruleIds;
+
     @SerializedName("dropoff")
     private Stop dropoffStop;
 
@@ -192,6 +213,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         referenceId = in.readString();
         startAddress = in.readString();
         startLat = in.readString();
+        batchCode = in.readString();
         startLng = in.readString();
         endAddress = in.readString();
         endLat = in.readString();
@@ -544,6 +566,15 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         this.trip_charges = trip_charges;
     }
 
+    /**
+     * this will return the unformatted customer wallet
+     *
+     * @return wallet of customer
+     */
+    public int getActualPassWallet() {
+        return passWallet;
+    }
+
     public String getPassWallet() {
         return passWallet < 200 ? "" + passWallet : "200+";
     }
@@ -864,6 +895,7 @@ public class NormalCallData extends CommonResponse implements Parcelable {
         dest.writeLong(sentTime);
         dest.writeString(tripId);
         dest.writeString(tripNo);
+        dest.writeString(batchCode);
         dest.writeString(referenceId);
         dest.writeString(startAddress);
         dest.writeString(startLat);
@@ -933,5 +965,53 @@ public class NormalCallData extends CommonResponse implements Parcelable {
             dest.writeInt(serviceCode);
         }
         dest.writeParcelable(extraParams, flags);
+    }
+
+    public ArrayList<String> getRuleIds() {
+        return ruleIds;
+    }
+
+    public void setRuleIds(ArrayList<String> ruleIds) {
+        this.ruleIds = ruleIds;
+    }
+
+    public String getBatchCode() {
+        return batchCode;
+    }
+
+    public void setBatchCode(String batchCode) {
+        this.batchCode = batchCode;
+    }
+
+    public ArrayList<BatchBooking> getBookingList() {
+        return bookingList;
+    }
+
+    public void setBookingList(ArrayList<BatchBooking> bookingList) {
+        this.bookingList = bookingList;
+    }
+
+    public String getBookingsSummary() {
+        return bookingsSummary;
+    }
+
+    public void setBookingsSummary(String bookingsSummary) {
+        this.bookingsSummary = bookingsSummary;
+    }
+
+    public boolean isDetectWallet() {
+        return isDetectWallet;
+    }
+
+    public void setDetectWallet(boolean detectWallet) {
+        isDetectWallet = detectWallet;
+    }
+
+    public String getDeliveryMessage() {
+        return deliveryMessage;
+    }
+
+    public void setDeliveryMessage(String deliveryMessage) {
+        this.deliveryMessage = deliveryMessage;
     }
 }

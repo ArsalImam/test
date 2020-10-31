@@ -14,6 +14,7 @@ import com.bykea.pk.partner.dal.util.BOOKING_CURRENT_DATE_FORMAT
 import com.bykea.pk.partner.dal.util.BOOKING_ID_TO_REPLACE
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.zendesk.util.StringUtils
 import java.text.SimpleDateFormat
@@ -56,23 +57,27 @@ class BookingDetailViewModel
      * @param bookingId id of the booking
      */
     fun updateBookingDetailById(bookingId: String) {
-        _showLoader.value = true
+        Util.safeLet(AppPreferences.getDriverSettings(),
+                AppPreferences.getDriverSettings().data,
+                AppPreferences.getDriverSettings().data?.bookingDetailByIdUrl) { _, _, bookingDetailByIdUrl ->
+            _showLoader.value = true
 
-        val url = AppPreferences.getSettings().settings.bookingDetailByIdUrl
-                .replace(BOOKING_ID_TO_REPLACE, bookingId)
+            val url = bookingDetailByIdUrl.replace(BOOKING_ID_TO_REPLACE, bookingId)
 
-        jobsRepository.getBookingDetailsById(url, object : JobsDataSource.GetBookingDetailCallback {
-            override fun onSuccess(bookingDetailResponse: BookingDetailResponse) {
-                _showLoader.value = false
-                updateBookingDetailObject(bookingDetailResponse.data)
-            }
+            jobsRepository.getBookingDetailsById(url, object : JobsDataSource.GetBookingDetailCallback {
+                override fun onSuccess(bookingDetailResponse: BookingDetailResponse) {
+                    _showLoader.value = false
+                    updateBookingDetailObject(bookingDetailResponse.data)
+                }
 
-            override fun onFail(code: Int, message: String?) {
-                super.onFail(code, message)
-                _showLoader.value = false
-                Utils.appToast(message)
-            }
-        })
+                override fun onFail(code: Int, message: String?) {
+                    _showLoader.value = false
+                    Utils.appToast(message)
+                }
+            })
+        }?:run{
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated))
+        }
     }
 
     /**
@@ -83,21 +88,23 @@ class BookingDetailViewModel
         _showComplainButton.value = Utils.getDaysInBetween(System.currentTimeMillis(),
                 SimpleDateFormat(BOOKING_CURRENT_DATE_FORMAT).parse(data.dt).time) <=
                 AppPreferences.getSettings().settings.trip_support_max_days
+        data.rate?.let {
+            var showPartnerRating = it.showPartnerRating ?: true
+            if (showPartnerRating && data.rate?.partner != null) {
+                data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
+                        StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
+                        DriverApp.getContext().getString(R.string.partner_ki_taraf_se_rating),
+                        StringUtils.EMPTY_STRING, null, false, Constants.BOOKING_DETAIL_VIEW_TYPE_RATING, data.rate?.customer?.toFloat()!!))
+            }
 
-        if (data.rate?.partner != null) {
-            data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
-                    StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
-                    DriverApp.getContext().getString(R.string.partner_ki_taraf_se_rating),
-                    data.rate?.customer?.toFloat(), Constants.BOOKING_DETAIL_VIEW_TYPE_RATING))
+            var showCustomerRating = it.showCustomerRating ?: true
+            if (showCustomerRating && data.rate?.customer != null) {
+                data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
+                        StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
+                        DriverApp.getContext().getString(R.string.customer_ki_taraf_se_rating),
+                        StringUtils.EMPTY_STRING, null, false, Constants.BOOKING_DETAIL_VIEW_TYPE_RATING, data.rate?.partner?.toFloat()!!))
+            }
         }
-
-        if (data.rate?.customer != null) {
-            data.invoice?.add(Invoice(false, Constants.SEPERATOR_ABOVE,
-                    StringUtils.EMPTY_STRING, StringUtils.EMPTY_STRING,
-                    DriverApp.getContext().getString(R.string.customer_ki_taraf_se_rating),
-                    data.rate?.partner?.toFloat(), Constants.BOOKING_DETAIL_VIEW_TYPE_RATING))
-        }
-
         _bookingDetailData.value = data
     }
 }

@@ -42,10 +42,6 @@ public class ApiTags {
 
     //    public static final String BASE_SERVER_URL_SIGN_UP = "http://54.189.207.7:5050";
     public static final String BASE_SERVER_URL_SIGN_UP_X_API = "2151d3fd63118e4f7bcef56e8b488b079cbc8052afdb45252febdaa2b9868416";
-    public static final String SIGN_UP_SETTINGS = "/online_reg/setting";
-    public static final String SIGN_UP_ADD_NUMBER = "/online_reg/add";
-    public static final String SIGN_UP_UPLOAD_DOCUMENT = "/online_reg/image";
-    public static final String SIGN_UP_COMPLETE = "/online_reg/complete";
     public static final String SIGN_UP_OPTIONAL_DATA = "/online_reg/optional";
     public static final String SIGN_UP_BIOMETRIC_VERIFICATION = "/online_reg/biometric";
 
@@ -146,7 +142,8 @@ public class ApiTags {
     public static final String MULTI_DELIVERY_SOCKET_TRIP_FEEDBACK_DRIVER = "TRIP_FEEDBACK_DRIVER";
     public static final String MULTI_DELIVERY_SOCKET_TRIP_MISSED = "TRIP_MISSED";
     public static final String MULTI_DELIVERY_SOCKET_BATCH_CANCELED = "TRIP_CANCELLED";
-    public static final String MULTI_DELIVERY_SOCKET_BATCH_COMPLETED= "BATCH_TRIP_COMPLETED";
+    public static final String MULTI_DELIVERY_SOCKET_BATCH_COMPLETED = "BATCH_TRIP_COMPLETED";
+    public static final String ON_BATCH_BOOKING_CANCELLED = "BATCH_BOOKING_CANCELLED";
     public static final String MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED = "ADMIN_CANCELLED";
 
     //endregion
@@ -161,4 +158,15 @@ public class ApiTags {
     public static final String UPDATE_DROP_OFF = "trip-endaddress";
     public static final String PLACES_DISTANCE_MATRIX_EXT_URL = "maps/api/distancematrix/json";
     public static final String SOCKET_ACCEPT_SCHEDULED_TRIP = "assign-driver";
+    public static final String BATCH_UPDATED = "BATCH_UPDATED";
+
+    public class BykeaMaps {
+        public static final String BASE_URL = BuildConfig.BYKEA_MAPS_URL;
+        public static final String DISTANCE_MATRIX = BASE_URL + "/v1/distance";
+    }
+
+    public class GeocodeOSMApis {
+        public static final String BASE_SERVER_URL = "https://geocode-beta.bykea.net";
+        public static final String GEOCODER_URL = BASE_SERVER_URL + "/nominatim/reverse.php?lat=%s&lon=%s&format=json";
+    }
 }

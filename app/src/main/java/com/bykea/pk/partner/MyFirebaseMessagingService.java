@@ -5,7 +5,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -26,13 +25,13 @@ import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
-import com.bykea.pk.partner.ui.activities.ChatActivityNew;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -44,12 +43,16 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.net.HttpURLConnection;
 
+import static com.bykea.pk.partner.utils.ApiTags.BATCH_UPDATED;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
 import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
+import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
+import static com.bykea.pk.partner.utils.Constants.Notification.DATA_TYPE_TELLO_VAL;
+import static com.bykea.pk.partner.utils.Constants.Notification.CONTENT_AVAILABLE_CHANNEL;
 
 //import com.bykea.pk.partner.utils.Constants.FCMEvents;
 
@@ -86,9 +89,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-
-        // Check if message contains a notification payload.
-        if (remoteMessage.getData() != null && remoteMessage.getData()
+        if (remoteMessage.getData() != null &&
+                remoteMessage.getData().get(Constants.Notification.DATA_TYPE_TELLO) != null &&
+                remoteMessage.getData().toString().equalsIgnoreCase(Constants.Notification.DATA_TYPE_TELLO)) {
+            TelloTalkManager.instance().onMessageReceived();
+        } else if (remoteMessage.getData() != null && remoteMessage.getData()
                 .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
             if (remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase("1")) {
@@ -147,7 +152,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE).equalsIgnoreCase(BOOKING_REQUEST))) {
                 JobCallPayload payload = gson.fromJson(remoteMessage.getData().get(Constants.Notification.DATA_TYPE), JobCallPayload.class);
                 JobCall jobCall = payload.getTrip();
-                if (payload.getType().equalsIgnoreCase("single")) {
+                jobCall.setType(payload.getType());
+                if (payload.getTrip().getDispatch() != null && payload.getTrip().getDispatch()) {
+                    Utils.appToastDebug("Job Dispatch FCM Received");
+                    ActivityStackManager.getInstance().startCallingActivity(jobCall, true, mContext);
+                } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase(SINGLE)) {
                     JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override
@@ -202,6 +211,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     AppPreferences.setDropOffUpdateRequired(true);
                     Notifications.createDropOffUpdateNotification();
                 }
+            } else if ((remoteMessage.getData().get(Constants.Notification.EVENT_TYPE)
+                    .equalsIgnoreCase(BATCH_UPDATED))) {
+                if (AppPreferences.isJobActivityOnForeground()) {
+                    Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
+                    intent.putExtra(Constants.ACTION, Keys.BROADCAST_BATCH_UPDATED);
+                    EventBus.getDefault().post(intent);
+
+                    Utils.appToast(getString(R.string.batch_update_by_passenger));
+                } else {
+                    Notifications.createBatchUpdateNotification();
+                }
             }
         }
     }
@@ -221,6 +241,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
                     intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
+                    intent.putExtra("msg", callData.getMessage());
+                    Utils.setCallIncomingState();
+                    if (AppPreferences.isJobActivityOnForeground() ||
+                            AppPreferences.isCallingActivityOnForeground()) {
+//                                mContext.sendBroadcast(intent);
+                        EventBus.getDefault().post(intent);
+                    } else {
+                        EventBus.getDefault().post(intent);
+                        Notifications.createCancelNotification(mContext, callData.getMessage());
+                    }
+                }
+            } else if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_BATCH_BOOKING_CANCELLED)) {
+                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                    AppPreferences.removeReceivedMessageCount();
+                    Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
+                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
+                    intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
                     intent.putExtra("msg", callData.getMessage());
                     Utils.setCallIncomingState();
                     if (AppPreferences.isJobActivityOnForeground() ||

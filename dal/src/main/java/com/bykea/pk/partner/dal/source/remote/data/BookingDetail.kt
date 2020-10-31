@@ -1,7 +1,10 @@
 package com.bykea.pk.partner.dal.source.remote.data
 
 import android.os.Parcelable
-import com.bykea.pk.partner.dal.util.*
+import com.bykea.pk.partner.dal.util.BOOKING_CURRENT_DATE_FORMAT
+import com.bykea.pk.partner.dal.util.BOOKING_LIST_REQUIRED_DATE_FORMAT
+import com.bykea.pk.partner.dal.util.DIGIT_ZERO
+import com.bykea.pk.partner.dal.util.DateUtils
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import org.apache.commons.lang3.StringUtils
@@ -24,6 +27,10 @@ data class BookingDetail(
         val dropoff: Dropoff?,
         @SerializedName("invoice")
         var invoice: ArrayList<Invoice>?,
+        @SerializedName("batch_invoice")
+        var batchInvoice: ArrayList<Invoice>?,
+        @SerializedName("proof_of_delivery")
+        var proofOfDelivery: String? = null,
         @SerializedName("partner")
         val partner: Partner?,
         @SerializedName("pickup")
@@ -116,8 +123,20 @@ data class Invoice(
         @SerializedName("title_ur")
         val titleUr: String?,
         @SerializedName("value")
-        val value: Float?,
-        var viewType: String? = null
+        val value: String?,
+        @SerializedName("delivery_status")
+        var deliveryStatus: Int? = null,
+        @SerializedName("strike")
+        var strike: Boolean? = false,
+        var viewType: String? = null,
+        @SerializedName("rateValue")
+        val rateValue: Float = 0f,
+        @SerializedName("field")
+        val field: String? = null,
+        @SerializedName("colour")
+        val colour: String? = null,
+        @SerializedName("font_type")
+        val fontType: String? = null
 ) : Parcelable
 
 @Parcelize
@@ -150,6 +169,10 @@ data class Rate(
         val customer: Double?,
         @SerializedName("partner")
         val partner: Double?,
+        @SerializedName("show_customer")
+        val showCustomerRating: Boolean?,
+        @SerializedName("show_partner")
+        val showPartnerRating: Boolean?,
         @SerializedName("driver_feedback")
         val driverFeedback: ArrayList<String>?
 ) : Parcelable

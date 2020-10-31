@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.fragments;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,9 +36,14 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.data.PlacesResult;
+import com.bykea.pk.partner.models.response.BatchBooking;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
 import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
@@ -90,6 +96,7 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -110,136 +117,89 @@ import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREE
  * Home landing screen which holds all the options for driver
  */
 public class HomeFragment extends Fragment {
-
+    //region Variables and Widgets
     private Unbinder unbinder;
-
     private HomeActivity mCurrentActivity;
-
     private long mLastClickTime;
-
     private GoogleMap mGoogleMap;
-
     private UserRepository repository;
-
     private boolean isScreenInFront;
-
     private Location mPrevLocToShow;
-
     private int[] cashInHand;
-
     @BindView(R.id.previusDurationBtn)
     ImageView previusDurationBtn;
-
     @BindView(R.id.durationBtn)
     ImageView durationBtn;
-
     @BindView(R.id.myRangeBar)
     MyRangeBarRupay myRangeBar;
-
     @BindView(R.id.llBottom)
     FrameLayout myRangeBarLayout;
-
     @BindView(R.id.line)
     View myRangeBarTopLine;
-
     @BindView(R.id.mapPinIv)
     FrameLayout mapPinIv;
-
-    @BindView(R.id.selectedAmountTV)
-    FontTextView selectedAmountTV;
-
-    @BindView(R.id.selectedAmountRL)
+    @BindView(R.id.offlineRideNavigationRL)
     LinearLayout selectedAmountRL;
-
     @BindView(R.id.weeklybookingTv)
     FontTextView weeklyBookingTv;
-
     @BindView(R.id.homeMapFragment)
     MapView mapView;
-
     @BindView(R.id.muntakhibTv)
     FontTextView muntakhibTv;
-
     @BindView(R.id.tvFenceError)
     TextView tvFenceError;
-
     @BindView(R.id.durationTv)
     TextView durationTv;
-
     @BindView(R.id.llTopActive)
     RelativeLayout headerTopActiveLayout;
-
     @BindView(R.id.llTop)
     RelativeLayout headerTopUnActiveLayout;
-
     @BindView(R.id.layoutupper)
     LinearLayout layoutUpper;
-
     @BindView(R.id.layoutDuration)
     RelativeLayout layoutDuration;
-
     @BindView(R.id.driverStatsLayout)
     LinearLayout driverStatsLayout;
-
-
     @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
-
     @BindView(R.id.tvCihIndex2)
     FontTextView tvCihIndex2;
-
     @BindView(R.id.tvCihIndex3)
     FontTextView tvCihIndex3;
-
     @BindView(R.id.tvCihIndex4)
     FontTextView tvCihIndex4;
-
     @BindView(R.id.tvCihIndex5)
     FontTextView tvCihIndex5;
-
     @BindView(R.id.muntakhibTv1)
     FontTextView muntakhibTv1;
-
     @BindView(R.id.mukamalBookingTv)
     FontTextView weeklyMukamalBookingTv;
-
     @BindView(R.id.kamaiTv)
     FontTextView weeklyKamaiTv;
-
     @BindView(R.id.wqtTv)
     FontTextView weeklyTimeTv;
-
     @BindView(R.id.takmeelTv)
     FontTextView weeklyTakmeelTv;
-
     @BindView(R.id.qboliyatTv)
     FontTextView weeklyQaboliatTv;
-
     @BindView(R.id.ratingTv)
     FontTextView weeklyratingTv;
-
     @BindView(R.id.totalScoreTv)
     FontTextView totalScoreTv;
-
     @BindView(R.id.totalBalanceTv)
     FontTextView totalBalanceTv;
-
     @BindView(R.id.driverImageView)
     ImageView driverImageView;
-
     @BindView(R.id.muntakhibTvUrdu)
     FontTextView muntakhibTvUrdu;
-
     @BindView(R.id.authorizedbookingTimeTv)
     FontTextView authorizedbookingTimeTv;
-
     @BindView(R.id.authorizedbookingTv)
     FontTextView authorizedbookingTv;
 
     private int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
-
-
+    private boolean isNavigateToOfflineRideRequired = false;
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean isCalled;
@@ -248,6 +208,9 @@ public class HomeFragment extends Fragment {
     private View view;
     private String currentVersion, latestVersion;
     private boolean isOfflineDialogVisible = false;
+    private JobsRepository jobsRepo;
+    private Dialog temperatureDialog;
+    //endregion
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -296,10 +259,10 @@ public class HomeFragment extends Fragment {
                 return;
             }
 
-            if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null &&
-                    StringUtils.isNotBlank(AppPreferences.getSettings().getSettings().getDemand())) {
-                String demandLink = AppPreferences.getSettings().getSettings().getDemand();
-//                    demandLink.replace(Constants.REPLACE_CITY,AppPreferences.getPilotData().getCity());
+            if (AppPreferences.getDriverSettings() != null &&
+                    AppPreferences.getDriverSettings().getData() != null &&
+                    StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getDemand())) {
+                String demandLink = AppPreferences.getDriverSettings().getData().getDemand();
                 String replaceString = demandLink.replace(Constants.REPLACE_CITY, StringUtils.capitalize(AppPreferences.getPilotData().getCity().getName()));
                 Utils.startCustomWebViewActivity(mCurrentActivity, replaceString, "Demand");
             }
@@ -366,43 +329,72 @@ public class HomeFragment extends Fragment {
      * This method sets Click onLoadBoardListFragmentInteractionListener on Bismillah Logo/Active Button
      */
     private void setActiveStatusClick() {
-        mCurrentActivity.setToolbarLogoBismilla(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.isGpsEnable()) {
-                    if (Connectivity.isConnectedFast(mCurrentActivity)) {
-                        if (AppPreferences.getAvailableStatus()) {
-                            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), new View.OnClickListener() {
+        mCurrentActivity.setToolbarLogoBismilla(v -> {
+            if (Utils.isGpsEnable()) {
+                if (Connectivity.isConnectedFast(mCurrentActivity)) {
+                    if (Utils.isPartnerTemperatureRequired()) {
+                        if (temperatureDialog == null) {
+                            temperatureDialog = Dialogs.INSTANCE.showTemperatureDialog(mCurrentActivity, new StringCallBack() {
                                 @Override
-                                public void onClick(View v) {
-                                    Dialogs.INSTANCE.dismissDialog();
-                                    callAvailableStatusAPI(false);
-                                }
-                            }, null);
-                        } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                // TODO call battery optimization
-                                boolean calledOptimize = Utils.disableBatteryOptimization(
-                                        mCurrentActivity, HomeFragment.this);
-                                if (!calledOptimize) {
-                                    handleActivationStatusForBattery(false);
-                                }
-                            } else {
-                                handleUIChangeForInActive = false;
-                                handleActivationStatusForBattery(false);
-                            }
-                        }
+                                public void onCallBack(String msg) {
+                                    Dialogs.INSTANCE.showLoader(mCurrentActivity);
+                                    jobsRepo.submitTemperature(Float.parseFloat(msg), new JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>() {
+                                        @Override
+                                        public void onDataLoaded(TemperatureSubmitResponse response) {
+                                            Dialogs.INSTANCE.dismissDialog(temperatureDialog);
+                                            AppPreferences.setLastPartnerTemperatureSubmitTime(System.currentTimeMillis());
+                                            setDriverStatusActive();
+                                            temperatureDialog = null;
+                                        }
 
+                                        @Override
+                                        public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+                                            Dialogs.INSTANCE.dismissDialog();
+                                            Dialogs.INSTANCE.showToast(reasonMsg);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        /* Null Handling Because If Context Of The Activity Is Going To Finish
+                           Then The Dialog Creation Function Will Return Null, Local Instance
+                           Is Created Because If Temperature Dialog Has To Be Dismiss On Server Response*/
+                        if (temperatureDialog != null && !temperatureDialog.isShowing()) {
+                            temperatureDialog.show();
+                        }
                     } else {
-                        Dialogs.INSTANCE.showError(mCurrentActivity
-                                , mapPinIv, getString(R.string.error_internet_connectivity));
+                        setDriverStatusActive();
                     }
                 } else {
-                    Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
-                            Permissions.LOCATION_PERMISSION);
+                    Dialogs.INSTANCE.showError(mCurrentActivity
+                            , mapPinIv, getString(R.string.error_internet_connectivity));
                 }
+            } else {
+                Dialogs.INSTANCE.showLocationSettings(mCurrentActivity,
+                        Permissions.LOCATION_PERMISSION);
             }
         });
+    }
+
+    private void setDriverStatusActive() {
+        if (AppPreferences.getAvailableStatus()) {
+            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), v -> {
+                Dialogs.INSTANCE.dismissDialog();
+                callAvailableStatusAPI(false);
+            }, null);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // TODO call battery optimization
+                boolean calledOptimize = Utils.disableBatteryOptimization(
+                        mCurrentActivity, HomeFragment.this);
+                if (!calledOptimize) {
+                    handleActivationStatusForBattery(false);
+                }
+            } else {
+                handleUIChangeForInActive = false;
+                handleActivationStatusForBattery(false);
+            }
+        }
     }
 
     private void callAvailableStatusAPI(boolean status) {
@@ -445,6 +437,8 @@ public class HomeFragment extends Fragment {
         //mCurrentActivity.hideToolbarTitle();
 
         repository = new UserRepository();
+        jobsRepo = Injection.INSTANCE.provideJobsRepository(DriverApp.getContext());
+
 
         checkGooglePlayService();
 
@@ -462,15 +456,20 @@ public class HomeFragment extends Fragment {
         repository.requestDriverVerifiedBookingStats(mCurrentActivity, WEEK_STATUS, handler);
     }
 
-    private void getDriverPerformanceData() {
+    public void getDriverPerformanceData() {
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getKronosPartnerSummary())) {
+            return;
+        }
         try {
             updateVerifiedBookingStats();
 //            if (!isCalled) {
 
 
-                Dialogs.INSTANCE.showLoader(mCurrentActivity);
-                repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
-                isCalled = true;
+            Dialogs.INSTANCE.showLoader(mCurrentActivity);
+            repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
+            isCalled = true;
 //            }
 
         } catch (Exception e) {
@@ -633,16 +632,9 @@ public class HomeFragment extends Fragment {
                 muntakhibTv1.setText(getResources().getString(R.string.address_not_set_urdu));
                 muntakhibTv1.setAttr(mCurrentActivity.getApplicationContext(), "jameel_noori_nastaleeq.ttf");
             }
-            if (AppPreferences.getIsCash()) {
-                //Cash in hand visibility VISIBLE
-                selectedAmountRL.setVisibility(View.VISIBLE);
-                selectedAmountTV.setText(getString(R.string.seleted_amount_rs, AppPreferences.getCashInHands()));
-            } else {
-                //Cash in hand visibility GONE and reposition google logo to bottom
-                selectedAmountRL.setVisibility(View.GONE);
-                if (mGoogleMap != null)
-                    mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
-            }
+            selectedAmountRL.setVisibility(View.VISIBLE);
+            if (mGoogleMap != null)
+                mGoogleMap.setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen._16sdp));
         }
 
         if (AppPreferences.isWalletAmountIncreased()) {
@@ -888,19 +880,18 @@ public class HomeFragment extends Fragment {
                                 }
                                 if (AppPreferences.getIsCash()) {
                                     mCurrentActivity.showLoadBoardBottomSheet();
-                                    /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
-                                            (int) getResources().getDimension(R.dimen._110sdp));*/
-                                    //callLoadBoardListingAPI();
                                 } else {
                                     mCurrentActivity.hideLoadBoardBottomSheet();
-                                    /*resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._19sdp),
-                                            (int) getResources().getDimension(R.dimen._50sdp));*/
                                 }
                             } else {
                                 AppPreferences.setDriverDestination(null);
                                 ActivityStackManager.getInstance().stopLocationService(mCurrentActivity);
                                 //todo reset slider to 1000 amount when CIH amount is less then 1000
                                 resetCashSliderToDefault();
+                                if (isNavigateToOfflineRideRequired) {
+                                    isNavigateToOfflineRideRequired = false;
+                                    mCurrentActivity.recyclerViewAdapter.updateCurrentFragmentWithOffline();
+                                }
                                 mCurrentActivity.hideLoadBoardBottomSheet();
                             }
                             setStatusBtn();
@@ -988,14 +979,8 @@ public class HomeFragment extends Fragment {
         String displayErrorMessage;
         switch (driverStatusResponse.getSubCode()) {
             case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
-                displayErrorMessage = getString(R.string.frequent_booking_cancel_error_ur);
-                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
-                        displayErrorMessage, 0f, null, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Dialogs.INSTANCE.dismissDialog();
-                            }
-                        });
+                Dialogs.INSTANCE.showAlertDialogUrduWithTick(mCurrentActivity,
+                        getString(R.string.frequent_booking_cancel_error_ur));
                 break;
             case Constants.ApiError.IMEI_NOT_REGISTERED:
                 Dialogs.INSTANCE.showImeiRegistrationErrorDialog(mCurrentActivity,
@@ -1008,14 +993,8 @@ public class HomeFragment extends Fragment {
                         });
                 break;
             case Constants.ApiError.WALLET_EXCEED_THRESHOLD:
-                displayErrorMessage = getString(R.string.wallet_amount_exceed_error_ur);
-                Dialogs.INSTANCE.showAlertDialogUrduWithTickCross(mCurrentActivity,
-                        displayErrorMessage, 0f, null, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Dialogs.INSTANCE.dismissDialog();
-                            }
-                        });
+                Dialogs.INSTANCE.showAlertDialogUrduWithTick(mCurrentActivity,
+                        getString(R.string.wallet_amount_exceed_error_ur));
                 break;
             case Constants.ApiError.OUT_OF_SERVICE_REGION:
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
@@ -1027,6 +1006,11 @@ public class HomeFragment extends Fragment {
                 Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
                         Utils.getSupportHelplineNumber(),
                         getString(R.string.account_blocked_message_ur));
+                break;
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN:
+                Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                        Utils.getSupportHelplineNumber(),
+                        getString(R.string.account_blocked_wallet_amount_not_paid));
                 break;
             case Constants.ApiError.APP_FORCE_UPDATE:
                 Dialogs.INSTANCE.showUpdateAppDialog(mCurrentActivity,
@@ -1264,7 +1248,7 @@ public class HomeFragment extends Fragment {
 
 
     @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn,
-            R.id.mapPinIv, R.id.walletRL})
+            R.id.mapPinIv, R.id.walletRL, R.id.offlineRideNavigationRL})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -1312,11 +1296,31 @@ public class HomeFragment extends Fragment {
                 setHomeLocation();
                 break;
             }
-
             //open wallet screen
-            case R.id.walletRL:
+            case R.id.walletRL: {
                 showWalletFragment();
                 break;
+            }
+            // Open Offline Ride Navigation Acknowledgment Dialog
+            case R.id.offlineRideNavigationRL: {
+                AppPreferences.setAvailableStatus(false);
+                isOfflineDialogVisible = true;
+                Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.you_are_going_to_offline),
+                        tickView -> {
+                            isOfflineDialogVisible = false;
+                            makeDriverOffline = true;
+                            getDriverPerformanceData();
+                            Dialogs.INSTANCE.dismissDialog();
+                            callAvailableStatusAPI(false);
+                            isNavigateToOfflineRideRequired = true;
+                        },
+                        crossView -> {
+                            isOfflineDialogVisible = false;
+                            Dialogs.INSTANCE.dismissDialog();
+                            AppPreferences.setAvailableStatus(true);
+                        });
+                break;
+            }
         }
     }
 
@@ -1411,6 +1415,7 @@ public class HomeFragment extends Fragment {
         //Utils.unbindDrawables(rlMain);
 //        mCurrentActivity.showToolbar();
         unbinder.unbind();
+        temperatureDialog = null;
     }
 
     @Override
@@ -1550,8 +1555,49 @@ public class HomeFragment extends Fragment {
             } else {
                 ActivityStackManager
                         .getInstance()
-                        .startFeedbackFromResume(mCurrentActivity);
+                        .startFeedbackActivity(mCurrentActivity);
             }
+        } else if (response.getData().getType()
+                .equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+
+            AppPreferences.setDeliveryType(Constants.CallType.NEW_BATCH);
+
+            String trip = gson.toJson(response.getData().getTrip());
+            Type type = new TypeToken<NormalCallData>() {
+            }.getType();
+
+            NormalCallData callData = gson.fromJson(trip, type);
+            if (StringUtils.isNotBlank(callData.getStarted_at())) {
+                AppPreferences.setStartTripTime(
+                        AppPreferences.getServerTimeDifference() +
+                                Utils.getTimeInMiles(
+                                        callData.getStarted_at())
+                );
+            }
+            AppPreferences.setCallData(callData);
+            AppPreferences.setTripStatus(callData.getStatus());
+
+            // check for unfinished ride later
+            ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
+
+            boolean isFinishedStateFound = false;
+
+            for (BatchBooking tripData : bookingResponseList) {
+                // if trip status if "finished", open invoice screen
+                if (tripData.getStatus().
+                        equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                    isFinishedStateFound = true;
+                    ActivityStackManager.getInstance()
+                            .startFeedbackActivity(mCurrentActivity);
+                    break;
+                }
+            }
+            //Navigate to booking screen if no pending invoices found
+            if (!isFinishedStateFound)
+                ActivityStackManager.
+                        getInstance().
+                        startJobActivity(mCurrentActivity);
+
         } else {
             AppPreferences.setDeliveryType(Constants.CallType.BATCH);
             String trip = gson.toJson(response.getData().getTrip());

@@ -8,14 +8,15 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.DocumentsData;
@@ -55,26 +56,24 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.zelory.compressor.Compressor;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.REQ_IMAGE;
+
 public class DocumentsRegistrationActivity extends BaseActivity {
     @BindView(R.id.phoneNumberEt)
     FontEditText phoneNumberEt;
     @BindView(R.id.ytIcon)
     ImageView ytIcon;
-
     @BindView(R.id.rvDocuments)
     RecyclerView mRecyclerView;
-
     @BindView(R.id.ivThumbnail)
     ImageView ivThumbnail;
     @BindView(R.id.etEmail)
     FontEditText etEmail;
-
-
     @BindView(R.id.mainScrollView)
     NestedScrollView mainScrollView;
 
     private boolean isImgCompressing;
-    //    private String imagPath;
     private String DRIVER_ID, CNIC, BASE_IMG_URL, REGISTERED_PHONE_NUMBER;
     private boolean isBiometricVerRequired;
     private DocumentsRegistrationActivity mCurrentActivity;
@@ -136,68 +135,24 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         }
         checkPermissions();
         initAdapter(getDocumentsData());
-
-//        etEmail.setOnFocusChangeListener(mFocusChangedListener);
-//        phoneNumberEt.setOnFocusChangeListener(mFocusChangedListener);
-        /*mainScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-// We take the last son in the scrollview
-                View view = (View) mainScrollView.getChildAt(mainScrollView.getChildCount() - 1);
-                int diff = (view.getBottom() - (mainScrollView.getHeight() + mainScrollView.getScrollY()));
-
-                // if diff is zero, then the bottom has been reached
-                if (diff <= 10) {
-                    isScrollViewAtBottom = true;
-                } else {
-                    isScrollViewAtBottom = false;
-                }
-            }
-        });*/
-
     }
 
     private boolean isScrollViewAtBottom;
 
-    private View.OnFocusChangeListener mFocusChangedListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View view, boolean hasFocus) {
-            if (mCurrentActivity != null) {
-                if (hasFocus) {
-                    mCurrentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                    if (!isScrollViewAtBottom) {
-                        Utils.scrollToBottom(mainScrollView);
-                    }
-                }
-            }
-        }
-    };
-
-
     private void initAdapter(ArrayList<DocumentsData> list) {
         if (DocumentsGridAdapter.getmInstanceForNullCheck() == null) {
             mAdapter = DocumentsGridAdapter.getInstance();
-            mAdapter.init(list, new DocumentsGridAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClickListener(int position, int prevPosition) {
-                    if (!isImgCompressing) {
-                        mAdapter.setSelectedItemIndex(position);
-//                        selectedDocument = position;
-                        startPickImageDialog();
-                    }
+            mAdapter.init(list, (position, prevPosition) -> {
+                if (!isImgCompressing) {
+                    mAdapter.setSelectedItemIndex(position);
+                    startPickImageDialog();
                 }
-            }, new IntegerCallBack() {
-                @Override
-                public void onCallBack(int position) {
-
-                }
+            }, position -> {
             });
         } else {
             mAdapter = DocumentsGridAdapter.getInstance();
         }
-
         initRv();
-
     }
 
 
@@ -206,13 +161,9 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-               /* int span;
-                span = mDocumnetList.size() % 2;*/
                 if (position <= 0) {
                     return 2;
-                }/* else if (position <= ((mDocumnetList.size() - 1) - span)) {
-                    return 1;
-                } */ else {
+                } else {
                     return 1;
                 }
             }
@@ -220,8 +171,6 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setAdapter(mAdapter);
-//        Utils.redLog("DocumentsRegistration", "initRv -> adapter = " + mAdapter.toString());
-//        Utils.redLog("DocumentsRegistration", "initRv -> mCurrentActivity = " + mCurrentActivity.toString());
     }
 
     private static final String TYPE_SELFIE = "selfie";
@@ -266,7 +215,6 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     private final String PERMISSION = "android.permission.CAMERA";
     private final String PERMISSION_READ_ES = "android.permission.READ_EXTERNAL_STORAGE";
 
-
     private void initYouTube() {
         playerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.player_fragment);
         Utils.initPlayerFragment(playerFragment, ytIcon, ivThumbnail, VIDEO_ID);
@@ -289,12 +237,6 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     @OnClick({R.id.ytIcon, R.id.nextBtn, R.id.rlRef, R.id.rlEmail})
     public void onClick(View view) {
         switch (view.getId()) {
-            /*case R.id.rlEmail:
-            case R.id.rlRef:
-                if (!isScrollViewAtBottom) {
-                    Utils.scrollToBottom(mainScrollView);
-                }
-                break;*/
             case R.id.ytIcon:
                 Utils.playVideo(mCurrentActivity, VIDEO_ID, ivThumbnail, ytIcon, playerFragment);
                 break;
@@ -337,65 +279,37 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         Dialogs.INSTANCE.showSignUpSuccessDialog(mCurrentActivity, REGISTERED_PHONE_NUMBER, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Dialogs.INSTANCE.dismissDialog();
-
-                    ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
-                    if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
-                        DocumentsGridAdapter.getInstance().resetTheInstance();
-                    }
-                    mCurrentActivity.finish();
+                ActivityStackManager.getInstance().startLoginActivity(mCurrentActivity);
+                if (DocumentsGridAdapter.getmInstanceForNullCheck() != null) {
+                    DocumentsGridAdapter.getInstance().resetTheInstance();
+                }
+                mCurrentActivity.finish();
             }
         });
-    }
-
-    private File createImageFile() throws IOException {
-        String imageFileName = "BykeaDocument" + mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType();
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                Constants.UPLOAD_IMG_EXT,         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mAdapter.setImgPath(image.getAbsolutePath());
-        return image;
     }
 
     private void startPickImageDialog() {
         final Dialogs_new d = new Dialogs_new(mCurrentActivity);
-        d.showActionSheet(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogs.INSTANCE.dismissDialog();
-                try {
-                    if (checkPermissions()) {
-                        mAdapter.getItem(mAdapter.getSelectedItemIndex()).setImageUri(Utils.startCameraByIntent(mCurrentActivity, createImageFile()));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+        d.showActionSheet(v -> {
+            Dialogs.INSTANCE.dismissDialog();
+            try {
+                if (checkPermissions()) {
+                    File file = Utils.createImageFile(
+                            DocumentsRegistrationActivity.this, mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType()
+                    );
+                    mAdapter.setImgPath(file.getAbsolutePath());
+                    mAdapter.getItem(mAdapter.getSelectedItemIndex())
+                            .setImageUri(Utils.startCameraByIntent(mCurrentActivity, file));
                 }
-                d.onBackPressed();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogs.INSTANCE.dismissDialog();
-                Utils.startGalleryByIntent(mCurrentActivity);
-                d.onBackPressed();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                d.onBackPressed();
-
-            }
-        }, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                d.onBackPressed();
-            }
-        });
+            d.onBackPressed();
+        }, v -> {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.startGalleryByIntent(mCurrentActivity);
+            d.onBackPressed();
+        }, v -> d.onBackPressed(), dialog -> d.onBackPressed());
     }
 
     @Override
@@ -452,43 +366,12 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         }
     }
 
-
-   /* private void compressImage(Bitmap bitmap) {
-        isImgCompressing = true;
-        mDocumnetList.get( mAdapter.getSelectedItemIndex()).setUploading(true);
-        mDocumnetList.get( mAdapter.getSelectedItemIndex()).setUploaded(false);
-        mAdapter.notifyItemChanged( mAdapter.getSelectedItemIndex());
-
-        String imgname = "BykeaDocument" + ".webp";
-        String path1 = mCurrentActivity.getFilesDir().toString();
-        File file = new File(path1, imgname);
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(file);
-            if (bitmap != null) {
-                bitmap.compress(Bitmap.CompressFormat.WEBP, 70, fos);
-            }
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (bitmap != null) {
-            bitmap.recycle();
-        }
-        logFileSize(file);
-        imagPath = file.getAbsolutePath();
-        startUploadImageTask(file);
-    }*/
-
     private void compressImage(File actualImage) {
         isImgCompressing = true;
         mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploading(true);
         mAdapter.getItem(mAdapter.getSelectedItemIndex()).setUploaded(false);
         mAdapter.notifyItemChanged(mAdapter.getSelectedItemIndex());
 
-//        logFileSize(actualImage);
         String imgname = "BykeaDocument" + Constants.UPLOAD_IMG_EXT;
         String path1 = mCurrentActivity.getFilesDir().toString();
         File file = new File(path1, imgname);
@@ -502,25 +385,11 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        logFileSize(file);
         mAdapter.setImgPath(file.getAbsolutePath());
         startUploadImageTask(file);
     }
 
-    private void logFileSize(File file) {
-        String value = null;
-        long Filesize = Utils.getFolderSize(file) / 1024;//call function and convert bytes into Kb
-        if (Filesize >= 1024)
-            value = Filesize / 1024 + " Mb";
-        else
-            value = Filesize + " Kb";
-
-        Utils.redLog("ImgSize", value);
-    }
-
     private void startUploadImageTask(File file) {
-//        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> adapter = " + mAdapter.toString());
-//        Utils.redLog("DocumentsRegistration", "startUploadImageTask -> mCurrentActivity = " + mCurrentActivity.toString());
         mUserRepository.uploadDocumentImage(mCurrentActivity, DRIVER_ID,
                 mAdapter.getItem(mAdapter.getSelectedItemIndex()).getType(), file, mCallback);
         isImgCompressing = false;
@@ -529,9 +398,6 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-//        if (StringUtils.isNotBlank(imagPath)) {
-//            outState.putString("photopath", imagPath);
-//        }
         outState.putInt("selectedDocument", mAdapter.getSelectedItemIndex());
         outState.putParcelableArrayList("mDocumnetList", mAdapter.getItemsList());
         super.onSaveInstanceState(outState);
@@ -539,20 +405,6 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("photopath")) {
-//                imagPath = savedInstanceState.getString("photopath");
-//                selectedDocument = savedInstanceState.getInt("selectedDocument");
-//                ArrayList<DocumentsData> list = savedInstanceState.getParcelableArrayList("mDocumnetList");
-//                mAdapter.setItemsList(list);
-//                initAdapter(list);
-//                if (StringUtils.isNotBlank(imagPath)) {
-//                    Picasso.with(mCurrentActivity).load(imagPath).placeholder(R.drawable.place_holder)
-//                            .into(profileImageView);
-//                }
-
-            }
-        }
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -571,33 +423,26 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
         @Override
         public void onSignUpOptionalResponse(SignUpOptionalDataResponse response) {
-            if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        logAnalyticsEvent();
-                        showSuccessDialog();
-                    }
-                });
-            }
+            if (mCurrentActivity != null) mCurrentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dialogs.INSTANCE.dismissDialog();
+                    logAnalyticsEvent();
+                    showSuccessDialog();
+                }
+            });
         }
 
         @Override
         public void onSignUpImageResponse(final SignupUplodaImgResponse response) {
             if (mCurrentActivity != null) {
-                mCurrentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Dialogs.INSTANCE.dismissDialog();
-                        int currentSelectedDocument = getSelectedDocument(response.getType());
-                        mAdapter.getItem(currentSelectedDocument).setUploaded(true);
-                        mAdapter.getItem(currentSelectedDocument).setUploading(false);
-                        mAdapter.getItem(currentSelectedDocument).setImage(getCompleteImgUrl(response.getType(), response.getLink()));
-                        mAdapter.notifyItemChanged(currentSelectedDocument);
-//                        Utils.redLog("DocumentsRegistration", "onSignUpImageResponse -> adapter = " + mAdapter.toString());
-//                        Utils.redLog("DocumentsRegistration", "onSignUpImageResponse -> mCurrentActivity = " + mCurrentActivity.toString());
-                    }
+                mCurrentActivity.runOnUiThread(() -> {
+                    Dialogs.INSTANCE.dismissDialog();
+                    int currentSelectedDocument = getSelectedDocument(response.getType());
+                    mAdapter.getItem(currentSelectedDocument).setUploaded(true);
+                    mAdapter.getItem(currentSelectedDocument).setUploading(false);
+                    mAdapter.getItem(currentSelectedDocument).setImage(getCompleteImgUrl(response.getType(), response.getLink()));
+                    mAdapter.notifyItemChanged(currentSelectedDocument);
                 });
             }
         }
@@ -619,19 +464,14 @@ public class DocumentsRegistrationActivity extends BaseActivity {
     public void onRequestPermissionsResult(final int requestCode,
                                            @NonNull String[] permissions, @NonNull final int[] grantResults) {
         if (mCurrentActivity != null) {
-            mCurrentActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    switch (requestCode) {
-                        case 1011:
-                            if (grantResults.length > 0) {
-                                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                                    onPermissionResult();
-                                } else {
-                                    checkPermissions();
-                                }
-                            }
-                            break;
+            mCurrentActivity.runOnUiThread(() -> {
+                if (requestCode == REQ_IMAGE) {
+                    if (grantResults.length > DIGIT_ZERO) {
+                        if (grantResults[DIGIT_ZERO] != PackageManager.PERMISSION_GRANTED) {
+                            onPermissionResult();
+                        } else {
+                            checkPermissions();
+                        }
                     }
                 }
             });
@@ -641,7 +481,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
 
     private void onPermissionResult() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (shouldShowRequestPermissionRationale(PERMISSION) /*&& shouldShowRequestPermissionRationale(PHONE_STATE)*/) {
+            if (shouldShowRequestPermissionRationale(PERMISSION)) {
                 Dialogs.INSTANCE.showAlertDialogNotSingleton(mCurrentActivity,
                         new StringCallBack() {
                             @Override
@@ -663,7 +503,7 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int location = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION);
             if (location != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{PERMISSION}, 1011);
+                requestPermissions(new String[]{PERMISSION}, REQ_IMAGE);
             } else {
                 hasPermission = true;
             }
@@ -687,24 +527,4 @@ public class DocumentsRegistrationActivity extends BaseActivity {
         Dialogs.INSTANCE.dismissDialog();
         mCurrentActivity.finish();
     }
-    /*private boolean checkPermissions() {
-        boolean hasPermission = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int camera = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION);
-            int read_es = ContextCompat.checkSelfPermission(mCurrentActivity.getApplicationContext(), PERMISSION_READ_ES);
-            if (read_es != -PackageManager.PERMISSION_GRANTED &&
-                    camera != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{PERMISSION, PERMISSION_READ_ES}, 1011);
-            } else if (camera != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{PERMISSION}, 1011);
-            } else if (read_es != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{PERMISSION_READ_ES}, 1011);
-            } else {
-                hasPermission = true;
-            }
-        } else {
-            hasPermission = true;
-        }
-        return hasPermission;
-    }*/
 }

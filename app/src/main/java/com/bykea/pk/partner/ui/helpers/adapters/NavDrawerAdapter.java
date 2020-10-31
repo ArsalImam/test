@@ -27,6 +27,7 @@ import com.bykea.pk.partner.ui.offlinerides.OfflineRidesFragment;
 import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -34,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.bykea.pk.partner.utils.Constants.HOW_IT_WORKS_WEB_URL;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
@@ -42,14 +42,17 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private String[] icons;
     private String[] newLabel;
     private Context context;
+    private HomeActivity mainActivity;
+    private FragmentManager fragmentManager;
 
     // The default constructor to receive titles,icons and context from MainActivity.
     public NavDrawerAdapter(String[] titles, String[] icons, String[] newLabel, Context context) {
-
         this.titles = titles;
         this.icons = icons;
         this.newLabel = newLabel;
         this.context = context;
+        mainActivity = (HomeActivity) context;
+        fragmentManager = mainActivity.getSupportFragmentManager();
     }
 
     /**
@@ -71,8 +74,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         FontTextView newLabel;
 
         Context context;
-        HomeActivity mainActivity;
-        FragmentManager fragmentManager;
 
         ViewHolder(View drawerItem, int itemType, Context context) {
 
@@ -80,8 +81,6 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             this.context = context;
             drawerItem.setOnClickListener(this);
 
-            mainActivity = (HomeActivity) context;
-            fragmentManager = mainActivity.getSupportFragmentManager();
             if (itemType == 1) {
                 navTitle = (FontTextView) itemView.findViewById(R.id.tv_NavTitle);
                 navIcon = (FontTextView) itemView.findViewById(R.id.iv_NavIcon);
@@ -128,18 +127,19 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                     case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S:
                         //TODO need to add backward compatibility here
                         String screenFlag = Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
-                        if (AppPreferences.getSettings().getSettings().getBookingLisitingForDriverUrl() == null) {
+                        if (AppPreferences.getDriverSettings() == null ||
+                                AppPreferences.getDriverSettings().getData() == null ||
+                                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
                             updateCurrentFragment(new TripHistoryFragment(), screenFlag);
                         } else {
                             updateCurrentFragment(new BookingListingFragment(), screenFlag);
                         }
-
                         break;
                     case Constants.ScreenRedirections.WALLET_SCREEN_S:
                         updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN_S);
                         break;
                     case Constants.ScreenRedirections.HOW_IT_WORKS_SCREEN_S:
-                        Utils.startCustomWebViewActivity(mainActivity, HOW_IT_WORKS_WEB_URL, context.getString(R.string.how_it_works));
+                        Utils.startCustomWebViewActivity(mainActivity, AppPreferences.getSettings().getSettings().getHowItWorksUrl(), context.getString(R.string.how_it_works));
                         break;
                     case Constants.ScreenRedirections.CONTACT_US_SCREEN_S:
                         updateCurrentFragment(new ContactUsFragment(), Constants.ScreenRedirections.CONTACT_US_SCREEN_S);
@@ -156,31 +156,48 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                             UserRepository repository = new UserRepository();
                             repository.requestPilotLogout(context, new UserDataHandler());
                             Utils.logout(context);
+                            TelloTalkManager.instance().logout();
                         }
                     }
                 }, null);
             }
         }
 
-        private void updateCurrentFragment(Fragment fragment, String pos) {
-            fragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.containerView, fragment)
-                    .commit();
-            HomeActivity.visibleFragmentNumber = pos;
-            /**
-             * when navigation in on home screen, show bottom sheet and connection status
-             * otherwise hide both
-             */
-            if (pos.equals(HOME_SCREEN_S)) {
-                ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
-                //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
-            } else {
-                ((HomeActivity) context).toggleAchaConnection(View.GONE);
-                ((HomeActivity) context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
-            }
+
+    }
+
+    /**
+     * Update Current Fragment With The Requested One
+     *
+     * @param fragment : Replace Previous Fragment With The Fragment
+     * @param pos      : Handle Toggle Icon Two Show Or Not
+     */
+    private void updateCurrentFragment(Fragment fragment, String pos) {
+        fragmentManager
+                .beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.containerView, fragment)
+                .commit();
+        HomeActivity.visibleFragmentNumber = pos;
+        /**
+         * when navigation in on home screen, show bottom sheet and connection status
+         * otherwise hide both
+         */
+        if (pos.equals(HOME_SCREEN_S)) {
+            ((HomeActivity) context).toggleAchaConnection(View.VISIBLE);
+            //View.VISIBLE is not used for bottom sheet because when homefragment inflate it will automatically visible
+        } else {
+            ((HomeActivity) context).toggleAchaConnection(View.GONE);
+            ((HomeActivity) context).toggleBottomSheetOnNavigationMenuSelection(View.GONE);
         }
+    }
+
+    /**
+     * Replace current fragment with the offline fragment
+     */
+    public void updateCurrentFragmentWithOffline() {
+        updateCurrentFragment(new OfflineRidesFragment(), Constants.ScreenRedirections.OFFLINE_RIDES_S);
+        notifyDataSetChanged();
     }
 
     /**

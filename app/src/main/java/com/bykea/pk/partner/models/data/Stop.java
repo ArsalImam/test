@@ -10,7 +10,7 @@ import static com.bykea.pk.partner.utils.Constants.NEGATIVE_DIGIT_ONE;
 public class Stop {
 
     @SerializedName("duration_est")
-    private Integer duration;
+    private float duration;
 
     @SerializedName("distance_est")
     private float distance = NEGATIVE_DIGIT_ONE;
@@ -26,7 +26,7 @@ public class Stop {
     private float lng;
 
     public Integer getDuration() {
-        return duration;
+        return Math.round(duration);
     }
 
     public void setDuration(Integer duration) {

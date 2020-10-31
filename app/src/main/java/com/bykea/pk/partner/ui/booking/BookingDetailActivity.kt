@@ -2,8 +2,11 @@ package com.bykea.pk.partner.ui.booking
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -31,9 +34,15 @@ class BookingDetailActivity : BaseActivity() {
     private lateinit var invoiceAdapter: LastAdapter<Invoice>
 
     /**
+     * data source for batch invoice list
+     */
+    private lateinit var batchInvoiceAdapter: LastAdapter<Invoice>
+
+    /**
      * data source for customer feedback list
      */
     private lateinit var feedbackAdapter: LastAdapter<String>
+
     /**
      * Binding object between activity and xml file, it contains all objects
      * of UI components used by activity
@@ -62,30 +71,22 @@ class BookingDetailActivity : BaseActivity() {
         viewModel = this.obtainViewModel(BookingDetailViewModel::class.java)
         binding?.lifecycleOwner = this
         binding?.viewModel = viewModel
-
-        updateToolbar()
+        binding?.ivBackButton?.setOnClickListener { finishActivity() }
+        binding?.btnProblem?.setOnClickListener { onComplainButtonClicked() }
         setupObservers()
     }
 
     /**
      * this method is binded with complain submit button and will trigger on its click
      */
-    public fun onComplainButtonClicked(view: View) {
+    private fun onComplainButtonClicked() {
         ActivityStackManager.getInstance()
                 .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
     }
 
     /**
-     * this will update toolbar for the booking detail activity
-     */
-    private fun updateToolbar() {
-        setBackNavigation()
-        hideToolbarLogo()
-    }
-
-    /**
      * This method is binding view model properties with view components
-     * through LiveData API available in Android MVVM
+     * through LiveData API available in Android mvvm
      *
      * @see [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
      */
@@ -97,8 +98,22 @@ class BookingDetailActivity : BaseActivity() {
 
         viewModel?.bookingDetailData?.observe(this, Observer {
             it?.let {
-                setToolbarTitle(it.bookingCode?.toUpperCase())
+                binding?.titleTextView?.text = it.bookingCode?.toUpperCase()
                 it.invoice?.let { invoiceAdapter.items = it }
+                it.batchInvoice?.let { batchInvoiceAdapter.items = it }
+                it.proofOfDelivery?.let {
+                    val url = it
+                    binding?.ivRightIcon?.let {
+                        it.visibility = View.VISIBLE
+                        it.tag = url
+                        it.setImageDrawable(
+                                ContextCompat.getDrawable(this@BookingDetailActivity, R.drawable.ic_remove_red_eye_black_24dp))
+                        it.setColorFilter(ContextCompat.getColor(this@BookingDetailActivity, R.color.colorAccent),
+                                PorterDuff.Mode.SRC_IN)
+                    }
+                } ?: run {
+                    binding?.ivRightIcon?.visibility = View.GONE
+                }
                 it.rate?.driverFeedback?.let {
 
                     /**
@@ -109,14 +124,17 @@ class BookingDetailActivity : BaseActivity() {
                 }
             }
         })
-        viewModel?.updateBookingDetailById(intent.extras[EXTRA_BOOKING_DETAIL_ID].toString())
+        viewModel?.updateBookingDetailById(intent.getStringExtra(EXTRA_BOOKING_DETAIL_ID))
         invoiceAdapter = LastAdapter(R.layout.adapter_booking_detail_invoice, object : LastAdapter.OnItemClickListener<Invoice> {
             override fun onItemClick(item: Invoice) {
 
             }
         })
+        batchInvoiceAdapter = LastAdapter(R.layout.adapter_booking_detail_invoice, object : LastAdapter.OnItemClickListener<Invoice> {
+            override fun onItemClick(item: Invoice) {
 
-
+            }
+        })
         feedbackAdapter = LastAdapter(R.layout.adapter_booking_detail_feedback, object : LastAdapter.OnItemClickListener<String> {
             override fun onItemClick(item: String) {
 
@@ -124,15 +142,20 @@ class BookingDetailActivity : BaseActivity() {
         })
         binding?.invoiceAdapter = invoiceAdapter
         binding?.feedbackAdapter = feedbackAdapter
+        binding?.batchInvoiceAdapter = batchInvoiceAdapter
     }
 
     /**
      * Removing activity from stack, this method is calling from view's onclick event
-     *
-     * @param v back button
      */
-    fun finishActivity(v: View) {
-        finish()
+    private fun finishActivity() = finish()
+
+    fun onPodClick(v: View) {
+        //handle right icon
+        v?.let {
+            Dialogs.INSTANCE.showChangeImageDialog(this@BookingDetailActivity, null, it.tag as String,
+                    null, null)
+        }
     }
 
     companion object {

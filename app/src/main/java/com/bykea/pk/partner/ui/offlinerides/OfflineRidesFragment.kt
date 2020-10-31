@@ -15,6 +15,7 @@ import android.widget.RadioGroup
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.JobsDataSource
 import com.bykea.pk.partner.dal.source.JobsRepository
@@ -33,16 +34,14 @@ import com.bykea.pk.partner.ui.activities.SelectPlaceActivity
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.ui.helpers.FontUtils
-import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.APP
+import com.bykea.pk.partner.utils.Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN
 import com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR
 import com.bykea.pk.partner.utils.Constants.Extras.FROM
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_DELIVERY
 import com.bykea.pk.partner.utils.Constants.ServiceCode.OFFLINE_RIDE
 import com.bykea.pk.partner.utils.Constants.USER_TYPE
-import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.GeocodeStrategyManager
-import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.FontTextView
 import kotlinx.android.synthetic.main.activity_ride_code_verification.*
 import kotlinx.android.synthetic.main.fragment_offline_rides.*
@@ -77,7 +76,16 @@ class OfflineRidesFragment : Fragment() {
             override fun onReceiveCodeClicked() {
                 if ((rBSawari.isChecked && validateMobileNumber()) ||
                         (rBDelivery.isChecked && validateMobileNumber() && validateCustomerName())) {
+                    Dialogs.INSTANCE.showLoader(mCurrentActivity)
                     geocodeStrategyManager?.fetchLocation(AppPreferences.getLatitude(), AppPreferences.getLongitude())
+                }
+            }
+
+            override fun onOfflineKamaiClicked() {
+                if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null) {
+                    Utils.startCustomWebViewActivity(mCurrentActivity, AppPreferences.getSettings().settings.partnerOfflineRideDemo, DriverApp.getContext().getString(R.string.offline_kamai));
+                } else {
+                    Utils.startCustomWebViewActivity(mCurrentActivity, Constants.OFFLINE_KAMAI_WEB_URL, DriverApp.getContext().getString(R.string.offline_kamai));
                 }
             }
         }
@@ -149,6 +157,8 @@ class OfflineRidesFragment : Fragment() {
             override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
                 when (checkedId) {
                     rBSawari.id -> {
+                        if (linLayoutSenderName.visibility == View.VISIBLE)
+                            linLayoutSenderName.visibility = View.GONE
                         eTCustomerName.error = null
                         eTCustomerName.clearFocus()
                         if (Utils.isValidNumber(eTMobileNumber)) {
@@ -158,6 +168,9 @@ class OfflineRidesFragment : Fragment() {
                         }
                     }
                     rBDelivery.id -> {
+                        if (linLayoutSenderName.visibility == View.GONE)
+                            linLayoutSenderName.visibility = View.VISIBLE
+
                         if (Utils.isValidNumber(eTMobileNumber) && validateCustomerName(false)) {
                             setBackgroundColor(R.color.colorAccent)
                         } else {
@@ -253,13 +266,13 @@ class OfflineRidesFragment : Fragment() {
         jobsRepository.getFairEstimation(
                 AppPreferences.getLatitude().toString(), AppPreferences.getLongitude().toString(),
                 placesResult.latLng.latitude.toString(), placesResult.latLng.longitude.toString(),
-                APP, Constants.ServiceType.OFFLINE_RIDE_STRING,
+                if (rBSawari.isChecked) OFFLINE_RIDE else OFFLINE_DELIVERY,
                 object : JobsDataSource.FareEstimationCallback {
                     override fun onSuccess(fareEstimationResponse: FareEstimationResponse) {
                         try {
-                            if (fareEstimationResponse.callData != null) {
+                            if (fareEstimationResponse.fareEstimateData != null) {
                                 tVDropOffAddress.text = mDropOffResult?.name
-                                setFare(fareEstimationResponse.callData?.maxLimitPrice?.toInt().toString())
+                                setFare(fareEstimationResponse.fareEstimateData?.maxLimitPrice?.toInt().toString())
                             }
                             Dialogs.INSTANCE.dismissDialog()
                         } catch (e: Exception) {
@@ -287,16 +300,16 @@ class OfflineRidesFragment : Fragment() {
             _id = AppPreferences.getDriverId()
             token_id = AppPreferences.getAccessToken()
 
-            if (eTCustomerName.text.toString().trim().isNotEmpty())
-                customer_name = eTCustomerName.text?.trim().toString()
-
             trip = RideCreateTripData()
             trip.creator = APP
 
-            if (rBSawari.isChecked)
+            if (rBSawari.isChecked) {
                 trip.service_code = OFFLINE_RIDE
-            else
+            } else {
                 trip.service_code = OFFLINE_DELIVERY
+                if (eTCustomerName.text.toString().trim().isNotEmpty())
+                    customer_name = eTCustomerName.text?.trim().toString()
+            }
 
             trip.lat = AppPreferences.getLatitude().toString()
             trip.lng = AppPreferences.getLongitude().toString()
@@ -318,7 +331,6 @@ class OfflineRidesFragment : Fragment() {
      * Navigate To Verify Code Screen
      */
     private fun navigateToVerifyCode(requestBody: RideCreateRequestObject) {
-        Dialogs.INSTANCE.showLoader(mCurrentActivity)
         jobsRepository.requestOtpGenerate(Utils.phoneNumberForServer(binding.eTMobileNumber.text.toString()), OTP_SMS,
                 object : JobsDataSource.OtpGenerateCallback {
                     override fun onSuccess(verifyNumberResponse: VerifyNumberResponse) {
@@ -345,13 +357,15 @@ class OfflineRidesFragment : Fragment() {
     private fun displayErrorToast(code: Int, subCode: Int?, message: String?) {
         if (subCode != null) {
             when (subCode) {
-                SUB_CODE_1009 -> Utils.appToast(message)
-                SUB_CODE_1019 -> Utils.appToast(message)
-                SUB_CODE_1028 -> Utils.appToast(message)
-                SUB_CODE_1051 -> Utils.appToast(message)
+                SUB_CODE_1009, SUB_CODE_1019, SUB_CODE_1028, SUB_CODE_1051 -> Utils.appToast(message)
                 SUB_CODE_1052 -> Utils.appToast(SUB_CODE_1052_MSG)
                 SUB_CODE_1053 -> linLayoutOtpWrongEntered.visibility = View.VISIBLE
                 SUB_CODE_1054 -> Utils.appToast(SUB_CODE_1054_MSG)
+                DRIVER_ACCOUNT_BLOCKED_BY_ADMIN -> {
+                    Dialogs.INSTANCE.showRegionOutErrorDialog(mCurrentActivity,
+                            Utils.getSupportHelplineNumber(),
+                            getString(R.string.account_blocked_wallet_amount_not_paid))
+                }
                 else -> Utils.appToast(getString(R.string.error_try_again))
             }
         } else {

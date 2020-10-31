@@ -13,4 +13,9 @@ interface OfflineFragmentListener {
      * Use Navigate To Enter Code Screen
      */
     fun onReceiveCodeClicked() {}
+
+    /**
+     * Navigate To OfflineKamaiVideo
+     */
+    fun onOfflineKamaiClicked() {}
 }

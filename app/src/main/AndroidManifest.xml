@@ -26,9 +26,10 @@
     <uses-feature android:name="android.hardware.location.gps" /> <!-- <uses-feature android:glEsVersion="0x00030001" /> -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
-
+    <uses-sdk tools:overrideLibrary="com.mahc.custombottomsheetbehavior"/>
     <application
         android:name=".DriverApp"
+        android:requestLegacyExternalStorage="true"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/partner_icon"
@@ -38,7 +39,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="merge"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup,android:name">
+        <activity
+            android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.nodataentry.ListDeliveryDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.nodataentry.ViewDeliveryDetailsActivity"
+            android:screenOrientation="portrait" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -46,8 +56,7 @@
 
         <activity
             android:name=".ui.activities.RideCodeVerificationActivity"
-            android:launchMode="singleTop" />
-        <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
+            android:launchMode="singleTop" /> <!-- OTP SMS onLoadBoardListFragmentInteractionListener -->
         <receiver
             android:name=".ui.helpers.SmsBroadcastReceiver"
             android:exported="true">
@@ -117,7 +126,8 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
@@ -134,10 +144,12 @@
             android:excludeFromRecents="false"
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
             android:launchMode="singleTop" />
-        <activity android:name=".ui.activities.FeedbackActivity" /> <!-- CROPPING ACTIVITY -->
+        <activity android:name=".ui.activities.FeedbackActivity" />
+        <activity android:name=".ui.activities.FSImplFeedbackActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
+            android:theme="@style/Base.Theme.AppCompat"
+            tools:replace="android:theme" />
         <!--
               <activity
               android:name=".ui.activities.PlacesActivity"
@@ -158,9 +170,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".services.DriverETAService"
-            android:exported="false" />
         <service
             android:name=".services.OneSignalNotificationExtenderService"
             android:exported="false"
@@ -257,6 +266,9 @@
             android:name=".ui.activities.MapDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.nodataentry.FinishBookingListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activities.ShahkarActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -291,7 +303,6 @@
             android:label="@string/title_complain_list"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|adjustResize" />
-
         <activity android:name=".ui.complain.ComplainZendeskIdentityActivity" />
 
         <receiver android:name=".ui.helpers.AppVersionUpdateReceiver">

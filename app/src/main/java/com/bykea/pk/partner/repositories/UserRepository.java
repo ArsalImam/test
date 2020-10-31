@@ -34,6 +34,7 @@ import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BeginRideResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -56,7 +57,6 @@ import com.bykea.pk.partner.models.response.GetConversationIdResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -104,6 +104,7 @@ import com.bykea.pk.partner.utils.Utils;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -263,16 +264,6 @@ public class UserRepository {
         mUserCallback = handler;
         mRestRequestHandler.getMissedTripHistory(mContext, mDataCallback, pageNo);
     }
-/*
-
-    public void requestUploadFile(Context context, IUserDataHandler handler, File file) {
-        if (Connectivity.isConnectedFast(context)) {
-            mContext = context;
-            mUserCallback = handler;
-            mRestRequestHandler.uplaodDriverDocument(context, mDataCallback, file);
-        }
-    }
-*/
 
     public void uploadAudioFile(Context context, IUserDataHandler handler, File file) {
         if (Connectivity.isConnectedFast(context)) {
@@ -289,61 +280,12 @@ public class UserRepository {
             mUserCallback = handler;
             mRestRequestHandler.uploadImageFile(mContext, mDataCallback, file);
         }
-
-    }
-
-    public void requestGetServiceTypes(Context context, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.getServiceTypes(context, mDataCallback);
-    }
-
-    public void requestPhoneNumberVerification(Context context, IUserDataHandler handler,
-                                               String phoneNumber) {
-        mContext = context;
-        mUserCallback = handler;
-        // 1 is for rider change it to 2 for driver
-        mRestRequestHandler.sendPhoneNumberVerificationRequest(context, mDataCallback, phoneNumber, 1);
-    }
-
-    public void requestCodeAuthentication(Context context, IUserDataHandler handler, String code,
-                                          String phone) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.sendCodeVerificationRequest(context, mDataCallback, code,
-                phone);
     }
 
     public void getCities(Context context, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
         mRestRequestHandler.getCities(mContext, mDataCallback);
-    }
-
-    /*public void requestHeatMapData(Context context, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("token_id", AppPreferences.getAccessToken());
-            jsonObject.put("_id", AppPreferences.getDriverId());
-            if (AppPreferences.getPilotData() != null) {
-                if (StringUtils.isNotBlank(AppPreferences.getPilotData().getService_type())) {
-                    jsonObject.put("service_type", AppPreferences.getPilotData().getService_type());
-                }
-                if (AppPreferences.getPilotData().getCity() != null &&
-                        StringUtils.isNotBlank(AppPreferences.getPilotData().getCity().getId()))
-                    jsonObject.put("city", AppPreferences.getPilotData().getCity().getId());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        mWebIORequestHandler.requestHeatmap(jsonObject, mDataCallback);
-    }*/
-    public void requestHeatMapData(Context context, IUserDataHandler handler) {
-        mContext = context;
-        mUserCallback = handler;
-        mRestRequestHandler.requestHeatMap(context, mDataCallback);
     }
 
     /***
@@ -483,22 +425,25 @@ public class UserRepository {
                 mContext,
                 new PlacesDataHandler() {
                     @Override
-                    public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                        if (response != null && response.getRows() != null && response.getRows().length > 0) {
+                    public void onDistanceMatrixResponse(BykeaDistanceMatrixResponse response) {
+                        if (response != null && response.getData() != null) {
                             counter[0] = 0;
-                            GoogleDistanceMatrixApi.Elements[] elements = response.getRows()[0].getElements();
-                            for (GoogleDistanceMatrixApi.Elements element : elements) {
-                                String tripID = bookingResponseList.get(counter[0]).getTrip().getId();
-                                Log.d(TAG, tripID);
-                                int distance = element.getDistance().getValueInt();
-                                int duration = element.getDuration().getValueInt();
-                                MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
-                                remainingETA.setTripID(tripID);
-                                remainingETA.setRemainingDistance(distance);
-                                remainingETA.setRemainingTime(duration);
-                                trackingDataList.add(remainingETA);
-                                counter[0]++;
+                            String tripID = bookingResponseList.get(counter[NumberUtils.INTEGER_ZERO]).getTrip().getId();
+                            Log.d(TAG, tripID);
+                            MultipleDeliveryRemainingETA remainingETA = new MultipleDeliveryRemainingETA();
+
+                            if (response.getData().getDistance() != null) {
+                                remainingETA.setRemainingDistance(response.getData().getDistance().getValue());
                             }
+
+                            if (response.getData().getDuration() != null) {
+                                remainingETA.setRemainingTime(response.getData().getDuration().getValue());
+                            }
+
+                            remainingETA.setTripID(tripID);
+                            trackingDataList.add(remainingETA);
+                            counter[NumberUtils.INTEGER_ZERO]++;
+
                             locationRequest.setBatchBookings(trackingDataList);
                             mRestRequestHandler.sendDriverLocationUpdate(mContext,
                                     mDataCallback, locationRequest);
@@ -510,7 +455,6 @@ public class UserRepository {
                         Log.d(TAG, error);
                     }
                 });
-
     }
 
 
@@ -1088,14 +1032,6 @@ public class UserRepository {
 
     }
 
-
-    public void requestReverseGeocoding(Context context, IUserDataHandler handler,
-                                        String latLng, String key) {
-        mUserCallback = handler;
-        mContext = context;
-        mRestRequestHandler.reverseGeoding(mContext, mDataCallback, latLng, key);
-    }
-
     public void requestWalletHistory(Context context, IUserDataHandler handler, String pageNo) {
         mContext = context;
         mUserCallback = handler;
@@ -1119,10 +1055,10 @@ public class UserRepository {
         mRestRequestHandler.requestSignUpSettings(mContext, mDataCallback);
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, String cnic, IUserDataHandler handler) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, String reference, IUserDataHandler handler) {
         mContext = context;
         mUserCallback = handler;
-        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, mDataCallback);
+        mRestRequestHandler.requestRegisterNumber(mContext, phone, city, cnic, reference, mDataCallback);
     }
 
     public void postOptionalSignupData(Context context, String id, String email, String referenceNo, IUserDataHandler handler) {
@@ -1178,6 +1114,7 @@ public class UserRepository {
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("tid", tripId);
             jsonObject.put("user_type", "d");
+//            jsonObject.put("service_code", AppPreferences.getCallData().getServiceCode());
             jsonObject.put("driver_id", AppPreferences.getDriverId());
             jsonObject.put("passenger_id", passId);
         } catch (JSONException e) {
@@ -1195,6 +1132,7 @@ public class UserRepository {
             jsonObject.put("user_type", "d");
             jsonObject.put("_id", AppPreferences.getDriverId());
             jsonObject.put("conversation_id", conversationId);
+//            jsonObject.put("service_code",  AppPreferences.getCallData().getServiceCode());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1274,6 +1212,7 @@ public class UserRepository {
             jsonObject.put("conversation_id", conversationId);
             jsonObject.put("message_type", messageType);
             jsonObject.put("message", message);
+            jsonObject.put("service_code", AppPreferences.getCallData().getServiceCode());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1676,6 +1615,9 @@ public class UserRepository {
                     case "ZoneAreaResponse":
                         mUserCallback.onZoneAreasResponse((ZoneAreaResponse) object);
                         break;
+                    case "TopUpPassengerWalletResponse":
+                        mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
+                        break;
                     case "TopUpPassWalletResponse":
                         mUserCallback.onTopUpPassWallet((TopUpPassWalletResponse) object);
                         break;
@@ -1683,10 +1625,7 @@ public class UserRepository {
                         mUserCallback.onLocationUpdate((LocationResponse) object);
                         break;
                     case "SignUpSettingsResponse":
-                        SignUpSettingsResponse response = (SignUpSettingsResponse) object;
-                        response.setTimeStamp(System.currentTimeMillis());
-                        AppPreferences.setObjectToSharedPref(response);
-                        mUserCallback.onSignUpSettingsResponse(response);
+                        mUserCallback.onSignUpSettingsResponse((SignUpSettingsResponse) object);
                         break;
                     case "SignUpAddNumberResponse":
                         mUserCallback.onSignUpAddNumberResponse((SignUpAddNumberResponse) object);

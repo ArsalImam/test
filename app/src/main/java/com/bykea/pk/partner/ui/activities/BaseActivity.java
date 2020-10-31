@@ -28,6 +28,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -64,6 +66,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -164,7 +167,7 @@ public class BaseActivity extends AppCompatActivity {
             } else if (location != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
             } else if (call != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
+                requestPermissions(new String[]{CALL_STATE}, PERMISSION_REQUEST_CODE);
             } else {
                 hasPermission = true;
             }
@@ -595,35 +598,75 @@ public class BaseActivity extends AppCompatActivity {
         mTitleTv.setText("");
     }
 
+    /**
+     * this will show right icon on top bar
+     *
+     * @param drawable icon for the icon
+     * @param onClick click of the icon
+     */
+    public void showRightIcon(@DrawableRes int drawable, final View.OnClickListener onClick) {
+        showRightIcon(drawable, NumberUtils.INTEGER_ZERO, onClick);
+    }
+
+    /**
+     * this will show right icon on top bar
+     *
+     * @param drawable icon for the icon
+     * @param color to add tint on image
+     * @param onClick click of the icon
+     */
+    public void showRightIcon(@DrawableRes int drawable, @ColorRes int color, final View.OnClickListener onClick) {
+        if (null != rightIv) {
+            rightIv.setVisibility(View.VISIBLE);
+            statusLayout.setVisibility(View.VISIBLE);
+
+            rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, drawable));
+            rightIv.setPadding(5, 5, 5, 5);
+
+            if (color != NumberUtils.INTEGER_ZERO)
+                rightIv.setColorFilter(ContextCompat.getColor(BaseActivity.this, color),
+                        android.graphics.PorterDuff.Mode.SRC_IN);
+
+            rightIv.setOnClickListener(onClick);
+        }
+    }
+
+    /**
+     * this will show wallet icon on top bar
+     * @param onClick click of the icon
+     */
     public void showWalletIcon(final View.OnClickListener onClick) {
+        showRightIcon(R.drawable.wallet, onClick);
+    }
+
+    /**
+     * this will hide right icon on top bar
+     */
+    public void hideRightIcon() {
         if (null != rightIv) {
-            rightIv.setVisibility(View.VISIBLE);
-            rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.wallet));
-            rightIv.setPadding(5, 5, 5, 5);
-            rightIv.setOnClickListener(onClick);
+            rightIv.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void showMissedCallIcon(final View.OnClickListener onClick) {
-        if (null != rightIv) {
-            mCurrentActivity.findViewById(R.id.statusLayout).setVisibility(View.VISIBLE);
-            rightIv.setVisibility(View.VISIBLE);
-            rightIv.setImageDrawable(ContextCompat.getDrawable(mCurrentActivity, R.drawable.miss_call_icon));
-            rightIv.setPadding(5, 5, 5, 5);
-            rightIv.setOnClickListener(onClick);
-        }
+        showRightIcon(R.drawable.miss_call_icon, onClick);
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void hideWalletIcon() {
-        if (null != rightIv) {
-            rightIv.setVisibility(View.GONE);
-        }
+        hideRightIcon();
     }
 
+    /**
+     * this will hide right icon on top bar
+     */
     public void hideMissedCallIcon() {
-        if (null != rightIv) {
-            rightIv.setVisibility(View.GONE);
-        }
+        hideRightIcon();
     }
 
 
@@ -633,8 +676,6 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-
-
         return false;
     }
 
@@ -662,13 +703,13 @@ public class BaseActivity extends AppCompatActivity {
             //MULTI DELIVERY EVENT ERROR HANDLING
             Utils.appToast(
                     mCurrentActivity.getString(R.string.error_try_again));
-        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED )) {
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_BATCH_COMPLETED)) {
             Utils.multiDeliveryFreeDriverOnBatchComplete();
             ActivityStackManager
                     .getInstance()
                     .startHomeActivity(true, mCurrentActivity);
             finish();
-        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN )) {
+        } else if (action.equalsIgnoreCase(Keys.MULTIDELIVERY_CANCELLED_BY_ADMIN)) {
             Utils.setCallIncomingState();
             AppPreferences.setAvailableStatus(true);
             ActivityStackManager.getInstance().startHomeActivityFromCancelTrip(true, mCurrentActivity);
@@ -801,7 +842,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    void setTitleCustomToolbarUrdu(String urdu) {
+    /**
+     * Set custom title for toolbar in urdu and hide the english title
+     * @param urdu
+     */
+    protected void setTitleCustomToolbarUrdu(String urdu) {
         FontTextView tvTitleUrdu = (FontTextView) findViewById(R.id.tvTitleUrdu);
         FontTextView tvTitle = (FontTextView) findViewById(R.id.tvTitle);
 
@@ -878,5 +923,4 @@ public class BaseActivity extends AppCompatActivity {
             mBound = false;
         }
     };
-
 }

@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -92,13 +93,12 @@ import com.bykea.pk.partner.models.data.SignUpCity;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.VehicleListData;
 import com.bykea.pk.partner.models.response.AddressComponent;
-import com.bykea.pk.partner.models.response.GeocoderApi;
+import com.bykea.pk.partner.models.response.BatchBooking;
+import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.Result;
-import com.bykea.pk.partner.repositories.UserDataHandler;
-import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
 import com.bykea.pk.partner.ui.activities.BookingCallListener;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
@@ -130,6 +130,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,7 +147,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -163,14 +166,20 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.COMMA;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
 import static com.bykea.pk.partner.utils.Constants.GoogleMap.TRANSIT_MODE_BIKE;
+import static com.bykea.pk.partner.utils.Constants.MAX_FAHRENHEIT_VALUE;
+import static com.bykea.pk.partner.utils.Constants.MIN_FAHRENHEIT_VALUE;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_COUNTRY_STANDARD;
 import static com.bykea.pk.partner.utils.Constants.MOBILE_TEL_URI;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY;
+import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY_COD;
 import static com.bykea.pk.partner.utils.Constants.TRANSALATION_SEPERATOR;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.COURIER_TYPE;
 import static com.bykea.pk.partner.utils.Constants.TripTypes.GOODS_TYPE;
@@ -240,6 +249,60 @@ public class Utils {
     public static int getMaxPageSize(int maxRecordsPerPage, Integer totalRecords) {
         return (int) Math.ceil((double) totalRecords / maxRecordsPerPage);
     }
+
+    public static File createImageFile(Context context, String type) throws IOException {
+        String imageFileName = Constants.BYKEA_DOCUMENTS + Constants.CHAR_HYPHEN +
+                System.nanoTime() + Constants.CHAR_HYPHEN + type;
+
+        File storageDir = new File(context.getExternalFilesDir(null), ".bykea");
+        if (!storageDir.exists()) storageDir.mkdir();
+
+        File noMediaFile = new File(storageDir, ".nomedia");
+        if (!noMediaFile.exists()) {
+            noMediaFile.createNewFile();
+        }
+
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                Constants.UPLOAD_IMG_EXT,         /* suffix */
+                storageDir      /* directory */
+        );
+        return image;
+    }
+
+    public static String getCallTypeByServiceCode(int bookingCode) {
+        switch (bookingCode) {
+            case Constants.ServiceCode.SEND_COD:
+                return Constants.CallType.COD;
+            case Constants.ServiceCode.SEND:
+                return Constants.CallType.NOD;
+            case Constants.ServiceCode.MART:
+                return Constants.CallType.PURCHASE;
+            default:
+                return Constants.CallType.SAWARI;
+        }
+    }
+
+    public static boolean containsReturnRunBooking(ArrayList<BatchBooking> bookingList) {
+        boolean containsReturnRun = false;
+        for (int i = 0; i < bookingList.size(); i++) {
+            BatchBooking batchBooking = bookingList.get(i);
+            if (batchBooking.getDisplayTag().equalsIgnoreCase("z")) {
+                containsReturnRun = true;
+            }
+        }
+        return containsReturnRun;
+    }
+
+    public static LatLng getLatLngFromString(String origin) {
+        if (StringUtils.isNotEmpty(origin) && origin.contains(COMMA)) {
+            String[] originLocation = origin.split(COMMA);
+            return new LatLng(Double.valueOf(originLocation[NumberUtils.INTEGER_ZERO]),
+                    Double.valueOf(originLocation[NumberUtils.INTEGER_ONE]));
+        }
+        return new LatLng(NumberUtils.DOUBLE_ZERO, NumberUtils.DOUBLE_ZERO);
+    }
+
 
     public void getImageFromGallery(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -651,6 +714,10 @@ public class Utils {
     }*/
 
     public static int getMapIcon(String type) {
+        if (type.equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+            return R.drawable.with_green_box_1;
+        }
+
         switch (AppPreferences.getTripStatus()) {
             case TripStatus.ON_ARRIVED_TRIP:
                 if (StringUtils.containsIgnoreCase(type, "van")) {
@@ -782,6 +849,64 @@ public class Utils {
     public static BitmapDescriptor getDropOffBitmapDiscriptor(Context context, String number) {
         Bitmap bmp = createDropOffMarker(context, number);
         return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    public static BitmapDescriptor getDropOffBitmapDiscriptorForBooking(Context context, BatchBooking booking) {
+        Bitmap bmp = createDropOffMarkerForBooking(context, booking);
+        return BitmapDescriptorFactory.fromBitmap(bmp);
+    }
+
+    /**
+     * Create drop off marker.
+     *
+     * @param context Holding the reference of an activity.
+     * @param booking The number of drop off.
+     *                <p>
+     *                By ignoring the constant, Time complexity of this function is O(n)^2
+     *                because this function execute in a loop.
+     * @return The bitmap for dropoff marker.
+     */
+    public static Bitmap createDropOffMarkerForBooking(Context context, BatchBooking booking) {
+
+        View marker = ((LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.drop_off_batch_marker_layout, null);
+
+        FontTextView txt_name = marker.findViewById(R.id.dropOffMarker);
+        ImageView imgView = marker.findViewById(R.id.drop_off_marker_img_view);
+        txt_name.setText(booking.getDisplayTag());
+        try {
+            if (booking.getStatus().equalsIgnoreCase(TripStatus.ON_COMPLETED_TRIP) ||
+                    booking.getStatus().equalsIgnoreCase(TripStatus.ON_FEEDBACK_TRIP)) {
+
+                ViewCompat.setBackgroundTintList(imgView, ContextCompat
+                        .getColorStateList(context,
+                                R.color.multi_delivery_dropoff_completed));
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        marker.setLayoutParams(new ViewGroup.LayoutParams(
+                40,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        marker.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        marker.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(
+                marker.getMeasuredWidth(),
+                marker.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        marker.draw(canvas);
+
+        return bitmap;
     }
 
     /***
@@ -1330,80 +1455,6 @@ public class Utils {
         });
     }
 
-    /**
-     * Get Address From Reverse Geo Coder API
-     *
-     * @param lat                     : Latitude
-     * @param lng                     : Longtitude
-     * @param activity                : Calling Activity
-     * @param locationAddressCallback : Interface For Location Address CallBack
-     */
-    public static void getLocationAddress(String lat, String lng, Activity activity, LocationAddressCallback locationAddressCallback) {
-        StringBuilder reverseGeoCodeAddress = new StringBuilder(StringUtils.EMPTY);
-        UserRepository repository = new UserRepository();
-        Dialogs.INSTANCE.showLoader(activity);
-        repository.requestReverseGeocoding(activity, new UserDataHandler() {
-            @Override
-            public void onReverseGeocode(GeocoderApi geocoderApiResponse) {
-                if (activity != null) {
-                    if (geocoderApiResponse != null
-                            && geocoderApiResponse.getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
-                            && geocoderApiResponse.getResults().length > 0) {
-                        String address = StringUtils.EMPTY;
-                        String subLocality = StringUtils.EMPTY;
-                        String cityName = StringUtils.EMPTY;
-                        GeocoderApi.Address_components[] address_componentses = geocoderApiResponse.getResults()[0].getAddress_components();
-                        for (GeocoderApi.Address_components addressComponent : address_componentses) {
-                            String[] types = addressComponent.getTypes();
-                            for (String type : types) {
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_CITY))
-                                    cityName = addressComponent.getLong_name();
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS) || type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_1))
-                                    address = addressComponent.getLong_name();
-                                if (type.equalsIgnoreCase(Constants.GEOCODE_RESULT_TYPE_ADDRESS_SUB_LOCALITY))
-                                    subLocality = addressComponent.getLong_name();
-                                if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality))
-                                    break;
-                            }
-                            if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(address) && StringUtils.isNotBlank(subLocality))
-                                break;
-                        }
-                        if (StringUtils.isNotBlank(subLocality)) {
-                            if (StringUtils.isNotBlank(address))
-                                address = address + " " + subLocality;
-                            else
-                                address = subLocality;
-                        }
-                        if (StringUtils.isNotBlank(address))
-                            reverseGeoCodeAddress.append(address);
-                        if (StringUtils.isNotBlank(address) && StringUtils.isNotBlank(cityName))
-                            reverseGeoCodeAddress.append(address).append(", ").append(cityName);
-
-                        if (StringUtils.isNotBlank(reverseGeoCodeAddress.toString())) {
-                            locationAddressCallback.onSuccess(reverseGeoCodeAddress.toString());
-                        } else {
-                            AppPreferences.setGeoCoderApiKeyRequired(true);
-                            locationAddressCallback.onFail();
-                        }
-                    } else {
-                        locationAddressCallback.onFail();
-                        AppPreferences.setGeoCoderApiKeyRequired(true);
-                    }
-                } else {
-                    locationAddressCallback.onFail();
-                }
-                Dialogs.INSTANCE.dismissDialog();
-            }
-
-            @Override
-            public void onError(int errorCode, String errorMessage) {
-                AppPreferences.setGeoCoderApiKeyRequired(true);
-                locationAddressCallback.onFail();
-                Dialogs.INSTANCE.dismissDialog();
-            }
-        }, lat + "," + lng, Utils.getApiKeyForGeoCoder());
-    }
-
     public static String calculateDistanceInKm(double newLat, double newLon, double prevLat,
                                                double prevLon) {
         return "" + Math.round(((calculateDistance(newLat,
@@ -1511,23 +1562,25 @@ public class Utils {
      * @return Google place server API key
      */
     public static String getApiKeyForGeoCoder() {
-        return AppPreferences.isGeoCoderApiKeyRequired() ? Constants.GOOGLE_PLACE_SERVER_API_KEY : StringUtils.EMPTY;
+        if (AppPreferences.isGeoCoderApiKeyRequired() && AppPreferences.isLoggedIn()) {
+            return AppPreferences.getDriverSettings().getData().getGooglePlacesServerApiKey();
+        }
+        return StringUtils.EMPTY;
     }
 
     /***
      *  Returns API key for Google Directions API if required.
      *  Will return Empty String if there's no error in Last
      *  Request while using API without any Key.
-     * @param context Calling Context.
      * @return Google place server API key
      */
-    public static String getApiKeyForDirections(Context context) {
+    public static String getApiKeyForDirections() {
         if (AppPreferences.isDirectionsApiKeyRequired()) {
             if (isDirectionsApiKeyCheckRequired()) {
                 AppPreferences.setDirectionsApiKeyRequired(false);
                 return StringUtils.EMPTY;
             } else {
-                return Constants.GOOGLE_PLACE_SERVER_API_KEY;
+                return getApiKeyForGeoCoder();
             }
         } else {
             return StringUtils.EMPTY;
@@ -2129,12 +2182,25 @@ public class Utils {
         return StringUtils.containsIgnoreCase(callType, SAWARI) || StringUtils.containsIgnoreCase(callType, OFFLINE_RIDE);
     }
 
+    /**
+     * Check if the ride is of courier
+     *
+     * @param callType : Receive in active trip data
+     * @return true if the type is of courier else false
+     */
     public static boolean isCourierService(String callType) {
-        return StringUtils.containsIgnoreCase(callType, GOODS_TYPE) || StringUtils.containsIgnoreCase(callType, COURIER_TYPE);
+        return (StringUtils.isEmpty(callType)) &&
+                (StringUtils.containsIgnoreCase(callType, GOODS_TYPE) || StringUtils.containsIgnoreCase(callType, COURIER_TYPE));
     }
 
     public static boolean isPurchaseService(String callType) {
         return isPurchaseService(callType, null);
+    }
+
+    public static boolean isNewBatchService(Integer serviceCode) {
+        if (serviceCode == null)
+            return false;
+        return serviceCode == NEW_BATCH_DELIVERY || serviceCode == NEW_BATCH_DELIVERY_COD;
     }
 
     public static boolean isPurchaseService(String callType, Integer serviceCode) {
@@ -2251,9 +2317,12 @@ public class Utils {
                 return R.drawable.jama_karo;
             case "carryvan":
                 return R.drawable.carry_van;
+            case "fooddelivery":
+                return R.drawable.ic_food;
             case "courier":
             case "goods":
-                return R.drawable.courier_no_caption;
+            case Constants.CallType.NEW_BATCH:
+                return R.drawable.bhejdo_no_caption;
             case "bykeacash-mobiletopup":
             case "bykeacash-mobilewallet":
             case "bykeacash-banktransfer":
@@ -2653,6 +2722,25 @@ public class Utils {
         fragment.startActivityForResult(intent1, Constants.REQUEST_GALLERY);
     }
 
+    public static void deleteLastPhotoFromGallery(Context context) {
+        File f = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
+
+        File[] files = f.listFiles();
+        Arrays.sort(files, new Comparator<Object>() {
+            public int compare(Object o1, Object o2) {
+
+                if (((File) o1).lastModified() > ((File) o2).lastModified()) {
+                    return -1;
+                } else if (((File) o1).lastModified() < ((File) o2).lastModified()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+        });
+        files[0].delete();
+    }
 
     public static Uri startCameraByIntent(Activity act, File photoFile) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -3208,6 +3296,7 @@ public class Utils {
                 break;
             case Constants.ApiError.MULTIPLE_CANCELLATION_BLOCK:
             case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED:
+            case Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN:
                 AppPreferences.setAvailableStatus(false);
                 eventBus.post(Keys.INACTIVE_FENCE);
                 break;
@@ -3302,6 +3391,26 @@ public class Utils {
     }
 
     /**
+     * Fetch drop down lat lng list.
+     *
+     * @param normalCallData The {@link MultiDeliveryCallDriverData} object.
+     * @return The collection of drop down lat lng.
+     */
+    public static List<LatLng> getDropDownLatLngList(NormalCallData
+                                                             normalCallData) {
+        List<LatLng> latLngList = new ArrayList<>();
+        for (BatchBooking response : normalCallData.getBookingList()) {
+            latLngList.add(new LatLng(
+
+                    response.getDropoff().getLat(),
+                    response.getDropoff().getLng())
+            );
+        }
+
+        return latLngList;
+    }
+
+    /**
      * Multi Delivery Free Driver on Batch Complete.
      */
     public static void multiDeliveryFreeDriverOnBatchComplete() {
@@ -3342,17 +3451,16 @@ public class Utils {
 
 
     /**
-     * Clears the Local Shared Pref in case of dirt
-     *
-     * @param context calling activity context
+     * Clears the Local Shared Pref in case of dirty
      */
-    public static void clearSharedPrefIfDirty(Context context) {
+    public static void clearSharedPrefIfDirty() {
         int savedVersionCode = AppPreferences.getAppVersionCode();
         int currentVersionCode = BuildConfig.VERSION_CODE;
         if (savedVersionCode < currentVersionCode) {
             AppPreferences.setAppVersionCode(currentVersionCode);
-            Utils.clearData(context);
-
+            if (savedVersionCode > DIGIT_ZERO) {
+                AppPreferences.clearExceptParticulars();
+            }
         }
     }
 
@@ -3442,12 +3550,28 @@ public class Utils {
      */
     public static ArrayList<ChatMessagesTranslated> getAllChatMessageTranslated(Context context) {
         ArrayList<ChatMessagesTranslated> chatMessagesTranslateds = new ArrayList<>();
-        String[] chatMessageInEnglish = Utils.getChatMessageInEnglish(context);
-        String[] chatMessageInUrdu = Utils.getChatMessageInUrdu(context);
 
-        for (int i = 0; i < chatMessageInEnglish.length; i++) {
-            if (StringUtils.isNotEmpty(chatMessageInEnglish[i]) && StringUtils.isNotEmpty(chatMessageInUrdu[i]))
-                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish[i], chatMessageInUrdu[i]));
+        //adding default messages list by default
+        List<String> chatMessageInEnglish = Arrays.asList(Utils.getChatMessageInEnglish(context));
+        List<String> chatMessageInUrdu = Arrays.asList(Utils.getChatMessageInUrdu(context));
+
+        //checking for batch service
+        NormalCallData callData = AppPreferences.getCallData();
+        if (callData != null && isNewBatchService(callData.getServiceCode())) {
+            //messages for pre arrive condition
+            if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_en));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_pre_arrive_messages_ur));
+            }
+            //messages for post arrive condition
+            else {
+                chatMessageInEnglish = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_en));
+                chatMessageInUrdu = Arrays.asList(context.getResources().getStringArray(R.array.batch_started_messages_ur));
+            }
+        }
+        for (int i = 0; i < chatMessageInEnglish.size(); i++) {
+            if (StringUtils.isNotEmpty(chatMessageInEnglish.get(i)) && StringUtils.isNotEmpty(chatMessageInUrdu.get(i)))
+                chatMessagesTranslateds.add(new ChatMessagesTranslated(i + Constants.DIGIT_ONE, chatMessageInEnglish.get(i), chatMessageInUrdu.get(i)));
         }
         return chatMessagesTranslateds;
     }
@@ -3639,10 +3763,96 @@ public class Utils {
         else
             return serviceCode == Constants.ServiceCode.SEND
                     || serviceCode == Constants.ServiceCode.SEND_COD
+                    || serviceCode == NEW_BATCH_DELIVERY
                     || serviceCode == Constants.ServiceCode.MART
                     || serviceCode == Constants.ServiceCode.MOBILE_TOP_UP
                     || serviceCode == Constants.ServiceCode.MOBILE_WALLET
                     || serviceCode == Constants.ServiceCode.BANK_TRANSFER
                     || serviceCode == Constants.ServiceCode.UTILITY;
+    }
+
+
+    /***
+     * Validate to show partner temperature dialog or not
+     * @return Returns true if to ask temperature from partner considering the toggle and time interval
+     */
+    public static boolean isPartnerTemperatureRequired() {
+        boolean temperatureShowToggle = false;
+        long temperatureShowDialogInterval = DIGIT_ZERO;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            temperatureShowToggle = AppPreferences.getSettings().getSettings().isPartnerTemperatureInputToggle();
+            temperatureShowDialogInterval = AppPreferences.getSettings().getSettings().getPartnerTemperatureInputInterval();
+        }
+
+        return temperatureShowToggle &&
+                ((System.currentTimeMillis() - AppPreferences.getLastPartnerTemperatureSubmitTime()) >=
+                        TimeUnit.SECONDS.toMillis(temperatureShowDialogInterval));
+    }
+
+    public static Pair<Double, Double> getMinMaxFahrenheitLimit() {
+        double minFahretheitLimit = MIN_FAHRENHEIT_VALUE;
+        double maxFahretheitLimit = MAX_FAHRENHEIT_VALUE;
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().getSettings() != null) {
+            minFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMinLimit();
+            maxFahretheitLimit = AppPreferences.getSettings().getSettings().getPartnerTemperatureMaxLimit();
+        }
+        return new Pair<>(minFahretheitLimit, maxFahretheitLimit);
+    }
+
+    /**
+     * Converts DP to Pixel
+     *
+     * @param dp value to be converted
+     * @return converted value in Px
+     */
+    public static float toPixel(float dp) {
+        DisplayMetrics metrics = DriverApp.getContext().getResources().getDisplayMetrics();
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     *
+     * @param view : View On Which To Stop Multiple Tap
+     */
+    public static void preventMultipleTap(View view) {
+        preventMultipleTap(view, (long) DIGIT_THOUSAND);
+    }
+
+    /**
+     * Prevent Multiple Tap
+     *
+     * @param view          : View On Which To Stop Multiple Tap
+     * @param timeInMillis: Disable Time
+     */
+    public static void preventMultipleTap(View view, Long timeInMillis) {
+        try {
+            if (timeInMillis > DIGIT_ZERO) {
+                view.setEnabled(false);
+                new Handler().postDelayed(() -> {
+                    view.setEnabled(true);
+                }, timeInMillis);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * If Shared Preference Key Preserve Required
+     *
+     * @param key : Shared Preference Key
+     * @return true: If equals to the preserver required else false
+     */
+    public static boolean isSharedPreferenceKeyPreserveRequired(String key) {
+        return key.equals(Keys.EMAIL) || key.equals(Keys.ACCESS_TOKEN) ||
+                key.equals(Keys.DRIVER_ID) || key.equals(Keys.PHONE_NUMBER) ||
+                key.equals(Keys.DRIVER_DATA) || key.equals(Keys.CASH_IN_HANDS_RANGE) ||
+                key.equals(Keys.FCM_REGISTRATION_ID) || key.equals(Keys.LATITUDE) ||
+                key.equals(Keys.LONGITUDE) || key.equals(Keys.IS_MOCK_LOCATION) ||
+                key.equals(Keys.LOCATION_ACCURACY) || key.equals(Keys.APP_VERSION_CODE) ||
+                key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
+                key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
+                key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
     }
 }

@@ -70,6 +70,10 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 import static com.bykea.pk.partner.DriverApp.getApplication;
+import static com.bykea.pk.partner.utils.Constants.ACTION;
+import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
+import static com.bykea.pk.partner.utils.Constants.MSG;
+import static com.bykea.pk.partner.utils.Keys.BROADCAST_CANCEL_BATCH;
 
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
@@ -560,8 +564,12 @@ public class WebIORequestHandler {
             Gson gson = new Gson();
             try {
                 JobCallPayload payload = gson.fromJson(serverResponse, JobCallPayload.class);
-                if (payload != null && AppPreferences.getAvailableStatus()) {
-                    JobCall jobCall = payload.getTrip();
+                JobCall jobCall = payload.getTrip();
+                jobCall.setType(payload.getType());
+                if (payload.getTrip().getDispatch() != null && payload.getTrip().getDispatch()) {
+                    Utils.appToastDebug("Job Dispatch Socket Received");
+                    ActivityStackManager.getInstance().startCallingActivity(jobCall, false, DriverApp.getContext());
+                } else if (AppPreferences.getAvailableStatus() && payload.getType().equalsIgnoreCase(SINGLE)) {
                     JobsRepository jobsRepo = Injection.INSTANCE.provideJobsRepository(getApplication().getApplicationContext());
                     jobsRepo.ackJobCall(jobCall.getTrip_id(), new JobsDataSource.AckJobCallCallback() {
                         @Override
@@ -575,7 +583,6 @@ public class WebIORequestHandler {
                             Utils.appToastDebug("Job Call Acknowledgement Failed");
                         }
                     });
-
                 }
             } catch (
                     Exception e) {
@@ -619,27 +626,27 @@ public class WebIORequestHandler {
                 normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CALLING_SEARCHING)) {
             ActivityStackManager.getInstance().startCallingActivity(normalCallData, false, DriverApp.getContext());
         } else if (normalCallData.getStatus().equalsIgnoreCase(TripStatus.ON_CANCEL_TRIP)) {
-                /*
-                 * when Gps is off, we don't show Calling Screen so we don't need to show
-                 * Cancel notification either if passenger cancels it before booking.
-                 * If passenger has cancelled it after booking we will entertain this Cancel notification
-                 * */
-                if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
-                    AppPreferences.removeReceivedMessageCount();
-                    Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
-                    intent.putExtra("action", Keys.BROADCAST_CANCEL_RIDE);
-                    intent.putExtra("msg", normalCallData.getMessage());
-                    Utils.setCallIncomingState();
-                    if (AppPreferences.isJobActivityOnForeground() ||
-                            AppPreferences.isCallingActivityOnForeground()) {
+            /*
+             * when Gps is off, we don't show Calling Screen so we don't need to show
+             * Cancel notification either if passenger cancels it before booking.
+             * If passenger has cancelled it after booking we will entertain this Cancel notification
+             * */
+            if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                AppPreferences.removeReceivedMessageCount();
+                Intent intent = new Intent(Keys.BROADCAST_CANCEL_RIDE);
+                intent.putExtra(ACTION, Keys.BROADCAST_CANCEL_RIDE);
+                intent.putExtra(MSG, normalCallData.getMessage());
+                Utils.setCallIncomingState();
+                if (AppPreferences.isJobActivityOnForeground() ||
+                        AppPreferences.isCallingActivityOnForeground()) {
 //                                DriverApp.getContext().sendBroadcast(intent);
-                        EventBus.getDefault().post(intent);
-                    } else {
-                        EventBus.getDefault().post(intent);
+                    EventBus.getDefault().post(intent);
+                } else {
+                    EventBus.getDefault().post(intent);
 //                                DriverApp.getContext().sendBroadcast(intent);
-                        Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
-                    }
-                    getInstance().unRegisterChatListener();
+                    Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
+                }
+                getInstance().unRegisterChatListener();
             } else {
                 Utils.appToastDebug(normalCallData.getMessage());
             }
@@ -746,6 +753,37 @@ public class WebIORequestHandler {
     }
 
     /**
+     * Multi Delivery Trip Batch Cancelled by admin onLoadBoardListFragmentInteractionListener
+     */
+    public static class BatchCancelledByPassengerListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog(TAG, serverResponse);
+            /*
+             * when Gps is off, we don't show Calling Screen so we don't need to show
+             * Cancel notification either if passenger cancels it before booking.
+             * If passenger has cancelled it after booking we will entertain this Cancel notification
+             * */
+            if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
+                AppPreferences.removeReceivedMessageCount();
+                Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
+                intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
+                Utils.setCallIncomingState();
+                if (AppPreferences.isJobActivityOnForeground() ||
+                        AppPreferences.isCallingActivityOnForeground()) {
+                    EventBus.getDefault().post(intent);
+                } else {
+                    EventBus.getDefault().post(intent);
+                    Notifications.createCancelNotification(DriverApp.getContext(), DriverApp.getContext().getString(R.string.passenger_has_cancelled_the_trip));
+                }
+                getInstance().unRegisterChatListener();
+            }
+        }
+    }
+
+    /**
      * Multi Delivery Trip Batch Completed onLoadBoardListFragmentInteractionListener
      */
     public static class MultiDeliveryTripBatchCompletedListener implements Emitter.Listener {
@@ -757,6 +795,27 @@ public class WebIORequestHandler {
             EventBus.getDefault().post(Keys.MULTIDELIVERY_BATCH_COMPLETED);
         }
 
+    }
+
+    /**
+     * Socket listener for Batch Updated
+     */
+    public static class BatchUpdatedListener implements Emitter.Listener {
+
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            if (AppPreferences.isJobActivityOnForeground() || AppPreferences.isListDeliveryOnForeground()) {
+                Utils.redLog("Batch Booking Updated (Socket) ", serverResponse);
+                Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
+                intent.putExtra("action", Keys.BROADCAST_BATCH_UPDATED);
+                EventBus.getDefault().post(intent);
+
+                Utils.appToast(DriverApp.getApplication().getString(R.string.batch_update_by_passenger));
+            } else {
+                Notifications.createBatchUpdateNotification();
+            }
+        }
     }
 
     private static IUserDataHandler handler = new UserDataHandler() {

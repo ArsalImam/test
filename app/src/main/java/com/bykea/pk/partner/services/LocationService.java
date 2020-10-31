@@ -22,13 +22,12 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.MultipleDeliveryBookingResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
@@ -45,10 +44,10 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -106,9 +105,6 @@ public class LocationService extends Service {
                         if (shouldCallLocApi) {
                             shouldCallLocApi = false;
                             if (Connectivity.isConnectedFast(mContext) && Utils.isGpsEnable()) {
-                                //mUserRepository.updateDriverLocation(mContext, handler, lat, lon);
-                                //validateDriverOfflineStatus();
-
                                 if (AppPreferences.isOnTrip() && AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.BATCH)) {
                                     counterForMultiDelivery++;
                                 }
@@ -394,6 +390,13 @@ public class LocationService extends Service {
                     tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
                     status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
                 }
+            } else if (AppPreferences.getDeliveryType().
+                    equalsIgnoreCase(Constants.CallType.NEW_BATCH)) {
+                NormalCallData callData = AppPreferences.getCallData();
+                if (callData != null) {
+                    tripNo = (callData.getTripNo() != null) ? callData.getTripNo() : StringUtils.EMPTY;
+                    status = (callData.getStatus() != null) ? callData.getStatus() : StringUtils.EMPTY;
+                }
             } else {
                 MultiDeliveryCallDriverData callDriverData = AppPreferences.getMultiDeliveryCallDriverData();
                 status = (callDriverData != null) ? callDriverData.getBatchStatus() : StringUtils.EMPTY;
@@ -619,18 +622,17 @@ public class LocationService extends Service {
             new PlacesRepository().getDistanceMatrix(origin, destination, mContext,
                     new PlacesDataHandler() {
                         @Override
-                        public void onDistanceMatrixResponse(GoogleDistanceMatrixApi response) {
-                            if (response != null && response.getRows() != null
-                                    && response.getRows().length > 0
-                                    && response.getRows()[0].getElements() != null
-                                    && response.getRows()[0].getElements().length > 0
-                                    && response.getRows()[0].getElements()[0].getDuration() != null
-                                    && response.getRows()[0].getElements()[0].getDistance() != null) {
-                                String time = (response.getRows()[0]
-                                        .getElements()[0].getDuration().getValueInt() / 60) + "";
-                                String distance = Utils.formatDecimalPlaces(
-                                        (response.getRows()[0].getElements()[0]
-                                                .getDistance().getValueInt() / 1000.0) + "", 1);
+                        public void onDistanceMatrixResponse(BykeaDistanceMatrixResponse response) {
+                            if (response != null && response.getData() != null) {
+                                String time = StringUtils.EMPTY;
+                                String distance = StringUtils.EMPTY;
+                                if (response.getData().getDistance() != null) {
+                                    distance = Utils.formatDecimalPlaces(
+                                            (response.getData().getDistance().getValue() / Constants.DECIMAL_THOUSAND) + StringUtils.EMPTY, NumberUtils.INTEGER_ONE);
+                                }
+                                if (response.getData().getDuration() != null) {
+                                    time = (response.getData().getDuration().getValue() / 60) + StringUtils.EMPTY;
+                                }
                                 updateETA(time, distance);
                                 Utils.redLogLocation("onDistanceMatrixResponse",
                                         "Time -> " + time + " Distance ->" + distance);

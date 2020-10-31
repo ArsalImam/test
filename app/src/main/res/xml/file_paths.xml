@@ -3,4 +3,7 @@
     <external-path
         name="external_files"
         path="Android/data/com.bykea.pk.partner" />
+    <external-path
+        name="external_files"
+        path="." />
 </paths>

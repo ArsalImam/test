@@ -22,8 +22,14 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.JobsDataSource;
+import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.Backend;
+import com.bykea.pk.partner.dal.source.remote.response.DriverSettingsResponse;
+import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PilotData;
 import com.bykea.pk.partner.models.response.UpdateAppVersionResponse;
 import com.bykea.pk.partner.repositories.UserDataHandler;
@@ -39,12 +45,14 @@ import com.bykea.pk.partner.utils.Connectivity;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +105,8 @@ public class HomeActivity extends BaseActivity {
 
     private boolean isDialogShown, isSettingsApiFirstTimeCalled;
 
+    private JobsRepository jobsRepository = Injection.INSTANCE.provideJobsRepository(DriverApp.getContext());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +139,9 @@ public class HomeActivity extends BaseActivity {
 
         Notifications.clearNotifications(mCurrentActivity);
         Utils.disableBatteryOptimization(this, mCurrentActivity);
-        Utils.clearSharedPrefIfDirty(mCurrentActivity);
+        Utils.clearSharedPrefIfDirty();
+
+        TelloTalkManager.instance().build();
     }
 
     @Override
@@ -269,6 +281,28 @@ public class HomeActivity extends BaseActivity {
                         ((HomeFragment) currentFragment).initRangeBar();
                     }
                 }
+            }
+        });
+
+        jobsRepository.getDriverSettings(new JobsDataSource.LoadDataCallback<DriverSettingsResponse>() {
+            @Override
+            public void onDataLoaded(DriverSettingsResponse response) {
+                AppPreferences.saveDriverSettingsData(response);
+                //logging in -- in tellotalk
+                TelloTalkManager.instance().build();
+                TelloTalkManager.instance().performLogin(success -> {
+                    if (success) TelloTalkManager.instance().setupFcm();
+                    return null;
+                });
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
+                if (currentFragment instanceof HomeFragment) {
+                    ((HomeFragment) currentFragment).getDriverPerformanceData();
+                }
+            }
+
+            @Override
+            public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+
             }
         });
 

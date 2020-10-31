@@ -8,6 +8,8 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.data.Address;
+import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
@@ -19,11 +21,14 @@ import com.bykea.pk.partner.models.request.DeletePlaceRequest;
 import com.bykea.pk.partner.models.request.DriverAvailabilityRequest;
 import com.bykea.pk.partner.models.request.DriverLocationRequest;
 import com.bykea.pk.partner.models.request.LoadBoardBookingCancelRequest;
+import com.bykea.pk.partner.models.request.RequestRegisterNumber;
+import com.bykea.pk.partner.models.request.SignUpOptionalDataRequest;
 import com.bykea.pk.partner.models.response.AcceptLoadboardBookingResponse;
 import com.bykea.pk.partner.models.response.AddSavedPlaceResponse;
 import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
+import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -41,7 +46,6 @@ import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
 import com.bykea.pk.partner.models.response.GetSavedPlacesResponse;
 import com.bykea.pk.partner.models.response.GetZonesResponse;
-import com.bykea.pk.partner.models.response.GoogleDistanceMatrixApi;
 import com.bykea.pk.partner.models.response.HeatMapUpdatedResponse;
 import com.bykea.pk.partner.models.response.LoadBoardResponse;
 import com.bykea.pk.partner.models.response.LocationResponse;
@@ -92,6 +96,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Field;
+
+import static com.bykea.pk.partner.utils.Constants.COMMA;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
 
@@ -455,8 +464,16 @@ public class RestRequestHandler {
         this.mResponseCallBack = onResponseCallBack;
         mRestClient = RestClient.getClient(mContext);
 
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
+            return;
+        }
+
         Call<BookingListingResponse> restCall = mRestClient.getBookingListing(
-                AppPreferences.getSettings().getSettings().getBookingLisitingForDriverUrl(),
+                AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl(),
                 AppPreferences.getDriverId(),
                 AppPreferences.getAccessToken(),
                 Constants.BookingFetchingStates.END,
@@ -689,111 +706,128 @@ public class RestRequestHandler {
         });
     }
 
-    public void reverseGeoding(Context context, final IResponseCallback onResponseCallback,
-                               String latLng, String key) {
-        mContext = context;
-        mResponseCallBack = onResponseCallback;
-        mRestClient = RestClient.getGooglePlaceApiClient();
-        Call<GeocoderApi> requestCall = mRestClient.callGeoCoderApi(latLng, key);
-        requestCall.enqueue(new Callback<GeocoderApi>() {
-            @Override
-            public void onResponse(Call<GeocoderApi> call, Response<GeocoderApi> response) {
-                if (response.body().getStatus().equalsIgnoreCase("ok")) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(0, "Address not found.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeocoderApi> call, Throwable t) {
-                mResponseCallBack.onError(0, getErrorMessage(t));
-            }
-        });
-    }
-
     public void requestSignUpSettings(Context context, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignUpSettingsResponse> requestCall = mRestClient.requestSignUpSettings(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API);
-        requestCall.enqueue(new Callback<SignUpSettingsResponse>() {
-            @Override
-            public void onResponse(Call<SignUpSettingsResponse> call, Response<SignUpSettingsResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
+        mRestClient = RestClient.getClient(context);
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupSettings()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
+            Call<SignUpSettingsResponse> requestCall = mRestClient.requestSignUpSettings(AppPreferences.getRegistrationLinksToken().getSignupSettings(),
+                    AppPreferences.getRegistrationLinksToken().getToken());
+            requestCall.enqueue(new Callback<SignUpSettingsResponse>() {
+                @Override
+                public void onResponse(Call<SignUpSettingsResponse> call, Response<SignUpSettingsResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, mContext.getString(R.string.error_try_again));
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<SignUpSettingsResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+                @Override
+                public void onFailure(Call<SignUpSettingsResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
-    public void requestRegisterNumber(Context context, String phone, String city, String cnic, final IResponseCallback onResponseCallBack) {
+    public void requestRegisterNumber(Context context, String phone, String city, String cnic, String reference, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-//        ArrayList<Double> loc = new ArrayList<>();
-//        loc.add(AppPreferences.getLatitude());
-//        loc.add(AppPreferences.getLongitude());
-//        SignupAddRequest request = new SignupAddRequest();
-//        request.setCity(city);
-//        request.setGeoloc(loc);
-//        request.setImei(Utils.getDeviceId(context));
-//        request.setPhone(phone);
-//        request.setMobile_brand(Utils.getDeviceName());
-//        request.setMobile_model(Utils.getDeviceModel());
-//        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API, request);
+        mRestClient = RestClient.getClient(context);
 
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupAddNumber()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
 
-        Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                phone, Utils.getDeviceId(context), Utils.getDeviceName(), Utils.getDeviceModel(), AppPreferences.getLatitude() + "," + AppPreferences.getLongitude(), cnic, city);
+            RequestRegisterNumber requestRegisterNumber = new RequestRegisterNumber();
+            requestRegisterNumber.setPhone(Utils.phoneNumberForServer(phone));
+            requestRegisterNumber.setImei(Utils.getDeviceId(context));
+            requestRegisterNumber.setMobile_brand(Utils.getDeviceName());
+            requestRegisterNumber.setMobile_model(Utils.getDeviceModel());
+            requestRegisterNumber.setGeoloc(AppPreferences.getLatitude() + COMMA + AppPreferences.getLongitude());
+            requestRegisterNumber.setCnic(cnic);
+            requestRegisterNumber.setCity(city);
+            requestRegisterNumber.setReference(StringUtils.isNotEmpty(reference) ? reference : null);
 
+            Call<SignUpAddNumberResponse> requestCall = mRestClient.requestRegisterNumber(
+                    AppPreferences.getRegistrationLinksToken().getSignupAddNumber(),
+                    AppPreferences.getRegistrationLinksToken().getToken(), requestRegisterNumber);
 
-        requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
-            @Override
-            public void onResponse(Call<SignUpAddNumberResponse> call, Response<SignUpAddNumberResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
+            requestCall.enqueue(new Callback<SignUpAddNumberResponse>() {
+                @Override
+                public void onResponse(Call<SignUpAddNumberResponse> call, Response<SignUpAddNumberResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<SignUpAddNumberResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+                @Override
+                public void onFailure(Call<SignUpAddNumberResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
 
     public void postOptionalSignupData(Context context, String id, String email, String referenceNo, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignUpOptionalDataResponse> requestCall = mRestClient.postOptionalSignupData(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                id, StringUtils.isNotBlank(email) ? email : null, StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
-        requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
-            @Override
-            public void onResponse(Call<SignUpOptionalDataResponse> call, Response<SignUpOptionalDataResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
-                }
-            }
+        mRestClient = RestClient.getClient(context);
 
-            @Override
-            public void onFailure(Call<SignUpOptionalDataResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupComplete()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
+
+            SignUpOptionalDataRequest signUpOptionalDataRequest = new SignUpOptionalDataRequest();
+            signUpOptionalDataRequest.setEmail(StringUtils.isNotBlank(email) ? email : null);
+            signUpOptionalDataRequest.setRef_number(StringUtils.isNotBlank(referenceNo) ? referenceNo : null);
+
+            Call<SignUpOptionalDataResponse> requestCall = mRestClient.postOptionalSignupData(
+                    AppPreferences.getRegistrationLinksToken().getSignupComplete(),
+                    AppPreferences.getRegistrationLinksToken().getToken(),
+                    signUpOptionalDataRequest);
+
+            requestCall.enqueue(new Callback<SignUpOptionalDataResponse>() {
+                @Override
+                public void onResponse(Call<SignUpOptionalDataResponse> call, Response<SignUpOptionalDataResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SignUpOptionalDataResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
     public void postBiometricVerification(Context context, String id, boolean isVerified, final IResponseCallback onResponseCallBack) {
@@ -822,24 +856,41 @@ public class RestRequestHandler {
     public void uploadDocumentImage(Context context, String id, String type, File file, final IResponseCallback onResponseCallBack) {
         mContext = context;
         mResponseCallBack = onResponseCallBack;
-        mRestClient = RestClient.getBykeaSignUpApiClient();
-        Call<SignupUplodaImgResponse> requestCall = mRestClient.uplodaDocumentImage(ApiTags.BASE_SERVER_URL_SIGN_UP_X_API,
-                Utils.convertStringToRequestBody(id), Utils.convertStringToRequestBody(type), Utils.convertFileToRequestBody(file));
-        requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
-            @Override
-            public void onResponse(Call<SignupUplodaImgResponse> call, Response<SignupUplodaImgResponse> response) {
-                if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
-                    mResponseCallBack.onResponse(response.body());
-                } else {
-                    mResponseCallBack.onError(response.body() != null ? response.body().getCode() : 0, response.body().getMessage());
-                }
-            }
+        mRestClient = RestClient.getClient(context);
 
-            @Override
-            public void onFailure(Call<SignupUplodaImgResponse> call, Throwable t) {
-                mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
-            }
-        });
+        if (AppPreferences.getRegistrationLinksToken() != null &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getSignupDocuments()) &&
+                StringUtils.isNotBlank(AppPreferences.getRegistrationLinksToken().getToken())) {
+
+            Call<SignupUplodaImgResponse> requestCall = mRestClient.uplodaDocumentImage(
+                    AppPreferences.getRegistrationLinksToken().getSignupDocuments(),
+                    AppPreferences.getRegistrationLinksToken().getToken(),
+                    id, type, Utils.convertFileToRequestBody(file));
+
+            requestCall.enqueue(new Callback<SignupUplodaImgResponse>() {
+                @Override
+                public void onResponse(Call<SignupUplodaImgResponse> call, Response<SignupUplodaImgResponse> response) {
+                    if (response.isSuccessful() && response.body().getCode() == HTTPStatus.OK) {
+                        mResponseCallBack.onResponse(response.body());
+                    } else {
+                        CommonResponse commonResponse = Utils.parseAPIErrorResponse(response, CommonResponse.class);
+                        if (commonResponse != null) {
+                            mResponseCallBack.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } else {
+                            mResponseCallBack.onError(response.code(), response.message());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SignupUplodaImgResponse> call, Throwable t) {
+                    mResponseCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, getErrorMessage(t));
+                }
+            });
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.something_went_wrong));
+        }
     }
 
     public void getSettings(Context context, final IResponseCallback onResponseCallBack) {
@@ -1110,8 +1161,8 @@ public class RestRequestHandler {
         @Override
         public void onResponse(Call<T> call, Response<T> response) {
             if (response == null || response.body() == null) {
-                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
-                        mContext.getString(R.string.error_try_again) + " ");
+                mCallBack.onError(HTTPStatus.INTERNAL_SERVER_ERROR, StringUtils.EMPTY +
+                        DriverApp.getContext().getString(R.string.error_try_again) + SPACE);
                 return;
             }
             if (response.body().isSuccess()) {
@@ -1247,20 +1298,27 @@ public class RestRequestHandler {
     /**
      * this method will execute api to get booking history stats from kronos
      *
-     * @param context of the activity
+     * @param context            of the activity
      * @param onResponseCallBack callback to send data back on the requested controllers
      */
     public void requestDriverVerifiedBookingStats(Context context, int weekStatus, IResponseCallback onResponseCallBack) {
-        mContext = context;
-        mRestClient = RestClient.getClient(mContext);
-        Call<DriverVerifiedBookingResponse> restCall =
-                mRestClient.requestDriverVerifiedBookingStats(
-                        AppPreferences.getSettings().getSettings().getKronosPartnerSummary(),
-                        AppPreferences.getDriverId(),
-                        AppPreferences.getAccessToken(),
-                        weekStatus);
+        if (AppPreferences.getDriverSettings() != null &&
+                AppPreferences.getDriverSettings().getData() != null &&
+                StringUtils.isNotBlank(AppPreferences.getDriverSettings().getData().getKronosPartnerSummary())) {
+            mContext = context;
+            mRestClient = RestClient.getClient(mContext);
+            Call<DriverVerifiedBookingResponse> restCall =
+                    mRestClient.requestDriverVerifiedBookingStats(
+                            AppPreferences.getDriverSettings().getData().getKronosPartnerSummary(),
+                            AppPreferences.getDriverId(),
+                            AppPreferences.getAccessToken(),
+                            weekStatus);
 
-        restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
+            restCall.enqueue(new GenericRetrofitCallBack<>(onResponseCallBack));
+        } else {
+            Dialogs.INSTANCE.dismissDialog();
+            Utils.appToast(DriverApp.getContext().getString(R.string.settings_are_not_updated));
+        }
     }
 
     public void requestLoadBoard(Context context, IResponseCallback onResponseCallBack, String lat, String lng) {
@@ -1519,6 +1577,114 @@ public class RestRequestHandler {
         }
     }
 
+    /**
+     * call osm reverse code api to get address from latitude/longitude (gps)
+     *
+     * @param latitude      of location from which address is required
+     * @param longitude     of location from which address is required
+     * @param mDataCallback callback to pass the control in case of success and failure
+     * @param context       of the activity
+     */
+    public void callOSMGeoCoderApi(final String latitude, final String longitude,
+                                   final IResponseCallback mDataCallback, Context context) {
+        mContext = context;
+        IRestClient restClient = RestClient.getGooglePlaceApiClient();
+
+        Call<OSMGeoCode> call = restClient.callOSMGeoCoderApi(String.format(ApiTags.GeocodeOSMApis.GEOCODER_URL, latitude, longitude));
+        call.enqueue(new Callback<OSMGeoCode>() {
+            @Override
+            public void onResponse(Call<OSMGeoCode> call, Response<OSMGeoCode> osmGeoCodeResponse) {
+                String address = StringUtils.EMPTY;
+
+                if (osmGeoCodeResponse != null && osmGeoCodeResponse.isSuccessful()) {
+                    OSMGeoCode body = osmGeoCodeResponse.body();
+                    if (body != null && body.getAddress() != null) {
+                        Address geocodeAddress = body.getAddress();
+
+                        String addressFirstPart = StringUtils.EMPTY;
+                        //Use one of these only from house_number, office, amenity or building
+                        if (StringUtils.isNotEmpty(geocodeAddress.getHouse_number())) {
+                            addressFirstPart = geocodeAddress.getHouse_number() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getOffice())) {
+                            addressFirstPart = geocodeAddress.getOffice() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getAmenity())) {
+                            addressFirstPart = geocodeAddress.getAmenity() + SPACE;
+                        } else if (StringUtils.isNotEmpty(geocodeAddress.getBuilding())) {
+                            addressFirstPart = geocodeAddress.getBuilding() + SPACE;
+                        }
+                        address += addressFirstPart;
+
+                        //concat road if found
+                        String addressSecondPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getRoad())) {
+                            addressSecondPart = geocodeAddress.getRoad() + SPACE;
+                        }
+                        address += addressSecondPart;
+
+
+                        //concat neighbourhood if found
+                        String addressThirdPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getNeighbourhood())) {
+                            addressThirdPart = geocodeAddress.getNeighbourhood() + SPACE;
+                        }
+                        address += addressThirdPart;
+
+
+                        //concat town if found
+                        String addressFourthPart = StringUtils.EMPTY;
+                        if (StringUtils.isNotEmpty(geocodeAddress.getTown())) {
+                            addressFourthPart = geocodeAddress.getTown() + SPACE;
+                        }
+                        address += addressFourthPart;
+
+
+                        //if nothing found from Address object from response, assign display_name
+                        //to address by checking its not empty
+                        if (StringUtils.isEmpty(address) && StringUtils.isNotEmpty(body.getDisplay_name())) {
+                            address = body.getDisplay_name();
+                        } else {
+
+
+                            //concat suburb if we found only one from first second or third part of address
+                            if ((address.trim().equals(addressFirstPart.trim()) ||
+                                    address.trim().equals(addressSecondPart.trim()) ||
+                                    address.trim().equals(addressThirdPart.trim())) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getSuburb())) {
+                                address += geocodeAddress.getSuburb() + SPACE;
+                            }
+
+                            //concat hamlet if we found only neighbourhood and no suburb
+                            if (address.trim().equals(addressThirdPart.trim()) &&
+                                    StringUtils.isEmpty(geocodeAddress.getSuburb()) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getHamlet())) {
+                                address += geocodeAddress.getHamlet();
+                            }
+
+                            //concat suburb before address if we found only town
+                            if (address.trim().equals(addressFourthPart.trim()) &&
+                                    StringUtils.isNotEmpty(geocodeAddress.getSuburb())) {
+                                address = geocodeAddress.getSuburb() + SPACE + address;
+                            }
+
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(address)) {
+                        mDataCallback.onResponse(address);
+                    } else {
+                        mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, Constants.NO_ADDRESS_FOUND);
+                    }
+                } else {
+                    mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, Constants.NO_ADDRESS_FOUND);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OSMGeoCode> call, Throwable t) {
+                Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
+    }
+
     public void callGeoCoderApi(final String latitude, final String longitude,
                                 final IResponseCallback mDataCallback, Context context) {
         mContext = context;
@@ -1634,38 +1800,27 @@ public class RestRequestHandler {
         });
     }
 
-    public void getDistanceMatriax(String origin, String destination, final IResponseCallback mDataCallback, Context context) {
+    public void getDistanceMatrix(String origin, String destination, final IResponseCallback mDataCallback, Context context) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<GoogleDistanceMatrixApi> call = restClient.callDistanceMatrixApi(origin, destination, Utils.getApiKeyForDirections(mContext));
-        call.enqueue(new Callback<GoogleDistanceMatrixApi>() {
-            @Override
-            public void onResponse(Call<GoogleDistanceMatrixApi> call, Response<GoogleDistanceMatrixApi> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    mDataCallback.onResponse(response.body());
-                    if (Constants.INVALID_REQUEST.equalsIgnoreCase(response.body().getStatus()) ||
-                            Constants.OVER_QUERY_LIMIT.equalsIgnoreCase(response.body().getStatus())) {
-                        AppPreferences.setDirectionsApiKeyRequired(true);
-                    }
-                } else {
-                    AppPreferences.setDirectionsApiKeyRequired(true);
-                    mDataCallback.onError(0, "Could not get the distance matrix");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<GoogleDistanceMatrixApi> call, Throwable t) {
-                AppPreferences.setDirectionsApiKeyRequired(true);
-                mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + getErrorMessage(t));
-            }
-        });
+        LatLng originLatLng = Utils.getLatLngFromString(origin);
+        LatLng destinationLatLng = Utils.getLatLngFromString(destination);
+
+        Call<BykeaDistanceMatrixResponse> call =
+                restClient.callDistanceMatrixApi(ApiTags.BykeaMaps.DISTANCE_MATRIX,
+                        originLatLng.latitude, originLatLng.longitude,
+                        destinationLatLng.latitude, destinationLatLng.longitude);
+
+        call.enqueue(new GenericRetrofitCallBack<>(mDataCallback));
     }
 
 
     public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000", Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000",
+                AppPreferences.getDriverSettings().getData().getGoogleAutoCompleteApiKey());
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
             public void onResponse(Call<PlaceAutoCompleteResponse> call, Response<PlaceAutoCompleteResponse> response) {
@@ -1688,7 +1843,7 @@ public class RestRequestHandler {
     public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Constants.GOOGLE_PLACE_AUTOCOMPLETE_API_KEY);
+        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Utils.getApiKeyForGeoCoder());
         call.enqueue(new Callback<PlaceDetailsResponse>() {
             @Override
             public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {

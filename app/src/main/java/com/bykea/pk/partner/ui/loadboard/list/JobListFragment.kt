@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
+import com.bykea.pk.partner.dal.util.DIGIT_ZERO
 import com.bykea.pk.partner.databinding.JobListFragBinding
 import com.bykea.pk.partner.ui.activities.HomeActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
@@ -29,6 +30,7 @@ import com.bykea.pk.partner.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.job_list_frag.*
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -51,12 +53,17 @@ class JobListFragment : Fragment() {
     var layoutParamRLZero = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
     var layoutParamRL: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
     var isExpanded = false
+    var coolDownTimeFetchLoadbaord: Long = DIGIT_ZERO.toLong()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layoutParamRLZero.setMargins(0, 0, 0, 0);
         layoutParamRL.setMargins(0, resources.getDimension(R.dimen._minus8sdp).toInt(), 0, 0);
 
         mCurrentActivity = activity as HomeActivity
+
+        if (AppPreferences.getSettings() != null && AppPreferences.getSettings().settings != null) {
+            coolDownTimeFetchLoadbaord = AppPreferences.getSettings().settings.coolDownLoadboardTimer
+        }
 
         viewDataBinding = JobListFragBinding.inflate(inflater, container, false).apply {
 
@@ -95,8 +102,6 @@ class JobListFragment : Fragment() {
                             relativeLayoutBottomSheet.setLayoutParams(layoutParamRL);
                     }
                 })
-
-
             }
 
             listener = object : JobListActionsListener {
@@ -104,7 +109,8 @@ class JobListFragment : Fragment() {
                     mBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
 
-                override fun onRefreshClicked() {
+                override fun onRefreshClicked(view: View) {
+                    Utils.preventMultipleTap(view, coolDownTimeFetchLoadbaord)
                     Utils.logEvent(mCurrentActivity, AppPreferences.getDriverId(),
                             Constants.AnalyticsEvents.ON_LB_REFRESH,
                             AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_REFRESH, null, listAdapter.count))

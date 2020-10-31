@@ -8,6 +8,7 @@ import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.models.data.PlacesResult
 import com.bykea.pk.partner.repositories.places.IPlacesDataHandler
 import com.bykea.pk.partner.repositories.places.PlacesRepository
+import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -31,18 +32,22 @@ class GeocodeStrategyManager
 (val context: Context, val placesDataHandler: IPlacesDataHandler, val prefix: String) {
 
     private val TAG: String = GeocodeStrategyManager.javaClass.name
+
     /**
      * last address fetched by this manager per instance
      */
     private var lastReceivedLocation: String? = null
+
     /**
      * [currentLatLng] of which address is required
      */
     private var currentLatLng: LatLng? = null
+
     /**
      * last lat/lng fetched by this manager per instance
      */
     private var lastLatLng: LatLng? = null
+
     /**
      * repository instance to call google geocode api
      */
@@ -149,19 +154,21 @@ class GeocodeStrategyManager
 
     private fun performCallback(strAddress: String?) {
         lastReceivedLocation = strAddress
-        val placeObject = PlacesResult(StringUtils.EMPTY, strAddress,
-                currentLatLng?.latitude!!, currentLatLng?.longitude!!)
-
-//        placesDataHandler.onPlacesResponse(placeObject)
-        placesDataHandler.onPlacesResponse(placeObject.address)
+        placesDataHandler.onPlacesResponse(strAddress)
     }
 
     /**
      * will obtain location from Google API, calling this method in case of [Geocoder] failure
      */
     private fun obtainFromGoogleApi() {
-        placesRepository.getGoogleGeoCoder(placesDataHandler, currentLatLng?.latitude.toString(), currentLatLng?.longitude.toString(), DriverApp.getContext())
-        Log.e(TAG, "location obtained from PlacesRepository")
+
+        if (AppPreferences.getSettings().settings.isGoogleGeocodeEnable) {
+            placesRepository.getGoogleGeoCoder(placesDataHandler, currentLatLng?.latitude.toString(), currentLatLng?.longitude.toString(), DriverApp.getContext())
+            Log.e(TAG, "location obtained from PlacesRepository")
+        } else {
+            placesRepository.getOSMGeoCoder(placesDataHandler, currentLatLng?.latitude.toString(), currentLatLng?.longitude.toString(), DriverApp.getContext())
+            Log.e(TAG, "location obtained from PlacesRepository")
+        }
     }
 
     companion object {

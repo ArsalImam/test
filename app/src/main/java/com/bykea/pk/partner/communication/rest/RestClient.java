@@ -132,18 +132,6 @@ class RestClient {
 
     static IRestClient getBykeaSignUpApiClient() {
         if (bykeaSignUpretrofitCalls == null) {
-            /* creating an SSLSocketFactory that uses our TrustManager
-            SSLContext sslContext = Utils.getSSLContext(context);
-            if (sslContext != null) {
-                okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
-            }
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-            HttpLoggingInterceptor.Level.NONE);
-            okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.readTimeout(60, TimeUnit.SECONDS);
-            okHttpClient.retryOnConnectionFailure(false);*/
-
             OkHttpClient.Builder okHttpClient = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
             if (BuildConfig.DEBUG)
                 okHttpClient.interceptors().add(new LoggingInterceptor());

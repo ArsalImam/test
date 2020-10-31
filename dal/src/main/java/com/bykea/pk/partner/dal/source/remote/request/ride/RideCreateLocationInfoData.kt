@@ -5,14 +5,14 @@ import android.os.Parcelable
 import com.bykea.pk.partner.dal.util.EMPTY_STRING
 
 open class RideCreateLocationInfoData(
-        var lat: String = EMPTY_STRING,
-        var lng: String = EMPTY_STRING,
+        var lat: String? = EMPTY_STRING,
+        var lng: String? = EMPTY_STRING,
         var address: String? = EMPTY_STRING) : Parcelable {
+
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
-            parcel.readString()) {
-    }
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(lat)

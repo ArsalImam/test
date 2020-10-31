@@ -3,8 +3,12 @@ package com.bykea.pk.partner.dal.source.remote
 import com.bykea.pk.partner.dal.BuildConfig
 import com.bykea.pk.partner.dal.source.Fields
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.DIGIT_TWENTY
+import com.bykea.pk.partner.dal.util.RequestParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -30,7 +34,7 @@ interface Backend {
     /**
      * Get Driver Email Update
      * @param email Driver email
-     * @param _id Driver id 
+     * @param _id Driver id
      * @param token_id Driver access token
      * @return Email is successfully update or not
      */
@@ -160,6 +164,17 @@ interface Backend {
     fun arrivedForJob(@Path("job_id") jobId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
 
     /**
+     * Requests to mark arrived for active job
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/v2/batch/{batch_id}/arrived")
+    fun arrivedAtJobForBatch(@Header("x-app-partner-id") driverId: String,
+                             @Header("x-app-partner-token") token: String,
+                             @Path("batch_id") batchId: String, @Body body: ArrivedAtJobRequest): Call<ArriveAtJobResponse>
+
+    /**
      * Requests to start active job
      * @param jobId Job ID
      * @param body AcceptJobRequest
@@ -169,12 +184,34 @@ interface Backend {
     fun startJob(@Path("job_id") jobId: String, @Body body: StartJobRequest): Call<StartJobResponse>
 
     /**
+     * Requests to start active job
+     * @param jobId Job ID
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @POST("/v2/batch/{batch_id}/start")
+    fun startJobForBatch(@Header("x-app-partner-id") driverId: String,
+                         @Header("x-app-partner-token") token: String,
+                         @Path("batch_id") batchId: String, @Body body: StartJobRequest): Call<StartJobResponse>
+
+    /**
      * Requests to cancel active job
      * @param body AcceptJobRequest
      * @return Call<BaseResponse>
      */
     @POST("/api/v1/driver/cancel")
     fun cancelJob(@Body body: CancelJobRequest): Call<CancelJobBadResponse>
+
+    /**
+     * Requests to cancel active job
+     * @param batchId batch id of the job
+     * @param body AcceptJobRequest
+     * @return Call<BaseResponse>
+     */
+    @PUT("/v2/batch/{batch_id}/partner/cancel")
+    fun cancelJobForBatch(
+            @Header("x-app-partner-id") driverId: String, @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String, @Body body: CancelJobRequest): Call<CancelJobBadResponse>
 
     /**
      * Requests to finish active job
@@ -236,15 +273,14 @@ interface Backend {
     //endregion
 
 
-    @GET("/api/v1/users/getFareEstimation")
+    @GET("/api/v1/fare/estimate/partner")
     fun requestFareEstimation(@Query(Fields.FareEstimation.ID) id: String,
                               @Query(Fields.FareEstimation.TOKEN_ID) tokenId: String,
                               @Query(Fields.FareEstimation.START_LAT) startLat: String,
                               @Query(Fields.FareEstimation.START_LNG) startLng: String,
                               @Query(Fields.FareEstimation.END_LAT) endLat: String,
                               @Query(Fields.FareEstimation.END_LNG) endLng: String,
-                              @Query(Fields.FareEstimation.TYPE) type: String,
-                              @Query(Fields.FareEstimation.RIDE_TYPE) rideType: String): Call<FareEstimationResponse>
+                              @Query(Fields.FareEstimation.SERVICE_CODE) serviceCode: Int): Call<FareEstimationResponse>
 
     @FormUrlEncoded
     @POST("/api/v1/driver/offline/ride/otp")
@@ -262,6 +298,19 @@ interface Backend {
             @Path("trip_id") jobRequestId: String,
             @Body bodyObject: UpdateBykeaCashBookingRequest): Call<UpdateBykeaCashBookingResponse>
 
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     */
+    @GET
+    fun getInvoiceDetails(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String,
+                          @Query(RequestParams.STATE) state: String): Call<FeedbackInvoiceResponse>
+
+    @GET
+    fun getReturnRunBatchInvoice(@Url invoiceUrl: String, @Query(RequestParams.TYPE) type: String): Call<FeedbackInvoiceResponse>
+
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,
                               @Query("type") type: String?,
@@ -272,6 +321,86 @@ interface Backend {
 
     @POST("/api/v1/trips/{job_id}/skip")
     fun skipJobRequest(@Path("job_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
+
+    @POST("/api/v1/batch/{batch_id}/skip")
+    fun skipBatchJobRequest(@Path("batch_id") jobId: String, @Body bodyObject: SkipJobRequest): Call<SkipJobResponse>
+
+    @PUT("/api/v1/trips/{job_id}/details")
+    fun pushTripDetails(@Path("job_id") jobId: String, @Body bodyObject: PushJobDetailsRequest): Call<BaseResponse>
+
+    @PUT("/api/v1/batch/{batch_id}/cancel/partner")
+    fun cancelMultiDeliveryBatchJob(@Path("batch_id") batch: String, @Body bodyObject: CancelBatchJobRequest): Call<BaseResponse>
+
+    @POST("/api/v1/partner/temperature")
+    fun submitTemperature(@Body bodyObject: TemperatureSubmitRequest): Call<TemperatureSubmitResponse>
+
+    @GET("/v2/batch/{batch_id}/bookings")
+    fun getAllDeliveryDetails(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Query("limit") limit: Int = DIGIT_TWENTY
+    ): Call<DeliveryDetailListResponse>
+
+    @GET("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun getSingleBatchDeliveryDetails(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String
+    ): Call<DeliveryDetailSingleTripResponse>
+
+    @POST("/v2/batch/{batch_id}/bookings")
+    fun addDeliveryDetail(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Body deliveryDetails: DeliveryDetails
+    ): Call<DeliveryDetailAddEditResponse>
+
+    @PUT("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun updateDeliveryDetail(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String,
+            @Body deliveryDetails: DeliveryDetails
+    ): Call<DeliveryDetailAddEditResponse>
+
+    @DELETE("/v2/batch/{batch_id}/bookings/{booking_id}")
+    fun removeDeliveryDetail(
+            @Header("x-app-partner-id") driverId: String,
+            @Header("x-app-partner-token") token: String,
+            @Path("batch_id") batchId: String,
+            @Path("booking_id") bookingId: String
+    ): Call<DeliveryDetailRemoveResponse>
+
+    @PATCH("/v2/batch/{batch_id}/update-return-run")
+    fun updateBatchReturnRun(@Header("x-app-partner-id") driverId: String,
+                             @Header("x-app-partner-token") token: String,
+                             @Path("batch_id") batchId: String,
+                             @Body batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest
+    ): Call<BatchUpdateReturnRunResponse>
+
+    @FormUrlEncoded
+    @POST("/api/v1/driver/topupToPassenger")
+    abstract fun topUpPassengerWallet(@Field("_id") _id: String,
+                                      @Field("token_id") token_id: String,
+                                      @Field("tId") tripNo: String,
+                                      @Field("amount") amount: String,
+                                      @Field("pId") passId: String
+    ): Call<TopUpPassengerWalletResponse>
+
+    @GET("/api/v1/partner/fence/check")
+    fun checkFence(@Query("_id") id: String,
+                   @Query("token_id") tokenId: String,
+                   @Query("lat") lat: String,
+                   @Query("lng") lng: String): Call<FenceCheckResponse>
+
+    @GET("/api/v1/driver/settings")
+    fun getDriverSettings(@Query("_id") id: String,
+                   @Query("token_id") tokenId: String): Call<DriverSettingsResponse>
+
 
     companion object {
 

@@ -2,7 +2,7 @@ package com.bykea.pk.partner;
 
 import android.content.Context;
 
-import androidx.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
 
 import com.bykea.pk.partner.communication.socket.WebIO;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
@@ -15,6 +15,7 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.FileUtil;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
 import com.elvishew.xlog.LogConfiguration;
 import com.elvishew.xlog.LogLevel;
@@ -29,6 +30,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
+import com.tilismtech.tellotalksdk.TelloApplication;
 import com.zendesk.logger.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,13 +41,10 @@ import java.io.File;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import zendesk.core.AnonymousIdentity;
-import zendesk.core.Identity;
-import zendesk.core.JwtIdentity;
 import zendesk.core.Zendesk;
 import zendesk.support.Support;
 
-public class DriverApp extends MultiDexApplication {
+public class DriverApp extends TelloApplication {
 
     private static DriverApp mContext;
     private BasicComponent mBasicComponent;
@@ -61,7 +60,9 @@ public class DriverApp extends MultiDexApplication {
     private Emitter.Listener mTripMissedListener = new WebIORequestHandler.MultiDeliveryTripMissedListener();
     private Emitter.Listener mBatachCompletedListener = new WebIORequestHandler.MultiDeliveryTripBatchCompletedListener();
     private Emitter.Listener mBatachCancelledListener = new WebIORequestHandler.MultiDeliveryBatchCancelledByAdminListener();
+    private Emitter.Listener mBatchCancelledByPassengerListener = new WebIORequestHandler.BatchCancelledByPassengerListener();
     private Emitter.Listener mDropOffChangeListener = new WebIORequestHandler.JobDropOffChangeListener();
+    private Emitter.Listener mBatchUpdatedListener = new WebIORequestHandler.BatchUpdatedListener();
 
     private static boolean isChatActivityVisible = false;
 
@@ -155,6 +156,7 @@ public class DriverApp extends MultiDexApplication {
         if (mContext == null) {
             mContext = this;
         }
+        MultiDex.install(mContext);
     }
 
     private Emitter.Listener connectionListener = new Emitter.Listener() {
@@ -182,7 +184,9 @@ public class DriverApp extends MultiDexApplication {
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED, mTripMissedListener);
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_COMPLETED, mBatachCompletedListener);
         WebIO.getInstance().on(ApiTags.MULTI_DELIVERY_SOCKET_BATCH_ADMIN_CANCELLED, mBatachCancelledListener);
+        WebIO.getInstance().on(ApiTags.ON_BATCH_BOOKING_CANCELLED, mBatchCancelledByPassengerListener);
         WebIO.getInstance().on(ApiTags.BOOKING_UPDATED_DROP_OFF, mDropOffChangeListener);
+        WebIO.getInstance().on(ApiTags.BATCH_UPDATED, mBatchUpdatedListener);
         if (AppPreferences.isOnTrip()) {
             WebIORequestHandler.getInstance().registerChatListener();
         }

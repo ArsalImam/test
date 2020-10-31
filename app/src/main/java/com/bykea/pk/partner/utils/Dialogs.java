@@ -9,10 +9,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -31,7 +34,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
+import com.bykea.pk.partner.dal.source.remote.data.Invoice;
 import com.bykea.pk.partner.ui.activities.BaseActivity;
+import com.bykea.pk.partner.ui.common.LastAdapter;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.ui.helpers.IntegerCallBack;
 import com.bykea.pk.partner.ui.helpers.StringCallBack;
@@ -42,16 +47,25 @@ import com.bykea.pk.partner.widgets.FontButton;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 import com.bykea.pk.partner.widgets.FontUtils;
+import com.bykea.pk.partner.widgets.Fonts;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static com.bykea.pk.partner.utils.Constants.COLON;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_FIVE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
+import static com.bykea.pk.partner.utils.Constants.DOT;
 
 //import com.thefinestartist.Base;
 
@@ -70,9 +84,13 @@ public enum Dialogs {
     }
 
     public void dismissDialog() {
+        dismissDialog(mDialog);
+    }
+
+    public void dismissDialog(Dialog dialog) {
         try {
-            if (null != mDialog && isShowing()) {
-                mDialog.dismiss();
+            if (null != dialog && dialog.isShowing()) {
+                dialog.dismiss();
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -94,9 +112,13 @@ public enum Dialogs {
     }
 
     private void showDialog() {
+        showDialog(mDialog);
+    }
+
+    private void showDialog(Dialog dialog) {
         try {
             if (!isShowing()) {
-                mDialog.show();
+                dialog.show();
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -573,10 +595,10 @@ public enum Dialogs {
                                          final String msg) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
-            mDialog = new Dialog(context, R.style.actionSheetTheme);
+            Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_region_out);
             if (StringUtils.isNotBlank(msg)) {
-                ((FontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
+                ((AutoFitFontTextView) mDialog.findViewById(R.id.messageTv)).setText(msg);
             }
             mDialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -585,7 +607,7 @@ public enum Dialogs {
                     Utils.callingIntent(context, number);
                 }
             });
-            showDialog();
+            showDialog(mDialog);
         }
     }
 
@@ -633,7 +655,10 @@ public enum Dialogs {
             mDialog.findViewById(R.id.ivPositive).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
+                    if (StringUtils.isNotBlank(receivedAmountEt.getText().toString()) &&
+                            Integer.valueOf(receivedAmountEt.getText().toString()) == DIGIT_ZERO) {
+                        receivedAmountEt.setError(DriverApp.getContext().getString(R.string.enter_correct_amount));
+                    } else if (Utils.isValidTopUpAmount(receivedAmountEt.getText().toString(), isCourierType)) {
                         dismissDialog();
                         callBack.onCallBack(receivedAmountEt.getText().toString());
                     } else {
@@ -641,7 +666,7 @@ public enum Dialogs {
                         if (isCourierType)
                             amount = AppPreferences.getSettings().getSettings().getVan_partner_topup_limit();
 
-                        receivedAmountEt.setError(DriverApp.getContext().getResources().getString(R.string.amount_cannot_greater, amount));
+                        receivedAmountEt.setError(DriverApp.getContext().getString(R.string.amount_cannot_greater, amount));
                     }
                 }
             });
@@ -675,27 +700,23 @@ public enum Dialogs {
     public void showLocationSettings(final Context context, final int requestCode) {
         if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
             dismissDialog();
-            mDialog = new Dialog(context, R.style.actionSheetTheme);
-            mDialog.setContentView(R.layout.enable_gps_dialog);
+            Dialog dialog = new Dialog(context, R.style.actionSheetTheme);
+            dialog.setContentView(R.layout.enable_gps_dialog);
 
-            ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+            ImageView okIv = dialog.findViewById(R.id.ivPositive);
 
-            okIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (context instanceof BaseActivity) {
-                        dismissDialog();
-                        ((BaseActivity) context).showLocationDialog();
-                    } else {
-                        dismissDialog();
-                        Intent intent = new Intent(
-                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
-                    }
-
+            okIv.setOnClickListener(v -> {
+                if (context instanceof BaseActivity) {
+                    dismissDialog(dialog);
+                    ((BaseActivity) context).showLocationDialog();
+                } else {
+                    dismissDialog(dialog);
+                    Intent intent = new Intent(
+                            Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ((Activity) context).startActivityForResult(intent, Constants.REQUEST_CODE_GPS_AND_LOCATION);
                 }
             });
-            showDialog();
+            showDialog(dialog);
         }
     }
 
@@ -782,6 +803,65 @@ public enum Dialogs {
         });
         mDialog.setCancelable(false);
         showDialog();
+    }
+
+    /**
+     * will show change image dialog
+     *
+     * @param context               of the activity
+     * @param uri                   local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, File uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        showChangeImageDialog(context, uri, null, positiveClickListener, negativeClickListener);
+    }
+
+    /**
+     * will show change image dialog
+     *
+     * @param context               of the activity
+     * @param uri                   global image url
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, String uri, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        showChangeImageDialog(context, null, uri, positiveClickListener, negativeClickListener);
+    }
+
+
+    /**
+     * will show change image dialog
+     *
+     * @param context               of the activity
+     * @param url                   global image url
+     * @param uri                   local file uri
+     * @param positiveClickListener on change image click listener
+     * @param negativeClickListener on tick click listener
+     */
+    public void showChangeImageDialog(Context context, File uri, String url, View.OnClickListener positiveClickListener, View.OnClickListener negativeClickListener) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            mDialog.setContentView(R.layout.dialog_change_image);
+            ImageView ivPicture = mDialog.findViewById(R.id.ivPicture);
+            ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+            View cancelIv = mDialog.findViewById(R.id.llChangeImage);
+            if (uri != null)
+                ivPicture.setImageURI(Uri.fromFile(uri));
+            else
+                Picasso.get().load(Uri.parse(url)).into(ivPicture);
+
+            if (negativeClickListener == null)
+                cancelIv.setVisibility(View.GONE);
+            else
+                cancelIv.setOnClickListener(negativeClickListener);
+            if (positiveClickListener == null)
+                okIv.setOnClickListener(v -> mDialog.dismiss());
+            else
+                okIv.setOnClickListener(positiveClickListener);
+            showDialog();
+        }
     }
 
     /**
@@ -1043,6 +1123,30 @@ public enum Dialogs {
         }
     }
 
+    public void showReturnRunInvoice(Context context, ArrayList<Invoice> invoices, View.OnClickListener onClick) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            mDialog = new Dialog(context, R.style.actionSheetTheme);
+            mDialog.setContentView(R.layout.dialog_return_run_invoice);
+            LastAdapter<Invoice> adapter = new LastAdapter<>(R.layout.adapter_booking_detail_invoice, item -> {
+
+            });
+            RecyclerView mDialogRecyclerView = mDialog.findViewById(R.id.invoiceRecyclerView);
+            mDialogRecyclerView.setAdapter(adapter);
+
+            adapter.setItems(invoices);
+            mDialog.findViewById(R.id.ivPositive).setOnClickListener(v -> {
+                dismissDialog();
+                if (onClick != null)
+                    onClick.onClick(v);
+            });
+            mDialog.setCancelable(false);
+
+            showDialog();
+        }
+    }
+
+
     /**
      * GENERIC DIALOG
      *
@@ -1087,6 +1191,7 @@ public enum Dialogs {
             showDialog();
         }
     }
+
 
     /**
      * Dialog Called From Splash Activity
@@ -1136,6 +1241,221 @@ public enum Dialogs {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param context     : Calling context
+     * @param dataHandler : Use for the callback of strings.
+     */
+    public Dialog showTemperatureDialog(Context context, StringCallBack dataHandler) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            Dialog mDialog = new Dialog(context, R.style.actionSheetTheme);
+            mDialog.setContentView(R.layout.dialog_enter_temperature);
+            try {
+                mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mDialog.setCancelable(false);
+            TextView titleTv = mDialog.findViewById(R.id.titleTv);
+            EditText mEditTextTemperature = mDialog.findViewById(R.id.editTextTemperature);
+            TextView textViewError = mDialog.findViewById(R.id.textViewError);
+
+            Pair<Double, Double> fahrenheitMinMaxLimit = Utils.getMinMaxFahrenheitLimit();
+            titleTv.setText(new SpannableStringBuilder(StringUtils.SPACE)
+                    .append(FontUtils.getStyledTitle(context, context.getString(R.string.fahrenheit),
+                            Fonts.Roboto_Medium.getName()))
+                    .append(FontUtils.getStyledTitle(context, StringUtils.SPACE,
+                            Fonts.Roboto_Medium.getName()))
+                    .append(FontUtils.getStyledTitle(context, context.getString(R.string.enter_your_temperature),
+                            Fonts.Jameel_Noori_Nastaleeq.getName()))
+                    .append(StringUtils.SPACE));
+
+            mEditTextTemperature.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(DIGIT_FIVE, DIGIT_ONE)});
+            mEditTextTemperature.setFocusable(true);
+            mEditTextTemperature.requestFocus();
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(mEditTextTemperature, InputMethodManager.SHOW_FORCED);
+
+            ImageView mPositiveButton = mDialog.findViewById(R.id.positiveBtn);
+
+            mDialog.findViewById(R.id.negativeBtn).setOnClickListener(v -> {
+                mEditTextTemperature.setText(StringUtils.EMPTY);
+                mDialog.dismiss();
+            });
+
+            mEditTextTemperature.addTextChangedListener(new TextWatcherUtil() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mEditTextTemperature.setError(null);
+                    if (s.toString().trim().length() > DIGIT_ZERO && !s.toString().trim().equals(DOT) && Double.parseDouble(s.toString()) > fahrenheitMinMaxLimit.second) {
+                        textViewError.setVisibility(View.VISIBLE);
+                    } else {
+                        textViewError.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            mDialog.setOnShowListener(dialog -> mPositiveButton.setOnClickListener(v -> {
+                if (StringUtils.isEmpty(mEditTextTemperature.getText()) || mEditTextTemperature.getText().toString().trim().equals(DOT) ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) < fahrenheitMinMaxLimit.first ||
+                        Double.parseDouble(mEditTextTemperature.getText().toString()) > fahrenheitMinMaxLimit.second) {
+                    mEditTextTemperature.setError(DriverApp.getContext().getString(R.string.temperature_value_error,
+                            String.valueOf(fahrenheitMinMaxLimit.first), String.valueOf(fahrenheitMinMaxLimit.second)));
+                    mEditTextTemperature.requestFocus();
+                    return;
+                }
+                dataHandler.onCallBack(mEditTextTemperature.getText().toString());
+            }));
+            return mDialog;
+        }
+        return null;
+    }
+
+    public void showCancelDialog(Activity activity, String message, View.OnClickListener onTickClick, View.OnClickListener onCrossClick) {
+        try {
+            if (activity instanceof AppCompatActivity && !activity.isFinishing()) {
+                dismissDialog();
+                mDialog = new Dialog(activity, R.style.actionSheetTheme);
+                mDialog.setContentView(R.layout.dialog_alert_cancel);
+
+                FontTextView textViewMessage = mDialog.findViewById(R.id.textViewMessage);
+                textViewMessage.setText(message);
+
+                ImageView negativeBtn = mDialog.findViewById(R.id.negativeBtn);
+                ImageView positiveBtn = mDialog.findViewById(R.id.positiveBtn);
+
+                if (onTickClick != null) {
+                    negativeBtn.setOnClickListener(onCrossClick);
+                } else {
+                    negativeBtn.setOnClickListener(v -> dismissDialog());
+                }
+
+                if (onTickClick != null) {
+                    positiveBtn.setOnClickListener(onTickClick);
+                } else {
+                    positiveBtn.setOnClickListener(v -> dismissDialog());
+                }
+
+                mDialog.setCancelable(false);
+                showDialog();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Shows Alert Dialog
+     *
+     * @param context   calling Context
+     * @param titleText Title Text
+     * @param message   Message Text
+     * @param onClick   On Positive Button Click callback
+     */
+    public void showAlertDialogNew(Context context, String titleText, String message, View.OnClickListener onClick) {
+        showAlertDialogNew(context, titleText, message, onClick, false);
+    }
+
+    /**
+     * Shows Alert Dialog
+     *
+     * @param context   calling Context
+     * @param titleText Title Text
+     * @param message   Message Text
+     * @param onClick   On Positive Button Click callback
+     */
+    public void showAlertDialogNew(Context context, String titleText, String message, View.OnClickListener onClick, boolean isCancellable) {
+        dismissDialog();
+        mDialog = new Dialog(context, R.style.actionSheetTheme);
+        mDialog.setContentView(R.layout.dialog_permission);
+
+        ImageView okIv = mDialog.findViewById(R.id.ivPositive);
+        ImageView cancelIv = mDialog.findViewById(R.id.ivNegative);
+
+        FontTextView title = mDialog.findViewById(R.id.cancelTitle);
+        FontTextView msg = mDialog.findViewById(R.id.tvErrorMessage);
+
+        title.setText(titleText);
+        msg.setText(message);
+        okIv.setOnClickListener(onClick);
+        cancelIv.setOnClickListener(v -> dismissDialog());
+        mDialog.setCancelable(isCancellable);
+        showDialog();
+    }
+
+    /**
+     * This method creates a dialog to show any message left amount limit
+     *
+     * @param context Calling context
+     * @param amount  Left amount to show
+     */
+    public void showAmountLimitMessageDialog(Context context, int amount) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            dialog.setContentView(R.layout.dialog_general_message_layout);
+            dialog.setCancelable(false);
+
+            AutoFitFontTextView messageAmountTv = dialog.findViewById(R.id.messageAmountTv);
+
+            messageAmountTv.setText(new SpannableStringBuilder(StringUtils.EMPTY)
+                    .append(FontUtils.getStyledTitle(context, DriverApp.getContext().getString(R.string.remaining_limit), Constants.FontNames.JAMEEL_NASTALEEQI))
+                    .append(FontUtils.getStyledTitle(context, COLON, Constants.FontNames.ROBOTO_MEDIUM))
+                    .append(FontUtils.getStyledTitle(context, StringUtils.SPACE, Constants.FontNames.ROBOTO_MEDIUM))
+                    .append(FontUtils.getStyledTitle(context, String.format(DriverApp.getContext().getString(R.string.amount_rs_int), amount), Constants.FontNames.ROBOTO_MEDIUM))
+                    .append(StringUtils.SPACE));
+
+            dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    /**
+     * This method creates a dialog to represent passenger balance as negative
+     *
+     * @param context Calling context
+     */
+    public void showPassengerNegativeDialog(Context context) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            final Dialog dialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            dialog.setContentView(R.layout.dialog_general_passenger_negative_balance);
+            dialog.setCancelable(false);
+
+            dialog.findViewById(R.id.positiveBtn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    /**
+     * This method shows a pop up dialog with Urdu text and Tick as Positive Button
+     *
+     * @param context Calling Context
+     * @param message Message to display
+     */
+    public void showAlertDialogUrduWithTick(Context context, String message) {
+        if (context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) {
+            dismissDialog();
+            Dialog mDialog = new Dialog(context, R.style.actionSheetThemeFullScreen);
+            mDialog.setContentView(R.layout.dialog_alert_tick_cross_urdu);
+            mDialog.findViewById(R.id.negativeBtn).setVisibility(View.GONE);
+            mDialog.findViewById(R.id.positiveBtn).setOnClickListener(v -> dismissDialog(mDialog));
+            FontTextView messageTv = mDialog.findViewById(R.id.messageTv);
+            messageTv.setText(message);
+            showDialog(mDialog);
         }
     }
 }

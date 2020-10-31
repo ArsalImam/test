@@ -30,8 +30,13 @@ android {
         productFlavors {
             local {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.xyz\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.xyz\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"http://52.184.193.109:3000\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://52.184.193.109:4000\""
+            }
+            sandbox {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://sandbox.bykea.net\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"http://52.212.154.126:4000\""
             }
             develop {
                 dimension "env"
@@ -40,8 +45,14 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.xyz\""
-                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.xyz\""
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"https://staging-talos.bykea.dev\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"https://staging-loadboard.bykea.dev\""
+            }
+
+            jenkinsUrl {
+                dimension "env"
+                buildConfigField "String", "FLAVOR_URL_TELOS", "\"$rootProject.ext.jenkinsTalosUrl\""
+                buildConfigField "String", "FLAVOR_URL_LOADBOARD", "\"$rootProject.ext.jenkinsLoadboardUrl\""
             }
             livetesting {
                 dimension "env"
@@ -79,6 +90,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.greenrobot:eventbus:3.0.0'
 
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation ('commons-validator:commons-validator:1.5.0') {

@@ -6,6 +6,7 @@ public class Keys {
      * PREFERENCE KEYS *
      *******************/
     public static final String SETTING_DATA = "SETTING_DATA";
+    public static final String DRIVER_SETTINGS = "DRIVER_SETTINGS";
     public static final String DRIVER_DATA = "DRIVER_DATA";
     public static final String DRIVER_ID = "DRIVER_ID";
     public static final String USER_STATUS = "user_status";
@@ -126,8 +127,10 @@ public class Keys {
 
     /*JOB ACTIVITY CANCEL JOB LISTENER*/
     public static final String BROADCAST_CANCEL_RIDE = "BROADCAST_CANCEL_RIDE";
+    public static final String BROADCAST_CANCEL_BATCH = "BROADCAST_CANCEL_BATCH";
     public static final String BROADCAST_DROP_OFF_UPDATED = "BROADCAST_DROP_OFF_UPDATED";
     public static final String TRIP_DATA_UPDATED = "TRIP_DATA_UPDATED";
+    public static final String BROADCAST_BATCH_UPDATED = "BROADCAST_BATCH_UPDATED";
     public static final String BROADCAST_CANCEL_BY_ADMIN = "BROADCAST_CANCEL_BY_ADMIN";
     public static final String BROADCAST_COMPLETE_BY_ADMIN = "BROADCAST_COMPLETE_BY_ADMIN";
     public static final String BROADCAST_MESSAGE_RECEIVE = "BROADCAST_MESSAGE_RECEIVE_DRIVER";
@@ -208,4 +211,10 @@ public class Keys {
      */
     public static final String LOADBOARD_SELECTED_PICKUP_ZONE = "LOADBOARD_SELECTED_PICKUP_ZONE";
     public static final String LOADBOARD_SELECTED_DROPOFF_ZONE = "LOADBOARD_SELECTED_DROPOFF_ZONE";
+
+    public static final String LAST_PARTNER_TEMPERATURE_SUBMIT = "LAST_PARTNER_TEMPERATURE_SUBMIT";
+    public static final String LAST_SELECTED_MSG_POSITION = "LAST_SELECTED_MSG_POSITION";
+    public static final String LIST_DELIVERY_ACTIVITY_FOREGROUND = "LIST_DELIVERY_ACTIVITY_FOREGROUND";
+    public static final String LAST_SELECTED_FEEDBACK_MSG = "LAST_SELECTED_FEEDBACK_MSG";
+    public static final String SIGNUP_LINKS_TOKENS = "SIGNUP_LINKS_TOKENS";
 }

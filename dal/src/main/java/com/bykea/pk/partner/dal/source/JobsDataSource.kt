@@ -3,7 +3,10 @@ package com.bykea.pk.partner.dal.source
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.remote.request.ChangeDropOffRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailAddEditRequest
 import com.bykea.pk.partner.dal.source.remote.request.UpdateBykeaCashBookingRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 
@@ -31,6 +34,11 @@ interface JobsDataSource {
     fun getJob(jobId: Long, callback: GetJobRequestCallback)
 
     /**
+     * callback Callback to executed
+     */
+    fun getInvoiceDetails(invoiceUrl: String, bookingId: String, callback: GetInvoiceCallback)
+
+    /**
      * Save JobRequest to data source
      *
      * @param job
@@ -55,8 +63,9 @@ interface JobsDataSource {
      *
      * @param jobId Id of JobRequest to be accepted
      * @param callback Response callback
+     * @param isDispatch :
      */
-    fun pickJob(job: Job, callback: AcceptJobRequestCallback)
+    fun pickJob(job: Job, isDispatch: Boolean, callback: AcceptJobRequestCallback)
 
     /**
      * Post acknowledgement of job call
@@ -89,6 +98,13 @@ interface JobsDataSource {
     fun arrivedAtJob(jobId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
 
     /**
+     * Requests arrived at job
+     * @param jobId Job ID
+     * @param callback ArrivedAtJobCallback
+     */
+    fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, callback: ArrivedAtJobCallback)
+
+    /**
      * Requests start job
      * @param jobId Job ID
      * @param address Address at which started the job
@@ -97,12 +113,28 @@ interface JobsDataSource {
     fun startJob(jobId: String, address: String, callback: StartJobCallback)
 
     /**
+     * Requests start job
+     * @param jobId Job ID
+     * @param address Address at which started the job
+     * @param callback StartJobCallback
+     */
+    fun startJobForBatch(batchId: String, address: String, callback: StartJobCallback)
+
+    /**
      * Requests to cancel job
      * @param jobId String
      * @param reason String
      * @param callback CancelJobCallback
      */
     fun cancelJob(jobId: String, reason: String, callback: CancelJobCallback)
+
+    /**
+     * Requests to cancel job
+     * @param jobId String
+     * @param reason String
+     * @param callback CancelJobCallback
+     */
+    fun cancelJobForBatch(jobId: String, reason: String, callback: CancelJobCallback)
 
     /**
      * Requests to finish job
@@ -157,7 +189,7 @@ interface JobsDataSource {
      * @param callback to get results in case of failure or success
      */
     fun getFairEstimation(startLat: String, startLng: String, endLat: String, endLng: String,
-                          type: String, rideType: String, callback: FareEstimationCallback)
+                          serviceCode: Int, callback: FareEstimationCallback)
 
     /**
      * Generate OTP
@@ -207,6 +239,23 @@ interface JobsDataSource {
         fun onDataNotAvailable(errorMsg: String? = "Data Not Available")
     }
 
+    interface GetInvoiceCallback {
+        /**
+         * On successfully Invoice detail loaded
+         *
+         * @param feedbackInvoiceResponse data on received
+         */
+        fun onInvoiceDataLoaded(feedbackInvoiceResponse: FeedbackInvoiceResponse)
+
+        /**
+         * On successfully Invoice detail loaded
+         *
+         * @param errorMessage
+         */
+        fun onInvoiceDataFailed(errorMessage: String?)
+
+    }
+
     /**
      * Callback interface used for fetch JobRequest details
      *
@@ -236,7 +285,7 @@ interface JobsDataSource {
 
         fun onJobRequestAccepted()
 
-        fun onJobRequestAcceptFailed(code: Int, message: String?)
+        fun onJobRequestAcceptFailed(code: Int, subCode: Int?, message: String?)
     }
 
     /**
@@ -399,6 +448,15 @@ interface JobsDataSource {
     }
 
     /**
+     * Callback interface to otp generate
+     */
+    interface PushTripDetailCallback {
+        fun onSuccess()
+
+        fun onFail(code: Int, message: String?) {}
+    }
+
+    /**
      * Callback interface for update booking details
      */
     interface UpdateBykeaCashBookingCallback {
@@ -415,10 +473,73 @@ interface JobsDataSource {
     fun skipJob(jobId: String, callback: SkipJobCallback)
 
     /**
+     * Requests to skip batch job
+     * @param jobId String
+     * @param bookingId Long
+     * @param callback CancelJobCallback
+     */
+    fun skipBatchJob(jobId: String, bookingId: Long, callback: SkipJobCallback)
+
+    fun cancelMultiDeliveryBatchJob(id: String, batchID: String, callback: CancelBatchCallback)
+
+    /**
      * Callback interface for cancel job
      */
     interface SkipJobCallback {
         fun onJobSkip()
         fun onJobSkipFailed()
     }
+
+    /**
+     * Callback interface for cancel job
+     */
+    interface CancelBatchCallback {
+        fun onJobCancel()
+        fun onJobCancelFailed()
+    }
+
+    fun pushTripDetails(jobId: String, filePath: String, callback: PushTripDetailCallback)
+
+    fun submitTemperature(temperature: Float, callback: LoadDataCallback<TemperatureSubmitResponse>)
+
+
+    interface LoadDataCallback<T> {
+        fun onDataLoaded(response: T) {
+        }
+
+        fun onDataNotAvailable(errorCode: Int, reasonMsg: String) {
+
+        }
+
+        @JvmDefault
+        fun onDataNotAvailable(errorCode: Int, subCode: Int?, reasonMsg: String) {
+
+        }
+
+
+        @JvmDefault
+        fun onDataNotAvailable(errorCode: Int, errorBody: BaseResponseError?, reasonMsg: String) {
+
+        }
+    }
+
+    fun getAllDeliveryDetails(batchID: String, callback: LoadDataCallback<DeliveryDetailListResponse>)
+
+    fun getSingleBatchDeliveryDetails(batchID: String, bookingId: String, callback: LoadDataCallback<DeliveryDetailSingleTripResponse>)
+
+    fun addDeliveryDetail(batchID: String, deliveryDetails: DeliveryDetails, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+
+    fun updateDeliveryDetail(batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: LoadDataCallback<DeliveryDetailAddEditResponse>)
+
+    fun removeDeliveryDetail(batchID: String, bookingId: String, callback: LoadDataCallback<DeliveryDetailRemoveResponse>)
+
+    fun updateBatchReturnRun(batchID: String, batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest, callback: LoadDataCallback<BatchUpdateReturnRunResponse>)
+
+    fun topUpPassengerWallet(batchID: String, amount: String, passengerId: String, callback: LoadDataCallback<TopUpPassengerWalletResponse>)
+
+    fun getReturnRunBatchInvoice(invoiceUrl: String, batchID: String, callback: GetInvoiceCallback)
+
+    fun checkFence(lat: String, lng: String, callback: LoadDataCallback<FenceCheckResponse>)
+
+    fun getDriverSettings(callback: LoadDataCallback<DriverSettingsResponse>)
 }

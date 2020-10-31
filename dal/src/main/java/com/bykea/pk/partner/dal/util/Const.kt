@@ -9,6 +9,8 @@ const val DRIVER_ID = "DRIVER_ID"
 const val ACCESS_TOKEN = "ACCESS_TOKEN"
 const val EMPTY_STRING = ""
 const val SERVICE_CODE_SEND = 21
+const val PARTNER_ANDROID = "PARTNER_ANDROID"
+const val BYKEA_DOMAIN = "http://www.bykea.com"
 
 val OTP_SMS = "sms"
 val OTP_CALL = "call"
@@ -26,6 +28,9 @@ val SUB_CODE_1028 = 1028
 val SUB_CODE_1009 = 1009
 val SUB_CODE_1019 = 1019
 
+const val UNAUTHORIZED = 401
+const val UNAUTHORIZED_BROADCAST = "UNAUTHORIZED_USER"
+
 val SUB_CODE_1052_MSG = "Invalid phone number"
 val SUB_CODE_1054_MSG = "Driver has an active trip"
 val SUB_CODE_1055_MSG = "Customer has an active trip"
@@ -42,14 +47,22 @@ val BOOKING_LIST_REQUIRED_DATE_FORMAT = "dd MMM, hh:mm a"
 val BOOKING_ID_TO_REPLACE = ":id"
 
 val LABEL_NOT_AVAILABLE = "N/A"
+val NEGATIVE_DIGIT_ONE = -1
 val DIGIT_ZERO = 0
+val DIGIT_TWENTY = 20
 
+
+object RequestParams {
+    const val STATE: String = "state"
+    const val TYPE: String = "type"
+}
 
 object AvailableTripStatus {
     val STATUS_COMPLETED: String = "completed"
     val STATUS_MISSED: String = "missed"
     val STATUS_CANCELLED: String = "cancelled"
     val STATUS_FEEDBACK: String = "feedback"
+    val STATUS_FINISH: String = "finished"
 }
 
 object CancelByStatus {

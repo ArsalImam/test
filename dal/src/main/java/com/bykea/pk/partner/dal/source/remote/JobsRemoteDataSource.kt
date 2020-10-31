@@ -2,9 +2,14 @@ package com.bykea.pk.partner.dal.source.remote
 
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip
 import com.bykea.pk.partner.dal.source.JobsDataSource
+import com.bykea.pk.partner.dal.source.pref.AppPref
 import com.bykea.pk.partner.dal.source.remote.request.*
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.BatchUpdateReturnRunRequest
+import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
+import com.bykea.pk.partner.dal.util.AvailableTripStatus
+import com.bykea.pk.partner.dal.util.RolesByName
 import retrofit2.Call
 import retrofit2.Response
 
@@ -48,11 +53,12 @@ class JobsRemoteDataSource {
      * Accept job request
      *
      * @param jobRequestId Id of Booking to be accepted
+     * @param isDispatch : Server will check busy or not if it's false
      */
-    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.AcceptJobRequestCallback) {
-        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng)).enqueue(object : Callback<PickJobResponse> {
+    fun pickJob(jobRequestId: Long, driverId: String, token: String, lat: Double, lng: Double, isDispatch: Boolean, callback: JobsDataSource.AcceptJobRequestCallback) {
+        Backend.loadboard.pickJob(driverId, token, jobRequestId, PickJobRequest(lat, lng, isDispatch)).enqueue(object : Callback<PickJobResponse> {
             override fun onSuccess(response: PickJobResponse) = callback.onJobRequestAccepted()
-            override fun onFail(code: Int, message: String?) = callback.onJobRequestAcceptFailed(code, message)
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onJobRequestAcceptFailed(code, subCode, message)
         })
     }
 
@@ -120,6 +126,22 @@ class JobsRemoteDataSource {
     }
 
     /**
+     * Requests to mark arrived for active batch job
+     * @param jobId String
+     * @param driverId String
+     * @param token String
+     * @param lat Double
+     * @param lng Double
+     * @param callback ArrivedAtJobCallback
+     */
+    fun arrivedAtJobForBatch(batchId: String, route: ArrayList<LocCoordinatesInTrip>, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.ArrivedAtJobCallback) {
+        Backend.talos.arrivedAtJobForBatch(driverId, token, batchId, ArrivedAtJobRequest(driverId, token, lat, lng, route)).enqueue(object : Callback<ArriveAtJobResponse> {
+            override fun onSuccess(response: ArriveAtJobResponse) = callback.onJobArrived()
+            override fun onFail(code: Int, message: String?) = callback.onJobArriveFailed()
+        })
+    }
+
+    /**
      * Requests to start active job
      * @param jobId String
      * @param address String
@@ -137,6 +159,23 @@ class JobsRemoteDataSource {
     }
 
     /**
+     * Requests to start active job
+     * @param jobId String
+     * @param address String
+     * @param driverId String
+     * @param token String
+     * @param lat Double
+     * @param lng Double
+     * @param callback StartJobCallback
+     */
+    fun startJobForBatch(batchId: String, address: String, driverId: String, token: String, lat: Double, lng: Double, callback: JobsDataSource.StartJobCallback) {
+        Backend.talos.startJobForBatch(driverId, token, batchId, StartJobRequest(driverId, token, lat, lng, address)).enqueue(object : Callback<StartJobResponse> {
+            override fun onSuccess(response: StartJobResponse) = callback.onJobStarted()
+            override fun onFail(code: Int, message: String?) = callback.onJobStartFailed(message)
+        })
+    }
+
+    /**
      * Requests to cancel active job
      * @param jobId String
      * @param driverId String
@@ -148,6 +187,23 @@ class JobsRemoteDataSource {
      */
     fun cancelJob(jobId: String, driverId: String, token: String, lat: Double, lng: Double, reason: String, callback: JobsDataSource.CancelJobCallback) {
         Backend.talos.cancelJob(CancelJobRequest(driverId, token, lat, lng, jobId, reason)).enqueue(object : Callback<CancelJobBadResponse> {
+            override fun onSuccess(response: CancelJobBadResponse) = callback.onJobCancelled()
+            override fun onFail(code: Int, message: String?) = callback.onJobCancelFailed()
+        })
+    }
+
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param driverId String
+     * @param token String
+     * @param lat Double
+     * @param lng Double
+     * @param reason String
+     * @param callback CancelJobCallback
+     */
+    fun cancelJobForBatch(jobId: String, driverId: String, token: String, lat: Double, lng: Double, reason: String, callback: JobsDataSource.CancelJobCallback) {
+        Backend.talos.cancelJobForBatch(driverId, token, jobId, CancelJobRequest(null, null, lat, lng, null, reason)).enqueue(object : Callback<CancelJobBadResponse> {
             override fun onSuccess(response: CancelJobBadResponse) = callback.onJobCancelled()
             override fun onFail(code: Int, message: String?) = callback.onJobCancelFailed()
         })
@@ -248,9 +304,9 @@ class JobsRemoteDataSource {
      * @param rideType Ride Type
      * @param callback to get results in case of failure or success
      */
-    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, type: String, rideType: String, callback: JobsDataSource.FareEstimationCallback) {
+    fun requestFairEstimation(driverId: String, accessToken: String, startLat: String, startLng: String, endLat: String, endLng: String, serviceCode: Int, callback: JobsDataSource.FareEstimationCallback) {
         Backend.talos.requestFareEstimation(driverId, accessToken,
-                startLat, startLng, endLat, endLng, type, rideType).enqueue(object : Callback<FareEstimationResponse> {
+                startLat, startLng, endLat, endLng, serviceCode).enqueue(object : Callback<FareEstimationResponse> {
             override fun onSuccess(response: FareEstimationResponse) {
                 callback.onSuccess(response)
             }
@@ -332,6 +388,136 @@ class JobsRemoteDataSource {
         Backend.talos.skipJobRequest(jobId, SkipJobRequest(driverId, token)).enqueue(object : Callback<SkipJobResponse> {
             override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
             override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
+    /**
+     * Requests to cancel active job
+     * @param jobId String
+     * @param bookingId Long
+     * @param driverId String
+     * @param token String
+     * @param callback CancelJobCallback
+     */
+    fun skipBatchJob(jobId: String, bookingId: Long, driverId: String, token: String, callback: JobsDataSource.SkipJobCallback) {
+        Backend.talos.skipBatchJobRequest(jobId, SkipJobRequest(driverId, token, bookingId)).enqueue(object : Callback<SkipJobResponse> {
+            override fun onSuccess(response: SkipJobResponse) = callback.onJobSkip()
+            override fun onFail(code: Int, message: String?) = callback.onJobSkipFailed()
+        })
+    }
+
+    fun pushTripDetails(jobId: String, filePath: String, driverId: String, accessToken: String, callback: JobsDataSource.PushTripDetailCallback) {
+        Backend.talos.pushTripDetails(jobId, PushJobDetailsRequest(driverId, accessToken, arrayOf(filePath))).enqueue(object : Callback<BaseResponse> {
+            override fun onSuccess(response: BaseResponse) = callback.onSuccess()
+            override fun onFail(code: Int, message: String?) = callback.onFail(code, message)
+        })
+    }
+
+    fun cancelMultiDeliveryBatchJob(jobId: String, reason: String, driverId: String, accessToken: String, lat: Double, lng: Double, callback: JobsDataSource.CancelBatchCallback) {
+        Backend.talos.cancelMultiDeliveryBatchJob(jobId, CancelBatchJobRequest(driverId, accessToken, lat, lng, reason)).enqueue(object : Callback<BaseResponse> {
+            override fun onSuccess(response: BaseResponse) = callback.onJobCancel()
+            override fun onFail(code: Int, message: String?) = callback.onJobCancelFailed()
+        })
+    }
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [callback] this will response back on data/error received
+     */
+    fun getInvoiceDetails(invoiceUrl: String, callback: JobsDataSource.GetInvoiceCallback) {
+        Backend.talos.getInvoiceDetails(invoiceUrl, RolesByName.CANCEL_BY_PARTNER.toLowerCase(),
+                AvailableTripStatus.STATUS_FINISH).enqueue(object : Callback<FeedbackInvoiceResponse> {
+            override fun onSuccess(response: FeedbackInvoiceResponse) = callback.onInvoiceDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
+        })
+    }
+
+    /**
+     * this method can be used to fetch invoice details against the booking id
+     *
+     * [invoiceUrl] url of the api, will be received from settings
+     * [callback] this will response back on data/error received
+     */
+
+    fun getReturnRunBatchInvoice(invoiceUrl: String, callback: JobsDataSource.GetInvoiceCallback) {
+        Backend.talos.getReturnRunBatchInvoice(invoiceUrl, RolesByName.CANCEL_BY_PARTNER.toLowerCase()).enqueue(object : Callback<FeedbackInvoiceResponse> {
+            override fun onSuccess(response: FeedbackInvoiceResponse) = callback.onInvoiceDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onInvoiceDataFailed(message)
+        })
+    }
+
+    fun submitTemperature(submitTemperatureSubmitRequest: TemperatureSubmitRequest, callback: JobsDataSource.LoadDataCallback<TemperatureSubmitResponse>) {
+        Backend.talos.submitTemperature(submitTemperatureSubmitRequest).enqueue(object : Callback<TemperatureSubmitResponse> {
+            override fun onSuccess(response: TemperatureSubmitResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+
+        })
+    }
+
+    fun getAllDeliveryDetails(driverId: String, accessToken: String, batchID: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailListResponse>) {
+        Backend.talos.getAllDeliveryDetails(driverId, accessToken, batchID).enqueue(object : Callback<DeliveryDetailListResponse> {
+            override fun onSuccess(response: DeliveryDetailListResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun getSingleBatchDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailSingleTripResponse>) {
+        Backend.talos.getSingleBatchDeliveryDetails(driverId, accessToken, batchID, bookingId).enqueue(object : Callback<DeliveryDetailSingleTripResponse> {
+            override fun onSuccess(response: DeliveryDetailSingleTripResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun addDeliveryDetails(driverId: String, accessToken: String, batchID: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        Backend.talos.addDeliveryDetail(driverId, accessToken, batchID, deliveryDetails).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
+            override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) = callback.onDataNotAvailable(code, errorBody, message.toString())
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onDataNotAvailable(code, subCode, message.toString())
+        })
+    }
+
+    fun updateDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, deliveryDetails: DeliveryDetails, callback: JobsDataSource.LoadDataCallback<DeliveryDetailAddEditResponse>) {
+        Backend.talos.updateDeliveryDetail(driverId, accessToken, batchID, bookingId, deliveryDetails).enqueue(object : Callback<DeliveryDetailAddEditResponse> {
+            override fun onSuccess(response: DeliveryDetailAddEditResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, errorBody: BaseResponseError?, message: String?) = callback.onDataNotAvailable(code, errorBody, message.toString())
+            override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onDataNotAvailable(code, subCode, message.toString())
+        })
+    }
+
+    fun removeDeliveryDetails(driverId: String, accessToken: String, batchID: String, bookingId: String, callback: JobsDataSource.LoadDataCallback<DeliveryDetailRemoveResponse>) {
+        Backend.talos.removeDeliveryDetail(driverId, accessToken, batchID, bookingId).enqueue(object : Callback<DeliveryDetailRemoveResponse> {
+            override fun onSuccess(response: DeliveryDetailRemoveResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun updateBatchReturnRun(driverId: String, accessToken: String, batchID: String, batchUpdateReturnRunRequest: BatchUpdateReturnRunRequest, callback: JobsDataSource.LoadDataCallback<BatchUpdateReturnRunResponse>) {
+        Backend.talos.updateBatchReturnRun(driverId, accessToken, batchID, batchUpdateReturnRunRequest).enqueue(object : Callback<BatchUpdateReturnRunResponse> {
+            override fun onSuccess(response: BatchUpdateReturnRunResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun topUpPassengerWallet(driverId: String, accessToken: String, tripNo: String, amount: String, passengerId: String, callback: JobsDataSource.LoadDataCallback<TopUpPassengerWalletResponse>) {
+        Backend.talos.topUpPassengerWallet(driverId, accessToken, tripNo, amount, passengerId).enqueue(object : Callback<TopUpPassengerWalletResponse> {
+            override fun onSuccess(response: TopUpPassengerWalletResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun checkFence(driverId: String, accessToken: String, lat: String, lng: String, callback: JobsDataSource.LoadDataCallback<FenceCheckResponse>) {
+        Backend.talos.checkFence(driverId, accessToken, lat, lng).enqueue(object : Callback<FenceCheckResponse> {
+            override fun onSuccess(response: FenceCheckResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun getDriverSettings(driverId: String, accessToken: String, callback: JobsDataSource.LoadDataCallback<DriverSettingsResponse>) {
+        Backend.talos.getDriverSettings(driverId, accessToken).enqueue(object : Callback<DriverSettingsResponse> {
+            override fun onSuccess(response: DriverSettingsResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
 }

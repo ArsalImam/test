@@ -327,9 +327,9 @@
         <item>ناكام - پتہ نہیں ملا</item>
     </string-array>
     <string-array name="bykea_cash_status_messages">
-        <item>کامیاب ادائیگی</item>
-        <item>ناكام - ادائیگی مکمل نہیں ہو سکی</item>
-        <item>ناكام - ادائیگی کرنے والا موجود نہیں  ہے</item>
+        <item>\u0020کامیاب ادائیگی\u0020</item>
+        <item>\u0020ناكام - ادائیگی مکمل نہیں ہو سکی\u0020</item>
+        <item>\u0020ناكام - ادائیگی کرنے والا موجود نہیں  ہے\u0020</item>
     </string-array>
     <string name="cancel_reason">Please select cancellation reason.</string>
     <string name="amount_cannot_greater">Amount can not be more than %1$s</string>
@@ -339,11 +339,13 @@
     <!--Testing verified commit-->
 
     <string name="how_it_works">How it Works</string>
+    <string name="offline_kamai">Offline Kamai</string>
     <string name="no_browser_found_error">Browser not found on Device</string>
 
     <string name="booking_already_taken_title">معذرت!</string>
     <string name="booking_already_taken_msg">یہ بکنگ کسی اور پارٹنر نے اسٹارٹ کرلی ہے</string>
     <string name="no_voice_note_available">No voice note available</string>
+    <string name="no_file_available">No file attached</string>
     <string name="enter_your_ip">enter your ip</string>
     <string name="enter_valid_ip">enter valid url</string>
     <string name="enter_your_loadboard_ip">enter your loadboard ip</string>
@@ -442,6 +444,34 @@
         <item>I have arrived</item>
     </string-array>
 
+    <string-array name="batch_started_messages_ur">
+        <item>\u0020میں لوکیشن پر پہنچ گیا ہوں\u0020</item>
+        <item>\u0020براۓ مہربانی مجھے کال کریں۔\u0020</item>
+        <item>\u0020براۓ مہربانی وصول کرنے والے کو اطلاع دے دیں۔\u0020</item>
+        <item>\u0020لوکیشن واٹس ایپ کر سکتے ہین؟\u0020</item>
+    </string-array>
+
+    <string-array name="batch_started_messages_en">
+        <item>I have arrived at the location.</item>
+        <item>Please call me.</item>
+        <item>Please inform the consignee.</item>
+        <item>Can you send me the location on WhatsApp</item>
+    </string-array>
+
+    <string-array name="batch_pre_arrive_messages_ur">
+        <item>\u0020آپ کی لوکیشن صحیح ڈلی ہوئ ہے؟\u0020</item>
+        <item>\u0020میں آپ کی طرف آ رہا ہوں۔\u0020</item>
+        <item>\u0020راستہ سمجھا دیں یا نزدیک کوئ جگہ بتا دیں۔\u0020</item>
+        <item>\u0020میں راستہ میں ہوں لیکن 5 منٹ لیٹ ہو سکتا ہوں۔\u0020</item>
+    </string-array>
+
+    <string-array name="batch_pre_arrive_messages_en">
+        <item>Is your location correct?</item>
+        <item>I am coming towards the location.</item>
+        <item>Explain the route or point to a nearby location.</item>
+        <item> I\'m on my way but may be 5 minutes late.</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
 
     <string name="offline_rides_en">Offline Rides</string>
@@ -487,6 +517,8 @@
     <string name="enter_amount_error">\u0020درج کردہ رقم\u0020</string>
     <string name="amount_not_more">\u0020روپے سے زیادہ اور 50 روپے سے کم نہیں ہوسکتی۔\u0020</string>
     <string name="alphabets">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="alphanumeric">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890</string>
+    <string name="alphanumeric_address">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/.#,-</string>
     <string name="alphanumeric_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="lb_bykea_call_center">Bykea Call Center</string>
     <string name="bykea_cash_utility_bill">\u0020بل کی ادائیگی\u0020</string>
@@ -500,6 +532,7 @@
     <string name="customer_name">\u0020کسٹمر کا نام\u0020</string>
     <string name="enter_customer_name">Customer Name</string>
     <string name="enter_customer_name_hint">Customer Name</string>
+    <string name="enter_sender_name_hint">Sender\'s Name</string>
     <string name="enter_correct_customer_name">Please enter correct customer name</string>
     <string name="muntakhib_manzil">منزل</string>
     <string name="commission_text_urdu">بائیکیاکمیشن</string>
@@ -527,4 +560,70 @@
     <string name="booking_urdu">بکنگز</string>
     <string name="order_number">Order #</string>
     <string name="booking_ur">\u0020بکنگ\u0020</string>
+    <string name="empty_string_sandwich_placeholder">\u0020%1$s\u0020</string>
+    <string name="advantages">\u0020فوائد\u0020</string>
+    <string name="you_are_going_to_offline">\u0020آپ آف لائن ہورہے ہیں۔\u0020</string>
+    <string name="manzil">Manzil</string>
+    <string name="mobile_number_mendatory">Mobile Number*</string>
+    <string name="receiver_name_hint">Receiver Name</string>
+    <string name="complete_address">Complete Address</string>
+    <string name="parcel_details">پارسل کی تفصیلات</string>
+    <string name="parcel_value">Parcel Value*</string>
+    <string name="order_number_hint">Order Number</string>
+    <string name="cod_amount">COD Amount</string>
+    <string name="record_voice_message">وائیس میسیج ریکورڈ کریں</string>
+    <string name="gps_address_hint">GPS Address*</string>
+    <string name="consignee_name">Consignee Name</string>
+    <string name="consignees_name">Consignee\'s Name</string>
+    <string name="empty_formatting">%s</string>
+    <string name="formatting_with_street">Street # %s</string>
+    <string name="formatting_with_order">Order # %s</string>
+    <string name="formatted_name">%s (%s)</string>
+    <string name="change_it">تبدیل کریں</string>
+    <string name="valid_image_required">وصول کردہ کا نام، موبائل نمبر، اور شناختی کارڈ یا دستخط کی تصویر درج کریں</string>
+    <string name="enter_your_temperature">اپنا درجہ حرارت درج کریں</string>
+    <string name="temperature_value_hint">98.2</string>
+    <string name="fahrenheit">(°F)</string>
+    <string name="numbers_with_decimal">0123456789.</string>
+    <string name="temperature_value_error">Durust darja–e–harrarat darj karein (%s - %s°F kay darmiyan)</string>
+    <string name="temperature_error">\u0020آپ کو بخار ہے ، براہ مہربانی  ٹیسٹ کروائیں۔\u0020</string>
+    <string name="cash_on_delivery_ur">\u0020کیش آن ڈیلیوری\u0020</string>
+    <string name="cancel_with_question_mark">\u0020کینسل؟\u0020</string>
+    <string name="permission_required_msg">For the best Bykea experience, please enable Permission -> Location &amp; Phone in the application settings.></string>
+    <string name="permission_msg_audio_settings">To record/play audio message, please enable Permission -> Microphone &amp; Storage in the application settings.</string>
+    <string name="permission_msg_audio">Bykea needs Microphone &amp; Storage Permissions to record/play audio message, please enable these permissions for better user experience.</string>
+    <string name="select_gps_address">Please select gps address</string>
+    <string name="enter_parcel_value">Please enter parcel value</string>
+    <string name="enter_correct_parcel_value">Please enter correct parcel value</string>
+    <string name="button_text_navigation">میپ لوکیشن</string>
+    <string name="questino_mukammal">\u0020مکمل؟\u0020</string>
+    <string name="call_sender">Call Sender</string>
+    <string name="call_recipent">Call Recipient</string>
+    <string name="enter_cod_amount">Please enter cod amount</string>
+    <string name="enter_correct_cod_amount">Please enter correct cod amount</string>
+    <string name="successful">\u0020کامیاب\u0020</string>
+    <string name="unsuccessful">\u0020ناکام\u0020</string>
+    <string name="return_booking">\u0020واپسی کی بکنگ\u0020</string>
+    <string name="your_cash_limit_is_end">\u0020آپ کی کیش لیمیٹ ختم ہوگئی ہے\u0020</string>
+    <string name="remaining_limit">\u0020بقیہ لیمیٹ\u0020</string>
+    <string name="error_uploading_file">Error in uploading file, please try again</string>
+    <string name="sender">\u0020بھیجنے والا\u0020</string>
+    <string name="return_run">\u0020بھیجنے والے کے پاس جائیں</string>
+    <string name="return_run_spinner">\u0020واپسی کی بکنگ\u0020</string>
+    <string name="re_route">\u0020کوئی اور پتہ درج کریں\u0020</string>
+    <string name="new_address">نیا پتہ</string>
+    <string name="goto_purchaser">واپس بھیجنے والے کے پاس</string>
+    <string name="enter_correct_amount">Please enter correct amount</string>
+    <string name="customer_will_tell">کسٹمر بتائے گا</string>
+    <string name="parcel_value_cannot_greater">Parcel value can not be more than</string>
+    <string name="customer_wallet_is_negative">\u0020کسٹمر کا والٹ منفی ہے۔ برائے مہربانی\u0020</string>
+    <string name="top_up_customer_wallet">\u0020کسٹمر کا والٹ  ٹاپ آپ کریں۔\u0020</string>
+    <string name="fence_error">Non Service Area</string>
+    <string name="account_blocked_wallet_amount_not_paid">\u0020گزشتہ دن تک کا والٹ بیلنس جمع نہ کرنے کی وجہ سے آپ کا اکاؤنٹ بلاک ہو گیا ہے۔\u0020</string>
+    <string name="tello_trip_template">Trip #%s,\n%s</string>
+    <string name="batch_update_by_passenger" translatable="false">Batch has been Updated by Passenger.</string>
+    <string name="settings_are_not_updated">Settings are not updated. please re-login</string>
+    <string name="reference">Reference</string>
+    <string name="reference_ur">\u0020حوالہ\u0020</string>
+    <string name="city">\u0020شہر\u0020</string>
 </resources>

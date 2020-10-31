@@ -7,6 +7,10 @@
 
         <import type="android.view.View" />
 
+        <import type="com.bykea.pk.partner.utils.Utils" />
+
+        <import type="com.bykea.pk.partner.utils.Constants.ServiceCode" />
+
         <variable
             name="viewmodel"
             type="com.bykea.pk.partner.ui.loadboard.detail.JobDetailViewModel" />
@@ -45,9 +49,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgViewDelivery"
-                    android:layout_width="@dimen/_35sdp"
-                    android:layout_height="match_parent"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
                     app:serviceCode="@{viewmodel.job.service_code}"
                     tools:src="@drawable/bhejdo_no_caption" />
             </LinearLayout>
@@ -79,7 +85,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:text="@{`Rs. ` + (int)viewmodel.job.fare_est}"
+                    android:text="@{viewmodel.job.fare_est_str != null ? `Rs. ` + viewmodel.job.fare_est_str : viewmodel.job.fare_est == 0 ? `?` : `Rs. ` + viewmodel.job.fare_est + (viewmodel.job.service_code == ServiceCode.NEW_BATCH_DELIVERY ? `+` : ``)}"
                     android:textColor="@color/color_06A833"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
@@ -278,7 +284,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="@{viewmodel.job.sender.name}"
+                            android:text="@{viewmodel.formattedSenderName}"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:goneUnless="@{viewmodel.job.sender.name != null}"
@@ -341,18 +347,35 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{` ` + viewmodel.job.dropoff.zone_ur}"
+                                        android:text='@{viewmodel.job.dropoff.zone_ur.equals(`?`) ?  ` ` + @string/customer_btayega :` ` + viewmodel.job.dropoff.zone_ur}'
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
+                                        android:visibility="gone"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
+                                        app:goneUnless="@{viewmodel.job.trips == null || viewmodel.job.trips.size() == 1}"
                                         tools:text="@string/nazimabad_ur" />
+
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/recViewTrips"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_75sdp"
+                                        android:layout_marginStart="@dimen/_40sdp"
+                                        android:layout_marginLeft="@dimen/_40sdp"
+                                        android:layout_marginTop="@dimen/_3sdp"
+                                        android:layout_marginEnd="@dimen/_40sdp"
+                                        android:layout_marginRight="@dimen/_40sdp"
+                                        app:goneUnless="@{viewmodel.job.trips != null  &amp;&amp;  viewmodel.job.trips.size() > 1}"
+                                        app:items="@{viewmodel.job.trips}"
+                                        app:layoutManager="LinearLayoutManager"
+                                        tools:itemCount="4"
+                                        tools:listitem="@layout/list_item_trips" />
 
                                     <TextView
                                         android:id="@+id/tVEstimatedDistanceDropOff"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="@dimen/_minus6sdp"
-                                        android:text="@{Integer.toString(viewmodel.job.dropoff.distance/1000)}"
+                                        android:text="@{Utils.isNewBatchService(viewmodel.job.service_code) &amp;&amp; viewmodel.job.dropoff.distance == 0 ? `?` : Integer.toString(viewmodel.job.dropoff.distance/1000)}"
                                         android:textColor="@color/blue_lightest"
                                         android:textSize="@dimen/_18sdp"
                                         android:textStyle="bold"
@@ -367,7 +390,8 @@
                                         android:text="@{` ` + @string/kilometer_ur}"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/_14sdp"
-                                        app:fontName="jameel_noori_nastaleeq.ttf" />
+                                        app:fontName="jameel_noori_nastaleeq.ttf"
+                                        tools:text="@string/kilometer_ur" />
                                 </LinearLayout>
 
                             </androidx.cardview.widget.CardView>
@@ -382,6 +406,7 @@
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
                                 android:onClick="@{() -> listener.onNavigateToMap(false,viewmodel.job.pickup.lat, viewmodel.job.pickup.lng, viewmodel.job.dropoff.lat, viewmodel.job.dropoff.lng)}"
+                                app:invisibleUnless="@{!Utils.isNewBatchService(viewmodel.job.service_code)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>

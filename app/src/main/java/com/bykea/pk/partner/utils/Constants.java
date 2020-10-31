@@ -9,10 +9,14 @@ public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
+    public static final int DIGIT_FIVE = 5;
+    public static final int DIGIT_EIGHT = 8;
     public static final int DIGIT_TEN = 10;
+    public static final int DIGIT_THIRTY = 30;
     public static final int DIGIT_SIXTY = 60;
     public static final int DIGIT_HUNDRED = 100;
     public static final int DIGIT_THOUSAND = 1000;
+    public static final double DECIMAL_THOUSAND = 1000.0;
     public static final int NEGATIVE_DIGIT_ONE = -1;
 
     public static final int PRIORITY_ONE = 1;
@@ -96,20 +100,23 @@ public class Constants {
     public static final String S3_OFFLINE_DELIVERY_ICON_URL = "https://bykea-assets.s3-us-west-2.amazonaws.com/icons/ic_offline_delivery.png";
     public static final String CREATOR_PASSENGER = "PASSENGER_ANDROID";
     public static final String ANDROID = "ANDROID";
+    public static final int NUMBER_OF_CHARS_IN_LINE = 40;
+    public static final int OFFSET_FOR_SINGLE_LINE = 37;
+    public static final String IOS = "IOS";
+    public static final String PLUS = "+";
+    public static final String API = "API";
+    public static final String DOCS = "doc";
+    public static final int REQ_IMAGE = 1011;
+    public static final String POD = "pod";
+    public static final String CHAR_HYPHEN = "-";
+    public static final String BYKEA_DOCUMENTS = "BykeaDocument";
+    public static final String NO_ADDRESS_FOUND = "No Address Found";
 
-    private static final String GOOGLE_PLACE_SERVER_API_KEY_DEBUG = "AIzaSyDbLexawbNFi_cA3DPKtn0BJc_L3HMCpwk";
-    private static final String GOOGLE_PLACE_SERVER_API_KEY_LIVE = "AIzaSyBWfX7y01M4x03xDl-yOBJ9gqEifB7HPDY";
-    public static final String HOW_IT_WORKS_WEB_URL = "https://www.bykea.com/partner-videos";
+    public static final String HOW_IT_WORKS_WEB_URL = "https://bykea.com/partner-videos.php";
+    public static final String OFFLINE_KAMAI_WEB_URL = "http://help.bykea.com/offline-kamai.php";
 
     //AIzaSyClj3C4IYReLc1ioHsiSdKAOz6xpYXK5x4 this key is giving query limit error
     //we have replaced the passenger's app debug autocomplete key
-    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG = "AIzaSyALb6BDq-cw_kWWCaiNw50eIthPzI9wISA";
-    private static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE = "AIzaSyAafW-AwnS0kYt1F5VLVkeBQjWPlM6LDQA";
-
-
-    public static final String GOOGLE_PLACE_SERVER_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_SERVER_API_KEY_DEBUG : GOOGLE_PLACE_SERVER_API_KEY_LIVE;
-    public static final String GOOGLE_PLACE_AUTOCOMPLETE_API_KEY = BuildConfig.DEBUG ? GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_DEBUG : GOOGLE_PLACE_AUTOCOMPLETE_API_KEY_LIVE;
-
     public static final String CONFIRM_DROPOFF_ADDRESS_RESULT = "CONFIRM_DROPOFF_ADDRESS_RESULT";
 
     public static final String REPLACE_CITY = "-replace-";
@@ -157,14 +164,33 @@ public class Constants {
     public static final String BOOKING_DETAIL_VIEW_TYPE_RATING = "rating";
     @NotNull
     public static final String COMMA = ",";
+    public static final String DOT = ".";
+    public static final String COLON = ":";
     public static final String NEAR_LBL = "Near ";
     public static final int DIGIT_THREE = 3;
     @Nullable
     public static final int REQUEST_CODE_SUBMIT_COMPLAIN = 1001;
 
+    public static final int MIC_BLINK_ANIMATION_DURATION = 500;
+    public static final float ANIMATION_SCALE_XY = 0.0f;
+    public static final float ANIMATION_SCALE_TO_XY = 1.0f;
+    public static final float ANIMATION_PIVOT_XY = 0.5f;
+
+    public static int BASKET_DELTA_TO_Y_DIFF = 90;
+    public static int BASKET_DELTA_FROM_Y_DIFF = 130;
+    public static int SHOW_VIEW_ANIMATION_DELAY = 250;
+    public static int HIDE_VIEW_ANIMATION_DELAY = 350;
+    public static int SHOW_VIEW_HANDLER_DELAY = 350;
+    public static int HIDE_VIEW_HANDLER_DELAY = 550;
+
     public static class CallType {
         public static final String SINGLE = "single";
         public static final String BATCH = "batch";
+        public static final String NEW_BATCH = "batch_v2";
+        public static final String NOD = "NOD";
+        public static final String COD = "COD";
+        public static final String PURCHASE = "Purchase";
+        public static final String SAWARI = "Sawari";
     }
 
 
@@ -172,7 +198,9 @@ public class Constants {
         public static final String NOTIFICATION_CHANNEL_ID = "bykea_p_channel_id_for_loc";
         public static final String NOTIFICATION_CHANNEL_NAME = "Bykea Active/Inactive Status";
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
-
+        public static final String CONTENT_AVAILABLE_CHANNEL = "content-available-Channel";
+        public static final String DATA_TYPE_TELLO_VAL = "content-available-IM";
+        public static final String DATA_TYPE_TELLO = "jobCode";
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
     }
@@ -204,6 +232,7 @@ public class Constants {
     public static final int REQUEST_CODE_GPS_AND_LOCATION = 9090;
 
     public final static String ACTION = "action";
+    public final static String MSG = "msg";
     public static final int IN_ACTIVE_MUSIC_SOUND = 5000;
 
 
@@ -258,6 +287,11 @@ public class Constants {
         public static final String FROM = "from";
         public static final String FLOW_FOR = "FLOW_FOR";
         public static final String OFFLINE_RIDE = "OFFLINE_RIDE";
+        public static final int ADD_DELIVERY_DETAILS = DIGIT_ONE;
+        public static final int EDIT_DELIVERY_DETAILS = DIGIT_TWO;
+        public static final int VIEW_DELIVERY_DETAILS = DIGIT_THREE;
+        public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
+        public static final String FAILED_BOOKING_ID = "FAILED_BOOKING_ID";
     }
 
     public static class Broadcast {
@@ -283,6 +317,11 @@ public class Constants {
 
     public static class RequestCode {
         public final static int SCAN_FINGER_PRINTS = 123;
+        public static final int PERMISSIONS_REQUEST_FOR_AUDIO_RECORDING_FROM_SETTINGS = 1089;
+        public static final int REQUEST_AUDIO_PERMISSION = 9998;
+        public static final int RC_ADD_DELIVERY_DETAILS = 1000;
+        public static final int RC_EDIT_DELIVERY_DETAILS = 1001;
+        public static final int RC_ADD_EDIT_DELIVERY_DETAILS = 1002;
     }
 
     public static class TimeFormats {
@@ -359,6 +398,7 @@ public class Constants {
     public final static int MAX_LIMIT_LOAD_BOARD = 10;
 
     public final static String RIDE_TYPE_FOOD_DELIVERY = "FoodDelivery";
+    public final static String NOT_AVAILABLE = "N/A";
 
     /**
      * Constant for checking delivery status whether is successful or not - Using is FeedbackActivity
@@ -417,12 +457,16 @@ public class Constants {
         public static final int OLD_COURIER = 26;
 
         public static final int SEND = 21;
+        public static final int MULTI_DELIVERY = 0;
+        public static final int NEW_BATCH_DELIVERY = 100;
+        public static final int NEW_BATCH_DELIVERY_COD = 101;
         public static final int SEND_COD = 22;
         public static final int RIDE = 23;
         public static final int OFFLINE_RIDE = 24;
         public static final int MART = 25;
         public static final int MOBILE_TOP_UP = 27;
         public static final int MOBILE_WALLET = 28;
+        public static final int FOOD = 36;
         public static final int BANK_TRANSFER = 29;
         public static final int UTILITY = 30;
         public static final int OFFLINE_DELIVERY = 31;
@@ -539,6 +583,7 @@ public class Constants {
         public static final String JAMEEL_NASTALEEQI = "jameel_noori_nastaleeq.ttf";
         public static final String OPEN_SANS_REQULAR = "open_sans_regular.ttf";
         public static final String OPEN_SANS_BOLD = "open_sans_semi_bold.ttf";
+        public static final String ROBOTO_MEDIUM = "roboto_medium.ttf";
     }
 
     /***
@@ -550,6 +595,7 @@ public class Constants {
         public static final int APP_FORCE_UPDATE = 1001;
         public static final int DRIVER_LAT_LNG_ZERO = 1002;
         public static final int DRIVER_ACCOUNT_BLOCKED = 1003;
+        public static final int DRIVER_ACCOUNT_BLOCKED_BY_ADMIN = 1101;
         public static final int DRIVER_LICENSE_EXPIRED = 1004;
         public static final int DRIVER_REGION_NOT_ALLOWED = 1005;
         public static final int MULTIPLE_CANCELLATION_BLOCK = 1007;
@@ -560,6 +606,8 @@ public class Constants {
         public static final int LOADBOARD_BOOKING_ALREADY_TAKEN = 1012;
         public static final int LOADBOARD_ALREADY_IN_TRIP = 1013;
         public static final int ERROR_MSG_CODE = 1050;
+        public static final int INSUFFIECIENT_PASSENGER_WALLET = 1028;
+        public static final int BOOKING_ALREADY_TAKEN = 4005;
     }
 
     /**
@@ -599,6 +647,7 @@ public class Constants {
     public static class Amazon {
         public static String IDENTITY_POOL_ID = "eu-west-1:19881c67-5a16-442f-a8fd-1ef78c5e5ef9";
         public static String BUCKET_NAME = "loadboard";
+        public static String BUCKET_NAME_POD = "proof-of-delivery";
     }
 
     /**
@@ -623,6 +672,8 @@ public class Constants {
 
         //PROD KEYS
         public static String SUBDOMAIN_URL = "https://bykea.zendesk.com";
+//        public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
+//        public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
         public static String APPLICATION_ID = "192495b9f94219fd3b1476c480c34170d003e1918df41599";
         public static String OAUTH_CLIENT_ID = "mobile_sdk_client_84be9aa0fb3f3d5c5c2b";
 
@@ -731,4 +782,23 @@ public class Constants {
     public static final long SET_SCALE_DELAY = 2000;
     public static final long SET_SCALE_DELAY_ZERO = 0;
     public static final String ANDROID_RESOURCE_URI = "android.resource://";
+
+    public static final double MIN_FAHRENHEIT_VALUE = 95;
+    public static final double MAX_FAHRENHEIT_VALUE = 99.4;
+    public static final int MAX_BATCH_BOOKING_LIMIT = 3;
+
+    /**
+     * Inner class for Audio recording/player related constants
+     */
+    public static class Audio {
+        public static final int AUDIO_CHANNELS = 1;
+        public static final int BIT_RATES = 8000;
+        public static final int SAMPLE_RATES = 8000;
+        public static final String AUDIO_FOLDER_NAME = "AudioRecorder";
+        public static final String FILE_EXT = ".aac";
+        public static final String AUDIO_TEMP_FILE_NAME = "tempFile";
+        public static final String AUDIO_FILE_NAME = "voice_note" + FILE_EXT;
+        public static final int AUDIO_MAX_DURATION = 60;
+        public static final int AUDIO_MAX_DURATION_IN_MILLIS = AUDIO_MAX_DURATION * 1000;
+    }
 }
