@@ -83,10 +83,11 @@ class ComplaintSubmissionActivity : BaseActivity() {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        if (intent?.extras != null) {
-            if (intent.extras.containsKey(INTENT_TRIP_HISTORY_DATA))
+        intent?.extras?.let {
+            if (it.containsKey(INTENT_TRIP_HISTORY_DATA))
                 tripHistoryDate = intent.getSerializableExtra(INTENT_TRIP_HISTORY_DATA) as TripHistoryData
-            if (intent.extras.containsKey(INTENT_TRIP_HISTORY_ID)) {
+
+            if (it.containsKey(INTENT_TRIP_HISTORY_ID)) {
                 tripHistoryId = intent.getStringExtra(INTENT_TRIP_HISTORY_ID)
                 updateTripDetailsById(tripHistoryId!!)
                 return

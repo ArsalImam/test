@@ -23,8 +23,8 @@ android {
                                 onesignal_google_project_number: "REMOTE"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 98
-        versionName "7.65"
+        versionCode 99
+        versionName "7.66"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "bykea-partner-v" + defaultConfig.versionName + "-" + releaseTime())
@@ -87,7 +87,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.org\""
+                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.dev\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             jenkinsUrl {
@@ -161,13 +161,6 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.google.com" }
     maven { url 'https://zendesk.jfrog.io/zendesk/repo' }
-    /*maven {
-        url 'http://artifactory.paysyslabs.com/instascan-complete'
-        credentials {
-            username = "jsbank-developer"
-            password = "AP9N3fsG4oAMheeKJuxJDhNVQaE"
-        }
-    }*/
 }
 dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.10'
@@ -220,7 +213,6 @@ dependencies {
     }
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
-    implementation 'top.oply.opuslib:opuslib:1.0.2'
     implementation deps.markerClustering
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -228,7 +220,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:2.2.3"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
-//    implementation project(path: ':loadboard')
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
     kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
@@ -243,39 +234,21 @@ dependencies {
     implementation 'io.supercharge:shimmerlayout:2.1.0'
 
 
-
     implementation project(':tellotalk-sdk')
 
-    implementation 'com.squareup.retrofit2:converter-moshi:2.5.0'
-    implementation 'com.squareup.moshi:moshi:1.8.0'
-    implementation 'pub.devrel:easypermissions:0.4.0'
-    implementation('com.theartofdev.edmodo:android-image-cropper:2.7.0') {
-        exclude module: 'appcompat-v7'
+    implementation('com.facebook.fresco:fresco:1.11.0') {
+        exclude group: 'com.facebook.fresco', module: 'soloader'
+        exclude group: 'com.facebook.fresco', module: 'nativeimagefilters'
+        exclude group: 'com.facebook.fresco', module: 'nativeimagetranscoder'
+        exclude group: 'com.facebook.fresco', module: 'memory-type-native'
+        exclude group: 'com.facebook.fresco', module: 'imagepipeline-native'
     }
-    implementation 'com.googlecode.libphonenumber:libphonenumber:8.8.9'
-    implementation 'com.facebook.fresco:fresco:1.11.0'
     implementation 'org.jsoup:jsoup:1.11.2'
-    implementation 'com.github.zomato:androidphotofilters:1.0.1'
-    implementation 'com.googlecode.ez-vcard:ez-vcard:0.10.4'
     implementation 'com.google.android.gms:play-services-places:16.0.0'
     implementation "com.google.android.libraries.places:places:1.0.0"
     implementation 'com.mahc.custombottomsheetbehavior:googlemaps-like:0.9.2'
-
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
 }
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'de.felixschulze.gradle.hockeyapp'
-
-def branch = getGitRevParseInfo("--abbrev-ref")
-
-hockeyapp {
-    apiToken = "4faee174e5fb499bb2e40c358e5193a7"
-    notes = branch
-    tags = "bykeadevteam,mobinspire"
-}
-
-def getGitRevParseInfo(what) {
-    def cmd = "git rev-parse " + what + " HEAD"
-    def proc = cmd.execute()
-    proc.text.trim()
-}

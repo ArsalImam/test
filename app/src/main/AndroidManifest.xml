@@ -29,6 +29,7 @@
     <uses-sdk tools:overrideLibrary="com.mahc.custombottomsheetbehavior"/>
     <application
         android:name=".DriverApp"
+        android:requestLegacyExternalStorage="true"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/partner_icon"

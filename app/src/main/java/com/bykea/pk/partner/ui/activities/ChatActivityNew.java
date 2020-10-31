@@ -1,10 +1,8 @@
 package com.bykea.pk.partner.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -52,7 +50,6 @@ import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.ui.common.LastAdapter;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
-import com.bykea.pk.partner.ui.helpers.OpusPlayerCallBack;
 import com.bykea.pk.partner.ui.helpers.adapters.ChatAdapterNewDF;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
@@ -60,6 +57,7 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.utils.audio.MediaPlayerHolder;
 import com.bykea.pk.partner.widgets.FontEditText;
 import com.bykea.pk.partner.widgets.FontTextView;
 
@@ -76,14 +74,11 @@ import javax.net.ssl.SSLSocketFactory;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import top.oply.opuslib.OpusEvent;
-import top.oply.opuslib.OpusRecorder;
 
 import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.MSG;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
 import static com.bykea.pk.partner.utils.Utils.openCallDialog;
-//import top.oply.opuslib.OpusService;
 
 public class ChatActivityNew extends BaseActivity implements ImageCompression.onImageCompressListener {
 
@@ -112,15 +107,11 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     @BindView(R.id.loader_audio)
     ProgressBar loader_audio;
 
-    private OpusPlayerCallBack mCallBack;
     private ChatAdapterNewDF chatAdapter;
     private boolean isInFront;
     private ArrayList<ChatMessage> messageList;
 
-    @SuppressLint("InlinedApi")
-    private int output_formats[] = {MediaRecorder.OutputFormat.MPEG_4, MediaRecorder.OutputFormat.THREE_GPP};
     private int currentFormat = 0;
-    //    private MediaRecorder recorder = null;
     private String filePath;
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";//2016-05-20T12:37:58.508Z
     private static final String REQUIRED_FORMAT = "EEEE, MMM dd, hh:mm aa";//"EEEE, MMM dd, hh:mm a"
@@ -137,8 +128,7 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     public static boolean isFromNotification = false;
     private String mCoversationId;
     private String mReceiversId;
-    private OpusReceiver mOpusReceiver;
-    private OpusRecorder opusRecorder;
+    private MediaRecorder mRecorder = null;
 
     private SSLSocketFactory defaultSslSocketFactory;
 
@@ -168,8 +158,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         mCurrentActivity = this;
         DriverApp.setChatActivityVisible(true);
         ButterKnife.bind(this);
-        opusRecorder = OpusRecorder.getInstance();
-        opusRecorder.setEventSender(new OpusEvent(mCurrentActivity));
 
         chatMessagesTranslatedArrayList = Utils.getAllChatMessageTranslated(mCurrentActivity);
         init();
@@ -177,7 +165,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         if (!Permissions.hasMicPermission(mCurrentActivity)) {
             Permissions.getMicPermission(mCurrentActivity);
         }
-        mOpusReceiver = new OpusReceiver();
         isInFront = true;
         defaultSslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
         HttpsURLConnection.setDefaultSSLSocketFactory(defaultSslSocketFactory);
@@ -303,20 +290,11 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
         }
 
-//        @Override
-//        public void onUpdateConversationStatus(UpdateConversationStatusResponse response) {
-//            if (null != response && response.isSuccess()) {
-//
-//            }
-//        }
-
-
         @Override
         public void onUploadAudioFile(final UploadAudioFile uploadAudioFile) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-//                    Dialogs.INSTANCE.dismissDialog();
                     loader_audio.setVisibility(View.INVISIBLE);
                     if (uploadAudioFile.isSuccess()) {
                         messageList.add(makeMsg(uploadAudioFile.getImagePath(), Keys.CHAT_TYPE_VOICE
@@ -365,7 +343,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-//                    Dialogs.INSTANCE.dismissDialog();
                     loader.setVisibility(View.INVISIBLE);
                     Dialogs.INSTANCE.showError(mCurrentActivity, voiceMsgLayout, error);
 
@@ -389,15 +366,9 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(OpusEvent.ACTION_OPUS_UI_RECEIVER);
-        registerReceiver(mOpusReceiver, filter);
-//        ActivityStackManager.getInstance().startOpusService(mCurrentActivity);
 
         AppPreferences.setChatActivityOnForeground(true);
-//        WebIORequestHandler.getInstance().setContext(mCurrentActivity);
         WebIORequestHandler.getInstance().registerChatListener();
-//        registerReceiver(messageReceiver, new IntentFilter(Keys.BROADCAST_MESSAGE_RECEIVE));
         Notifications.removeAllNotifications(mCurrentActivity);
     }
 
@@ -407,21 +378,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         AppPreferences.setChatActivityOnForeground(false);
         if (chatAdapter != null) {
             chatAdapter.stopPlayingAudio();
-        }
-//        if (messageReceiver != null) {
-//            try {
-//                unregisterReceiver(messageReceiver);
-//            } catch (Exception ex) {
-//                Utils.redLog("ChatActivity", "UnregisterRecieverException" + " " + ex.toString());
-//            }
-//        }
-//        ActivityStackManager.getInstance().stopOpusService(mCurrentActivity);
-        if (mOpusReceiver != null) {
-            try {
-                unregisterReceiver(mOpusReceiver);
-            } catch (Exception ex) {
-                Utils.redLog("ChatActivity", "UnregisterRecieverException" + " " + ex.toString());
-            }
         }
         isInFront = false;
     }
@@ -501,8 +457,8 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
                                                                       if (isRecording &&
                                                                               event.getRawX() > 400 &&
                                                                               elapsedMillis >= Constants.MINIMUM_VOICE_RECORDING) {
-                                                                          stopRecording();
                                                                           shouldUploadFile = true;
+                                                                          stopRecording();
                                                                       } else {
                                                                           stopRecording();
                                                                       }
@@ -590,31 +546,23 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         return filePath;
     }
 
-
-    private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
-        @Override
-        public void onError(MediaRecorder mr, int what, int extra) {
-//            Toast.makeText(mCurrentActivity, "Error: " + what + ", " +
-//                    extra, Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private MediaRecorder.OnInfoListener infoListener = new MediaRecorder.OnInfoListener() {
-        @Override
-        public void onInfo(MediaRecorder mr, int what, int extra) {
-//            Toast.makeText(mCurrentActivity, "Warning: " + what + ", " +
-//                    extra, Toast.LENGTH_SHORT).show();
-        }
-    };
-
     @SuppressLint("InlinedApi")
-    private void startRecording() {
+    private synchronized void startRecording() {
         chatAdapter.stopPlayingAudio();
         chronometer.setBase(SystemClock.elapsedRealtime());
 
         try {
-            opusRecorder.startRecording(getFilename());
-//            OpusService.record(mCurrentActivity, getFilename());
+            mRecorder = new MediaRecorder();
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setAudioChannels(Constants.Audio.AUDIO_CHANNELS);
+            mRecorder.setAudioEncodingBitRate(Constants.Audio.BIT_RATES);
+            mRecorder.setAudioSamplingRate(Constants.Audio.SAMPLE_RATES);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+            mRecorder.setOutputFile(getFilename());
+            mRecorder.setMaxDuration(Constants.Audio.AUDIO_MAX_DURATION_IN_MILLIS);//60s
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mRecorder.prepare();
+            mRecorder.start();
             chronometer.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -622,15 +570,25 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         isRecording = true;
     }
 
-    private void stopRecording() {
+    private synchronized void stopRecording() throws IllegalStateException {
 
         try {
+            if (mRecorder != null)
+                mRecorder.release();
+            mRecorder = null;
 
             if (isRecording) {
                 chronometer.stop();
             }
-            opusRecorder.stopRecording();
-//            OpusService.stopRecording(mCurrentActivity);
+            if (shouldUploadFile) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    loader.setVisibility(View.VISIBLE);
+                }
+                repository.uploadAudioFile(mCurrentActivity,
+                        chatHandler, new File(filePath));
+
+                shouldUploadFile = false;
+            }
             isRecording = false;
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -783,11 +741,6 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
         }
     }
 
-
-    public void setCallBack(OpusPlayerCallBack mCallBack) {
-        this.mCallBack = mCallBack;
-    }
-
     public boolean isInFront() {
         return isInFront;
     }
@@ -805,76 +758,9 @@ public class ChatActivityNew extends BaseActivity implements ImageCompression.on
 
     }
 
-    //define a broadcast receiver
-    private class OpusReceiver extends BroadcastReceiver {
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            int type = bundle.getInt(OpusEvent.EVENT_TYPE, 0);
-            switch (type) {
-                case OpusEvent.CONVERT_FINISHED:
-                    break;
-                case OpusEvent.CONVERT_FAILED:
-                    break;
-                case OpusEvent.CONVERT_STARTED:
-                    break;
-                case OpusEvent.RECORD_FAILED:
-                    break;
-                case OpusEvent.RECORD_FINISHED:
-                    Utils.redLog("OpusCallBack", "OpusEvent.RECORD_FINISHED");
-                    if (shouldUploadFile) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            loader_audio.setVisibility(View.VISIBLE);
-                        }
-                        repository.uploadAudioFile(mCurrentActivity,
-                                chatHandler, new File(filePath));
-                        shouldUploadFile = false;
-                    }
-                    break;
-                case OpusEvent.RECORD_STARTED:
-                    break;
-                case OpusEvent.RECORD_PROGRESS_UPDATE:
-                    break;
-                case OpusEvent.PLAY_PROGRESS_UPDATE:
-                    Utils.redLog("OpusCallBack", "OpusEvent.PLAY_PROGRESS_UPDATE");
-                    if (mCallBack != null) {
-                        mCallBack.onCallBack(OpusEvent.PLAY_PROGRESS_UPDATE, bundle);
-                    }
-                    break;
-                case OpusEvent.PLAY_GET_AUDIO_TRACK_INFO:
-                    if (mCallBack != null) {
-                        mCallBack.onCallBack(OpusEvent.PLAY_GET_AUDIO_TRACK_INFO, bundle);
-                    }
-                    break;
-                case OpusEvent.PLAYING_FAILED:
-                    Utils.redLog("OpusCallBack", "OpusEvent.PLAYING_FAILED");
-                    if (mCallBack != null) {
-                        mCallBack.onCallBack(OpusEvent.PLAYING_FAILED, bundle);
-                    }
-                    break;
-                case OpusEvent.PLAYING_FINISHED:
-                    if (mCallBack != null) {
-                        mCallBack.onCallBack(OpusEvent.PLAYING_FINISHED, bundle);
-                    }
-                    break;
-                case OpusEvent.PLAYING_PAUSED:
-                    if (mCallBack != null) {
-                        mCallBack.onCallBack(OpusEvent.PLAYING_PAUSED, bundle);
-                    }
-                    break;
-                case OpusEvent.PLAYING_STARTED:
-                    if (mCallBack != null) {
-                        mCallBack.onCallBack(OpusEvent.PLAYING_STARTED, bundle);
-                    }
-                    break;
-                default:
-                    Utils.redLog("ChatNew", intent.toString() + "Invalid request,discarded");
-                    break;
-            }
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case Constants.PICK_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
