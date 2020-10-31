@@ -130,11 +130,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.ApiError.BUSINESS_LOGIC_ERROR;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_MIX_THRESHOLD_METERS;
 import static com.bykea.pk.partner.utils.Constants.MAX_LIMIT_LOAD_BOARD;
+import static com.bykea.pk.partner.utils.Constants.MSG;
 import static com.bykea.pk.partner.utils.Constants.PLUS;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.DISPATCH_RIDE;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.MART;
@@ -1204,25 +1206,25 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             mCurrentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE) ||
-                            intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BATCH)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE) ||
+                            intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_BATCH)) {
                         cancelByPassenger(false);
                     }
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
-                        String message = intent.getStringExtra("msg");
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                        String message = intent.getStringExtra(MSG);
                         cancelByPassenger(true);
                     }
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_COMPLETE_BY_ADMIN)) {
                         playNotificationSound();
-                        onCompleteByAdmin(intent.getStringExtra("msg"));
+                        onCompleteByAdmin(intent.getStringExtra(MSG));
                     }
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_DROP_OFF_UPDATED)) {
                         playNotificationSound();
                         Utils.appToast(getString(R.string.drop_off_update_by_passenger));
                         shouldRefreshDropOffMarker = true;
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.TRIP_DATA_UPDATED)) {
                         playNotificationSound();
                         Utils.appToast("Trip Details has been Added by Passenger.");
                         callData = AppPreferences.getCallData();
@@ -1233,7 +1235,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                             showDropOffPersonInfo();
                         showWalletAmount();
                     }
-                    if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_BATCH_UPDATED)) {
+                    if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_BATCH_UPDATED)) {
                         dataRepository.requestRunningTrip(mCurrentActivity, handler);
                     }
                 }

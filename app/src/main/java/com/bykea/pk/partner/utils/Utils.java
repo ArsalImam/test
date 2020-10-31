@@ -168,6 +168,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.COMMA;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
@@ -449,7 +450,6 @@ public class Utils {
 
     public static void logout(Context context) {
         clearData(context);
-        AppPreferences.clearLoadboardSelectedZoneData();
         HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);
@@ -978,14 +978,12 @@ public class Utils {
     public static void setCallIncomingStateWithoutRestartingService() {
         AppPreferences.setIsOnTrip(false);
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
     }
 
     public static void setCallIncomingState() {
         AppPreferences.setIsOnTrip(false);
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
         ActivityStackManager.getInstance().restartLocationService(DriverApp.getContext());
     }
@@ -1617,11 +1615,6 @@ public class Utils {
     public static String getTripTime() {
         long diff = System.currentTimeMillis() - AppPreferences.getStartTripTime();
         return diff > 0 ? "" + (1 + (int) TimeUnit.MILLISECONDS.toMinutes(diff)) : "N/A";
-    }
-
-    public static boolean isAppVersionCheckRequired() {
-        long lastApiCallTime = AppPreferences.getVersionCheckTime();
-        return lastApiCallTime == 0 || (System.currentTimeMillis() - lastApiCallTime) >= Constants.MILISEC_IN_HALF_DAY;
     }
 
     public static long getTimeInMiles(String dateString) {
@@ -2972,7 +2965,7 @@ public class Utils {
 
                 AppPreferences.setCallData(currentcallData);
                 Intent intent = new Intent(Keys.TRIP_DATA_UPDATED);
-                intent.putExtra("action", Keys.TRIP_DATA_UPDATED);
+                intent.putExtra(ACTION, Keys.TRIP_DATA_UPDATED);
                 EventBus.getDefault().post(intent);
             } else if (StringUtils.isNotBlank(callData.getData().getEndAddress()) &&
                     !callData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
@@ -2983,7 +2976,7 @@ public class Utils {
                 currentcallData.setStatus(callData.getData().getStatus());
                 AppPreferences.setCallData(currentcallData);
                 Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra(ACTION, Keys.BROADCAST_DROP_OFF_UPDATED);
                 EventBus.getDefault().post(intent);
             }
         }
