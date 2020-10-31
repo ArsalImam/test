@@ -352,7 +352,6 @@ public class SplashActivity extends BaseActivity {
                         switch (errorCode) {
                             case HttpURLConnection.HTTP_UNAUTHORIZED:
                                 AppPreferences.saveLoginStatus(false);
-                                AppPreferences.setIncomingCall(false);
                                 AppPreferences.setCallData(null);
                                 AppPreferences.setTripStatus("");
                                 AppPreferences.saveLoginStatus(false);
