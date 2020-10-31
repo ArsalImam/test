@@ -27,7 +27,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.GoogleMap.GOOGLE_MAP_PACKAGE
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.zendesk.util.StringUtils
 import kotlinx.android.synthetic.main.map_toolbar.*
 import java.util.*
@@ -80,9 +80,9 @@ class FinishBookingListingActivity : BaseActivity() {
         jobRepo.finishJob(selectedBooking?.id!!, latLngList, endAddress, object : FinishJobCallback {
             override fun onJobFinished(data: FinishJobResponseData, request: String, resp: String) {
                 AppPreferences.removeReceivedMessageCount()
-                Crashlytics.setUserIdentifier(AppPreferences.getPilotData().id)
-                Crashlytics.setString("Finish Job Request Trip ID", callData!!.tripId)
-                Crashlytics.setString("Finish Job Response", resp)
+                FirebaseCrashlytics.getInstance().setUserId(AppPreferences.getPilotData().id)
+                FirebaseCrashlytics.getInstance().setCustomKey("Finish Job Request Trip ID", callData!!.tripId)
+                FirebaseCrashlytics.getInstance().setCustomKey("Finish Job Response", resp)
                 onFinished(data)
             }
 

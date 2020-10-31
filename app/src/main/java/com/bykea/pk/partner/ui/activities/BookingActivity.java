@@ -82,7 +82,6 @@ import com.bykea.pk.partner.utils.audio.BykeaAmazonClient;
 import com.bykea.pk.partner.widgets.AutoFitFontTextView;
 import com.bykea.pk.partner.widgets.DashedLine;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -100,6 +99,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
@@ -2736,9 +2736,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             @Override
             public void onJobFinished(@NotNull FinishJobResponseData data, @NotNull String request, @NotNull String resp) {
                 AppPreferences.removeReceivedMessageCount();
-                Crashlytics.setUserIdentifier(AppPreferences.getPilotData().getId());
-                Crashlytics.setString("Finish Job Request Trip ID", callData.getTripId());
-                Crashlytics.setString("Finish Job Response", resp);
+                FirebaseCrashlytics.getInstance().setUserId(AppPreferences.getPilotData().getId());
+                FirebaseCrashlytics.getInstance().setCustomKey("Finish Job Request Trip ID", callData.getTripId());
+                FirebaseCrashlytics.getInstance().setCustomKey("Finish Job Response", resp);
 
                 onFinished(data, endAddress);
             }
