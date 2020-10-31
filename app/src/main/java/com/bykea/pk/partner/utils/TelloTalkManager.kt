@@ -134,7 +134,9 @@ class TelloTalkManager {
          */
         @JvmStatic
         fun instance(): TelloTalkManager = INSTANCE ?: synchronized(TelloTalkManager::class.java) {
-            INSTANCE ?: TelloTalkManager()
+            INSTANCE ?: TelloTalkManager().also {
+                INSTANCE = it
+            }
         }
     }
 }

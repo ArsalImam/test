@@ -89,15 +89,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-        if (remoteMessage.getData() != null) {
-            String value = remoteMessage.getData().get(Constants.Notification.DATA_TYPE_TELLO);
-            if (value != null) {
-                if (value.equalsIgnoreCase(DATA_TYPE_TELLO_VAL)) {
-                    TelloTalkManager.instance().onMessageReceived();
-                } else if (value.equalsIgnoreCase(CONTENT_AVAILABLE_CHANNEL)) {
-                    TelloTalkManager.instance().onMessageReceived(remoteMessage.getData());
-                }
-            }
+        if (remoteMessage.getData() != null &&
+                remoteMessage.getData().get(Constants.Notification.DATA_TYPE_TELLO) != null &&
+                remoteMessage.getData().toString().equalsIgnoreCase(Constants.Notification.DATA_TYPE_TELLO)) {
+            TelloTalkManager.instance().onMessageReceived();
         } else if (remoteMessage.getData() != null && remoteMessage.getData()
                 .get(Constants.Notification.EVENT_TYPE) != null) {
             Utils.redLog(TAG, "NOTIFICATION DATA (FCM) : " + remoteMessage.getData().toString());
