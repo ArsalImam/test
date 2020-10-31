@@ -12,7 +12,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-perf' //Performance Monitoring plugin
 
 android {
@@ -177,7 +176,6 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'androidx.transition:transition:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     implementation 'com.elvishew:xlog:1.4.1'
     implementation 'com.facebook.android:facebook-android-sdk:4.42.0'
     implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
