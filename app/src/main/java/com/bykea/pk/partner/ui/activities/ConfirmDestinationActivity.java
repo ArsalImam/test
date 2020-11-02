@@ -170,8 +170,6 @@ public class ConfirmDestinationActivity extends BaseActivity {
     private void getIntentData() {
         if (null != getIntent() && null != getIntent().getExtras()) {
             addressTv.setText(getIntent().getStringExtra("address"));
-            AppPreferences.setDropOffData(getIntent().getStringExtra("address"),
-                    getIntent().getDoubleExtra("lat", 0.0), getIntent().getDoubleExtra("lng", 0.0));
             setLocation(getIntent().getDoubleExtra("lat", 0.0), getIntent().getDoubleExtra("lng", 0.0));
         } else {
             addressTv.setText(getResources().getString(R.string.loading));
@@ -206,9 +204,6 @@ public class ConfirmDestinationActivity extends BaseActivity {
     public void onClick() {
         if (StringUtils.isNotBlank(addressTv.getText().toString())
                 && !addressTv.getText().toString().equalsIgnoreCase(getResources().getString(R.string.loading))) {
-            AppPreferences.setDropOffData(addressTv.getText().toString(),
-                    mGoogleMap.getCameraPosition().target.latitude,
-                    mGoogleMap.getCameraPosition().target.longitude);
             Intent intent = new Intent();
         /*intent.putExtra("address", addressTv.getText().toString());
         intent.putExtra("lat", mGoogleMap.getCameraPosition().target.latitude);
@@ -220,7 +215,6 @@ public class ConfirmDestinationActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        AppPreferences.setDropOffData(StringUtils.EMPTY, 0.0, 0.0);
         super.onBackPressed();
     }
 

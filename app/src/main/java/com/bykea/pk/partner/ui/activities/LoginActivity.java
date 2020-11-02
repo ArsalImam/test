@@ -24,7 +24,6 @@ import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.NumericKeyBoardTransformationMethod;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontEditText;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -72,7 +71,7 @@ public class LoginActivity extends BaseActivity {
         enableLoginButton(false);
 
         if (StringUtils.isBlank(AppPreferences.getRegId())) {
-            AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
+            Utils.requestFCMID();
         }
 
         if (Utils.isGetCitiesApiCallRequired()) {
@@ -193,7 +192,7 @@ public class LoginActivity extends BaseActivity {
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (Utils.isValidNumber(mCurrentActivity, phoneNumberEt)) {
                         if (StringUtils.isBlank(AppPreferences.getRegId())) {
-                            AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
+                            Utils.requestFCMID();
                         }
                         Utils.hideSoftKeyboard(mCurrentActivity, phoneNumberEt);
                         Dialogs.INSTANCE.showLoader(mCurrentActivity);

@@ -242,8 +242,12 @@ public class RestRequestHandler {
                     }
                 } else {
                     if (response.isSuccessful()) {
-                        if (null != mResponseCallBack) {
+                        if (null != mResponseCallBack && null != response.body().getUser() &&
+                                StringUtils.isNotEmpty(response.body().getUser().getAccessToken())) {
                             mResponseCallBack.onResponse(response.body());
+                        } else {
+                            mResponseCallBack.onError(response.body().getCode(),
+                                    response.body().getMessage());
                         }
                     } else {
                         mResponseCallBack.onError(response.body().getCode(),

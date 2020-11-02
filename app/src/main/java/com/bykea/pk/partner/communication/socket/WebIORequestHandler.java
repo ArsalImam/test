@@ -539,8 +539,8 @@ public class WebIORequestHandler {
                             Notifications.createChatNotification(DriverApp.getContext(), SerializationUtils.clone(receivedMessage));
                         }
                         Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
-                        intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
-                        intent.putExtra("msg", receivedMessage);
+                        intent.putExtra(ACTION, Keys.BROADCAST_MESSAGE_RECEIVE);
+                        intent.putExtra(MSG, receivedMessage);
 //                        DriverApp.getContext().sendBroadcast(intent);
                         EventBus.getDefault().post(intent);
                         AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
@@ -728,7 +728,7 @@ public class WebIORequestHandler {
             if (AppPreferences.isJobActivityOnForeground()) {
                 Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
                 Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra(ACTION, Keys.BROADCAST_DROP_OFF_UPDATED);
                 EventBus.getDefault().post(intent);
             } else {
                 AppPreferences.setDropOffUpdateRequired(true);
@@ -767,7 +767,7 @@ public class WebIORequestHandler {
             if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                 AppPreferences.removeReceivedMessageCount();
                 Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
-                intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
+                intent.putExtra(ACTION, Keys.BROADCAST_CANCEL_BATCH);
                 Utils.setCallIncomingState();
                 if (AppPreferences.isJobActivityOnForeground() ||
                         AppPreferences.isCallingActivityOnForeground()) {
@@ -806,7 +806,7 @@ public class WebIORequestHandler {
             if (AppPreferences.isJobActivityOnForeground() || AppPreferences.isListDeliveryOnForeground()) {
                 Utils.redLog("Batch Booking Updated (Socket) ", serverResponse);
                 Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_BATCH_UPDATED);
+                intent.putExtra(ACTION, Keys.BROADCAST_BATCH_UPDATED);
                 EventBus.getDefault().post(intent);
 
                 Utils.appToast(DriverApp.getApplication().getString(R.string.batch_update_by_passenger));
