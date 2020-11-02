@@ -171,6 +171,7 @@ import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
 import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.COMMA;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_TWO;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS;
 import static com.bykea.pk.partner.utils.Constants.DIRECTION_API_TIME_IN_MILLISECONDS_MULTIDELIVERY;
@@ -3860,5 +3861,14 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Check if number is even
+     * @param number : Number to check
+     * @return true if number is even else false
+     */
+    public static boolean isEvenNumber(int number) {
+        return number % DIGIT_TWO == DIGIT_ZERO;
     }
 }
