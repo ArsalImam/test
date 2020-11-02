@@ -37,9 +37,6 @@ public class BatchBooking {
     private BatchBookingDropoff pickup;
     private boolean selected;
 
-    @SerializedName("extra_params")
-    private ExtraParams extraParams;
-
     public String getId() {
         return id;
     }
@@ -130,13 +127,5 @@ public class BatchBooking {
 
     public void setReturnRun(boolean returnRun) {
         this.returnRun = returnRun;
-    }
-
-    public ExtraParams getExtraParams() {
-        return extraParams;
-    }
-
-    public void setExtraParams(ExtraParams extraParams) {
-        this.extraParams = extraParams;
     }
 }
