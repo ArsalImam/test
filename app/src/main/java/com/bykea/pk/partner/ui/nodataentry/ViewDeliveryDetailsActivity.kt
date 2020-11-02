@@ -8,13 +8,15 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
-import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
 import com.bykea.pk.partner.databinding.ActivityViewDeliveryDetailsBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.utils.*
 import com.bykea.pk.partner.utils.Constants.*
+import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.GenericListener
+import com.bykea.pk.partner.utils.Util
+import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.utils.audio.BykeaAmazonClient
 import com.bykea.pk.partner.utils.audio.Callback
 import com.zendesk.util.StringUtils
@@ -37,8 +39,10 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        if (intent?.extras!!.containsKey(Constants.Extras.DELIVERY_DETAILS_OBJECT)) {
-            viewModel.deliveryDetails.value = intent?.extras!!.getParcelable(Constants.Extras.DELIVERY_DETAILS_OBJECT) as DeliveryDetails
+        intent?.extras?.let {
+            if (it.containsKey(Extras.DELIVERY_DETAILS_OBJECT)) {
+                viewModel.deliveryDetails.value = intent?.extras?.getParcelable(Extras.DELIVERY_DETAILS_OBJECT)
+            }
         }
 
         viewModel.getActiveTrip()
@@ -165,24 +169,8 @@ class ViewDeliveryDetailsActivity : BaseActivity() {
      * @return Phone number for Sender
      */
     private fun getSenderNumber(): String {
-        viewModel.callData.value?.let {
-            return if (!it.phoneNo.isNullOrEmpty() && !it.senderPhone.isNullOrEmpty()) {
-                var passengerPhoneNumber = it.phoneNo
-                var senderPhoneNumber = it.senderPhone
-                if (passengerPhoneNumber.startsWith(MOBILE_COUNTRY_STANDARD))
-                    passengerPhoneNumber = Utils.phoneNumberToShow(it.phoneNo)
-                if (senderPhoneNumber.startsWith(MOBILE_COUNTRY_STANDARD))
-                    senderPhoneNumber = Utils.phoneNumberToShow(it.senderPhone)
-
-                if (passengerPhoneNumber.equals(senderPhoneNumber, ignoreCase = true))
-                    passengerPhoneNumber
-                else
-                    senderPhoneNumber
-            } else if (!it.phoneNo.isNullOrEmpty()) {
-                it.phoneNo
-            } else {
-                return StringUtils.EMPTY_STRING
-            }
+        if (!viewModel.deliveryDetails.value?.pickup?.phone.isNullOrEmpty()) {
+            return viewModel.deliveryDetails.value?.pickup?.phone.toString()
         }
         return StringUtils.EMPTY_STRING
     }

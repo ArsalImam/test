@@ -8,14 +8,13 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class SignUpCity implements Parcelable {
+    @SerializedName("id")
     private String _id;
     private String video;
-
     @SerializedName("name_ur")
     private String urduName;
-
+    @SerializedName("name_en")
     private String name;
-
     private ArrayList<Double> gps;
 
     protected SignUpCity(Parcel in) {

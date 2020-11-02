@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Images implements Parcelable {
         private String type;
-        @SerializedName("image")
         private String link;
 
         protected Images(Parcel in) {

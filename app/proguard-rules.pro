@@ -28,7 +28,6 @@
 -keep class com.bykea.pk.partner.models.** { *; }
 -keep class com.bykea.pk.partner.utils.audio.** { *; }
 -keep class com.bykea.pk.partner.dal.** { *; }
--keep class top.oply.opuslib.** { *; }
 -keep class java.io.** { *; }
 -keep class id.zelory.** { *; }
 -keep class io.reactivex.** { *; }
@@ -66,6 +65,13 @@
     @org.greenrobot.eventbus.Subscribe <methods>;
 }
 -keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.tilismtech.tellotalksdk.eventbus.Subscribe <methods>;
+}
+-keep enum com.tilismtech.tellotalksdk.eventbus.ThreadMode { *; }
+
 -keepattributes Exceptions, Signature, InnerClasses
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();

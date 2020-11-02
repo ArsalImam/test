@@ -141,12 +141,11 @@ class ComplainAddActivity : BaseActivity() {
                     createRequest()
             }
         }
-
-        if (intent?.extras != null) {
-            if (intent.extras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA))
+        intent?.extras?.let {
+            if (it.containsKey(Constants.INTENT_TRIP_HISTORY_DATA))
                 tripHistoryDate = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
 
-            if (intent.extras.containsKey(SELECTED_REASON_INTENT_KEY))
+            if (it.containsKey(SELECTED_REASON_INTENT_KEY))
                 selectedReason = intent.getParcelableExtra(SELECTED_REASON_INTENT_KEY) as ComplainReason
         }
 

@@ -158,13 +158,6 @@ public class MultiDeliveryCallingActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         stopSound();
-//        unregisterReceiver(cancelRideReceiver);
-        if (AppPreferences.isOnTrip()) {
-            AppPreferences.setIncomingCall(false);
-        } else {
-            //AppPreferences.setTripStatus(TripStatus.ON_FREE);
-            AppPreferences.setIncomingCall(true);
-        }
         AppPreferences.setCallingActivityOnForeground(false);
         Utils.unbindDrawables(activity_multi_delivery_calling);
         super.onDestroy();

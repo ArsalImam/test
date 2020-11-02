@@ -152,7 +152,7 @@ class   WithdrawalActivity : BaseActivity() {
         }
 
         binding?.withdrawalSubmitLayout?.setOnClickListener {
-            viewModel?.onSubmitClicked(binding?.balanceEdittext?.text?.toString())
+            viewModel?.onSubmitClicked(binding?.balanceEdittext?.text?.toString() ?: StringUtils.EMPTY)
         }
 
         binding?.balanceEdittext?.addTextChangedListener(object : TextWatcher {
