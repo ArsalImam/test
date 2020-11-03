@@ -164,7 +164,7 @@ class WithdrawalViewModel
      * Binded with button's onclick,
      * @param amt amount entered by the user
      */
-    fun onSubmitClicked(amt: String?) {
+    fun onSubmitClicked(amt: String) {
         try {
             val amount = Integer.valueOf(amt)
             val errorMsg = validateContent(amount)

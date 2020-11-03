@@ -2,7 +2,9 @@ package com.bykea.pk.partner.ui.helpers.adapters;
 
 import android.content.Context;
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +17,15 @@ import com.bykea.pk.partner.models.data.Predictions;
 import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
-//import com.google.android.gms.location.places.AutocompletePrediction;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+
+import static com.bykea.pk.partner.utils.Constants.DIGIT_FOUR;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 
 
 public class PlaceAutocompleteAdapter
@@ -31,7 +35,8 @@ public class PlaceAutocompleteAdapter
     private ArrayList<Predictions> mResultList;
     private String city;
     private PlacesRepository mRepository = new PlacesRepository();
-
+    private String previousConstraintStr = StringUtils.EMPTY;
+    private int previousConstaint = DIGIT_ZERO;
 
     public PlaceAutocompleteAdapter(Context context, String city) {
         super(context, -1, android.R.id.text1);
@@ -89,39 +94,49 @@ public class PlaceAutocompleteAdapter
                 final FilterResults results = new FilterResults();
                 // Skip the autocomplete query if no constraints are given.
                 if (constraint != null) {
-                    if (constraint.length() >= 3) {
-                        autocompleteHandler.removeMessages(0);
-                        autocompleteHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mRepository.getPlaceAutoComplete(getContext(), constraint.toString(), new PlacesDataHandler() {
+                    if (constraint.toString().trim().length() >= DIGIT_FOUR) {
+                        if (Utils.isEvenNumber(constraint.toString().trim().length()) && !constraint.toString().trim().equalsIgnoreCase(previousConstraintStr)) {
+                            autocompleteHandler.removeMessages(DIGIT_ZERO);
+                            if (constraint.length() <= previousConstaint) {
+                                previousConstaint = constraint.length();
+                            } else if (constraint.length() > previousConstaint) {
+                                previousConstraintStr = constraint.toString().trim();
+                                previousConstaint = constraint.length();
+                                autocompleteHandler.postDelayed(new Runnable() {
                                     @Override
-                                    public void onError(String error) {
+                                    public void run() {
+                                        mRepository.getPlaceAutoComplete(getContext(), constraint.toString(), new PlacesDataHandler() {
+                                            @Override
+                                            public void onError(String error) {
 
-                                    }
-
-                                    @Override
-                                    public void onPlaceAutoCompleteResponse(PlaceAutoCompleteResponse response) {
-                                        ArrayList<Predictions> resultList = response.getPredictions();
-                                        if (resultList != null) {
-                                            // The API successfully returned results.
-                                            if (resultList.size() > 0) {
-                                                mResultList = resultList;
-                                                results.values = mResultList;
-                                                results.count = mResultList.size();
-                                            } else {
-                                                if (mResultList != null && mResultList.size() > 0) {
-                                                    results.values = mResultList;
-                                                    results.count = mResultList.size();
-                                                }
                                             }
-                                        }
-                                        notifyDataSetChanged();
+
+                                            @Override
+                                            public void onPlaceAutoCompleteResponse(PlaceAutoCompleteResponse response) {
+                                                ArrayList<Predictions> resultList = response.getPredictions();
+                                                if (resultList != null) {
+                                                    // The API successfully returned results.
+                                                    if (resultList.size() > 0) {
+                                                        mResultList = resultList;
+                                                        results.values = mResultList;
+                                                        results.count = mResultList.size();
+                                                    } else {
+                                                        if (mResultList != null && mResultList.size() > 0) {
+                                                            results.values = mResultList;
+                                                            results.count = mResultList.size();
+                                                        }
+                                                    }
+                                                }
+                                                notifyDataSetChanged();
+                                            }
+                                        });
                                     }
-                                });
+                                }, 1000);
                             }
-                        }, 1000);
-                    } else if (mResultList != null) {
+                        }
+                    } else {
+                        previousConstraintStr = StringUtils.EMPTY;
+                        previousConstaint = constraint.length();
                         autocompleteHandler.removeMessages(0);
                         mResultList.clear();
                     }
@@ -131,7 +146,8 @@ public class PlaceAutocompleteAdapter
                     }
                 } else if (mResultList != null) {
                     autocompleteHandler.removeMessages(0);
-//                    mResultList.clear();
+                    previousConstaint = DIGIT_ZERO;
+                    previousConstraintStr = StringUtils.EMPTY;
                 }
                 return results;
             }
@@ -144,16 +160,8 @@ public class PlaceAutocompleteAdapter
 
             @Override
             public CharSequence convertResultToString(Object resultValue) {
-                // Override this method to display a readable result in the AutocompleteTextView
-                // when clicked.
-//                if (resultValue instanceof AutocompletePrediction) {
-//                    return ((AutocompletePrediction) resultValue).getFullText(null);
-//                } else {
                 return super.convertResultToString(resultValue);
-//                }
             }
         };
     }
-
-
 }

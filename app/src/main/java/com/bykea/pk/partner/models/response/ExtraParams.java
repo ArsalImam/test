@@ -3,6 +3,8 @@ package com.bykea.pk.partner.models.response;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ExtraParams implements Parcelable {
     private String telco_name;
     private String vendor_name;
@@ -12,6 +14,9 @@ public class ExtraParams implements Parcelable {
     private String cnic;
     private String iban;
     private String phone;
+    @SerializedName("is_paid")
+    private boolean isPaid;
+
 
     public ExtraParams() {}
 
@@ -23,6 +28,7 @@ public class ExtraParams implements Parcelable {
         cnic = in.readString();
         iban = in.readString();
         phone = in.readString();
+        isPaid = in.readByte() != 0;
     }
 
     public static final Creator<ExtraParams> CREATOR = new Creator<ExtraParams>() {
@@ -107,5 +113,14 @@ public class ExtraParams implements Parcelable {
         dest.writeString(cnic);
         dest.writeString(iban);
         dest.writeString(phone);
+        dest.writeByte((byte) (isPaid ? 1 : 0));
+    }
+
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
     }
 }

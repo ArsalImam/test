@@ -190,8 +190,6 @@ public class HandleInactivePushService extends Service {
             Utils.redLogLocation(Constants.LogTags.BYKEA_INACTIVE_PUSH,
                     "location API Response: " + new Gson().toJson(response));
             if (response.isSuccess()) {
-                AppPreferences.setDriverOfflineForcefully(false);
-                AppPreferences.setLocationSocketNotReceivedCount(Constants.LOCATION_RESPONSE_COUNTER_RESET);
                 ActivityStackManager.getInstance().restartLocationService(mContext);
             } else {
                 handleLocationErrorUseCase(response);

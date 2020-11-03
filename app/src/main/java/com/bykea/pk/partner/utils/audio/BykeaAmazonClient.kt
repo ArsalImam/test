@@ -1,5 +1,6 @@
 package com.bykea.pk.partner.utils.audio
 
+import android.os.AsyncTask
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
@@ -13,7 +14,6 @@ import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
-import io.fabric.sdk.android.services.concurrency.AsyncTask
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream

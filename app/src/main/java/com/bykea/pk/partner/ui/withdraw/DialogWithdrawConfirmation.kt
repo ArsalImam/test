@@ -1,8 +1,6 @@
 package com.bykea.pk.partner.ui.withdraw
 
 import android.app.Activity
-import android.view.View
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.DialogWithdrawConfirmationBinding
@@ -42,11 +40,12 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
     private fun initUi(activity: Activity) {
 
         viewBinder = DataBindingUtil.inflate(activity.layoutInflater, R.layout.dialog_withdraw_confirmation,
-                        null, false)
+                null, false)
 
-        ownerActivity = activity
-        window.setBackgroundDrawableResource(android.R.color.transparent)
-        setContentView(viewBinder?.root)
+        setOwnerActivity(activity)
+
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
+        setContentView(viewBinder?.root!!)
 
         viewBinder?.dismissWithdrawTxtview?.setOnClickListener { withdrawalViewModel?.showConfirmationDialog(false) }
         viewBinder?.confirmWithdrawTxtview?.setOnClickListener {
@@ -80,15 +79,16 @@ open class DialogWithdrawConfirmation : BottomSheetDialog {
 
         val amount = withdrawalViewModel?.balanceInt?.value!!
         val fees = Math.round(withdrawalViewModel?.selectedPaymentMethod?.fees!!)
+        ownerActivity?.let {
+            viewBinder?.confirmationPaymentValue?.text =
+                    String.format(it.getString(R.string.formatted_price), amount)
 
-        viewBinder!!.confirmationPaymentValue?.text =
-                String.format(ownerActivity.getString(R.string.formatted_price), amount)
+            viewBinder?.confirmationFeesValue?.text =
+                    String.format(it.getString(R.string.specifier_string), fees)
 
-        viewBinder!!.confirmationFeesValue?.text =
-                String.format(ownerActivity.getString(R.string.specifier_string), fees)
-
-        viewBinder!!.confirmationTotalValue?.text =
-                String.format(ownerActivity.getString(R.string.rs_price), (amount - fees))
+            viewBinder?.confirmationTotalValue?.text =
+                    String.format(it.getString(R.string.rs_price), (amount - fees))
+        }
     }
 
     companion object {
