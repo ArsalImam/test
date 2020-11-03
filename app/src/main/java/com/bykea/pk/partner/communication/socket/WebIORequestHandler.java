@@ -10,6 +10,7 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.pref.AppPref;
+import com.bykea.pk.partner.dal.source.remote.response.BookingUpdated;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -817,6 +818,27 @@ public class WebIORequestHandler {
             }
         }
     }
+
+    /**
+     * Socket listener for Batch Updated
+     */
+    public static class BookingUpdatedListener implements Emitter.Listener {
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("BOOKING UPDATED (Socket) ", serverResponse);
+            Gson gson = new Gson();
+            try {
+                BookingUpdated response = gson.fromJson(serverResponse, BookingUpdated.class);
+                if (response != null && response.isPaid()) {
+                    EventBus.getDefault().post(response);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private static IUserDataHandler handler = new UserDataHandler() {
         @Override
