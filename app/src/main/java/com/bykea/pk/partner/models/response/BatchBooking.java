@@ -36,7 +36,6 @@ public class BatchBooking {
     @Expose
     private BatchBookingDropoff pickup;
     private boolean selected;
-
     @SerializedName("extra_params")
     private ExtraParams extraParams;
 
@@ -139,4 +138,5 @@ public class BatchBooking {
     public void setExtraParams(ExtraParams extraParams) {
         this.extraParams = extraParams;
     }
+
 }

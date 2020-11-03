@@ -14,9 +14,9 @@ public class ExtraParams implements Parcelable {
     private String cnic;
     private String iban;
     private String phone;
-
     @SerializedName("is_paid")
     private boolean isPaid;
+
 
     public ExtraParams() {}
 

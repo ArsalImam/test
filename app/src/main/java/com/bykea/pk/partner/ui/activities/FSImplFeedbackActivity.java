@@ -443,15 +443,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
         // check for finished trip
         ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
         //this will be the finished trip
+
         for (BatchBooking tripData : bookingResponseList) {
             // if trip status if "finished", getting trip details
             if (tripData.getStatus().
                     equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
                 trip = tripData;
-                //CHECK FOR RESPECTIVE BOOKING FROM BATCH AND SET IS_PAID VALUE ACCORDINGLY
-                if (tripData.getExtraParams() != null) {
-                    isPaid = tripData.getExtraParams().isPaid();
-                }
                 break;
             }
         }
@@ -989,12 +986,12 @@ public class FSImplFeedbackActivity extends BaseActivity {
         } else if (!receivedAmountEt.getText().toString().matches(Constants.REG_EX_DIGIT)) {
             setEtError(getString(R.string.error_invalid_amount));
             return false;
-        } else if (!isPaid && totalCharges.matches(Constants.REG_EX_DIGIT)
+        } else if (totalCharges.matches(Constants.REG_EX_DIGIT)
                 && Integer.parseInt(receivedAmountEt.getText().toString()) < Integer.parseInt(totalCharges)
                 && (!isBykeaCashType || isJobSuccessful)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
+        } else if (!isPaid && totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT &&
                 Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
                 !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {

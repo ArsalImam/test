@@ -9,6 +9,7 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.pref.AppPref;
 import com.bykea.pk.partner.dal.source.remote.response.BookingUpdated;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
@@ -46,6 +47,7 @@ import com.bykea.pk.partner.models.response.UpdateDropOffResponse;
 import com.bykea.pk.partner.repositories.IUserDataHandler;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
+import com.bykea.pk.partner.ui.activities.BookingActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 import com.bykea.pk.partner.utils.ApiTags;
@@ -72,6 +74,7 @@ import static com.bykea.pk.partner.DriverApp.getApplication;
 import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
 import static com.bykea.pk.partner.utils.Constants.MSG;
+import static com.bykea.pk.partner.utils.Keys.BROADCAST_CANCEL_BATCH;
 
 public class WebIORequestHandler {
     private static WebIORequestHandler mWebIORequestHandler = new WebIORequestHandler();
@@ -835,6 +838,7 @@ public class WebIORequestHandler {
             }
         }
     }
+
 
     private static IUserDataHandler handler = new UserDataHandler() {
         @Override
