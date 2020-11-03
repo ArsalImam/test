@@ -33,7 +33,6 @@ import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.FontTextView;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -207,9 +206,8 @@ public class SplashActivity extends BaseActivity {
      * Plus we request FCM Device ID if it's found we store it inside App preference
      */
     private void fetchUserLocationAndFireBaseDeviceID() {
-        if (StringUtils.isBlank(AppPreferences.getRegId())
-                && StringUtils.isNotBlank(FirebaseInstanceId.getInstance().getToken())) {
-            AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken());
+        if (StringUtils.isBlank(AppPreferences.getRegId())) {
+            Utils.requestFCMID();
         }
         ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
     }
@@ -352,7 +350,6 @@ public class SplashActivity extends BaseActivity {
                         switch (errorCode) {
                             case HttpURLConnection.HTTP_UNAUTHORIZED:
                                 AppPreferences.saveLoginStatus(false);
-                                AppPreferences.setIncomingCall(false);
                                 AppPreferences.setCallData(null);
                                 AppPreferences.setTripStatus("");
                                 AppPreferences.saveLoginStatus(false);

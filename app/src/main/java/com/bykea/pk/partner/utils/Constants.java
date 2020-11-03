@@ -9,6 +9,7 @@ public class Constants {
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;
+    public static final int DIGIT_FOUR = 4;
     public static final int DIGIT_FIVE = 5;
     public static final int DIGIT_EIGHT = 8;
     public static final int DIGIT_TEN = 10;

@@ -34,6 +34,7 @@ import com.bykea.pk.partner.dal.source.remote.data.Invoice;
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailInfo;
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails;
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetailsLocationInfoData;
+import com.bykea.pk.partner.dal.source.remote.response.BookingUpdated;
 import com.bykea.pk.partner.dal.source.remote.response.ConcludeJobBadResponse;
 import com.bykea.pk.partner.dal.source.remote.response.FeedbackInvoiceResponse;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -65,6 +66,7 @@ import com.bykea.pk.partner.widgets.FontTextView;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
@@ -80,6 +82,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
 import static com.bykea.pk.partner.utils.Constants.RequestCode.RC_ADD_EDIT_DELIVERY_DETAILS;
 import static com.bykea.pk.partner.utils.Constants.ServiceCode.NEW_BATCH_DELIVERY_COD;
@@ -166,10 +169,11 @@ public class FSImplFeedbackActivity extends BaseActivity {
     private boolean mLastReturnRunBooking;
     private ArrayList<Invoice> batchInvoiceList;
 
-    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType;
+    private boolean isBykeaCashType, isDeliveryType, isOfflineDeliveryType, isPurchaseType, isPaid;
     private NormalCallData callData;
     private DeliveryDetails reRouteDeliveryDetails;
     private boolean returnRunOnBooking;
+    private BatchBooking trip = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -432,10 +436,14 @@ public class FSImplFeedbackActivity extends BaseActivity {
         //extracting batch service code
         batchServiceCode = callData.getServiceCode();
         batchId = callData.getTripId();
+        //CHECK FOR SINGLE BOOKING AND SET IS_PAID VALUE ACCORDINGLY
+        if (callData.getExtraParams() != null) {
+            isPaid = callData.getExtraParams().isPaid();
+        }
         // check for finished trip
         ArrayList<BatchBooking> bookingResponseList = callData.getBookingList();
         //this will be the finished trip
-        BatchBooking trip = null;
+
         for (BatchBooking tripData : bookingResponseList) {
             // if trip status if "finished", getting trip details
             if (tripData.getStatus().
@@ -833,7 +841,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                     finishTrip();
                 }
             }, AppPreferences.getDriverSettings().getData().getS3BucketPod());
-        }else {
+        } else {
             finishTrip();
         }
     }
@@ -983,7 +991,7 @@ public class FSImplFeedbackActivity extends BaseActivity {
                 && (!isBykeaCashType || isJobSuccessful)) {
             setEtError(getString(R.string.error_amount_greater_than_total));
             return false;
-        } else if (totalCharges.matches(Constants.REG_EX_DIGIT) &&
+        } else if (!isPaid && totalCharges.matches(Constants.REG_EX_DIGIT) &&
                 driverWallet <= PARTNER_TOP_UP_NEGATIVE_LIMIT &&
                 Integer.parseInt(receivedAmountEt.getText().toString()) >= (Integer.parseInt(totalCharges) + PARTNER_TOP_UP_NEGATIVE_LIMIT + Constants.DIGIT_ONE) &&
                 !Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())) {
@@ -1196,6 +1204,32 @@ public class FSImplFeedbackActivity extends BaseActivity {
             llFailureDelivery.setVisibility(View.VISIBLE);
             imageViewAddDelivery.setVisibility(View.GONE);
             tvGotoPurchaser.setText(String.format(formattedString, getString(R.string.goto_purchaser)));
+        }
+    }
+
+    /**
+     * Event Received from Socket (BOOKING_UPDATED)
+     *
+     * @param response updated data
+     */
+    @Subscribe
+    public void onEvent(BookingUpdated response) {
+        if (callData != null) {
+            if (callData.getExtraParams() != null) {
+                callData.getExtraParams().setPaid(response.isPaid());
+                isPaid = response.isPaid();
+            } else if (trip != null && callData.getBookingList() != null && callData.getBookingList().size() > DIGIT_ZERO) {
+                for (BatchBooking tripData : callData.getBookingList()) {
+                    if (trip.getId().equalsIgnoreCase(tripData.getId()) && tripData.getStatus().equalsIgnoreCase(TripStatus.ON_FINISH_TRIP)) {
+                        //CHECK FOR RESPECTIVE BOOKING FROM BATCH AND SET IS_PAID VALUE ACCORDINGLY
+                        if (tripData.getExtraParams() != null) {
+                            tripData.getExtraParams().setPaid(response.isPaid());
+                            isPaid = response.isPaid();
+                        }
+                        break;
+                    }
+                }
+            }
         }
     }
 }
