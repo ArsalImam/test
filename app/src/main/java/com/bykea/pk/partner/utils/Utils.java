@@ -116,6 +116,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -123,6 +124,7 @@ import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.onesignal.OneSignal;
@@ -166,6 +168,7 @@ import zendesk.core.Zendesk;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.bykea.pk.partner.DriverApp.getContext;
 import static com.bykea.pk.partner.dal.util.ConstKt.EMPTY_STRING;
+import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.COMMA;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
@@ -447,7 +450,6 @@ public class Utils {
 
     public static void logout(Context context) {
         clearData(context);
-        AppPreferences.clearLoadboardSelectedZoneData();
         HomeActivity.visibleFragmentNumber = HOME_SCREEN_S;
         //ActivityStackManager.getInstance().startLoginActivity(context);
         ActivityStackManager.getInstance().startLandingActivity(context);
@@ -976,14 +978,12 @@ public class Utils {
     public static void setCallIncomingStateWithoutRestartingService() {
         AppPreferences.setIsOnTrip(false);
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
     }
 
     public static void setCallIncomingState() {
         AppPreferences.setIsOnTrip(false);
         AppPreferences.setTripStatus(TripStatus.ON_FREE);
-        AppPreferences.setIncomingCall(true);
         AppPreferences.clearTrackingData();
         ActivityStackManager.getInstance().restartLocationService(DriverApp.getContext());
     }
@@ -1615,11 +1615,6 @@ public class Utils {
     public static String getTripTime() {
         long diff = System.currentTimeMillis() - AppPreferences.getStartTripTime();
         return diff > 0 ? "" + (1 + (int) TimeUnit.MILLISECONDS.toMinutes(diff)) : "N/A";
-    }
-
-    public static boolean isAppVersionCheckRequired() {
-        long lastApiCallTime = AppPreferences.getVersionCheckTime();
-        return lastApiCallTime == 0 || (System.currentTimeMillis() - lastApiCallTime) >= Constants.MILISEC_IN_HALF_DAY;
     }
 
     public static long getTimeInMiles(String dateString) {
@@ -2339,7 +2334,7 @@ public class Utils {
      * @return boolean true/false
      */
     public static boolean isFcmIdUpdateRequired(boolean isLoggedIn) {
-        AppPreferences.setRegId(FirebaseInstanceId.getInstance().getToken()); //on Android 8, sometimes onNewToken gets called 2 times and 2nd one is not latest(Unexpected behaviour). That's why updating SP with latest FCM Token
+        Utils.requestFCMID(); //on Android 8, sometimes onNewToken gets called 2 times and 2nd one is not latest(Unexpected behaviour). That's why updating SP with latest FCM Token
         boolean required = false;
         if (isLoggedIn && StringUtils.isNotBlank(AppPreferences.getRegId())
                 && AppPreferences.getPilotData() != null && !AppPreferences.getRegId().equalsIgnoreCase(AppPreferences.getPilotData().getReg_id())) {
@@ -2970,7 +2965,7 @@ public class Utils {
 
                 AppPreferences.setCallData(currentcallData);
                 Intent intent = new Intent(Keys.TRIP_DATA_UPDATED);
-                intent.putExtra("action", Keys.TRIP_DATA_UPDATED);
+                intent.putExtra(ACTION, Keys.TRIP_DATA_UPDATED);
                 EventBus.getDefault().post(intent);
             } else if (StringUtils.isNotBlank(callData.getData().getEndAddress()) &&
                     !callData.getData().getEndAddress().equalsIgnoreCase(AppPreferences.getCallData().getEndAddress())) {
@@ -2981,7 +2976,7 @@ public class Utils {
                 currentcallData.setStatus(callData.getData().getStatus());
                 AppPreferences.setCallData(currentcallData);
                 Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra(ACTION, Keys.BROADCAST_DROP_OFF_UPDATED);
                 EventBus.getDefault().post(intent);
             }
         }
@@ -3854,5 +3849,16 @@ public class Utils {
                 key.equals(Keys.SETTING_DATA) || key.equals(Keys.AVAILABLE_STATUS) ||
                 key.equals(Keys.LOGIN_STATUS) || key.equals(Keys.LAST_PARTNER_TEMPERATURE_SUBMIT) ||
                 key.equals(SignUpSettingsResponse.class.getName()) || key.equals(DriverPerformanceResponse.class.getName());
+    }
+
+    /**
+     * Requesting for FCM Id and Save In Shared Preferences
+     */
+    public static void requestFCMID() {
+        try {
+            FirebaseMessaging.getInstance().getToken().addOnSuccessListener(AppPreferences::setRegId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

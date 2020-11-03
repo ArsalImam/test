@@ -10,6 +10,7 @@ import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
 import com.bykea.pk.partner.dal.source.pref.AppPref;
+import com.bykea.pk.partner.dal.source.remote.response.BookingUpdated;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCall;
 import com.bykea.pk.partner.dal.source.socket.payload.JobCallPayload;
 import com.bykea.pk.partner.dal.util.Injection;
@@ -541,8 +542,8 @@ public class WebIORequestHandler {
                             Notifications.createChatNotification(DriverApp.getContext(), SerializationUtils.clone(receivedMessage));
                         }
                         Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
-                        intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
-                        intent.putExtra("msg", receivedMessage);
+                        intent.putExtra(ACTION, Keys.BROADCAST_MESSAGE_RECEIVE);
+                        intent.putExtra(MSG, receivedMessage);
 //                        DriverApp.getContext().sendBroadcast(intent);
                         EventBus.getDefault().post(intent);
                         AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
@@ -730,7 +731,7 @@ public class WebIORequestHandler {
             if (AppPreferences.isJobActivityOnForeground()) {
                 Utils.redLog("DROP OFF CHANGED (Socket) ", serverResponse);
                 Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                intent.putExtra(ACTION, Keys.BROADCAST_DROP_OFF_UPDATED);
                 EventBus.getDefault().post(intent);
             } else {
                 AppPreferences.setDropOffUpdateRequired(true);
@@ -769,7 +770,7 @@ public class WebIORequestHandler {
             if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                 AppPreferences.removeReceivedMessageCount();
                 Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
-                intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
+                intent.putExtra(ACTION, Keys.BROADCAST_CANCEL_BATCH);
                 Utils.setCallIncomingState();
                 if (AppPreferences.isJobActivityOnForeground() ||
                         AppPreferences.isCallingActivityOnForeground()) {
@@ -808,7 +809,7 @@ public class WebIORequestHandler {
             if (AppPreferences.isJobActivityOnForeground() || AppPreferences.isListDeliveryOnForeground()) {
                 Utils.redLog("Batch Booking Updated (Socket) ", serverResponse);
                 Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
-                intent.putExtra("action", Keys.BROADCAST_BATCH_UPDATED);
+                intent.putExtra(ACTION, Keys.BROADCAST_BATCH_UPDATED);
                 EventBus.getDefault().post(intent);
 
                 Utils.appToast(DriverApp.getApplication().getString(R.string.batch_update_by_passenger));
@@ -817,6 +818,27 @@ public class WebIORequestHandler {
             }
         }
     }
+
+    /**
+     * Socket listener for Batch Updated
+     */
+    public static class BookingUpdatedListener implements Emitter.Listener {
+        @Override
+        public void call(Object... args) {
+            String serverResponse = args[0].toString();
+            Utils.redLog("BOOKING UPDATED (Socket) ", serverResponse);
+            Gson gson = new Gson();
+            try {
+                BookingUpdated response = gson.fromJson(serverResponse, BookingUpdated.class);
+                if (response != null && response.isPaid()) {
+                    EventBus.getDefault().post(response);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private static IUserDataHandler handler = new UserDataHandler() {
         @Override

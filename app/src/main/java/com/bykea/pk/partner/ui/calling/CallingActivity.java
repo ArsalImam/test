@@ -48,6 +48,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.bykea.pk.partner.utils.Constants.ACTION;
+
 
 public class CallingActivity extends BaseActivity {
 
@@ -143,11 +145,6 @@ public class CallingActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         stopSound();
-        if (AppPreferences.isOnTrip()) {
-            AppPreferences.setIncomingCall(false);
-        } else {
-            AppPreferences.setIncomingCall(true);
-        }
         AppPreferences.setCallingActivityOnForeground(false);
         Utils.unbindDrawables(activity_calling);
         super.onDestroy();
@@ -471,10 +468,7 @@ public class CallingActivity extends BaseActivity {
                 Dialogs.INSTANCE.showToast(message);
                 Dialogs.INSTANCE.dismissDialog();
                 if (AppPreferences.isOnTrip()) {
-                    AppPreferences.setIncomingCall(false);
                     AppPreferences.setTripStatus(TripStatus.ON_FREE);
-                } else {
-                    AppPreferences.setIncomingCall(true);
                 }
                 ActivityStackManager.getInstance().startHomeActivity(true, mCurrentActivity);
                 stopSound();
@@ -493,8 +487,8 @@ public class CallingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     if (null != intent && null != intent.getExtras()) {
-                        if (intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
-                                || intent.getStringExtra("action").equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
+                        if (intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_RIDE)
+                                || intent.getStringExtra(ACTION).equalsIgnoreCase(Keys.BROADCAST_CANCEL_BY_ADMIN)) {
                             cancelRide();
                         }
                     }

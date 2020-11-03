@@ -48,9 +48,11 @@ import static com.bykea.pk.partner.utils.ApiTags.BOOKING_REQUEST;
 import static com.bykea.pk.partner.utils.ApiTags.BOOKING_UPDATED_DROP_OFF;
 import static com.bykea.pk.partner.utils.ApiTags.MULTI_DELIVERY_SOCKET_TRIP_MISSED;
 import static com.bykea.pk.partner.utils.ApiTags.SOCKET_NEW_JOB_CALL;
+import static com.bykea.pk.partner.utils.Constants.ACTION;
 import static com.bykea.pk.partner.utils.Constants.CallType.SINGLE;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_CANCEL_BY_ADMIN;
 import static com.bykea.pk.partner.utils.Constants.FCM_EVENTS_MULTIDELIVER_INCOMING_CALL;
+import static com.bykea.pk.partner.utils.Constants.MSG;
 import static com.bykea.pk.partner.utils.Constants.Notification.DATA_TYPE_TELLO_VAL;
 import static com.bykea.pk.partner.utils.Constants.Notification.CONTENT_AVAILABLE_CHANNEL;
 
@@ -115,8 +117,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         Notifications.createChatNotification(DriverApp.getContext(), receivedMessage);
                     }
                     Intent intent = new Intent(Keys.BROADCAST_MESSAGE_RECEIVE);
-                    intent.putExtra("action", Keys.BROADCAST_MESSAGE_RECEIVE);
-                    intent.putExtra("msg", receivedMessage);
+                    intent.putExtra(ACTION, Keys.BROADCAST_MESSAGE_RECEIVE);
+                    intent.putExtra(MSG, receivedMessage);
                     EventBus.getDefault().post(intent);
                     AppPreferences.setLastMessageID(receivedMessage.getData().getMessageId());
                     WebIORequestHandler.getInstance().registerChatListener();
@@ -205,7 +207,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .equalsIgnoreCase(BOOKING_UPDATED_DROP_OFF))) {
                 if (AppPreferences.isJobActivityOnForeground()) {
                     Intent intent = new Intent(Keys.BROADCAST_DROP_OFF_UPDATED);
-                    intent.putExtra("action", Keys.BROADCAST_DROP_OFF_UPDATED);
+                    intent.putExtra(ACTION, Keys.BROADCAST_DROP_OFF_UPDATED);
                     EventBus.getDefault().post(intent);
                 } else {
                     AppPreferences.setDropOffUpdateRequired(true);
@@ -215,7 +217,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .equalsIgnoreCase(BATCH_UPDATED))) {
                 if (AppPreferences.isJobActivityOnForeground()) {
                     Intent intent = new Intent(Keys.BROADCAST_BATCH_UPDATED);
-                    intent.putExtra(Constants.ACTION, Keys.BROADCAST_BATCH_UPDATED);
+                    intent.putExtra(ACTION, Keys.BROADCAST_BATCH_UPDATED);
                     EventBus.getDefault().post(intent);
 
                     Utils.appToast(getString(R.string.batch_update_by_passenger));
@@ -240,8 +242,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     AppPreferences.removeReceivedMessageCount();
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_BY_ADMIN);
-                    intent.putExtra("action", Keys.BROADCAST_CANCEL_BY_ADMIN);
-                    intent.putExtra("msg", callData.getMessage());
+                    intent.putExtra(ACTION, Keys.BROADCAST_CANCEL_BY_ADMIN);
+                    intent.putExtra(MSG, callData.getMessage());
                     Utils.setCallIncomingState();
                     if (AppPreferences.isJobActivityOnForeground() ||
                             AppPreferences.isCallingActivityOnForeground()) {
@@ -257,8 +259,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     AppPreferences.removeReceivedMessageCount();
                     Utils.redLog(Constants.APP_NAME, " CANCEL CALLING FCM");
                     Intent intent = new Intent(Keys.BROADCAST_CANCEL_BATCH);
-                    intent.putExtra("action", Keys.BROADCAST_CANCEL_BATCH);
-                    intent.putExtra("msg", callData.getMessage());
+                    intent.putExtra(ACTION, Keys.BROADCAST_CANCEL_BATCH);
+                    intent.putExtra(MSG, callData.getMessage());
                     Utils.setCallIncomingState();
                     if (AppPreferences.isJobActivityOnForeground() ||
                             AppPreferences.isCallingActivityOnForeground()) {
@@ -279,8 +281,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 if (Utils.isGpsEnable() || AppPreferences.isOnTrip()) {
                     Intent intent = new Intent(Keys.BROADCAST_COMPLETE_BY_ADMIN);
-                    intent.putExtra("action", Keys.BROADCAST_COMPLETE_BY_ADMIN);
-                    intent.putExtra("msg", callData.getMessage());
+                    intent.putExtra(ACTION, Keys.BROADCAST_COMPLETE_BY_ADMIN);
+                    intent.putExtra(MSG, callData.getMessage());
                     if (AppPreferences.isJobActivityOnForeground()) {
                         EventBus.getDefault().post(intent);
 //                            mContext.sendBroadcast(intent);
