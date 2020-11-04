@@ -19,6 +19,7 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.ApiError.BOOKING_ALREADY_TAKEN
 import com.bykea.pk.partner.utils.Constants.ApiError.DRIVER_ACCOUNT_BLOCKED_BY_ADMIN
 import com.bykea.pk.partner.utils.Constants.DIGIT_ZERO
+import com.bykea.pk.partner.utils.Constants.ServiceCode.*
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
@@ -137,7 +138,8 @@ class JobDetailViewModel(private val jobsRepository: JobsRepository) : ViewModel
         _dataLoading.value = false
 
         _showDropOff.value = !Util.isBykeaCashJob(job.service_code)
-        _showCOD.value = job.service_code == 22 || job.service_code == 25 || Util.isBykeaCashJob(job.service_code)
+        _showCOD.value = job.service_code == SEND_COD || job.service_code == MART || Util.isBykeaCashJob(job.service_code) ||
+                (job.service_code == NEW_BATCH_DELIVERY && job.amount != DIGIT_ZERO)
 
         if (job.isComplete)
             Utils.logEvent(DriverApp.getContext(), AppPreferences.getDriverId(),
