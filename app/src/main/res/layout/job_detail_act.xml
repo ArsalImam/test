@@ -353,7 +353,7 @@
                                         android:textSize="@dimen/_18sdp"
                                         android:visibility="gone"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
-                                        app:goneUnless="@{viewmodel.job.trips == null || viewmodel.job.trips.size() == 1}"
+                                        app:goneUnless="@{viewmodel.job.trips == null || viewmodel.job.trips.size() &lt;= 1}"
                                         tools:text="@string/nazimabad_ur" />
 
                                     <androidx.recyclerview.widget.RecyclerView
@@ -407,6 +407,8 @@
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
                                 android:onClick="@{() -> listener.onNavigateToMap()}"
+                                android:visibility="gone"
+                                app:invisibleUnless="@{!viewmodel.job.dropoff.zone_ur.equals(`?`)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
