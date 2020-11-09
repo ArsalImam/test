@@ -888,6 +888,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.IOS) ||
                                 (callData.getServiceCode() != null && callData.getServiceCode() == DISPATCH_RIDE))
                             Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                        else if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.OPEN_API) ||
+                                callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.DISPATCH))
+                            Utils.sendCall(mCurrentActivity, callData.getSenderPhone());
                         else
                             Utils.sendSms(mCurrentActivity, callData.getSenderPhone());
                     }

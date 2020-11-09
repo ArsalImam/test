@@ -91,7 +91,7 @@ android {
             }
             staging {
                 dimension "env"
-                buildConfigField "String", "FLAVOR_URL", "\"https://staging-talos.bykea.dev\""
+                buildConfigField "String", "FLAVOR_URL", "\"https://bykea3-talos.bykea.dev\""
                 buildConfigField "String", "BYKEA_MAPS_URL", "\"http://maps.bykea.xyz\""
             }
             jenkinsUrl {

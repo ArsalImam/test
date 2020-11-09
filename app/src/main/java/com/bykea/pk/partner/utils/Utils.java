@@ -1119,6 +1119,12 @@ public class Utils {
         context.startActivity(intent);
     }
 
+    public static void sendCall(Context context, String number) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + number));
+        context.startActivity(intent);
+    }
+
     public static void contactViaWhatsApp(Context context, String number) {
 
         Uri uri = Uri.parse("smsto:" + number);
