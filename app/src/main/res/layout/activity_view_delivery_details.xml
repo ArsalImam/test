@@ -272,12 +272,12 @@
                         android:layout_weight="1"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@{viewModel.deliveryDetails.details.order_no}"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp"
                         app:fontName="open_sans_regular.ttf"
+                        tools:text="515113"
                         app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
-                        tools:text="515113" />
+                        android:text="@{viewModel.deliveryDetails.details.order_no}" />
 
                 </LinearLayout>
 
