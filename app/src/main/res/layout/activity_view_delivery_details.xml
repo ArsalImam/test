@@ -260,8 +260,8 @@
                         android:layout_height="@dimen/_18sdp"
                         android:layout_marginStart="@dimen/_20sdp"
                         android:layout_marginLeft="@dimen/_20sdp"
-                        app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}"
-                        app:srcCompat="@drawable/ic_number_black" />
+                        app:srcCompat="@drawable/ic_number_black"
+                        app:goneUnless="@{viewModel.deliveryDetails.details.order_no != null}" />
 
                     <com.bykea.pk.partner.widgets.FontTextView
                         android:id="@+id/tVOrderNumber"
