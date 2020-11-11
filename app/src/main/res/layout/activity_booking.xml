@@ -33,12 +33,12 @@
 
 
                     <RelativeLayout
+                        android:id="@+id/rLPWalletAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_6sdp"
                         android:layout_marginRight="@dimen/_8sdp"
-                        android:id="@+id/rLPWalletAmount"
                         android:background="@color/blue_light"
                         android:paddingLeft="@dimen/_5sdp"
                         android:paddingTop="@dimen/_5sdp"
@@ -63,12 +63,12 @@
                             tools:text="Rs. 30" />
 
                         <com.bykea.pk.partner.widgets.FontTextView
+                            android:id="@+id/tvPWalletAmountLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:id="@+id/tvPWalletAmountLabel"
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginLeft="@dimen/_8sdp"
                             android:gravity="end|center"
@@ -507,6 +507,49 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/llBatchPickUpInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_2sdp"
+        android:background="#f5f5f5"
+        android:orientation="horizontal"
+        android:padding="@dimen/_8sdp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tvBatchPickUpCustomerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13sdp"
+                app:fontName="open_sans_regular.ttf"
+                tools:text="Ahmed" />
+
+            <com.bykea.pk.partner.widgets.FontTextView
+                android:id="@+id/tvBatchPickUpAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:fontName="open_sans_regular.ttf"
+                tools:text="Pickup Address Name" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivBatchPickUpCustomerPhone"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            app:srcCompat="@drawable/ic_call_icon" />
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -540,9 +583,9 @@
                 android:paddingTop="@dimen/_4sdp">
 
                 <RelativeLayout
-                    android:layout_marginTop="@dimen/_2sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:orientation="vertical">
 
                     <ImageView
@@ -660,8 +703,8 @@
                         android:id="@+id/vAddressDivider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="@dimen/_5sdp"
                         android:layout_marginLeft="@dimen/_25sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
                         android:alpha="0.2"
                         android:background="@color/textColorPrimary676767" />
 
