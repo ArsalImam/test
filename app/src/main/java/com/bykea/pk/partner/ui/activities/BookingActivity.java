@@ -399,7 +399,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             tvBatchPickUpCustomerName.setText(callData.getSenderName() == null ? "-" : callData.getSenderName());
             tvBatchPickUpAddress.setText(callData.getSenderAddress() == null ? "-" : callData.getSenderAddress());
             ivPickUpCustomerPhone.setTag(Utils.phoneNumberToShow(callData.getSenderPhone()));
-            return;
         }
 
         if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
