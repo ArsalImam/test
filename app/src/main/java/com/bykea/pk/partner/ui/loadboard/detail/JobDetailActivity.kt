@@ -166,15 +166,12 @@ class JobDetailActivity : BaseActivity() {
                             binding.viewmodel?.job?.value?.pickup?.lng,
                             binding.viewmodel?.job?.value?.dropoff?.lat,
                             binding.viewmodel?.job?.value?.dropoff?.lng) { pickLat, pickLng, dropLat, dropLng ->
-                        Utils.navigateToGoogleMap(this@JobDetailActivity, pickLat, pickLng, dropLat, dropLng)
+
+                        Utils.navigateToGoogleMap(this@JobDetailActivity, pickLat, pickLng, binding.viewmodel?.job?.value?.trips)
                     }
                 } else {
                     binding.viewmodel?.job?.value?.trips?.let { trips ->
-                        val wayPoints = StringBuilder()
-                        trips.subList(DIGIT_ZERO, trips.size - DIGIT_ONE).forEach {
-                            wayPoints.append(it.lat, it.lng)
-                        }
-                        gotoGoogleMapOnDesiredLocation(trips.last().lat.toString(), trips.last().lng.toString(), wayPoints.toString())
+                        Utils.navigateToGoogleMap(this@JobDetailActivity, binding.viewmodel?.job?.value?.pickup?.lat!!, binding.viewmodel?.job?.value?.pickup?.lng!!, binding.viewmodel?.job?.value?.trips)
                     }
                 }
             }
