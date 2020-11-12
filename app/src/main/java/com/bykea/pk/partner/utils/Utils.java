@@ -621,7 +621,7 @@ public class Utils {
     public static void navigateToGoogleMap(Context context,
                                            double pickLat, double pickLng, List<Trips> trips) {
         try {
-            String startAddr = pickLat + "," + pickLng;
+            String startAddr = pickLat + Constants.COMMA + pickLng;
             String endAddr = trips.get(DIGIT_ZERO).getLat() + Constants.COMMA + trips.get(DIGIT_ZERO).getLng();
 
             for (int i = 1; i < trips.size(); i++)
