@@ -25,15 +25,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767103339988-mqfi2tf6vbusqnp5bhe2pq82hj90lh6g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "767103339988-i7hqnpbrr0hbrma28ilbpt1ai0bf19uq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bykea.pk"
+              }
+            }
+          ]
         }
       }
     },
@@ -64,11 +69,7 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "767103339988-mqfi2tf6vbusqnp5bhe2pq82hj90lh6g.apps.googleusercontent.com",
@@ -82,9 +83,6 @@
               }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
