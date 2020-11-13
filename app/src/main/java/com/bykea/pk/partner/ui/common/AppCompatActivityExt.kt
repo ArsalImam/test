@@ -65,28 +65,3 @@ private inline fun FragmentManager.transact(action: FragmentTransaction.() -> Un
         action()
     }.commit()
 }
-
-/**
- * Extension function to navigate to google map with destination and waypoints
- *
- * @param lat Destination Latitude
- * @param lng Destination Longitude
- * @param wayPoints WayPoints (Optional)
- */
-fun AppCompatActivity.gotoGoogleMapOnDesiredLocation(
-        lat: String,
-        lng: String,
-        wayPoints: String = StringUtils.EMPTY
-) {
-    val link: String = if (wayPoints.isNotEmpty()) {
-        "${GOOGLE_MAP_ADDRESS_WITH_WAY_POINTS}$ORIGIN${AppPreferences.getLatitude()},${AppPreferences.getLongitude()}$DESTINATION$lat,$lng$WAY_POINTS$wayPoints"
-    } else {
-        "$GOOGLE_MAP_ADDRESS$lat,$lng"
-    }
-
-    try {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
-    } catch (e: Exception) {
-        Dialogs.INSTANCE.showToast(DriverApp.getContext().getString(R.string.install_google_map))
-    }
-}

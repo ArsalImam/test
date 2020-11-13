@@ -539,19 +539,9 @@ public class Utils {
                 }
                 String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
                         Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                        Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-                if (intent.resolveActivity(context.getPackageManager()) != null) {
-                    context.startActivity(intent);
-                }
+                navigateToGoogleMap(context, uri);
             } else {
-                Uri gmmIntentUri = Uri.parse("geo:" + getCurrentLocation());
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage(Constants.GoogleMap.GOOGLE_MAP_PACKAGE);
-                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
-                    context.startActivity(mapIntent);
-                }
+                navigateToGoogleMap(context, "geo:" + getCurrentLocation());
             }
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
@@ -575,12 +565,8 @@ public class Utils {
                     mCallData.getPickup().getLng();
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
                     Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            }
+
+            navigateToGoogleMap(context, uri);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -605,12 +591,7 @@ public class Utils {
             String endAddr = dropLat + "," + dropLng;
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
                     Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr + TRANSIT_MODE_BIKE;
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            }
+            navigateToGoogleMap(context, uri);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -629,16 +610,21 @@ public class Utils {
 
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
                     Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr + TRANSIT_MODE_BIKE;
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            }
+            navigateToGoogleMap(context, uri);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void navigateToGoogleMap(Context context,
+                                           String uri) throws ActivityNotFoundException {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
+                Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
         }
     }
 
@@ -657,12 +643,8 @@ public class Utils {
                     latLng.longitude;
             String uri = Constants.GoogleMap.GOOGLE_NAVIGATE_ENDPOINT + startAddr +
                     Constants.GoogleMap.GOOGLE_DESTINATION_ENDPOINT + endAddr;
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
-                    Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            }
+
+            navigateToGoogleMap(context, uri);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
