@@ -20,7 +20,6 @@ import com.bykea.pk.partner.models.response.CheckDriverStatusResponse
 import com.bykea.pk.partner.repositories.UserDataHandler
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
-import com.bykea.pk.partner.ui.common.gotoGoogleMapOnDesiredLocation
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.common.setupSnackbar
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager

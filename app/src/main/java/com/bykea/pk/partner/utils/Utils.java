@@ -618,7 +618,14 @@ public class Utils {
         }
     }
 
-    public static void navigateToGoogleMap(Context context,
+    /**
+     * a very basic implementation of opening google map's default intent
+     *
+     * @param context of the component
+     * @param uri google map's options
+     * @throws ActivityNotFoundException activity not exception
+     */
+    private static void navigateToGoogleMap(Context context,
                                            String uri) throws ActivityNotFoundException {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
