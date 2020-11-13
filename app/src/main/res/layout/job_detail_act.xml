@@ -102,6 +102,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:goneUnless="@{viewmodel.showCOD}">
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
@@ -352,7 +353,7 @@
                                         android:textSize="@dimen/_18sdp"
                                         android:visibility="gone"
                                         app:fontName="jameel_noori_nastaleeq.ttf"
-                                        app:goneUnless="@{viewmodel.job.trips == null || viewmodel.job.trips.size() == 1}"
+                                        app:goneUnless="@{viewmodel.job.trips == null || viewmodel.job.trips.size() &lt;= 1}"
                                         tools:text="@string/nazimabad_ur" />
 
                                     <androidx.recyclerview.widget.RecyclerView
@@ -405,8 +406,9 @@
                                 android:layout_marginRight="@dimen/_5sdp"
                                 android:layout_toStartOf="@id/cardViewDropOff"
                                 android:layout_toLeftOf="@id/cardViewDropOff"
-                                android:onClick="@{() -> listener.onNavigateToMap(false,viewmodel.job.pickup.lat, viewmodel.job.pickup.lng, viewmodel.job.dropoff.lat, viewmodel.job.dropoff.lng)}"
-                                app:invisibleUnless="@{!Utils.isNewBatchService(viewmodel.job.service_code)}"
+                                android:onClick="@{() -> listener.onNavigateToMap()}"
+                                android:visibility="gone"
+                                app:invisibleUnless="@{!viewmodel.job.dropoff.zone_ur.equals(`?`)}"
                                 app:srcCompat="@drawable/ic_direction_right_blue" />
 
                         </RelativeLayout>
