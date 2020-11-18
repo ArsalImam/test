@@ -1738,8 +1738,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (CollectionUtils.isEmpty(callData.getBookingList())) {
             llEndAddress.setVisibility(View.GONE);
         } else {
-            llEndAddress.setVisibility(View.VISIBLE);
-            endAddressTv.setText(callData.getBookingsSummary());
+            if (callData.getStatus() != null) {
+                if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                    llEndAddress.setVisibility(View.GONE);
+                } else {
+                    llEndAddress.setVisibility(View.VISIBLE);
+                    endAddressTv.setText(callData.getBookingsSummary());
+                }
+            }
         }
     }
 
@@ -2851,6 +2857,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     showEstimatedDistTime();
                     updateDropOff(true);
                     configCountDown();
+                    updateBatchDropOffDetails();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
                 }

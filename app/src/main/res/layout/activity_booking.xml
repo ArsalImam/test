@@ -408,6 +408,52 @@
 
         </LinearLayout>
 
+
+        <LinearLayout
+            android:id="@+id/llBatchPickUpInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:background="#f5f5f5"
+            android:orientation="horizontal"
+            android:padding="@dimen/_8sdp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvBatchPickUpCustomerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_13sdp"
+                    app:fontName="open_sans_regular.ttf"
+                    tools:text="Ahmed" />
+
+                <com.bykea.pk.partner.widgets.FontTextView
+                    android:id="@+id/tvBatchPickUpAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:fontName="open_sans_regular.ttf"
+                    tools:text="Pickup Address Name" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivBatchPickUpCustomerPhone"
+                android:layout_width="@dimen/_36sdp"
+                android:padding="@dimen/_3sdp"
+                android:layout_height="@dimen/_36sdp"
+                app:srcCompat="@drawable/ic_call_icon" />
+        </LinearLayout>
+
+
         <LinearLayout
             android:id="@+id/llEndAddress"
             android:layout_width="match_parent"
@@ -505,49 +551,6 @@
             android:visibility="gone"
             app:fontName="roboto_bold.ttf" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/llBatchPickUpInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/_2sdp"
-        android:background="#f5f5f5"
-        android:orientation="horizontal"
-        android:padding="@dimen/_8sdp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/tvBatchPickUpCustomerName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_13sdp"
-                app:fontName="open_sans_regular.ttf"
-                tools:text="Ahmed" />
-
-            <com.bykea.pk.partner.widgets.FontTextView
-                android:id="@+id/tvBatchPickUpAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp"
-                app:fontName="open_sans_regular.ttf"
-                tools:text="Pickup Address Name" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/ivBatchPickUpCustomerPhone"
-            android:layout_width="@dimen/_26sdp"
-            android:layout_height="@dimen/_26sdp"
-            app:srcCompat="@drawable/ic_call_icon" />
     </LinearLayout>
 
     <FrameLayout
