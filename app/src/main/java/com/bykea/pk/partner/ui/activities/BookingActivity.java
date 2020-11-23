@@ -397,7 +397,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (Utils.isNewBatchService(callData.getServiceCode())) {
             llBatchPickUpInfo.setVisibility(View.VISIBLE);
             tvBatchPickUpCustomerName.setText(callData.getSenderName() == null ? "-" : callData.getSenderName());
-            tvBatchPickUpAddress.setText(callData.getSenderAddress() == null ? "-" : callData.getSenderAddress());
+            tvBatchPickUpAddress.setText(callData.getSenderAddress() == null ||
+                    callData.getSenderAddress().equalsIgnoreCase(callData.getStartAddress()) ? "-" : callData.getSenderAddress());
             ivPickUpCustomerPhone.setTag(Utils.phoneNumberToShow(callData.getSenderPhone()));
         }
 
