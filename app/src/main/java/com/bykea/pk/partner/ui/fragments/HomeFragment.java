@@ -190,6 +190,8 @@ public class HomeFragment extends Fragment {
     FontTextView totalBalanceTv;
     @BindView(R.id.driverImageView)
     ImageView driverImageView;
+    @BindView(R.id.imageViewDriveCrown)
+    ImageView imageViewDriveCrown;
     @BindView(R.id.muntakhibTvUrdu)
     FontTextView muntakhibTvUrdu;
     @BindView(R.id.authorizedbookingTimeTv)
@@ -484,6 +486,11 @@ public class HomeFragment extends Fragment {
                 if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                     Utils.loadImgPicasso(driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
+                }
+                if (response.getData().getPartnerCategory() != null &&
+                        StringUtils.isNotBlank(response.getData().getPartnerCategory().getCrownUrl())) {
+                    Utils.loadImgPicasso(imageViewDriveCrown, R.drawable.tajj,
+                            response.getData().getPartnerCategory().getCrownUrl());
                 }
                 if (weeklyBookingTv != null)
                     weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));
