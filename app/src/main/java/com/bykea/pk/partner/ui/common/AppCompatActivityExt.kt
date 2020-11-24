@@ -4,12 +4,20 @@ package com.bykea.pk.partner.ui.common
  * Various extension functions for AppCompatActivity.
  */
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.bykea.pk.partner.DriverApp
+import com.bykea.pk.partner.R
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants.*
+import com.bykea.pk.partner.utils.Dialogs
+import org.apache.commons.lang3.StringUtils
 
 
 /**

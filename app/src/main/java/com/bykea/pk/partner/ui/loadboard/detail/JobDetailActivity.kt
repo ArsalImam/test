@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.analytics.AnalyticsEventsJsonObjects
 import com.bykea.pk.partner.dal.Trips
+import com.bykea.pk.partner.dal.util.DIGIT_ZERO
 import com.bykea.pk.partner.databinding.JobDetailActBinding
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse
@@ -24,6 +25,7 @@ import com.bykea.pk.partner.ui.common.setupSnackbar
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Constants.DIGIT_ONE
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
@@ -42,6 +44,7 @@ import kotlinx.android.synthetic.main.activity_confirm_drop_off_address.*
 import kotlinx.android.synthetic.main.job_detail_act.*
 import java.io.File
 import java.io.FileInputStream
+import java.lang.StringBuilder
 import java.util.*
 
 /**
@@ -145,16 +148,31 @@ class JobDetailActivity : BaseActivity() {
             }
 
             override fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double) {
-                if (isPickUp) //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE CURRENT TO PICKUP
-                    Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
-                            Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value))
-                else //TRIGGER WHEN USER CLICK ON DIRECTION TO SEE PICKUP TO DROPOFF
-                    Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
-                            Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
-                            AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value))
-
+                Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION,
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_PICKUP_DIRECTION, binding.viewmodel?.job?.value))
                 Utils.navigateToGoogleMap(this@JobDetailActivity, pickLat, pickLng, dropLat, dropLng)
+            }
+
+            override fun onNavigateToMap() {
+                Utils.logEvent(this@JobDetailActivity, AppPreferences.getDriverId(),
+                        Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION,
+                        AnalyticsEventsJsonObjects.getEventLoadBoardJson(Constants.AnalyticsEvents.ON_LB_DROPOFF_DIRECTION, binding.viewmodel?.job?.value))
+
+                if (binding.viewmodel?.job?.value?.trips.isNullOrEmpty() ||
+                        binding.viewmodel?.job?.value?.trips?.size == DIGIT_ONE) {
+                    Util.safeLet(binding.viewmodel?.job?.value?.pickup?.lat,
+                            binding.viewmodel?.job?.value?.pickup?.lng,
+                            binding.viewmodel?.job?.value?.dropoff?.lat,
+                            binding.viewmodel?.job?.value?.dropoff?.lng) { pickLat, pickLng, dropLat, dropLng ->
+
+                        Utils.navigateToGoogleMap(this@JobDetailActivity, pickLat, pickLng, binding.viewmodel?.job?.value?.trips)
+                    }
+                } else {
+                    binding.viewmodel?.job?.value?.trips?.let { trips ->
+                        Utils.navigateToGoogleMap(this@JobDetailActivity, binding.viewmodel?.job?.value?.pickup?.lat!!, binding.viewmodel?.job?.value?.pickup?.lng!!, binding.viewmodel?.job?.value?.trips)
+                    }
+                }
             }
 
             override fun onAcceptBooking() {

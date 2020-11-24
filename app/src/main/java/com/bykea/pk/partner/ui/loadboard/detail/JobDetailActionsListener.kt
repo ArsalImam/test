@@ -22,6 +22,11 @@ interface JobDetailActionsListener {
     fun onNavigateToMap(isPickUp: Boolean, pickLat: Double, pickLng: Double, dropLat: Double, dropLng: Double)
 
     /**
+     * On navigation to Google map for route
+     */
+    fun onNavigateToMap()
+
+    /**
      * On user attempt to accept booking
      *
      */
