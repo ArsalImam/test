@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Constants {
+
+    public static final int OVERLAY_PERMISSION_REQUEST_CODE = 122;
     public static final int DIGIT_ZERO = 0;
     public static final int DIGIT_ONE = 1;
     public static final int DIGIT_TWO = 2;

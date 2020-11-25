@@ -306,8 +306,8 @@ public enum Dialogs {
             mDialog = new Dialog(context, R.style.actionSheetTheme);
             mDialog.setContentView(R.layout.dialog_alert);
 
-            FontButton okIv = (FontButton) mDialog.findViewById(R.id.positiveBtn);
-            FontButton cancelIv = (FontButton) mDialog.findViewById(R.id.negativeBtn);
+            FontTextView okIv = (FontTextView) mDialog.findViewById(R.id.positiveBtn);
+            FontTextView cancelIv = (FontTextView) mDialog.findViewById(R.id.negativeBtn);
             cancelIv.setText(context.getString(R.string.button_text_cancel));
             okIv.setText(context.getString(R.string.button_text_ok));
 

@@ -238,7 +238,6 @@ public class HomeFragment extends Fragment {
 
         resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
                 (int) getResources().getDimension(R.dimen._110sdp));
-
         return view;
     }
 
@@ -330,6 +329,20 @@ public class HomeFragment extends Fragment {
      */
     private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(v -> {
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                    !Settings.canDrawOverlays(getActivity())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Show alert dialog to the user saying a separate permission is needed
+                    // Launch the settings activity if the user prefers
+                    Dialogs.INSTANCE.showAlertDialog(getActivity(),
+                            "Bykea",
+                            "The call feature requires to allow screen overlay please allow by pressing 'ok' button",
+                            view -> Utils.openAllowOverLayIntent(getActivity()));
+                    return;
+                }
+            }
             if (Utils.isGpsEnable()) {
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (Utils.isPartnerTemperatureRequired()) {
