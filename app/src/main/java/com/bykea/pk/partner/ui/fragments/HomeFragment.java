@@ -336,10 +336,9 @@ public class HomeFragment extends Fragment {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Show alert dialog to the user saying a separate permission is needed
                     // Launch the settings activity if the user prefers
-                    Dialogs.INSTANCE.showAlertDialog(getActivity(),
-                            "Bykea",
-                            "The call feature requires to allow screen overlay please allow by pressing 'ok' button",
-                            view -> Utils.openAllowOverLayIntent(getActivity()));
+                    Dialogs.INSTANCE.showNegativeAlertDialog(getActivity(),
+                            "کال فیچر کے استعمال کے لئے اجازت کی ضرورت ہے",
+                            view -> Utils.openAllowOverLayIntent(getActivity()), null);
                     return;
                 }
             }
