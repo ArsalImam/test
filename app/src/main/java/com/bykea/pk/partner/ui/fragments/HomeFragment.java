@@ -337,7 +337,7 @@ public class HomeFragment extends Fragment {
                     // Show alert dialog to the user saying a separate permission is needed
                     // Launch the settings activity if the user prefers
                     Dialogs.INSTANCE.showNegativeAlertDialog(getActivity(),
-                            "کال فیچر کے استعمال کے لئے اجازت کی ضرورت ہے",
+                            getString(R.string.permission_allow_call),
                             view -> Utils.openAllowOverLayIntent(getActivity()), null);
                     return;
                 }
