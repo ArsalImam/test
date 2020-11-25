@@ -378,7 +378,7 @@ public class HomeFragment extends Fragment {
 
     private void setDriverStatusActive() {
         if (AppPreferences.getAvailableStatus()) {
-            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), v -> {
+            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, DriverApp.getContext().getString(R.string.offline_msg_ur), v -> {
                 Dialogs.INSTANCE.dismissDialog();
                 callAvailableStatusAPI(false);
             }, null);
