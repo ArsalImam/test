@@ -238,7 +238,6 @@ public class HomeFragment extends Fragment {
 
         resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
                 (int) getResources().getDimension(R.dimen._110sdp));
-
         return view;
     }
 
@@ -330,6 +329,19 @@ public class HomeFragment extends Fragment {
      */
     private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(v -> {
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                    !Settings.canDrawOverlays(getActivity())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Show alert dialog to the user saying a separate permission is needed
+                    // Launch the settings activity if the user prefers
+                    Dialogs.INSTANCE.showNegativeAlertDialog(getActivity(),
+                            getString(R.string.permission_allow_call),
+                            view -> Utils.openAllowOverLayIntent(getActivity()), null);
+                    return;
+                }
+            }
             if (Utils.isGpsEnable()) {
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (Utils.isPartnerTemperatureRequired()) {
