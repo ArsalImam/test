@@ -35,19 +35,10 @@ public class Constants {
     public static final String DEVICE_TYPE = "android";
     public static final String USER_TYPE = "d";
     public static final String UNAUTH_MESSAGE = "unAuthrozied User";
-    public static final int ESTIMATION_SPEED = 30;
 
     public static final int MINIMUM_VOICE_RECORDING = 1000;
 
     public static final String BYKEA = "BYKEA";
-    public static final String BYKEA_URL = "BYKEA URL";
-    public static final String BYKEA_ERROR = "BYKEA ERROR";
-    public static final String BYKEA_WARNING = "BYKEA WARNING";
-    public static final String TAG_CALL = "Call";
-    public static final String TAG_ADVANCE_CALL = "AdvanceCall";
-    public static final String TAG_NORMAL_CALL = "NORMAL_CALL";
-    public static final String TAG_LOCATION = "LocationUpdate";
-    public static final String TAG_GOOGLE_MAP = "GOOGLE MAP TRACKING";
 
     /*Added these ride statuses to handle making calls to drop off location's person
      * Call option can only be enabled when ride has started or arrived*/
@@ -80,17 +71,11 @@ public class Constants {
 
     public static final long MILLI_SEC_IN_1_AND_HALF_DAYS = 129600000;
     public static final int CONFIRM_DROPOFF_REQUEST_CODE = 101;
-    public static final int UPDATE_DROPOFF_REQUEST_CODE = 102;
-    public static final String TOOLBAR_TITLE = "toolbar_title";
-    public static final String SEARCHBOX_TITLE = "searchBox_title";
     public static final String GOOGLE_CHROME_PACKAGE = "com.android.chrome";
 
     public final static String ON_NEW_NOTIFICATION = "checkNotification";
     public final static String ON_PERMISSIONS_GRANTED = "ON_PERMISSIONS_GRANTED";
 
-    public static final String INVALID_REQUEST = "INVALID_REQUEST";
-    public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
-    public static final String EVENT_ACTION_UPDATE_WITHDRAW = "EVENT_ACTION_UPDATE_WITHDRAW";
     public static final String DEFAULT_ADMIN_FEE = "10";
     public static final String FONT_NASTALIQ = "jameel_noori_nastaleeq.ttf";
     public static final String FONT_ROBOTO_MED = "roboto_medium.ttf";
@@ -104,11 +89,11 @@ public class Constants {
     public static final String CREATOR_PASSENGER = "PASSENGER_ANDROID";
     public static final String ANDROID = "ANDROID";
     public static final int NUMBER_OF_CHARS_IN_LINE = 40;
-    public static final int OFFSET_FOR_SINGLE_LINE = 37;
     public static final String IOS = "IOS";
+    public static final String OPEN_API = "api";
+    public static final String DISPATCH = "Agent";
     public static final String PLUS = "+";
     public static final String API = "API";
-    public static final String DOCS = "doc";
     public static final int REQ_IMAGE = 1011;
     public static final String POD = "pod";
     public static final String CHAR_HYPHEN = "-";
