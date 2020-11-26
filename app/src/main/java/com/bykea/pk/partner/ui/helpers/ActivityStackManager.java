@@ -738,12 +738,12 @@ public class ActivityStackManager {
         activity.startActivity(intent);
     }
 
-    /*public void startComplainDepartmentReasonActivity(Activity activity, String departmentId, TripHistoryData tripDetails) {
+    public void startComplainDepartmentReasonActivity(Activity activity, String departmentId, TripHistoryData tripDetails) {
         Intent intent = new Intent(activity, ComplainDepartmentReasonActivity.class);
         if (tripDetails != null) {
             intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripDetails);
         }
         intent.putExtra(DEPARTMENT_ID, departmentId);
         activity.startActivity(intent);
-    }*/
+    }
 }
