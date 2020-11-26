@@ -627,4 +627,5 @@
     <string name="reference_ur">\u0020حوالہ\u0020</string>
     <string name="city">\u0020شہر\u0020</string>
     <string name="install_google_map">Please Install Google Map</string>
+    <string name="permission_allow_call">کال فیچر کے استعمال کے لئے اجازت کی ضرورت ہے</string>
 </resources>
