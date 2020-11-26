@@ -1,12 +1,12 @@
 package com.bykea.pk.partner.utils
 
 import android.app.Activity
-import com.bykea.pk.partner.BuildConfig
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
 import org.apache.commons.lang3.StringUtils
-import org.json.JSONObject
+import java.util.HashMap
 
 /**
  * this is the utitlity manager class for tellotalk
@@ -81,21 +81,11 @@ class TelloTalkManager {
      *
      * [activity] context of the activity from which it will open
      */
-    fun openCorporateChat(activity: Activity?, template: String? = null) {
+    fun openCorporateChat(activity: Activity?, template: String? = null, departmentConversations: DepartmentConversations? = null) {
         if (telloApiClient == null) {
             build()
         }
-        telloApiClient?.openCorporateChat(activity, template)
-    }
-
-    /**
-     * this will awake tello's client on fcm received for fcm
-     */
-    fun onMessageReceived() {
-        if (telloApiClient == null) {
-            build()
-        }
-        telloApiClient?.onMessageNotificationReceived()
+        telloApiClient?.openCorporateChat(activity, template, StringUtils.EMPTY, departmentConversations)
     }
 
     fun build() {
@@ -117,11 +107,13 @@ class TelloTalkManager {
             if (telloApiClient == null) {
                 build()
             }
-            telloApiClient?.buildNotification(JSONObject(data))
+            telloApiClient?.onMessageNotificationReceived(data as HashMap<String, String>?)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
+    fun getDepartments() = telloApiClient?.department
 
     companion object {
         /**

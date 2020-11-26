@@ -96,19 +96,12 @@ public class ContactUsFragment extends Fragment {
             case R.id.supportCall:
                 checkContactNumberAndCall(true);
                 break;
-            case R.id.submittedComplains: {
-                TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null);
-//                if (AppPreferences.isEmailVerified()) {
-//                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-//                } else {
-//                    checkIsEmailUpdatedFromRemoteDataSource();
-//                }
-            }
-            break;
-            case R.id.reportComplain: {
+            case R.id.submittedComplains:
+                TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, null);
+                break;
+            case R.id.reportComplain:
                 ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null, null);
-            }
-            break;
+                break;
             case R.id.bankAccountNumber:
                 startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
                 break;
@@ -119,6 +112,7 @@ public class ContactUsFragment extends Fragment {
      * Check ContactNumber object
      * if it not null, get support contact number and land to mobile calling screen
      * if null, generate call if @param generateApiCall is True
+     *
      * @param generateApiCall : Call API If True
      */
     private void checkContactNumberAndCall(boolean generateApiCall) {
@@ -140,7 +134,7 @@ public class ContactUsFragment extends Fragment {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable Boolean isEmailUpdated) {
                 Dialogs.INSTANCE.dismissDialog();
-                if (isEmailUpdated!=null && isEmailUpdated)
+                if (isEmailUpdated != null && isEmailUpdated)
                     AppPreferences.setEmailVerified();
                 ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
             }

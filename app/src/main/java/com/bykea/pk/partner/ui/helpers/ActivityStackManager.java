@@ -54,6 +54,8 @@ import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.complain.ComplainAddActivity;
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentActivity;
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentReasonActivity;
 import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
@@ -73,6 +75,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
+import static com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_ID;
 import static com.bykea.pk.partner.utils.Constants.Extras.FAILED_BOOKING_ID;
 import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
@@ -251,6 +254,7 @@ public class ActivityStackManager {
 
     /**
      * this will open feedback activity with taking care of backward compatibility
+     *
      * @param mContext of the activity
      */
     public void startFeedbackActivity(Context mContext) {
@@ -261,7 +265,7 @@ public class ActivityStackManager {
      * this will open feedback activity with taking care of backward compatibility (dependent on the flag)
      *
      * @param mContext of the activity
-     * @param newFlow if true, will ignore backward compatibility
+     * @param newFlow  if true, will ignore backward compatibility
      */
     public void startFeedbackActivity(Context mContext, boolean newFlow) {
         NormalCallData callData = AppPreferences.getCallData();
@@ -672,7 +676,7 @@ public class ActivityStackManager {
      * @param flowFor         : Flow for is to handle add or edit
      * @param deliveryDetails : Delivery Detail Object
      * @param failedBookingId : id of the failed booking against which re route's booking needs
-     *                          to be created
+     *                        to be created
      */
     public void startAddEditDeliveryDetails(Activity activity, int flowFor, DeliveryDetails deliveryDetails, String failedBookingId) {
         Intent intent = new Intent(activity, AddEditDeliveryDetailsActivity.class);
@@ -728,4 +732,18 @@ public class ActivityStackManager {
         Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
         activity.startActivity(intent);
     }
+
+    public void startComplainDepartmentActivity(Activity activity) {
+        Intent intent = new Intent(activity, ComplainDepartmentActivity.class);
+        activity.startActivity(intent);
+    }
+
+    /*public void startComplainDepartmentReasonActivity(Activity activity, String departmentId, TripHistoryData tripDetails) {
+        Intent intent = new Intent(activity, ComplainDepartmentReasonActivity.class);
+        if (tripDetails != null) {
+            intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripDetails);
+        }
+        intent.putExtra(DEPARTMENT_ID, departmentId);
+        activity.startActivity(intent);
+    }*/
 }

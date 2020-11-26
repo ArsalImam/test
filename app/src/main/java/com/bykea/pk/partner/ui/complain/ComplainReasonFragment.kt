@@ -126,7 +126,7 @@ class ComplainReasonFragment : Fragment() {
             mCurrentActivity?.tripHistoryDate?.let {
                 template = String.format(mCurrentActivity?.getString(R.string.tello_trip_template)!!, it?.tripNo, reason.message)
             }
-            TelloTalkManager.instance().openCorporateChat(activity, template)
+            TelloTalkManager.instance().openCorporateChat(activity, template, null)
         }
     }
 

@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bykea.pk.partner">
 
+    <uses-sdk tools:overrideLibrary="com.mahc.custombottomsheetbehavior" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- <uses-permission android:name="android.permission.CALL_PHONE" /> -->
@@ -26,20 +28,22 @@
     <uses-feature android:name="android.hardware.location.gps" /> <!-- <uses-feature android:glEsVersion="0x00030001" /> -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
-    <uses-sdk tools:overrideLibrary="com.mahc.custombottomsheetbehavior"/>
+
     <application
         android:name=".DriverApp"
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/partner_icon"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup,android:name">
+        <activity android:name=".ui.complain.ComplainDepartmentReasonActivity"/>
+        <activity android:name=".ui.complain.ComplainDepartmentActivity" />
         <activity
             android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"
             android:screenOrientation="portrait" />

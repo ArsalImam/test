@@ -627,4 +627,5 @@
     <string name="reference_ur">\u0020حوالہ\u0020</string>
     <string name="city">\u0020شہر\u0020</string>
     <string name="install_google_map">Please Install Google Map</string>
+    <string name="chat">\u0020چیٹ\u0020</string>
 </resources>
