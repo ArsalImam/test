@@ -1719,7 +1719,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateButtonState();
             updateMarkers(true);
 
-            updateBatchDropOffDetails();
+            if (Utils.isNewBatchService(callData.getServiceCode())) updateBatchDropOffDetails();
         }
     }
 
@@ -2861,7 +2861,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     showEstimatedDistTime();
                     updateDropOff(true);
                     configCountDown();
-                    updateBatchDropOffDetails();
+                    if (Utils.isNewBatchService(callData.getServiceCode()))
+                        updateBatchDropOffDetails();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
                 }
