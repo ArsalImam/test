@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.complain
 
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
@@ -44,7 +45,10 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
                 }?.let {
                     departmentConversations = it
                     setTitleCustomToolbarUrdu(it.department.dptName)
-                    Utils.loadImgPicasso(imgViewCategory, R.color.white, it.department.dptImage)
+                    it.department.dptImage?.let { dptImg ->
+                        Utils.loadImgPicasso(imgViewCategory, R.color.white, dptImg)
+                        imgViewCategory.visibility = View.VISIBLE
+                    }
                 }
             }
         }
