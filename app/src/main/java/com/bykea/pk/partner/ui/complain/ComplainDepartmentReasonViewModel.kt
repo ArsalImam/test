@@ -9,6 +9,8 @@ import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.remote.data.ComplainReason
 import com.bykea.pk.partner.dal.source.remote.response.ComplainReasonResponse
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.utils.Constants.DIGIT_ONE
+import com.bykea.pk.partner.utils.Dialogs
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 
 class ComplainDepartmentReasonViewModel : ViewModel() {
@@ -26,7 +28,15 @@ class ComplainDepartmentReasonViewModel : ViewModel() {
     fun fetchDepartmentReason(departmentId: String) {
         jobRespository.getJobComplainReasons(object : JobsDataSource.ComplainReasonsCallback {
             override fun onSuccess(complainReasonResponse: ComplainReasonResponse) {
+                complainReasonResponse.data?.forEachIndexed { index, complainReason ->
+                    complainReason.messageModified = (index + DIGIT_ONE).toString().plus(") ").plus(complainReason.message)
+                }
+                Dialogs.INSTANCE.dismissDialog()
                 _items.value = complainReasonResponse.data
+            }
+
+            override fun onFail(code: Int, subCode: Int?, message: String?) {
+                Dialogs.INSTANCE.dismissDialog()
             }
         })
     }

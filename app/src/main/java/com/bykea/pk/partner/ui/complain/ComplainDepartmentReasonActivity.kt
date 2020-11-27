@@ -17,6 +17,7 @@ import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.TelloTalkManager
 import com.bykea.pk.partner.utils.Utils
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
+import kotlinx.android.synthetic.main.activity_complain_department_reason.*
 import kotlinx.android.synthetic.main.custom_toolbar_right.*
 
 class ComplainDepartmentReasonActivity : BaseActivity() {
@@ -31,8 +32,11 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_complain_department_reason)
+        binding.lifecycleOwner = this
         viewModel = obtainViewModel(ComplainDepartmentReasonViewModel::class.java)
         binding.viewModel = viewModel
+
+        setTitleCustomToolbarUrdu(getString(R.string.chat))
 
         intent?.extras?.let { intentExtras ->
             if (intentExtras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA)) {
@@ -45,8 +49,8 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
                 }?.let {
                     departmentConversations = it
                     setTitleCustomToolbarUrdu(it.department.dptName)
-                    it.department.dptImage?.let { dptImg ->
-                        Utils.loadImgPicasso(imgViewCategory, R.color.white, dptImg)
+                    if (!it.department.dptImage.isNullOrEmpty()) {
+                        Utils.loadImgPicasso(imgViewCategory, R.color.white, it.department.dptImage)
                         imgViewCategory.visibility = View.VISIBLE
                     }
                 }
@@ -78,5 +82,6 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
                         .openCorporateChat(this@ComplainDepartmentReasonActivity, template, departmentConversations)
             }
         })
+        recViewComplainDepartmentReason.adapter = lastAdapter
     }
 }

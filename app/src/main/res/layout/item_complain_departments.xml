@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:goneUnless="@{item.conversation!=null}">
+                app:goneUnless="@{item.conversation!=null &amp;&amp; item.conversation.unreadCount != 0}">
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:layout_width="@dimen/_24sdp"

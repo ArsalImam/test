@@ -100,7 +100,7 @@ public class ContactUsFragment extends Fragment {
                 TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, null);
                 break;
             case R.id.reportComplain:
-                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null, null);
+                ActivityStackManager.getInstance().startComplainDepartmentActivity(mCurrentActivity);
                 break;
             case R.id.bankAccountNumber:
                 startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));

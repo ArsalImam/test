@@ -9,6 +9,7 @@ import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.TelloTalkManager
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
+import kotlinx.android.synthetic.main.activity_complain_department.*
 
 class ComplainDepartmentActivity : BaseActivity() {
     lateinit var binding: ActivityComplainDepartmentBinding
@@ -20,12 +21,26 @@ class ComplainDepartmentActivity : BaseActivity() {
 
         setTitleCustomToolbarUrdu(getString(R.string.chat))
 
+        setAdapter()
+        fetchComplainDepartments()
+    }
+
+    /**
+     * Set Adapter For Complain Departments
+     */
+    private fun setAdapter() {
         lastAdapter = LastAdapter(R.layout.item_complain_departments, object : LastAdapter.OnItemClickListener<DepartmentConversations> {
             override fun onItemClick(item: DepartmentConversations) {
                 ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.dptId, null)
             }
         })
+        recViewComplainDepartment.adapter = lastAdapter
+    }
 
+    /**
+     * Fetch Complain Department From Tello Talk SDK
+     */
+    private fun fetchComplainDepartments() {
         TelloTalkManager.instance().getDepartments()?.let {
             lastAdapter?.items = ArrayList(it)
         }

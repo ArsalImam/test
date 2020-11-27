@@ -106,12 +106,14 @@ class TelloTalkManager {
         try {
             if (telloApiClient == null) {
                 build()
+                telloApiClient?.setLocality("ur")
             }
             telloApiClient?.onMessageNotificationReceived(data as HashMap<String, String>?)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
 
     fun getDepartments() = telloApiClient?.department
 

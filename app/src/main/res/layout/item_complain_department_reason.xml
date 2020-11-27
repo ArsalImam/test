@@ -38,7 +38,7 @@
                 android:layout_margin="@dimen/_5sdp"
                 android:layout_weight="1"
                 android:padding="@dimen/_14sdp"
-                android:text="@{item.message}"
+                android:text="@{item.messageModified}"
                 android:textSize="@dimen/textsize.small.medium"
                 app:fontName="jameel_noori_nastaleeq.ttf"
                 tools:text="@string/chat" />
