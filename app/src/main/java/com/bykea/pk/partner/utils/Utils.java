@@ -78,6 +78,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bykea.pk.partner.BuildConfig;
@@ -304,6 +305,12 @@ public class Utils {
                     Double.valueOf(originLocation[NumberUtils.INTEGER_ONE]));
         }
         return new LatLng(NumberUtils.DOUBLE_ZERO, NumberUtils.DOUBLE_ZERO);
+    }
+
+    public static void openAllowOverLayIntent(Activity context) {
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + context.getPackageName()));
+        context.startActivityForResult(intent, Constants.OVERLAY_PERMISSION_REQUEST_CODE);
     }
 
 
@@ -1128,6 +1135,12 @@ public class Utils {
         Uri uri = Uri.parse("smsto:" + number);
         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
         intent.putExtra("sms_body", "");
+        context.startActivity(intent);
+    }
+
+    public static void sendCall(Context context, String number) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + number));
         context.startActivity(intent);
     }
 
