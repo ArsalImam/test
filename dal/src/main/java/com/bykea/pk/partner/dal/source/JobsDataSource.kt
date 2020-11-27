@@ -182,7 +182,7 @@ interface JobsDataSource {
     /**
      * Get Job Complain Reasons
      */
-    fun getJobComplainReasons(callback: ComplainReasonsCallback)
+    fun getJobComplainReasons(departmentId: String?, callback: ComplainReasonsCallback)
 
     /**
      * Get fair estimation

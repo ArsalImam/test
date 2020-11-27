@@ -8,6 +8,7 @@ import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetail
 import com.bykea.pk.partner.dal.source.remote.request.ride.RideCreateRequestObject
 import com.bykea.pk.partner.dal.source.remote.response.*
 import com.bykea.pk.partner.dal.util.DIGIT_TWENTY
+import com.bykea.pk.partner.dal.util.MESSAGE_TYPE
 import com.bykea.pk.partner.dal.util.RequestParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -313,7 +314,7 @@ interface Backend {
 
     @GET("/api/v1/common/cancel/messages")
     fun getJobComplainReasons(@Query("user_type") userType: String?,
-                              @Query("type") type: String?,
+                              @Query("type") type: String? = MESSAGE_TYPE,
                               @Query("lang") lang: String?): Call<ComplainReasonResponse>
 
     @GET
@@ -399,7 +400,7 @@ interface Backend {
 
     @GET("/api/v1/driver/settings")
     fun getDriverSettings(@Query("_id") id: String,
-                   @Query("token_id") tokenId: String): Call<DriverSettingsResponse>
+                          @Query("token_id") tokenId: String): Call<DriverSettingsResponse>
 
 
     companion object {

@@ -84,12 +84,8 @@ class JobsRepository(
         if (jobInCache == null || !jobInCache.isComplete) getJobFromRemote(jobId, callback)
     }
 
-    /**
-     * this method can be used to get all complain's reasons related with jobs
-     * [callback] get all complain reasons
-     */
-    override fun getJobComplainReasons(callback: JobsDataSource.ComplainReasonsCallback) {
-        jobsRemoteDataSource.getJobComplainReasons(USER_TYPE_DRIVER, MESSAGE_TYPE, LANG_TYPE, callback)
+    override fun getJobComplainReasons(departmentId: String?, callback: JobsDataSource.ComplainReasonsCallback) {
+        jobsRemoteDataSource.getJobComplainReasons(USER_TYPE_DRIVER, departmentId, LANG_TYPE, callback)
     }
 
     override fun saveJob(job: Job) {
