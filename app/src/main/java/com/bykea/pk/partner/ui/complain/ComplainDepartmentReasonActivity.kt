@@ -14,7 +14,9 @@ import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_ID
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.TelloTalkManager
+import com.bykea.pk.partner.utils.Utils
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
+import kotlinx.android.synthetic.main.custom_toolbar_right.*
 
 class ComplainDepartmentReasonActivity : BaseActivity() {
     lateinit var binding: ActivityComplainDepartmentReasonBinding
@@ -37,8 +39,12 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
             }
             if (intentExtras.containsKey(DEPARTMENT_ID)) {
                 departmentId = intentExtras.getString(DEPARTMENT_ID)
-                departmentConversations = TelloTalkManager.instance().getDepartments()?.find { departmentConversations ->
+                TelloTalkManager.instance().getDepartments()?.find { departmentConversations ->
                     !departmentId.isNullOrEmpty() && departmentId == departmentConversations.department.dptId
+                }?.let {
+                    departmentConversations = it
+                    setTitleCustomToolbarUrdu(it.department.dptName)
+                    Utils.loadImgPicasso(imgViewCategory, R.color.white, it.department.dptImage)
                 }
             }
         }
