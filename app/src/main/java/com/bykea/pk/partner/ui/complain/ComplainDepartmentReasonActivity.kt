@@ -61,7 +61,7 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
      * Set Adapter For Complain Department Reasons
      */
     fun setAdapter() {
-        lastAdapter = LastAdapter(R.layout.drawer_footer_layout, object : LastAdapter.OnItemClickListener<ComplainReason> {
+        lastAdapter = LastAdapter(R.layout.item_complain_department_reason, object : LastAdapter.OnItemClickListener<ComplainReason> {
             override fun onItemClick(item: ComplainReason) {
                 var template = item.message
 
