@@ -75,7 +75,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
-import static com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_ID;
+import static com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_TAG;
 import static com.bykea.pk.partner.utils.Constants.Extras.FAILED_BOOKING_ID;
 import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
@@ -738,12 +738,12 @@ public class ActivityStackManager {
         activity.startActivity(intent);
     }
 
-    public void startComplainDepartmentReasonActivity(Activity activity, String departmentId, TripHistoryData tripDetails) {
+    public void startComplainDepartmentReasonActivity(Activity activity, String departmentTag, TripHistoryData tripDetails) {
         Intent intent = new Intent(activity, ComplainDepartmentReasonActivity.class);
         if (tripDetails != null) {
             intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripDetails);
         }
-        intent.putExtra(DEPARTMENT_ID, departmentId);
+        intent.putExtra(DEPARTMENT_TAG, departmentTag);
         activity.startActivity(intent);
     }
 }

@@ -23,9 +23,22 @@
             android:id="@+id/recViewComplainDepartmentReason"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:goneUnless="@{viewModel.items.size() > 0}"
             app:items="@{viewModel.items}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_complain_department_reason" />
+
+        <com.bykea.pk.partner.widgets.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:padding="@dimen/_14sdp"
+            android:text="@string/reasons_not_found"
+            android:textColor="@color/dark_gray656565"
+            android:textSize="@dimen/_18sdp"
+            app:fontName="jameel_noori_nastaleeq.ttf"
+            app:goneUnless="@{!viewModel.items.empty}" />
 
     </LinearLayout>
 </layout>

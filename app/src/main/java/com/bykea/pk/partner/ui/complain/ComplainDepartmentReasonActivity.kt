@@ -12,7 +12,7 @@ import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.utils.Constants
-import com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_ID
+import com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_TAG
 import com.bykea.pk.partner.utils.Dialogs
 import com.bykea.pk.partner.utils.TelloTalkManager
 import com.bykea.pk.partner.utils.Utils
@@ -27,7 +27,7 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
 
     var lastAdapter: LastAdapter<ComplainReason>? = null
     var departmentConversations: DepartmentConversations? = null
-    var departmentId: String? = null
+    var departmentTag: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +42,10 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
             if (intentExtras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA)) {
                 tripHistoryData = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
             }
-            if (intentExtras.containsKey(DEPARTMENT_ID)) {
-                departmentId = intentExtras.getString(DEPARTMENT_ID)
+            if (intentExtras.containsKey(DEPARTMENT_TAG)) {
+                departmentTag = intentExtras.getString(DEPARTMENT_TAG)
                 TelloTalkManager.instance().getDepartments()?.find { departmentConversations ->
-                    !departmentId.isNullOrEmpty() && departmentId == departmentConversations.department.dptId
+                    !departmentTag.isNullOrEmpty() && departmentTag == departmentConversations.department.deptTag
                 }?.let {
                     departmentConversations = it
                     setTitleCustomToolbarUrdu(it.department.dptName)
@@ -59,7 +59,7 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
 
         setAdapter()
 
-        departmentId?.let {
+        departmentTag?.let {
             Dialogs.INSTANCE.showLoader(this@ComplainDepartmentReasonActivity)
             viewModel.fetchDepartmentReason(it)
         }
