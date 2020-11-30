@@ -54,7 +54,6 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
 import com.bykea.pk.partner.models.response.SettingsResponse;
@@ -1683,6 +1682,38 @@ public class RestRequestHandler {
             @Override
             public void onFailure(Call<OSMGeoCode> call, Throwable t) {
                 Utils.redLog("GeoCode", t.getMessage() + "");
+            }
+        });
+    }
+
+    /**
+     * Call Geo Code Api via Place Id
+     *
+     * @param placeId       Place Id
+     * @param context       Caller context
+     * @param mDataCallback Result callback
+     */
+    public void callGeoCodeApiWithPlaceId(final String placeId, Context context, final IResponseCallback mDataCallback) {
+        mContext = context;
+        IRestClient restClient = RestClient.getBykeaPlacesClient();
+        Call<BykeaPlaceDetailsResponse> call = restClient.callGeoCoderApiWithPlaceId(placeId,
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(), Constants.USER_TYPE_DRIVER
+        );
+        call.enqueue(new Callback<BykeaPlaceDetailsResponse>() {
+            @Override
+            public void onResponse(Call<BykeaPlaceDetailsResponse> call, Response<BykeaPlaceDetailsResponse> geocoderApiResponse) {
+                if (geocoderApiResponse.isSuccessful() && geocoderApiResponse.body() != null) {
+                    mDataCallback.onResponse(geocoderApiResponse.body());
+                } else {
+                    mDataCallback.onError(0, geocoderApiResponse.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BykeaPlaceDetailsResponse> call, Throwable t) {
+                mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
+                        mContext.getString(R.string.error_try_again) + " ");
             }
         });
     }
