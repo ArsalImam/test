@@ -65,147 +65,158 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_60sdp"
-            app:srcCompat="@drawable/ic_offline_ride_navigate"/>
+            app:srcCompat="@drawable/ic_offline_ride_navigate" />
 
     </LinearLayout>
 
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/layoutupper"
+        android:layout_below="@+id/llTop"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@drawable/score_board_bg" />
+
     <LinearLayout
         android:id="@+id/layoutupper"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_95sdp"
-        android:layout_below="@+id/llTop"
-        android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginRight="@dimen/_8sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_above="@+id/layoutDuration"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:weightSum="5.5">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!--Partner Crown, Photo and Rating -->
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2.4"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/driverImageView"
-                android:layout_width="@dimen/_75sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_marginTop="6dp"
-                android:src="@drawable/driverimg"
-                app:civ_border_color="@color/d9d9d9"
-                app:civ_border_width="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageView3"
-                app:layout_constraintVertical_bias="0.28" />
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/driverImageView"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:src="@drawable/driverimg"
+                    app:civ_border_color="@color/d9d9d9"
+                    app:civ_border_width="1dp" />
 
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_25sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/tajj" />
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:layout_gravity="center_horizontal"
+                    app:srcCompat="@drawable/tajj" />
 
+            </FrameLayout>
 
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/totalScoreTv"
-                android:layout_width="@dimen/_70sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_below="@+id/frameLayout"
+                android:layout_marginLeft="@dimen/_3sdp"
+                android:layout_marginTop="@dimen/_minus5sdp"
+                android:layout_marginRight="@dimen/_3sdp"
                 android:background="@drawable/score_board_bg"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12sdp"
-                app:fontName="jameel_noori_nastaleeq.ttf"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.483"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView3"
-                app:layout_constraintVertical_bias="0.823" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-
-        <RelativeLayout
-            android:id="@+id/statsBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2">
-
-            <ImageView
-                android:layout_width="@dimen/_80sdp"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/graphic_progression" />
-
+                android:textSize="@dimen/_10sdp"
+                app:fontName="jameel_noori_nastaleeq.ttf" />
 
         </RelativeLayout>
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.1" />
 
-        <LinearLayout
+        <!--Status-->
+        <RelativeLayout
+            android:id="@+id/statsBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_5sdp"
+                android:src="@drawable/graphic_progression" />
+        </RelativeLayout>
+
+        <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2.6">
+            android:layout_weight="0.1" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        <!--Shakar-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
 
-                <ImageView
-                    android:id="@+id/shahkarBtn"
-                    android:layout_width="@dimen/_50sdp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/shahkar" />
+            <ImageView
+                android:id="@+id/shahkarBtn"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:src="@drawable/shahkar" />
 
-                <RelativeLayout
-                    android:id="@+id/walletRL"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/shahkarBtn"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginTop="@dimen/_10sdp">
+        </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/walletImg"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/wallet_filled_money_tool_1" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1" />
 
-                    <com.bykea.pk.partner.widgets.FontTextView
-                        android:id="@+id/totalBalanceTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_4sdp"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_toRightOf="@+id/walletImg"
-                        android:text=""
-                        android:textColor="@color/grey_hex_51"
-                        android:textSize="@dimen/_14sdp"
-                        app:fontName="open_sans_semi_bold.ttf" />
+        <!--Wallet-->
+        <RelativeLayout
+            android:id="@+id/walletRL"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
 
-                </RelativeLayout>
+            <ImageView
+                android:id="@+id/walletImg"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:src="@drawable/wallet_filled_money_tool_1" />
 
+        </RelativeLayout>
 
-            </RelativeLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1" />
+
+        <!--Chat Meesages-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                app:srcCompat="@drawable/ic_chat_bubble" />
 
         </LinearLayout>
 
@@ -215,7 +226,7 @@
         android:id="@+id/layoutDuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutupper"
+        android:layout_above="@+id/driverStatsLayout"
         android:layout_marginLeft="@dimen/_12sdp"
         android:layout_marginRight="@dimen/_12sdp"
         android:visibility="visible">
@@ -271,18 +282,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/line"
-        android:layout_below="@+id/layoutDuration"
         android:layout_marginLeft="@dimen/_12sdp"
         android:layout_marginRight="@dimen/_12sdp"
+        android:gravity="bottom"
         android:orientation="vertical"
-        android:visibility="visible"
-        android:weightSum="4">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_35sdp"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -302,9 +312,9 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="@dimen/_11sdp"
@@ -328,13 +338,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="?"
+                        android:text="@string/question_mark"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_16sdp"
                         app:fontName="open_sans_semi_bold.ttf" />
 
                 </LinearLayout>
-
 
                 <com.bykea.pk.partner.widgets.FontTextView
                     android:layout_width="wrap_content"
@@ -347,10 +356,9 @@
 
             </LinearLayout>
 
-
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.5" />
 
             <LinearLayout
@@ -366,7 +374,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_mukamal_booking"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -384,7 +392,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.5" />
 
             <LinearLayout
@@ -400,7 +408,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_kamai"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -418,7 +426,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.5" />
 
             <LinearLayout
@@ -434,7 +442,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_wqt"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -454,8 +462,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_20sdp"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -471,7 +479,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_takmeel"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -489,7 +497,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.5" />
 
             <LinearLayout
@@ -505,7 +513,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_qabooliat"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -523,7 +531,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.5" />
 
             <LinearLayout
@@ -539,7 +547,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_rating"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -555,12 +563,10 @@
 
             </LinearLayout>
 
-
             <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0.5" />
-
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -575,7 +581,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_booking"
                     android:gravity="center"
-                    android:text="?"
+                    android:text="@string/question_mark"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16sdp"
                     app:fontName="open_sans_semi_bold.ttf" />
@@ -592,7 +598,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
 
     </LinearLayout>
 

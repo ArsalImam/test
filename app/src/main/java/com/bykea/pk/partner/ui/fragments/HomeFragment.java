@@ -186,8 +186,6 @@ public class HomeFragment extends Fragment {
     FontTextView weeklyratingTv;
     @BindView(R.id.totalScoreTv)
     FontTextView totalScoreTv;
-    @BindView(R.id.totalBalanceTv)
-    FontTextView totalBalanceTv;
     @BindView(R.id.driverImageView)
     ImageView driverImageView;
     @BindView(R.id.muntakhibTvUrdu)
@@ -511,8 +509,8 @@ public class HomeFragment extends Fragment {
                 if (weeklyratingTv != null)
                     weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                if (totalBalanceTv != null)
-                    totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());
+                /*if (totalBalanceTv != null)
+                    totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());*/
 
                 if (response.getData().getScore() != null && totalScoreTv != null) {
                     if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
