@@ -8,6 +8,7 @@ import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.data.Address;
 import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
@@ -29,6 +30,7 @@ import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
+import com.bykea.pk.partner.models.response.BykeaPlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -40,7 +42,6 @@ import com.bykea.pk.partner.models.response.DriverDestResponse;
 import com.bykea.pk.partner.models.response.DriverPerformanceResponse;
 import com.bykea.pk.partner.models.response.DriverVerifiedBookingResponse;
 import com.bykea.pk.partner.models.response.ForgotPasswordResponse;
-import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
 import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.models.response.GetCitiesResponse;
 import com.bykea.pk.partner.models.response.GetProfileResponse;
@@ -53,7 +54,6 @@ import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.NormalCallData;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.ServiceTypeResponse;
@@ -96,10 +96,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Field;
 
 import static com.bykea.pk.partner.utils.Constants.COMMA;
-import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class RestRequestHandler {
@@ -1771,39 +1769,6 @@ public class RestRequestHandler {
         });
     }
 
-    /**
-     * Call Geo Code Api via Place Id
-     *
-     * @param placeId       Place Id
-     * @param context       Caller context
-     * @param mDataCallback Result callback
-     */
-    public void callGeoCodeApiWithPlaceId(final String placeId, Context context, final IResponseCallback mDataCallback) {
-        mContext = context;
-        IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<GeoCodeApiResponse> call = restClient.callGeoCoderApiWithPlaceId(placeId, Utils.getApiKeyForGeoCoder());
-        call.enqueue(new Callback<GeoCodeApiResponse>() {
-            @Override
-            public void onResponse(Call<GeoCodeApiResponse> call, Response<GeoCodeApiResponse> geocoderApiResponse) {
-                if (geocoderApiResponse != null && geocoderApiResponse.isSuccessful()
-                        && geocoderApiResponse.body() != null
-                        && geocoderApiResponse.body().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)
-                        && geocoderApiResponse.body().getResults().size() > 0) {
-                    mDataCallback.onResponse(geocoderApiResponse.body());
-                } else {
-                    mDataCallback.onError(0, "" +
-                            mContext.getString(R.string.error_try_again) + " ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeoCodeApiResponse> call, Throwable t) {
-                mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" +
-                        mContext.getString(R.string.error_try_again) + " ");
-            }
-        });
-    }
-
     public void getDistanceMatrix(String origin, String destination, final IResponseCallback mDataCallback, Context context) {
         mContext = context;
         IRestClient restClient = RestClient.getGooglePlaceApiClient();
@@ -1819,17 +1784,35 @@ public class RestRequestHandler {
         call.enqueue(new GenericRetrofitCallBack<>(mDataCallback));
     }
 
-
     public void autocomplete(Context context, String input, final IResponseCallback mDataCallback) {
         mContext = context;
-        IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(input, Utils.getCurrentLocation(), Constants.COUNTRY_CODE_AUTOCOMPLETE, "35000",
-                AppPreferences.getDriverSettings().getData().getGoogleAutoCompleteApiKey());
+        IRestClient restClient = RestClient.getBykeaPlacesClient();
+        Call<PlaceAutoCompleteResponse> call = restClient.getAutoCompletePlaces(
+                input,
+                Utils.getCurrentLocation(),
+                AppPreferences.getDriverId(),
+                AppPreferences.getAccessToken(),
+                Constants.USER_TYPE_DRIVER
+        );
         call.enqueue(new Callback<PlaceAutoCompleteResponse>() {
             @Override
             public void onResponse(Call<PlaceAutoCompleteResponse> call, Response<PlaceAutoCompleteResponse> response) {
-                if (response.isSuccessful() && response.body() != null &&
-                        response.body().getStatus().equalsIgnoreCase("OK")) {
+                if (response.body() == null) {
+                    if (response.errorBody() != null) {
+                        try {
+                            CommonResponse commonResponse = new Gson().fromJson(response.errorBody().string(), CommonResponse.class);
+                            mDataCallback.onError(commonResponse.getCode(), commonResponse.getMessage());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + DriverApp.getContext().getString(R.string.error_try_again) + " ");
+                        }
+                    } else {
+                        mDataCallback.onError(HTTPStatus.INTERNAL_SERVER_ERROR, "" + DriverApp.getContext().getString(R.string.error_try_again) + " ");
+                    }
+                    return;
+                }
+                if (response.isSuccessful() && response.body().getData() != null
+                        && response.body().getData().getStatus().equalsIgnoreCase(Constants.STATUS_CODE_OK)) {
                     mDataCallback.onResponse(response.body());
                 } else {
                     mDataCallback.onError(0, response.message());
@@ -1842,29 +1825,6 @@ public class RestRequestHandler {
             }
         });
     }
-
-
-    public void getPlaceDetails(String s, Context context, final IResponseCallback mDataCallback) {
-        mContext = context;
-        IRestClient restClient = RestClient.getGooglePlaceApiClient();
-        Call<PlaceDetailsResponse> call = restClient.getPlaceDetails(s, Utils.getApiKeyForGeoCoder());
-        call.enqueue(new Callback<PlaceDetailsResponse>() {
-            @Override
-            public void onResponse(Call<PlaceDetailsResponse> call, Response<PlaceDetailsResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    mDataCallback.onResponse(response.body());
-                } else {
-                    mDataCallback.onError(0, response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PlaceDetailsResponse> call, Throwable t) {
-                mDataCallback.onError(0, t.toString());
-            }
-        });
-    }
-
 
     /**
      * This method clears Singleton instance of Bykea's retrofit client when URL is changed for Local builds

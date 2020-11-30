@@ -5,9 +5,10 @@ import android.content.Context;
 import com.bykea.pk.partner.communication.IResponseCallback;
 import com.bykea.pk.partner.communication.rest.RestRequestHandler;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
+import com.bykea.pk.partner.models.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
+import com.bykea.pk.partner.models.response.BykeaPlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
-import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
 
@@ -37,6 +38,8 @@ public class PlacesRepository {
                 mUserCallback.onDistanceMatrixResponse((BykeaDistanceMatrixResponse) object);
             } else if (object instanceof PlaceDetailsResponse) {
                 mUserCallback.onPlaceDetailsResponse((PlaceDetailsResponse) object);
+            } else if (object instanceof BykeaPlaceDetailsResponse) {
+                mUserCallback.onBykeaPlaceDetailsResponse((BykeaPlaceDetailsResponse) object);
             } else if (object instanceof PlaceAutoCompleteResponse) {
                 mUserCallback.onPlaceAutoCompleteResponse((PlaceAutoCompleteResponse) object);
             } else if (object instanceof GeoCodeApiResponse) {
@@ -61,16 +64,6 @@ public class PlacesRepository {
     public void getDistanceMatrix(String origin, String destination, Context context, IPlacesDataHandler handler) {
         mUserCallback = handler;
         mRestRequestHandler.getDistanceMatrix(origin, destination, mGeoCoderPlaces, context);
-    }
-
-    /**
-     * @param placeId : Place Id
-     * @param context : Calling Activity
-     * @param handler : CallBack
-     */
-    public void getPlaceDetails(String placeId, Context context, IPlacesDataHandler handler) {
-        mUserCallback = handler;
-        mRestRequestHandler.getPlaceDetails(placeId, context, mGeoCoderPlaces);
     }
 
     /**
