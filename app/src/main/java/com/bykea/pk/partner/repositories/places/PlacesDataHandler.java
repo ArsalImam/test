@@ -1,9 +1,10 @@
 package com.bykea.pk.partner.repositories.places;
 
+import com.bykea.pk.partner.models.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.data.PlacesList;
 import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
+import com.bykea.pk.partner.models.response.BykeaPlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
-import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 
 public class PlacesDataHandler implements IPlacesDataHandler {
@@ -23,6 +24,11 @@ public class PlacesDataHandler implements IPlacesDataHandler {
 
     @Override
     public void onPlaceDetailsResponse(PlaceDetailsResponse response) {
+
+    }
+
+    @Override
+    public void onBykeaPlaceDetailsResponse(BykeaPlaceDetailsResponse response) {
 
     }
 

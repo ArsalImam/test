@@ -20,6 +20,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -29,6 +30,7 @@ class RestClient {
     private static IRestClient retrofitGoogleApiCalls;
     private static IRestClient bykea2retrofitCalls;
     private static IRestClient bykeaSignUpretrofitCalls;
+    private static IRestClient retrofitBykeaMapApiCalls;
 
 
     static IRestClient getClient(Context context) {
@@ -149,6 +151,37 @@ class RestClient {
             bykeaSignUpretrofitCalls = client.create(IRestClient.class);
         }
         return bykeaSignUpretrofitCalls;
+    }
+
+
+    /**
+     * This method returns BASE URL for Bykea Places server
+     * Added interceptor to send app version in every request
+     */
+    static IRestClient getBykeaPlacesClient() {
+        if (retrofitBykeaMapApiCalls == null) {
+            OkHttpClient.Builder okHttpClient = NetworkUtil.INSTANCE.enableTls12OnPreLollipop();
+
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
+                    HttpLoggingInterceptor.Level.NONE);
+
+
+            okHttpClient.followRedirects(true);
+            okHttpClient.followSslRedirects(true);
+            okHttpClient.retryOnConnectionFailure(true);
+            okHttpClient.cache(null);
+            okHttpClient.connectTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.readTimeout(60, TimeUnit.SECONDS);
+            okHttpClient.interceptors().add(loggingInterceptor);
+            Retrofit client = new Retrofit.Builder()
+                    .baseUrl(ApiTags.BYKEA_PLACES_BASE_URL)
+                    .client(okHttpClient.build())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            retrofitBykeaMapApiCalls = client.create(IRestClient.class);
+        }
+        return retrofitBykeaMapApiCalls;
     }
 
     /**
