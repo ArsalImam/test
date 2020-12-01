@@ -163,6 +163,7 @@ public class Constants {
     public static final float ANIMATION_SCALE_XY = 0.0f;
     public static final float ANIMATION_SCALE_TO_XY = 1.0f;
     public static final float ANIMATION_PIVOT_XY = 0.5f;
+    public static final int HEART_BEAT_OFFSET = 3;
     public static final String USER_TYPE_DRIVER = "d";
 
     public static int BASKET_DELTA_TO_Y_DIFF = 90;
