@@ -31,7 +31,7 @@ class ComplainDepartmentActivity : BaseActivity() {
     private fun setAdapter() {
         lastAdapter = LastAdapter(R.layout.item_complain_departments, object : LastAdapter.OnItemClickListener<DepartmentConversations> {
             override fun onItemClick(item: DepartmentConversations) {
-                ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.dptId, null)
+                ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.deptTag, null, null)
             }
         })
         recViewComplainDepartment.adapter = lastAdapter
