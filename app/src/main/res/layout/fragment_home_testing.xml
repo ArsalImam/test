@@ -6,12 +6,6 @@
     android:background="@color/white">
 
     <include
-        android:id="@+id/llTop"
-        layout="@layout/home_testing_top_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <include
         android:id="@+id/llTopActive"
         layout="@layout/home_testing_driver_on_top"
         android:layout_width="match_parent"
@@ -616,5 +610,11 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/white" />
+
+    <include
+        android:id="@+id/llTop"
+        layout="@layout/home_testing_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
