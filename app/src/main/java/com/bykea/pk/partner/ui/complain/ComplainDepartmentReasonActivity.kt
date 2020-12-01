@@ -8,6 +8,9 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.source.remote.data.ComplainReason
 import com.bykea.pk.partner.databinding.ActivityComplainDepartmentReasonBinding
 import com.bykea.pk.partner.models.data.TripHistoryData
+import com.bykea.pk.partner.models.response.TripHistoryResponse
+import com.bykea.pk.partner.repositories.UserDataHandler
+import com.bykea.pk.partner.repositories.UserRepository
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
@@ -19,11 +22,13 @@ import com.bykea.pk.partner.utils.Utils
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import kotlinx.android.synthetic.main.activity_complain_department_reason.*
 import kotlinx.android.synthetic.main.custom_toolbar_right.*
+import org.apache.commons.collections.CollectionUtils
 
 class ComplainDepartmentReasonActivity : BaseActivity() {
     lateinit var binding: ActivityComplainDepartmentReasonBinding
     lateinit var viewModel: ComplainDepartmentReasonViewModel
     var tripHistoryData: TripHistoryData? = null
+    var tripHistoryId: String? = null
 
     var lastAdapter: LastAdapter<ComplainReason>? = null
     var departmentConversations: DepartmentConversations? = null
@@ -41,6 +46,10 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
         intent?.extras?.let { intentExtras ->
             if (intentExtras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA)) {
                 tripHistoryData = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
+            }
+            if (intentExtras.containsKey(Constants.INTENT_TRIP_HISTORY_ID)) {
+                tripHistoryId = intent.getStringExtra(Constants.INTENT_TRIP_HISTORY_ID)
+                tripHistoryId?.let { updateTripDetailsById(it) }
             }
             if (intentExtras.containsKey(DEPARTMENT_TAG)) {
                 departmentTag = intentExtras.getString(DEPARTMENT_TAG)
@@ -83,5 +92,25 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
             }
         })
         recViewComplainDepartmentReason.adapter = lastAdapter
+    }
+
+    /**
+     * this method will update the trip details by id
+     *
+     * @param tripHistoryId (optional) if any specific trip details needed
+     */
+    private fun updateTripDetailsById(tripHistoryId: String) {
+        Dialogs.INSTANCE.showLoader(this@ComplainDepartmentReasonActivity)
+        UserRepository().requestTripHistory(this@ComplainDepartmentReasonActivity, object : UserDataHandler() {
+            override fun onGetTripHistory(tripHistoryResponse: TripHistoryResponse?) {
+                super.onGetTripHistory(tripHistoryResponse)
+                Dialogs.INSTANCE.dismissDialog()
+                if (tripHistoryResponse?.isSuccess!! && CollectionUtils.isNotEmpty(tripHistoryResponse.data)) {
+                    tripHistoryData = tripHistoryResponse.data[Constants.DIGIT_ZERO]
+                } else {
+                    Utils.appToast(tripHistoryResponse?.message)
+                }
+            }
+        }, Constants.DIGIT_ONE.toString(), tripHistoryId)
     }
 }

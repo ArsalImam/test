@@ -97,6 +97,7 @@ public class ContactUsFragment extends Fragment {
                 checkContactNumberAndCall(true);
                 break;
             case R.id.submittedComplains:
+                //TODO : DEPARTMENT TAG
                 TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, null);
                 break;
             case R.id.reportComplain:

@@ -80,8 +80,8 @@ class BookingDetailActivity : BaseActivity() {
      * this method is binded with complain submit button and will trigger on its click
      */
     private fun onComplainButtonClicked() {
-        ActivityStackManager.getInstance()
-                .startComplainSubmissionActivity(this, null, viewModel?.bookingDetailData?.value?.bookingId!!)
+        //TODO : DEPARTMENT TAG
+        ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@BookingDetailActivity, "item.department.deptTag", null, viewModel?.bookingDetailData?.value?.bookingId!!)
     }
 
     /**
