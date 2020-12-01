@@ -1,10 +1,12 @@
-package com.bykea.pk.partner.models.response;
-
-import com.bykea.pk.partner.models.data.Predictions;
+package com.bykea.pk.partner.models.data;
 
 import java.util.ArrayList;
 
-public class PlaceAutoCompleteResponse {
+/**
+ * Model class for Auto Complete Data
+ */
+public class PlacesAutoCompleteData {
+
     private ArrayList<Predictions> predictions;
 
     private String status;
@@ -24,6 +26,4 @@ public class PlaceAutoCompleteResponse {
     public void setStatus(String status) {
         this.status = status;
     }
-
-
 }

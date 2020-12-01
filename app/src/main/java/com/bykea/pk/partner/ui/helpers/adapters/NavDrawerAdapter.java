@@ -177,7 +177,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 .beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.containerView, fragment)
-                .commit();
+                .commitAllowingStateLoss();
         HomeActivity.visibleFragmentNumber = pos;
         /**
          * when navigation in on home screen, show bottom sheet and connection status

@@ -2,11 +2,11 @@ package com.bykea.pk.partner.communication.rest;
 
 
 import com.bykea.pk.partner.dal.source.remote.response.BookingListingResponse;
+import com.bykea.pk.partner.models.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.data.OSMGeoCode;
 import com.bykea.pk.partner.models.data.RankingResponse;
 import com.bykea.pk.partner.models.data.SavedPlaces;
 import com.bykea.pk.partner.models.data.SignUpAddNumberResponse;
-import com.bykea.pk.partner.models.data.SignUpCompleteResponse;
 import com.bykea.pk.partner.models.data.SignUpOptionalDataResponse;
 import com.bykea.pk.partner.models.data.SignUpSettingsResponse;
 import com.bykea.pk.partner.models.data.SignupUplodaImgResponse;
@@ -22,6 +22,7 @@ import com.bykea.pk.partner.models.response.BankAccountListResponse;
 import com.bykea.pk.partner.models.response.BankDetailsResponse;
 import com.bykea.pk.partner.models.response.BiometricApiResponse;
 import com.bykea.pk.partner.models.response.BykeaDistanceMatrixResponse;
+import com.bykea.pk.partner.models.response.BykeaPlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.CancelRideResponse;
 import com.bykea.pk.partner.models.response.ChangePinResponse;
 import com.bykea.pk.partner.models.response.CheckDriverStatusResponse;
@@ -43,7 +44,6 @@ import com.bykea.pk.partner.models.response.LocationResponse;
 import com.bykea.pk.partner.models.response.LoginResponse;
 import com.bykea.pk.partner.models.response.LogoutResponse;
 import com.bykea.pk.partner.models.response.PilotStatusResponse;
-import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.response.PlaceDetailsResponse;
 import com.bykea.pk.partner.models.response.ProblemPostResponse;
 import com.bykea.pk.partner.models.response.RegisterResponse;
@@ -65,7 +65,6 @@ import com.bykea.pk.partner.models.response.ZoneAreaResponse;
 import com.bykea.pk.partner.utils.ApiTags;
 import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Fields;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
@@ -286,8 +285,11 @@ interface IRestClient {
     @GET
     Call<OSMGeoCode> callOSMGeoCoderApi(@Url String url);
 
-    @GET(ApiTags.PLACES_GEOCODER_EXT_URL)
-    Call<GeoCodeApiResponse> callGeoCoderApiWithPlaceId(@Query("place_id") String placeId, @Query("key") String key);
+    @GET(ApiTags.EXTENDED_URL_BYKEA_PLACE_DETAILS_API)
+    Call<BykeaPlaceDetailsResponse> callGeoCoderApiWithPlaceId(@Query("pId") String placeid,
+                                                               @Query("_id") String userId,
+                                                               @Query("token_id") String tokenId,
+                                                               @Query("t") String userType);
 
     @FormUrlEncoded
     @POST(ApiTags.CHANGE_PIN)
@@ -356,12 +358,12 @@ interface IRestClient {
     Call<PlaceDetailsResponse> getPlaceDetails(@Query("placeid") String placeid,
                                                @Query("key") String googleMapApiKey);
 
-    @GET(ApiTags.EXTENDED_URL_GOOGLE_PLACE_AUTOCOMPLETE_API)
+    @GET(ApiTags.EXTENDED_URL_BYKEA_PLACE_AUTOCOMPLETE_API)
     Call<PlaceAutoCompleteResponse> getAutoCompletePlaces(@Query("input") String input,
-                                                          @Query("location") String location,
-                                                          @Query("components") String component,
-                                                          @Query("radius") String radius,
-                                                          @Query("key") String googleMapApiKey);
+                                                          @Query("loc") String location,
+                                                          @Query("_id") String userId,
+                                                          @Query("token_id") String tokenId,
+                                                          @Query("t") String userType);
 
 
     @POST(ApiTags.ADD_SAVED_PLACE)
