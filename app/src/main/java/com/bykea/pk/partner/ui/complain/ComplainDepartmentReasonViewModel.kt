@@ -23,10 +23,10 @@ class ComplainDepartmentReasonViewModel : ViewModel() {
         get() = _items
 
     /**
-     * Fetch Department Reasons By Department Id
-     * @param departmentId : Department Id
+     * Fetch Department Reasons By Department Tag
+     * @param departmentTag : Department Tag
      */
-    fun fetchDepartmentReason(departmentId: String) {
+    fun fetchDepartmentReason(departmentTag: String) {
         jobRespository.getJobComplainReasons(MESSAGE_TYPE, object : JobsDataSource.ComplainReasonsCallback {
             override fun onSuccess(complainReasonResponse: ComplainReasonResponse) {
                 complainReasonResponse.data?.forEachIndexed { index, complainReason ->

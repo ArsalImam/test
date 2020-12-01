@@ -300,7 +300,7 @@ public class Constants {
         public static final int VIEW_DELIVERY_DETAILS = DIGIT_THREE;
         public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
         public static final String FAILED_BOOKING_ID = "FAILED_BOOKING_ID";
-        public static final String DEPARTMENT_ID = "DEPARTMENT_ID";
+        public static final String DEPARTMENT_TAG = "DEPARTMENT_TAG";
     }
 
     public static class Broadcast {
