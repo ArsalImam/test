@@ -68,6 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_150sdp"
         android:layout_above="@id/layoutupper"
+        android:layout_marginBottom="@dimen/_5sdp"
         android:layout_below="@+id/llTop">
 
         <com.bykea.pk.partner.widgets.InfiniteIndicator

@@ -461,15 +461,20 @@ public class HomeFragment extends Fragment {
         repository = new UserRepository();
         jobsRepo = Injection.INSTANCE.provideJobsRepository(DriverApp.getContext());
 
-
         checkGooglePlayService();
-
         Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
 
 
         initRangeBar();
         AppPreferences.setAvailableAPICalling(false);
 
+        initCityBanners();
+    }
+
+    /**
+     * Initiate Banners According To Cities
+     */
+    private void initCityBanners() {
         CityBannerResponse cityBannerResponse = new CityBannerResponse();
         cityBannerResponse.setCityBanners(new ArrayList<>());
         String link = "https://partner-crown.s3-eu-west-1.amazonaws.com/partner_banners/partner_banner_img_1.png";
@@ -478,7 +483,7 @@ public class HomeFragment extends Fragment {
         cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
         createCollectionForBanner(cityBannerResponse);
 
-        /*if (AppPreferences.getCityBanner() == null
+       /* if (AppPreferences.getCityBanner() == null
                 || AppPreferences.getCityBanner().getCityBanners() == null) {
             requestCityWiseBannerAPI();
         } else {
@@ -493,14 +498,10 @@ public class HomeFragment extends Fragment {
      * Otherwise user lat/lng are send and city name is null
      */
     public void requestCityWiseBannerAPI() {
-//        if (!isBannerApiRunning) {//to check if API is already called to avoid duplicate API calls when user logs in for first time
-//            isBannerApiRunning = true;
-//        mUserRepository.requestCityBanners(mUserDataCallBack);
-//        }
         jobsRepo.getCityWiseBanner(new JobsDataSource.LoadDataCallback<CityBannerResponse>() {
             @Override
             public void onDataLoaded(CityBannerResponse response) {
-                AppPreferences.setCityBannerResponse(response,AppPreferences.getSettingsVersion());
+                AppPreferences.setCityBannerResponse(response, AppPreferences.getSettingsVersion());
                 createCollectionForBanner(response);
             }
 
