@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -38,6 +39,9 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
+import com.bykea.pk.partner.dal.source.remote.Backend;
+import com.bykea.pk.partner.dal.source.remote.response.CityBanner;
+import com.bykea.pk.partner.dal.source.remote.response.CityBannerResponse;
 import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.MultiDeliveryCallDriverData;
@@ -68,10 +72,13 @@ import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
+import com.bykea.pk.partner.utils.OnPageChangeListenerUtil;
 import com.bykea.pk.partner.utils.Permissions;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
+import com.bykea.pk.partner.widgets.BannerViewBinder;
 import com.bykea.pk.partner.widgets.FontTextView;
+import com.bykea.pk.partner.widgets.InfiniteIndicator;
 import com.bykea.pk.partner.widgets.MyRangeBarRupay;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -94,6 +101,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -108,9 +116,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import cn.lightsky.infiniteindicator.ImageLoader;
+import cn.lightsky.infiniteindicator.IndicatorConfiguration;
+import cn.lightsky.infiniteindicator.OnPageClickListener;
+import cn.lightsky.infiniteindicator.Page;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_SIX;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_THREE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 /**
@@ -194,6 +211,13 @@ public class HomeFragment extends Fragment {
     FontTextView authorizedbookingTimeTv;
     @BindView(R.id.authorizedbookingTv)
     FontTextView authorizedbookingTv;
+    @BindView(R.id.layoutBanner)
+    RelativeLayout layoutBanner;
+    @BindView(R.id.infinite_anim_circle)
+    InfiniteIndicator mAnimCircleIndicator;
+    private ArrayList<CityBanner> mBannerItems = new ArrayList<>();
+    private ArrayList<Page> pageViews;
+    private int currentIndex = 0;
 
     private int WEEK_STATUS = 0;
     private boolean makeDriverOffline = false;
@@ -445,7 +469,123 @@ public class HomeFragment extends Fragment {
 
         initRangeBar();
         AppPreferences.setAvailableAPICalling(false);
+
+        CityBannerResponse cityBannerResponse = new CityBannerResponse();
+        cityBannerResponse.setCityBanners(new ArrayList<>());
+        String link = "https://partner-crown.s3-eu-west-1.amazonaws.com/partner_banners/partner_banner_img_1.png";
+        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
+        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
+        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
+        createCollectionForBanner(cityBannerResponse);
+
+        /*if (AppPreferences.getCityBanner() == null
+                || AppPreferences.getCityBanner().getCityBanners() == null) {
+            requestCityWiseBannerAPI();
+        } else {
+            createCollectionForBanner(AppPreferences.getCityBanner());
+        }*/
     }
+
+    /***
+     * Call City wise banner API when latest setting API is fetched.
+     * We set null values are query parameter when user lat/lng are 0.0.
+     * In this case we send city name returned from login api.
+     * Otherwise user lat/lng are send and city name is null
+     */
+    public void requestCityWiseBannerAPI() {
+//        if (!isBannerApiRunning) {//to check if API is already called to avoid duplicate API calls when user logs in for first time
+//            isBannerApiRunning = true;
+//        mUserRepository.requestCityBanners(mUserDataCallBack);
+//        }
+        jobsRepo.getCityWiseBanner(new JobsDataSource.LoadDataCallback<CityBannerResponse>() {
+            @Override
+            public void onDataLoaded(CityBannerResponse response) {
+                AppPreferences.setCityBannerResponse(response,AppPreferences.getSettingsVersion());
+                createCollectionForBanner(response);
+            }
+
+            @Override
+            public void onDataNotAvailable(int errorCode, @NotNull String reasonMsg) {
+                mCurrentActivity.runOnUiThread(() -> {
+                    Dialogs.INSTANCE.dismissDialog();
+                    Utils.appToast(reasonMsg);
+                });
+            }
+        });
+    }
+
+    /***
+     * Create collection for Banner Image pager from our cached city banner app preference or from API response
+     *
+     * @param bannerResponse banner API response data
+     */
+    private void createCollectionForBanner(CityBannerResponse bannerResponse) {
+        if (bannerResponse != null && bannerResponse.getCityBanners() != null) {
+            if (mBannerItems.size() > DIGIT_ZERO) {
+                mBannerItems.clear();
+            }
+            mBannerItems.addAll(bannerResponse.getCityBanners());
+            initImageLinks(mBannerItems);
+            loadCityBanner();
+        }
+    }
+
+    /**
+     * Initializes Banner List
+     *
+     * @param banner_images City Banner data
+     */
+    private void initImageLinks(ArrayList<CityBanner> banner_images) {
+        pageViews = new ArrayList<>();
+        for (int i = DIGIT_ZERO; i < banner_images.size(); i++) {
+            pageViews.add(new Page(StringUtils.EMPTY, banner_images.get(i).getImgURL(), onPageChangeListener));
+        }
+    }
+
+    /***
+     * Load City banners
+     */
+    private void loadCityBanner() {
+        IndicatorConfiguration configuration = new IndicatorConfiguration.Builder()
+                .imageLoader((context, targetView, res) -> {
+                    if (res instanceof String) {
+                        Picasso.get().load(res.toString()).fit().into(targetView);
+                    }
+                })
+                .onPageChangeListener(new OnPageChangeListenerUtil() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        currentIndex = position;
+                    }
+                })
+                .position(IndicatorConfiguration.IndicatorPosition.Center_Bottom)
+                .onPageClickListener(onPageChangeListener)
+                .internal(DIGIT_SIX * DIGIT_THOUSAND)
+                .viewBinder(new BannerViewBinder())
+                .scrollDurationFactor(DIGIT_THREE)
+                .isStopWhileTouch(true)
+                .isDrawIndicator(true)
+                .direction(RIGHT)
+                .isLoop(true)
+                .build();
+
+        mAnimCircleIndicator.init(configuration);
+        mAnimCircleIndicator.notifyDataChange(pageViews);
+        mAnimCircleIndicator.getmViewPager().setClipToPadding(false);
+        mAnimCircleIndicator.getmViewPager().setClipChildren(false);
+        mAnimCircleIndicator.getmViewPager().setOffscreenPageLimit(DIGIT_THREE);
+        int resDimens = (int) getResources().getDimension(R.dimen._20sdp);
+        mAnimCircleIndicator.getmViewPager().setPadding(resDimens, DIGIT_ZERO, resDimens, DIGIT_ZERO);
+    }
+
+    /**
+     * Handle Navigation For Banners
+     */
+    private OnPageClickListener onPageChangeListener = (position, page) -> {
+        if (StringUtils.isNotBlank(mBannerItems.get(currentIndex).getDepartmentTag())) {
+
+        }
+    };
 
     /**
      * this can be call to get partner booking stats data from kronos
@@ -462,14 +602,9 @@ public class HomeFragment extends Fragment {
         }
         try {
             updateVerifiedBookingStats();
-//            if (!isCalled) {
-
-
             Dialogs.INSTANCE.showLoader(mCurrentActivity);
             repository.requestDriverPerformance(mCurrentActivity, handler, WEEK_STATUS);
             isCalled = true;
-//            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -509,9 +644,6 @@ public class HomeFragment extends Fragment {
                 if (weeklyratingTv != null)
                     weeklyratingTv.setText(String.valueOf(response.getData().getWeeklyRating()));
 
-                /*if (totalBalanceTv != null)
-                    totalBalanceTv.setText(getString(R.string.rs) + response.getData().getTotalBalance());*/
-
                 if (response.getData().getScore() != null && totalScoreTv != null) {
                     if (response.getData().getScore().contains(getString(R.string.minus_sign))) {
                         totalScoreTv.setText(response.getData().getScore());
@@ -519,10 +651,7 @@ public class HomeFragment extends Fragment {
                         totalScoreTv.setText(getString(R.string.score_urdu) + response.getData().getScore());
                     }
                 }
-
-
             }
-
             if (!isDialogDisplayingForBattery)
                 Dialogs.INSTANCE.dismissDialog();
         }
@@ -565,7 +694,6 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-//            callLoadBoardListingAPI();
     }
 
     public synchronized void setStatusBtn() {
@@ -574,11 +702,9 @@ public class HomeFragment extends Fragment {
         }
         if (!AppPreferences.getAvailableStatus()) {
             mCurrentActivity.hideLoadBoardBottomSheet();
-
             //inactive state
             getDriverPerformanceData();
 
-//            mCurrentActivity.isVisibleFirstTime = true;
             myRangeBarLayout.setVisibility(View.VISIBLE);
             myRangeBarTopLine.setVisibility(View.VISIBLE);
             myRangeBar.setEnabled(true);
@@ -589,6 +715,7 @@ public class HomeFragment extends Fragment {
             headerTopUnActiveLayout.setVisibility(View.VISIBLE);
             mCurrentActivity.showBismillah();
             layoutUpper.setVisibility(View.VISIBLE);
+            layoutBanner.setVisibility(View.VISIBLE);
             layoutDuration.setVisibility(View.VISIBLE);
             driverStatsLayout.setVisibility(View.VISIBLE);
 
@@ -615,6 +742,7 @@ public class HomeFragment extends Fragment {
             headerTopActiveLayout.setVisibility(View.VISIBLE);
             headerTopUnActiveLayout.setVisibility(View.GONE);
             layoutUpper.setVisibility(View.GONE);
+            layoutBanner.setVisibility(View.GONE);
             layoutDuration.setVisibility(View.GONE);
             driverStatsLayout.setVisibility(View.GONE);
 
@@ -659,6 +787,10 @@ public class HomeFragment extends Fragment {
             mapView.onResume();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (mAnimCircleIndicator.getConfiguration() != null) {
+            mAnimCircleIndicator.start();
         }
 
         isScreenInFront = true;
@@ -1376,6 +1508,9 @@ public class HomeFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (isOfflineDialogVisible) AppPreferences.setAvailableStatus(true);
+        if (mAnimCircleIndicator.getConfiguration() != null) {
+            mAnimCircleIndicator.stop();
+        }
 
         isScreenInFront = false;
         isCalled = false;

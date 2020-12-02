@@ -402,6 +402,14 @@ interface Backend {
     fun getDriverSettings(@Query("_id") id: String,
                           @Query("token_id") tokenId: String): Call<DriverSettingsResponse>
 
+    @GET("/api/v1/settings/banners")
+    fun getCityWiseBanner(@Header("id") id: String,
+                          @Header("token-id") token_id: String,
+                          @Query("lat") lat: Double,
+                          @Query("lng") lng: Double,
+                          @Query("lang") lang: String,
+                          @Query("type") userType: String
+    ): Call<CityBannerResponse>
 
     companion object {
 

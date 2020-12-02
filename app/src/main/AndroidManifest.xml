@@ -78,8 +78,7 @@
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
             android:launchMode="singleTask"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:windowSoftInputMode="adjustResize" />
+            android:turnScreenOn="true" />
         <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -63,14 +63,20 @@
 
     </LinearLayout>
 
-
-    <androidx.appcompat.widget.AppCompatImageView
+    <RelativeLayout
+        android:id="@+id/layoutBanner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/_150sdp"
         android:layout_above="@id/layoutupper"
-        android:layout_below="@+id/llTop"
-        android:layout_margin="@dimen/_10sdp"
-        android:background="@drawable/score_board_bg" />
+        android:layout_below="@+id/llTop">
+
+        <com.bykea.pk.partner.widgets.InfiniteIndicator
+            android:id="@+id/infinite_anim_circle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            app:indicator_type="indicator_anim_circle" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/layoutupper"

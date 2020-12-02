@@ -320,6 +320,10 @@ class JobsRepository(
         jobsRemoteDataSource.getDriverSettings(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), callback)
     }
 
+    override fun getCityWiseBanner(callback: JobsDataSource.LoadDataCallback<CityBannerResponse>) {
+        jobsRemoteDataSource.getCityWiseBanner(AppPref.getDriverId(pref), AppPref.getAccessToken(pref), AppPref.getLat(pref), AppPref.getLng(pref), callback)
+    }
+
 
     companion object {
 

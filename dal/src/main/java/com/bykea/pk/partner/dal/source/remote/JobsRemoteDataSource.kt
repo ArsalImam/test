@@ -520,4 +520,11 @@ class JobsRemoteDataSource {
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }
+
+    fun getCityWiseBanner(driverId: String, accessToken: String, lat: Double, lng: Double, callback: JobsDataSource.LoadDataCallback<CityBannerResponse>) {
+        Backend.talos.getCityWiseBanner(driverId, accessToken, lat, lng, "ur", "d").enqueue(object : Callback<CityBannerResponse> {
+            override fun onSuccess(response: CityBannerResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
 }
