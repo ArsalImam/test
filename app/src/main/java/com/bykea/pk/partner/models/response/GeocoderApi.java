@@ -1,8 +1,10 @@
 package com.bykea.pk.partner.models.response;
 
+import com.bykea.pk.partner.models.data.Place;
+
 public class GeocoderApi {
 
-    private Results []results;
+    private Results[] results;
 
     private String status;
 
@@ -10,7 +12,7 @@ public class GeocoderApi {
         return results;
     }
 
-    public void setResults(Results []results) {
+    public void setResults(Results[] results) {
         this.results = results;
     }
 
@@ -23,8 +25,8 @@ public class GeocoderApi {
     }
 
 
-    public class Results {
-        private Address_components []address_components;
+    public class Results extends Place {
+        private Address_components[] address_components;
 
         private String formatted_address;
 
@@ -33,7 +35,7 @@ public class GeocoderApi {
             return address_components;
         }
 
-        public void setAddress_components(Address_components []address_components) {
+        public void setAddress_components(Address_components[] address_components) {
             this.address_components = address_components;
         }
 

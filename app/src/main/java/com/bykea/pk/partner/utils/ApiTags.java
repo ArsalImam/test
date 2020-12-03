@@ -31,6 +31,9 @@ public class ApiTags {
      * */
     public static String LOCAL_BASE_URL = AppPreferences.getLocalBaseUrl(Keys.BASE_URL_LOCAL);
     public static String BASE_SERVER_URL = BuildConfig.FLAVOR.equalsIgnoreCase(Constants.BUILD_VARIANT_LOCAL_FLAVOR) ? LOCAL_BASE_URL : BuildConfig.FLAVOR_URL;
+    //Bykea Places BASE URL
+    public static String BYKEA_PLACES_BASE_URL = BuildConfig.FLAVOR.toLowerCase().equalsIgnoreCase(Constants.BUILD_VARIANT_LOCAL_FLAVOR)
+            ? "http://googleplaces.bykea.net:3000" : "http://googleplaces.bykea.net:3000"; //TODO update base url when we have diff servers for local & live builds
 
     // Other options below:
     //Resources.getSystem().getString(R.string.flavor_url);
@@ -49,6 +52,8 @@ public class ApiTags {
     public static final String GOOGLE_API_BASE_URL = "https://maps.googleapis.com/";
     public static final String PLACES_GEOCODER_EXT_URL = "maps/api/geocode/json";
     public static final String EXTENDED_URL_GOOGLE_PLACE_AUTOCOMPLETE_API = "maps/api/place/autocomplete/json";
+    public static final String EXTENDED_URL_BYKEA_PLACE_AUTOCOMPLETE_API = "/autoComplete";
+    public static final String EXTENDED_URL_BYKEA_PLACE_DETAILS_API = "/getDetail";
     public static final String EXTENDED_URL_GOOGLE_PLACE_DETAILS_API = "maps/api/place/details/json";
     public static final String HEAT_MAP_2 = "/getdata/HOUR/CITY_NAME";
     public static final String HEAT_MAP_2_X_API = "6E46E61CB1458A9F32C02CE5F056A557CC801DC31A43ABF39F7BCA9ED6FFAFD2";

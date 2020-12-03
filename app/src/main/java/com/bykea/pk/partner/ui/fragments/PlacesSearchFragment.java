@@ -34,8 +34,8 @@ import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PlacesResult;
 import com.bykea.pk.partner.models.data.Predictions;
 import com.bykea.pk.partner.models.data.SavedPlaces;
-import com.bykea.pk.partner.models.response.GeoCodeApiResponse;
-import com.bykea.pk.partner.models.response.Result;
+import com.bykea.pk.partner.models.response.BykeaPlaceDetailsResponse;
+import com.bykea.pk.partner.models.response.GeocoderApi;
 import com.bykea.pk.partner.repositories.UserDataHandler;
 import com.bykea.pk.partner.repositories.UserRepository;
 import com.bykea.pk.partner.repositories.places.IPlacesDataHandler;
@@ -392,9 +392,7 @@ public class PlacesSearchFragment extends Fragment {
                 city.name);
         mAutocompleteView.setAdapter(mAdapter);
         mAutocompleteView.setDropDownWidth(getResources().getDisplayMetrics().widthPixels);
-
     }
-
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
@@ -423,11 +421,14 @@ public class PlacesSearchFragment extends Fragment {
 
                 new PlacesRepository().geoCodeWithPlaceId(placeId, mCurrentActivity, new PlacesDataHandler() {
                     @Override
-                    public void onGeoCodeApiResponse(GeoCodeApiResponse response) {
-                        Result result = response.getResults().get(0);
-                        if (result != null) {
-                            String resultText = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.cookAddressGeoCodeResult(result);
-                            PlacesResult placesResult = new PlacesResult(resultText, "", result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
+                    public void onBykeaPlaceDetailsResponse(BykeaPlaceDetailsResponse response) {
+
+                        GeocoderApi.Results result = response.getData().getResults()[0];
+                        if (result != null && response.getData().getResults().length > 0) {
+                            String resultText = StringUtils.isNotBlank(primaryText) ? primaryText :
+                                    Utils.formatAddress(response.getData().getResults()[0].getFormatted_address());
+                            PlacesResult placesResult = new PlacesResult(resultText, StringUtils.EMPTY,
+                                    response.getData().getResults()[0].geometry.location.lat, response.getData().getResults()[0].geometry.location.lng);
                             updateDropOff(placesResult);
                         }
                     }
