@@ -41,7 +41,7 @@ class ComplainDepartmentActivity : BaseActivity() {
      * Fetch Complain Department From Tello Talk SDK
      */
     private fun fetchComplainDepartments() {
-        TelloTalkManager.instance().getDepartments()?.let {
+        TelloTalkManager.instance().getDepartments().let {
             lastAdapter?.items = ArrayList(it)
         }
     }

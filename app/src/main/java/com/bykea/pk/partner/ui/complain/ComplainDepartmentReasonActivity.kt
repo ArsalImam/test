@@ -53,7 +53,7 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
             }
             if (intentExtras.containsKey(DEPARTMENT_TAG)) {
                 departmentTag = intentExtras.getString(DEPARTMENT_TAG)
-                TelloTalkManager.instance().getDepartments()?.find { departmentConversations ->
+                TelloTalkManager.instance().getDepartments().find { departmentConversations ->
                     !departmentTag.isNullOrEmpty() && departmentTag == departmentConversations.department.deptTag
                 }?.let {
                     departmentConversations = it

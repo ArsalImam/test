@@ -152,6 +152,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -622,11 +623,11 @@ public class Utils {
      * a very basic implementation of opening google map's default intent
      *
      * @param context of the component
-     * @param uri google map's options
+     * @param uri     google map's options
      * @throws ActivityNotFoundException activity not exception
      */
     private static void navigateToGoogleMap(Context context,
-                                           String uri) throws ActivityNotFoundException {
+                                            String uri) throws ActivityNotFoundException {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         intent.setClassName(Constants.GoogleMap.GOOGLE_MAP_PACKAGE,
                 Constants.GoogleMap.GOOGLE_MAP_ACTIVITY);
@@ -3883,5 +3884,22 @@ public class Utils {
      */
     public static boolean isEvenNumber(int number) {
         return number % DIGIT_TWO == DIGIT_ZERO;
+    }
+
+
+    /**
+     * Fetch Tello Talk Tag against Tello Talk Tag Key
+     *
+     * @param telloTalkTagKey : Tello Talk Tag Key
+     * @return tag : if found else null
+     */
+    public static String fetchTelloTalkTag(String telloTalkTagKey) {
+        HashMap<String, String> telloTalkTags = AppPreferences.getSettings().getSettings().getTelloTalkTags();
+        if (telloTalkTags == null || telloTalkTags.size() == DIGIT_ZERO)
+            return StringUtils.EMPTY;
+        if (telloTalkTags.containsKey(telloTalkTagKey))
+            return telloTalkTags.get(telloTalkTagKey);
+        return StringUtils.EMPTY;
+        // RETURNED EMPTY, SO ONLY EMPTY STRING CHECK NEED TO BE MANTAIN
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
@@ -21,14 +22,20 @@ import com.bykea.pk.partner.ui.activities.BanksAccountActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
+import com.tilismtech.tellotalksdk.entities.DepartmentConversations;
+
+import org.apache.commons.lang3.StringUtils;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static com.bykea.pk.partner.utils.Constants.TelloTalkTags.TELLO_TALK_SUBMITTED_COMPLAINS_KEY;
 
 public class ContactUsFragment extends Fragment {
 
@@ -97,8 +104,10 @@ public class ContactUsFragment extends Fragment {
                 checkContactNumberAndCall(true);
                 break;
             case R.id.submittedComplains:
-                //TODO : DEPARTMENT TAG
-                TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, null);
+                DepartmentConversations depConvObj = TelloTalkManager.instance().getDepartmentFromKey(TELLO_TALK_SUBMITTED_COMPLAINS_KEY);
+                if (depConvObj != null) {
+                    TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, depConvObj);
+                }
                 break;
             case R.id.reportComplain:
                 ActivityStackManager.getInstance().startComplainDepartmentActivity(mCurrentActivity);

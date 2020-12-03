@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.utils
 
 import android.app.Activity
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
@@ -114,8 +115,42 @@ class TelloTalkManager {
         }
     }
 
+    /**
+     * Get Department Conversation Object Against Tello Talk Department Tag
+     */
+    fun getDepartmentFromKey(telloTalkKey: String): DepartmentConversations? {
+        val telloTalkTag = Utils.fetchTelloTalkTag(telloTalkKey)
+        if (StringUtils.isEmpty(telloTalkTag)) {
+            getDepartmentFromTag(telloTalkTag)?.let {
+                return it
+            } ?: run {
+                Utils.appToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+                return null
+            }
+        } else {
+            Utils.appToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+            return null
+        }
+    }
 
-    fun getDepartments() = telloApiClient?.department
+    /**
+     * Get Department Conversation Object Against Tello Talk Department Tag
+     */
+    fun getDepartmentFromTag(telloTalkTag: String): DepartmentConversations? {
+        return getDepartments().find { it.department.deptTag == telloTalkTag }
+    }
+
+    /**
+     * Get Department Conversation List
+     */
+    fun getDepartments(): MutableList<DepartmentConversations> {
+        var departmentConversationsList: MutableList<DepartmentConversations> = ArrayList()
+        if (telloApiClient == null) {
+            build()
+        }
+        telloApiClient?.department?.let { departmentConversationsList = it }
+        return departmentConversationsList
+    }
 
     companion object {
         /**

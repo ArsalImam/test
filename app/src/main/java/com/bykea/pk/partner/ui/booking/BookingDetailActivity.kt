@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -18,7 +17,11 @@ import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.common.obtainViewModel
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Constants.TelloTalkTags
 import com.bykea.pk.partner.utils.Dialogs
+import com.bykea.pk.partner.utils.TelloTalkManager.Companion.instance
+import com.bykea.pk.partner.utils.Utils
+import com.zendesk.util.StringUtils
 
 
 /**
@@ -80,8 +83,10 @@ class BookingDetailActivity : BaseActivity() {
      * this method is binded with complain submit button and will trigger on its click
      */
     private fun onComplainButtonClicked() {
-        //TODO : DEPARTMENT TAG
-        ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@BookingDetailActivity, "item.department.deptTag", null, viewModel?.bookingDetailData?.value?.bookingId!!)
+        val telloTalkTag: String = Utils.fetchTelloTalkTag(TelloTalkTags.TELLO_TALK_TRIP_HISTORY_KEY)
+        if (telloTalkTag.isNotEmpty()) {
+            ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@BookingDetailActivity, telloTalkTag, null, viewModel?.bookingDetailData?.value?.bookingId!!)
+        }
     }
 
     /**

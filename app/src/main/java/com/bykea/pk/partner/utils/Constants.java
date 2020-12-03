@@ -811,4 +811,12 @@ public class Constants {
         public static final int AUDIO_MAX_DURATION = 60;
         public static final int AUDIO_MAX_DURATION_IN_MILLIS = AUDIO_MAX_DURATION * 1000;
     }
+
+    /**
+     * Tello Talk Department Key (Get Tag From Server Sent In Settings)
+     */
+    public static class TelloTalkTags{
+        public static final String TELLO_TALK_TRIP_HISTORY_KEY = "trip_history";
+        public static final String TELLO_TALK_SUBMITTED_COMPLAINS_KEY = "submitted_complains";
+    }
 }
