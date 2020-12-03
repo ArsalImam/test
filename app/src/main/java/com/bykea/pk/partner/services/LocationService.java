@@ -79,7 +79,7 @@ public class LocationService extends Service {
     private LocationManager mLocationManager;
     private LatLng lastApiCallLatLng;
     private Handler mServiceHandler;
-    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(10000, 1000) {
+    private CountDownTimer mCountDownLocationTimer = new CountDownTimer(Constants.HEART_BEAT_OFFSET * 1000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
             if (Connectivity.isConnectedFast(mContext)) {

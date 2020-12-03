@@ -324,7 +324,8 @@ public class UserRepository {
         }
 
         if (AppPreferences.isOnTrip()) {
-            if (AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.SINGLE)) {
+            if (AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.NEW_BATCH) ||
+            AppPreferences.getDeliveryType().equalsIgnoreCase(Constants.CallType.SINGLE)) {
                 tripStatus = AppPreferences.getCallData() != null
                         && StringUtils.isNotBlank(AppPreferences.getCallData().getStatus())
                         ? AppPreferences.getCallData().getStatus() : StringUtils.EMPTY;
