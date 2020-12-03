@@ -583,8 +583,11 @@ public class HomeFragment extends Fragment {
      * Handle Navigation For Banners
      */
     private OnPageClickListener onPageChangeListener = (position, page) -> {
-        if (StringUtils.isNotBlank(mBannerItems.get(currentIndex).getDepartmentTag())) {
-
+        if (mBannerItems.size() > DIGIT_ZERO) {
+            CityBanner cityBanner = mBannerItems.get(currentIndex);
+            if (StringUtils.isNotEmpty(cityBanner.getDepartmentTag())) {
+                ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+            }
         }
     };
 
