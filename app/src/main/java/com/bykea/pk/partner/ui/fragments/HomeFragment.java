@@ -501,6 +501,7 @@ public class HomeFragment extends Fragment {
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
                 }
                 if (response.getData().getPartnerCategory() != null &&
+                        imageViewDriveCrown != null &&
                         StringUtils.isNotBlank(response.getData().getPartnerCategory().getCrownUrl())) {
                     Picasso.get().load(response.getData().getPartnerCategory().getCrownUrl()).into(imageViewDriveCrown);
                 }
