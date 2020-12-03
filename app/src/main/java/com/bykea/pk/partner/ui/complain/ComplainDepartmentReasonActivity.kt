@@ -54,7 +54,7 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
             if (intentExtras.containsKey(DEPARTMENT_TAG)) {
                 departmentTag = intentExtras.getString(DEPARTMENT_TAG)
                 TelloTalkManager.instance().getDepartments().find { departmentConversations ->
-                    !departmentTag.isNullOrEmpty() && departmentTag == departmentConversations.department.deptTag
+                    !departmentTag.isNullOrEmpty() && departmentTag.equals(departmentConversations.department.deptTag, ignoreCase = true)
                 }?.let {
                     departmentConversations = it
                     setTitleCustomToolbarUrdu(it.department.dptName)
