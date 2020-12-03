@@ -3902,4 +3902,28 @@ public class Utils {
         return StringUtils.EMPTY;
         // RETURNED EMPTY, SO ONLY EMPTY STRING CHECK NEED TO BE MANTAIN
     }
+
+    /**
+     * Will compare Banner List version coming from Settings API with Current Service List present
+     * in SharedPref, if it's different we need to call API.
+     * Also, it compares distance between current location coordinates with Location Coordinates set
+     * with Banner List when Shared Preference were updated last time and if distance is greater
+     * than Constants.MIN_FENCE_DISTANCE that means user location has significant change and we
+     * should call Banner API for latest Banners List
+     *
+     * @return true if all conditions meet
+     */
+    public static boolean isBannerListUpdated() {
+        String version = StringUtils.EMPTY;
+        if (AppPreferences.getCityBanner() != null &&
+                StringUtils.isNotBlank(AppPreferences.getCityBanner().getSettingsVersion())) {
+            version = AppPreferences.getCityBanner().getSettingsVersion();
+        }
+        String settingsVersion = AppPreferences.getSettingsVersion();
+        return !(StringUtils.isNotBlank(settingsVersion)
+                && StringUtils.isNotBlank(version)
+                && version.equalsIgnoreCase(settingsVersion))
+                || Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
+                AppPreferences.getCityBanner().getLat(), AppPreferences.getCityBanner().getLng()) > Constants.MIN_FENCE_DISTANCE;
+    }
 }

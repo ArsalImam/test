@@ -502,8 +502,9 @@ public class HomeFragment extends Fragment {
         cityBannerResponse.getCityBanners().add(new CityBanner(link, null,  "submitted_complains"));
         createCollectionForBanner(cityBannerResponse);*/
 
-        if (AppPreferences.getCityBanner() == null
-                || AppPreferences.getCityBanner().getCityBanners() == null) {
+        if (AppPreferences.getCityBanner() == null ||
+                AppPreferences.getCityBanner().getCityBanners() == null ||
+                Utils.isBannerListUpdated()) {
             requestCityWiseBannerAPI();
         } else {
             createCollectionForBanner(AppPreferences.getCityBanner());
