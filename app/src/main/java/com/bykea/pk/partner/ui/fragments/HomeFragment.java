@@ -481,10 +481,10 @@ public class HomeFragment extends Fragment {
         if (TelloTalkManager.instance().getTelloApiClient() != null) {
             TelloTalkManager.instance().getTelloApiClient().setMessageCounterListener(telloMessageCount -> {
                 if (telloMessageCount > DIGIT_ZERO) {
-                    messageCountBadge.setVisibility(View.GONE);
-                } else {
                     messageCountBadge.setVisibility(View.VISIBLE);
                     messageCountBadge.setText(String.valueOf(telloMessageCount));
+                } else {
+                    messageCountBadge.setVisibility(View.GONE);
                 }
             });
         }

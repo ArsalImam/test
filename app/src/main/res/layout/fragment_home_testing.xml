@@ -68,8 +68,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_150sdp"
         android:layout_above="@id/layoutupper"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:layout_below="@+id/llTop">
+        android:layout_below="@+id/llTop"
+        android:layout_marginBottom="@dimen/_5sdp">
 
         <com.bykea.pk.partner.widgets.InfiniteIndicator
             android:id="@+id/infinite_anim_circle"
@@ -211,26 +211,26 @@
             android:id="@+id/frameLayoutMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_weight="1">
 
             <ImageView
-                android:layout_width="@dimen/_40sdp"
+                android:layout_width="@dimen/_38sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                app:srcCompat="@drawable/ic_chat_bubble" />
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_6sdp"
+                app:srcCompat="@drawable/ic_chat" />
 
-            <TextView
+            <com.bykea.pk.partner.ui.helpers.FontTextView
                 android:id="@+id/messageCountBadge"
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp"
                 android:layout_gravity="right"
                 android:background="@drawable/bg_notification_badge"
                 android:gravity="center"
-                android:text="0"
                 android:textColor="@color/white"
-                android:textSize="10sp"
-                android:visibility="gone" />
+                android:textSize="@dimen/_10sdp"
+                android:visibility="gone"
+                app:fontName="open_sans_light.ttf" />
 
         </FrameLayout>
 
