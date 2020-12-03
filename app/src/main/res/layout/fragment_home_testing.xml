@@ -65,7 +65,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_60sdp"
-            app:srcCompat="@drawable/ic_offline_ride_navigate"/>
+            app:srcCompat="@drawable/ic_offline_ride_navigate" />
 
     </LinearLayout>
 
@@ -98,18 +98,20 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageView3"
+                app:layout_constraintTop_toTopOf="@+id/imageViewDriveCrown"
                 app:layout_constraintVertical_bias="0.28" />
 
 
             <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="@dimen/_100sdp"
+                android:id="@+id/imageViewDriveCrown"
+                android:layout_width="@dimen/_62sdp"
                 android:layout_height="@dimen/_25sdp"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/tajj" />
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <com.bykea.pk.partner.widgets.FontTextView
@@ -127,7 +129,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.483"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewDriveCrown"
                 app:layout_constraintVertical_bias="0.823" />
 
 
@@ -302,9 +304,9 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="@dimen/_11sdp"
