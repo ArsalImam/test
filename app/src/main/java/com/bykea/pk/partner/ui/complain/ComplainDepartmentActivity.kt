@@ -7,6 +7,7 @@ import com.bykea.pk.partner.databinding.ActivityComplainDepartmentBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
+import com.bykea.pk.partner.utils.Constants.DIGIT_ONE
 import com.bykea.pk.partner.utils.TelloTalkManager
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import kotlinx.android.synthetic.main.activity_complain_department.*
@@ -31,7 +32,11 @@ class ComplainDepartmentActivity : BaseActivity() {
     private fun setAdapter() {
         lastAdapter = LastAdapter(R.layout.item_complain_departments, object : LastAdapter.OnItemClickListener<DepartmentConversations> {
             override fun onItemClick(item: DepartmentConversations) {
-                ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.deptTag, null, null)
+                if (item.department.dptType == DIGIT_ONE.toString()) {
+                    TelloTalkManager.instance().openCorporateChat(this@ComplainDepartmentActivity, null, item)
+                } else {
+                    ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.deptTag, null, null)
+                }
             }
         })
         recViewComplainDepartment.adapter = lastAdapter

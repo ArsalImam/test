@@ -139,7 +139,7 @@ class TelloTalkManager {
      * Get Department Conversation Object Against Tello Talk Department Tag
      */
     fun getDepartmentFromTag(telloTalkTag: String): DepartmentConversations? {
-        return getDepartments().find { it.department.deptTag == telloTalkTag }
+        return getDepartments().find { it.department.deptTag.equals(telloTalkTag, ignoreCase = true) }
     }
 
     /**

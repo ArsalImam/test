@@ -101,6 +101,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.squareup.picasso.Picasso;
+import com.tilismtech.tellotalksdk.entities.DepartmentConversations;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -122,6 +123,7 @@ import cn.lightsky.infiniteindicator.Page;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_SIX;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THREE;
@@ -603,7 +605,13 @@ public class HomeFragment extends Fragment {
         if (mBannerItems.size() > DIGIT_ZERO) {
             CityBanner cityBanner = mBannerItems.get(currentIndex);
             if (StringUtils.isNotEmpty(cityBanner.getDepartmentTag())) {
-                ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+                DepartmentConversations departmentConversations = TelloTalkManager.instance().getDepartmentFromTag(cityBanner.getDepartmentTag());
+                if (departmentConversations != null && departmentConversations.getDepartment() != null &&
+                        departmentConversations.getDepartment().getDptType().equals(String.valueOf(DIGIT_ONE))) {
+                    TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, departmentConversations);
+                } else {
+                    ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+                }
             }
         }
     };
