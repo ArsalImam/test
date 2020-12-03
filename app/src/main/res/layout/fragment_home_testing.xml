@@ -207,7 +207,8 @@
             android:layout_weight="0.1" />
 
         <!--Chat Meesages-->
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/frameLayoutMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -219,7 +220,19 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 app:srcCompat="@drawable/ic_chat_bubble" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/messageCountBadge"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:layout_gravity="right"
+                android:background="@drawable/bg_notification_badge"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

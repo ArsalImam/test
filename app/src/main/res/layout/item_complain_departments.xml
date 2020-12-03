@@ -64,6 +64,7 @@
                     android:text="@{item.department.dptName}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
+                    app:fontName="jameel_noori_nastaleeq.ttf"
                     tools:text="@string/advantages" />
 
                 <com.bykea.pk.partner.ui.helpers.FontTextView
@@ -73,6 +74,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10sdp"
                     android:visibility="gone"
+                    app:fontName="jameel_noori_nastaleeq.ttf"
                     tools:visibility="visible" />
             </LinearLayout>
 

@@ -20,6 +20,8 @@ class TelloTalkManager {
      */
     private var telloApiClient: TelloApiClient? = null
 
+    fun getTelloApiClient() = telloApiClient
+
     /**
      * constructor to initialize tello sdk object
      */
