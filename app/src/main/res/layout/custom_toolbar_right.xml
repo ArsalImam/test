@@ -70,7 +70,7 @@
         android:layout_marginLeft="@dimen/_5sdp"
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp"
-        android:background="@drawable/ic_chat_bubble"
+        tools:background="@drawable/ic_chat_bubble"
         android:visibility="gone"
         tools:visibility="visible" />
 </LinearLayout>

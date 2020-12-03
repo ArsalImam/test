@@ -11,6 +11,7 @@ import com.bykea.pk.partner.utils.Constants.DIGIT_ONE
 import com.bykea.pk.partner.utils.TelloTalkManager
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import kotlinx.android.synthetic.main.activity_complain_department.*
+import kotlinx.android.synthetic.main.custom_toolbar_right.*
 
 class ComplainDepartmentActivity : BaseActivity() {
     lateinit var binding: ActivityComplainDepartmentBinding
@@ -21,6 +22,7 @@ class ComplainDepartmentActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_complain_department)
 
         setTitleCustomToolbarUrdu(getString(R.string.chat))
+        tvTitleUrdu.textSize = resources.getDimension(R.dimen._11sdp)
 
         setAdapter()
         fetchComplainDepartments()
