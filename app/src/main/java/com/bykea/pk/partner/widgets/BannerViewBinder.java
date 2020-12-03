@@ -28,7 +28,7 @@ public class BannerViewBinder implements ViewBinder {
         if (convertView != null) {
             holder = (BannerViewBinder.ViewHolder) convertView.getTag();
         } else {
-            convertView = LayoutInflater.from(context).inflate(R.layout.simple_slider_view_clone, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_banner_slide, null);
             holder = new BannerViewBinder.ViewHolder(convertView);
             convertView.setTag(holder);
         }
