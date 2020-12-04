@@ -61,7 +61,7 @@
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{item.department.dptName}"
+                    android:text="@{item.department.name_u}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
                     app:fontName="jameel_noori_nastaleeq.ttf"

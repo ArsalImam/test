@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils
 import android.app.Activity
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.util.LANG_TYPE
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
@@ -100,6 +101,7 @@ class TelloTalkManager {
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
 
         telloApiClient = builder.build()
+        telloApiClient?.setLocality(LANG_TYPE)
     }
 
     /**
@@ -109,7 +111,6 @@ class TelloTalkManager {
         try {
             if (telloApiClient == null) {
                 build()
-                telloApiClient?.setLocality("ur")
             }
             telloApiClient?.onMessageNotificationReceived(data as HashMap<String, String>?)
         } catch (e: Exception) {

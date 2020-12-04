@@ -41,8 +41,6 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
         viewModel = obtainViewModel(ComplainDepartmentReasonViewModel::class.java)
         binding.viewModel = viewModel
 
-        setTitleCustomToolbarUrdu(getString(R.string.chat))
-
         intent?.extras?.let { intentExtras ->
             if (intentExtras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA)) {
                 tripHistoryData = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
@@ -57,7 +55,7 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
                     !departmentTag.isNullOrEmpty() && departmentTag.equals(departmentConversations.department.deptTag, ignoreCase = true)
                 }?.let {
                     departmentConversations = it
-                    setTitleCustomToolbarUrdu(it.department.dptName)
+                    setTitleCustomToolbarUrdu(it.department.name_u)
                     tvTitleUrdu.textSize = resources.getDimension(R.dimen._11sdp)
                     imgViewCategory.visibility = View.VISIBLE
                     if (!it.department.dptImage.isNullOrEmpty()) {
