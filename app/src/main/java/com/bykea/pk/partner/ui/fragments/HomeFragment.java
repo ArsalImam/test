@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -176,7 +177,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.layoutDuration)
     RelativeLayout layoutDuration;
     @BindView(R.id.driverStatsLayout)
-    LinearLayout driverStatsLayout;
+    ScrollView driverStatsLayout;
     @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
     @BindView(R.id.tvCihIndex2)
