@@ -37,6 +37,8 @@ public class DriverPerformanceData {
     @SerializedName("score")
     String score;
 
+    @SerializedName("partner_category")
+    private PartnerCategory partnerCategory;
 
     public int getDriverBooking() {
         return driverBooking;
@@ -124,5 +126,9 @@ public class DriverPerformanceData {
 
     public void setScore(String score) {
         this.score = score;
+    }
+
+    public PartnerCategory getPartnerCategory() {
+        return partnerCategory;
     }
 }
