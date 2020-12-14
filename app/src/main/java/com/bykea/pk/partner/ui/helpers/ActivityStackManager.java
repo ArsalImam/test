@@ -734,11 +734,24 @@ public class ActivityStackManager {
         activity.startActivity(intent);
     }
 
+    /**
+     * Start Complain Department Activity (Departments List)
+     *
+     * @param activity       context from which this needs to open
+     */
     public void startComplainDepartmentActivity(Activity activity) {
         Intent intent = new Intent(activity, ComplainDepartmentActivity.class);
         activity.startActivity(intent);
     }
 
+    /**
+     * this method can be used to open complain department booking activity
+     *
+     * @param activity      Context from which this needs to open
+     * @param departmentTag Department Tag
+     * @param tripDetails   Model Send For Intent
+     * @param bookingId     Booking Id to fetch booking details
+     */
     public void startComplainDepartmentReasonActivity(Activity activity, String departmentTag, TripHistoryData tripDetails, String bookingId) {
         Intent intent = new Intent(activity, ComplainDepartmentReasonActivity.class);
 
@@ -749,6 +762,12 @@ public class ActivityStackManager {
         activity.startActivity(intent);
     }
 
+    /**
+     * this method can be used to open complain department booking activity
+     *
+     * @param activity       context from which this needs to open
+     * @param departmentTag  Department Tag
+     */
     public void startComplainDepartmentBookingActivity(Activity activity, String departmentTag) {
         Intent intent = new Intent(activity, ComplainDepartmentBookingActivity.class);
         intent.putExtra(DEPARTMENT_TAG, departmentTag);
