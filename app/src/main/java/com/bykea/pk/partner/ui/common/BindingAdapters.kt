@@ -16,7 +16,9 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
+import com.bykea.pk.partner.dal.util.DATE_ONLY
 import com.bykea.pk.partner.dal.util.SEPERATOR
+import com.bykea.pk.partner.dal.util.TIME_ONLY
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
@@ -27,6 +29,7 @@ import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
+import com.zendesk.util.DateUtils
 import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -309,4 +312,17 @@ object BindingAdapters {
         }
     }
 
+    @BindingAdapter("app:dateTimeAccordingly")
+    @JvmStatic
+    fun setDateTimeAccordingly(textView: TextView, date: Date?) {
+        date?.let {
+            if (DateUtils.isSameDay(date, Date())) {
+                textView.text = SimpleDateFormat(TIME_ONLY).format(date)
+            } else {
+                textView.text = SimpleDateFormat(DATE_ONLY).format(date)
+            }
+        } ?: run {
+            textView.text = StringUtils.EMPTY
+        }
+    }
 }
