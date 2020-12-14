@@ -629,4 +629,6 @@
     <string name="install_google_map">Please Install Google Map</string>
     <string name="chat">\u0020چیٹ\u0020</string>
     <string name="reasons_not_found">\u0020وجوہات نہیں مل سکیں\u0020</string>
+    <string name="enter_new_issue">\u0020نیا مسئلہ درج کریں\u0020</string>
+    <string name="see_old_issue">\u0020پرانا مسئلہ دیکھیں\u0020</string>
 </resources>

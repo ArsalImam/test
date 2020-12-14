@@ -125,15 +125,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                         }
                         break;
                     case Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S:
-                        //TODO need to add backward compatibility here
-                        String screenFlag = Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
-                        if (AppPreferences.getDriverSettings() == null ||
-                                AppPreferences.getDriverSettings().getData() == null ||
-                                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
-                            updateCurrentFragment(new TripHistoryFragment(), screenFlag);
-                        } else {
-                            updateCurrentFragment(new BookingListingFragment(), screenFlag);
-                        }
+                        navigateToTripHistories();
                         break;
                     case Constants.ScreenRedirections.WALLET_SCREEN_S:
                         updateCurrentFragment(new WalletFragment(), Constants.ScreenRedirections.WALLET_SCREEN_S);
@@ -164,6 +156,21 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         }
 
 
+    }
+
+    /**
+     * Navigate to Trip Histories
+     */
+    public void navigateToTripHistories() {
+        //TODO need to add backward compatibility here
+        String screenFlag = Constants.ScreenRedirections.TRIP_HISTORY_SCREEN_S;
+        if (AppPreferences.getDriverSettings() == null ||
+                AppPreferences.getDriverSettings().getData() == null ||
+                StringUtils.isBlank(AppPreferences.getDriverSettings().getData().getBookingLisitingForDriverUrl())) {
+            updateCurrentFragment(new TripHistoryFragment(), screenFlag);
+        } else {
+            updateCurrentFragment(new BookingListingFragment(), screenFlag);
+        }
     }
 
     /**

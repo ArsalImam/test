@@ -128,6 +128,7 @@ import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_SIX;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THREE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_TWO;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
@@ -607,12 +608,17 @@ public class HomeFragment extends Fragment {
         if (mBannerItems.size() > DIGIT_ZERO) {
             CityBanner cityBanner = mBannerItems.get(currentIndex);
             if (StringUtils.isNotEmpty(cityBanner.getDepartmentTag())) {
-                DepartmentConversations departmentConversations = TelloTalkManager.instance().getDepartmentFromTag(cityBanner.getDepartmentTag());
-                if (departmentConversations != null && departmentConversations.getDepartment() != null &&
-                        departmentConversations.getDepartment().getDptType().equals(String.valueOf(DIGIT_ONE))) {
-                    TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, departmentConversations);
-                } else {
-                    ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+                DepartmentConversations deptConv = TelloTalkManager.instance().getDepartmentFromTag(cityBanner.getDepartmentTag());
+                if (deptConv != null && deptConv.getDepartment() != null) {
+                    if (deptConv.getDepartment().getDptType().equals(String.valueOf(DIGIT_ONE))) {
+                        TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, deptConv);
+                    } else if (deptConv.getDepartment().getDptType().equals(String.valueOf(DIGIT_TWO))) {
+                        if (deptConv.getDepartment().getDeptTag().equalsIgnoreCase(Utils.fetchTelloTalkTag(Constants.TelloTalkTags.TELLO_TALK_TRIP_HISTORY_KEY))) {
+                            ActivityStackManager.getInstance().startComplainDepartmentBookingActivity(mCurrentActivity, deptConv.getDepartment().getDeptTag());
+                        } else {
+                            ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+                        }
+                    }
                 }
             }
         }

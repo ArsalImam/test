@@ -7,8 +7,11 @@ import com.bykea.pk.partner.databinding.ActivityComplainDepartmentBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
-import com.bykea.pk.partner.utils.Constants.DIGIT_ONE
+import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.bykea.pk.partner.utils.Constants
+import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.TelloTalkManager
+import com.bykea.pk.partner.utils.Utils
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import kotlinx.android.synthetic.main.activity_complain_department.*
 import kotlinx.android.synthetic.main.custom_toolbar_right.*
@@ -36,8 +39,12 @@ class ComplainDepartmentActivity : BaseActivity() {
             override fun onItemClick(item: DepartmentConversations) {
                 if (item.department.dptType == DIGIT_ONE.toString()) {
                     TelloTalkManager.instance().openCorporateChat(this@ComplainDepartmentActivity, null, item)
-                } else {
-                    ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.deptTag, null, null)
+                } else if (item.department.dptType == DIGIT_TWO.toString()) {
+                    if (item.department.deptTag.equals(Utils.fetchTelloTalkTag(TelloTalkTags.TELLO_TALK_TRIP_HISTORY_KEY), ignoreCase = true)) {
+                        ActivityStackManager.getInstance().startComplainDepartmentBookingActivity(this@ComplainDepartmentActivity, item.department.deptTag)
+                    } else {
+                        ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.deptTag, null, null)
+                    }
                 }
             }
         })

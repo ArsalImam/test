@@ -258,6 +258,7 @@ public class Constants {
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
         public static final String CONTACT_TYPE = "cType";
+        public static final String BOOKING_HISTORY = "BOOKING_HISTORY";
 
 
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
