@@ -3895,12 +3895,9 @@ public class Utils {
      */
     public static String fetchTelloTalkTag(String telloTalkTagKey) {
         HashMap<String, String> telloTalkTags = AppPreferences.getSettings().getSettings().getTelloTalkTags();
-        if (telloTalkTags == null || telloTalkTags.size() == DIGIT_ZERO)
-            return StringUtils.EMPTY;
-        if (telloTalkTags.containsKey(telloTalkTagKey))
+        if (telloTalkTags != null && telloTalkTags.containsKey(telloTalkTagKey))
             return telloTalkTags.get(telloTalkTagKey);
-        return StringUtils.EMPTY;
-        // RETURNED EMPTY, SO ONLY EMPTY STRING CHECK NEED TO BE MANTAIN
+        return telloTalkTagKey;
     }
 
     /**
