@@ -126,7 +126,7 @@
             <com.bykea.pk.partner.widgets.FontTextView
                 android:id="@+id/totalScoreTv"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_12sdp"
+                android:layout_height="@dimen/_13sdp"
                 android:layout_below="@+id/frameLayout"
                 android:layout_marginLeft="@dimen/_3sdp"
                 android:layout_marginTop="@dimen/_minus5sdp"
@@ -135,7 +135,7 @@
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/white"
-                android:textSize="@dimen/_10sdp"
+                android:textSize="@dimen/_9sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf" />
 
         </RelativeLayout>
