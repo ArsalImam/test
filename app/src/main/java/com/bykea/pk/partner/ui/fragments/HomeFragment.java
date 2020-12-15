@@ -474,12 +474,12 @@ public class HomeFragment extends Fragment {
         initRangeBar();
         AppPreferences.setAvailableAPICalling(false);
 
-        fetchTelloTalkUnreadMessageCount();
         initCityBanners();
     }
 
     private void fetchTelloTalkUnreadMessageCount() {
-        TelloTalkManager.instance().build();
+        if (TelloTalkManager.instance().getTelloApiClient() == null)
+            TelloTalkManager.instance().build();
         if (TelloTalkManager.instance().getTelloApiClient() != null) {
             TelloTalkManager.instance().getTelloApiClient().setMessageCounterListener(telloMessageCount -> {
                 if (telloMessageCount > DIGIT_ZERO) {
@@ -848,6 +848,7 @@ public class HomeFragment extends Fragment {
         repository.requestRunningTrip(mCurrentActivity, handler);
 //        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
         if (enableLocation()) return;
+        fetchTelloTalkUnreadMessageCount();
         super.onResume();
     }
 
