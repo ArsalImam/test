@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_round_outline"
         android:layout_marginLeft="@dimen/_5sdp"
         android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginRight="@dimen/_5sdp">
+        android:layout_marginRight="@dimen/_5sdp"
+        app:cardCornerRadius="@dimen/_10sdp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/slider_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
