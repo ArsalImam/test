@@ -178,7 +178,7 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.layoutDuration)
     RelativeLayout layoutDuration;
     @BindView(R.id.driverStatsLayout)
-    ScrollView driverStatsLayout;
+    LinearLayout driverStatsLayout;
     @BindView(R.id.tvCihIndex1)
     FontTextView tvCihIndex1;
     @BindView(R.id.tvCihIndex2)
