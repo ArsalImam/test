@@ -1490,7 +1490,6 @@ public class HomeFragment extends Fragment {
                 break;
             }
             case R.id.frameLayoutMessage: {
-                messageCountBadge.setVisibility(View.GONE);
                 ActivityStackManager.getInstance().startComplainDepartmentActivity(mCurrentActivity);
             }
         }

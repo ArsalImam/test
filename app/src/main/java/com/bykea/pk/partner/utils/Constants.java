@@ -210,9 +210,11 @@ public class Constants {
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
         public static final String CONTENT_AVAILABLE_CHANNEL = "content-available-Channel";
         public static final String DATA_TYPE_TELLO_VAL = "content-available-IM";
-        public static final String DATA_TYPE_TELLO = "jobCode";
+        public static final String DATA_TYPE_TELLO = "tellotalk-content-available";
+        public static final String DATA_TYPE_TELLO_IM = "content-available-IM";
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
+        public static final String KEY_JOB_CODE = "jobCode";
     }
 
 //    public static class FCMEvents {
