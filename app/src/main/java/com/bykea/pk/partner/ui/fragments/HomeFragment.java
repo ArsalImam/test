@@ -847,8 +847,8 @@ public class HomeFragment extends Fragment {
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
 //        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
-        if (enableLocation()) return;
         fetchTelloTalkUnreadMessageCount();
+        if (enableLocation()) return;
         super.onResume();
     }
 
