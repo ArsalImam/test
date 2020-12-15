@@ -112,7 +112,7 @@ class TelloTalkManager {
             if (telloApiClient == null) {
                 build()
             }
-            telloApiClient?.onMessageNotificationReceived(data as HashMap<String, String>?)
+            telloApiClient?.onMessageNotificationReceived(HashMap<String, String>(data))
         } catch (e: Exception) {
             e.printStackTrace()
         }
