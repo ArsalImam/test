@@ -8,6 +8,10 @@
         <variable
             name="item"
             type="com.tilismtech.tellotalksdk.entities.DepartmentConversations" />
+
+        <variable
+            name="listener"
+            type="com.bykea.pk.partner.ui.common.LastAdapter.OnItemClickListener" />
     </data>
 
     <LinearLayout
@@ -34,6 +38,7 @@
                     android:layout_height="@dimen/_24sdp"
                     android:background="@drawable/ic_chat_bubble"
                     android:gravity="center"
+                    android:onClick="@{(v)->listener.onSubItemOneClick(v,item)}"
                     android:paddingBottom="@dimen/_5sdp"
                     android:text="@{item.conversation!=null ? item.conversation.unreadCount + ``: ``}"
                     android:textColor="@color/white"

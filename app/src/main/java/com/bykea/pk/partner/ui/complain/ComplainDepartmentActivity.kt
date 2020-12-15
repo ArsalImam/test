@@ -1,6 +1,7 @@
 package com.bykea.pk.partner.ui.complain
 
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.bykea.pk.partner.R
 import com.bykea.pk.partner.databinding.ActivityComplainDepartmentBinding
@@ -46,6 +47,10 @@ class ComplainDepartmentActivity : BaseActivity() {
                         ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(this@ComplainDepartmentActivity, item.department.deptTag, null, null)
                     }
                 }
+            }
+
+            override fun onSubItemOneClick(view: View, item: DepartmentConversations) {
+                TelloTalkManager.instance().openCorporateChat(this@ComplainDepartmentActivity, null, item)
             }
         })
         recViewComplainDepartment.adapter = lastAdapter
