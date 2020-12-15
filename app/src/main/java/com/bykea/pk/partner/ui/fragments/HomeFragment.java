@@ -103,6 +103,7 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.squareup.picasso.Picasso;
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations;
+import com.tilismtech.tellotalksdk.listeners.MessageCounterListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -135,7 +136,7 @@ import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREE
 /**
  * Home landing screen which holds all the options for driver
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements MessageCounterListener {
     //region Variables and Widgets
     private Unbinder unbinder;
     private HomeActivity mCurrentActivity;
@@ -481,14 +482,7 @@ public class HomeFragment extends Fragment {
         if (TelloTalkManager.instance().getTelloApiClient() == null)
             TelloTalkManager.instance().build();
         if (TelloTalkManager.instance().getTelloApiClient() != null) {
-            TelloTalkManager.instance().getTelloApiClient().setMessageCounterListener(telloMessageCount -> {
-                if (telloMessageCount > DIGIT_ZERO) {
-                    messageCountBadge.setVisibility(View.VISIBLE);
-                    messageCountBadge.setText(String.valueOf(telloMessageCount));
-                } else {
-                    messageCountBadge.setVisibility(View.GONE);
-                }
-            });
+            TelloTalkManager.instance().getTelloApiClient().setMessageCounterListener(this);
         }
     }
 
@@ -1859,6 +1853,16 @@ public class HomeFragment extends Fragment {
                 public void onError(int errorCode, String errorMessage) {
                 }
             }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        }
+    }
+
+    @Override
+    public void onMessageCounterUpdate(int telloMessageCount) {
+        if (telloMessageCount > DIGIT_ZERO) {
+            messageCountBadge.setVisibility(View.VISIBLE);
+            messageCountBadge.setText(String.valueOf(telloMessageCount));
+        } else {
+            messageCountBadge.setVisibility(View.GONE);
         }
     }
 }
