@@ -1490,6 +1490,7 @@ public class HomeFragment extends Fragment {
                 break;
             }
             case R.id.frameLayoutMessage: {
+                Utils.preventMultipleTap(view);
                 ActivityStackManager.getInstance().startComplainDepartmentActivity(mCurrentActivity);
             }
         }

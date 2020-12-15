@@ -50,6 +50,7 @@ class ComplainDepartmentActivity : BaseActivity() {
             }
 
             override fun onSubItemOneClick(view: View, item: DepartmentConversations) {
+                Utils.preventMultipleTap(view)
                 TelloTalkManager.instance().openCorporateChat(this@ComplainDepartmentActivity, null, item)
             }
         })
