@@ -21,6 +21,11 @@ class ComplainDepartmentActivity : BaseActivity() {
     lateinit var binding: ActivityComplainDepartmentBinding
     var lastAdapter: LastAdapter<DepartmentConversations>? = null
 
+    override fun onResume() {
+        super.onResume()
+        fetchComplainDepartments()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_complain_department)
