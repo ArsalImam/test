@@ -86,6 +86,7 @@
                     android:visibility="gone"
                     app:fontName="jameel_noori_nastaleeq.ttf"
                     app:goneUnless="@{item.conversation!=null &amp;&amp; item.conversation.lastMessage!=null &amp;&amp; item.conversation.lastMessage.message!=null}"
+                    tools:text="@string/advantages"
                     tools:visibility="visible" />
             </LinearLayout>
 
