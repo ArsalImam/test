@@ -77,11 +77,12 @@
                 <com.bykea.pk.partner.ui.helpers.FontTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/advantages"
+                    android:text="@{` ` + item.conversation.lastMessage.message}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10sdp"
                     android:visibility="gone"
                     app:fontName="jameel_noori_nastaleeq.ttf"
+                    app:goneUnless="@{item.conversation!=null &amp;&amp; item.conversation.lastMessage!=null &amp;&amp; item.conversation.lastMessage.message!=null}"
                     tools:visibility="visible" />
             </LinearLayout>
 

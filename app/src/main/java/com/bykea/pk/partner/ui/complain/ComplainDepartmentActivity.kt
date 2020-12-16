@@ -8,16 +8,15 @@ import com.bykea.pk.partner.databinding.ActivityComplainDepartmentBinding
 import com.bykea.pk.partner.ui.activities.BaseActivity
 import com.bykea.pk.partner.ui.common.LastAdapter
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
-import com.bykea.pk.partner.ui.helpers.AppPreferences
-import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.*
 import com.bykea.pk.partner.utils.TelloTalkManager
 import com.bykea.pk.partner.utils.Utils
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
+import com.tilismtech.tellotalksdk.listeners.MessageCounterListener
 import kotlinx.android.synthetic.main.activity_complain_department.*
 import kotlinx.android.synthetic.main.custom_toolbar_right.*
 
-class ComplainDepartmentActivity : BaseActivity() {
+class ComplainDepartmentActivity : BaseActivity(), MessageCounterListener {
     lateinit var binding: ActivityComplainDepartmentBinding
     var lastAdapter: LastAdapter<DepartmentConversations>? = null
 
@@ -35,6 +34,7 @@ class ComplainDepartmentActivity : BaseActivity() {
 
         setAdapter()
         fetchComplainDepartments()
+        fetchTelloTalkUnreadMessageCount()
     }
 
     /**
@@ -69,5 +69,16 @@ class ComplainDepartmentActivity : BaseActivity() {
         TelloTalkManager.instance().getDepartments().let {
             lastAdapter?.items = ArrayList(it)
         }
+    }
+
+    private fun fetchTelloTalkUnreadMessageCount() {
+        if (TelloTalkManager.instance().getTelloApiClient() == null) TelloTalkManager.instance().build()
+        if (TelloTalkManager.instance().getTelloApiClient() != null) {
+            TelloTalkManager.instance().getTelloApiClient()!!.setMessageCounterListener(this)
+        }
+    }
+
+    override fun onMessageCounterUpdate(p0: Int) {
+        fetchComplainDepartments()
     }
 }
