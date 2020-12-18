@@ -631,4 +631,15 @@
     <string name="reasons_not_found">\u0020وجوہات نہیں مل سکیں\u0020</string>
     <string name="enter_new_issue">\u0020نیا مسئلہ درج کریں\u0020</string>
     <string name="see_old_issue">\u0020پرانا مسئلہ دیکھیں\u0020</string>
+    <string name="audio_send_msg">\u0020آڈیو موصول ہوئی ہے\u0020</string>
+    <string name="video_send_msg">\u0020ویڈیو موصول ہوئی ہے\u0020</string>
+    <string name="image_send_msg">\u0020تصویر موصول ہوئی ہے\u0020</string>
+    <string name="file_send_msg">\u0020فائل موصول ہوئی ہے\u0020</string>
+    <string name="audio_received_msg">\u0020آڈیو موصول ہوئی ہے\u0020</string>
+    <string name="video_received_msg">\u0020ویڈیو موصول ہوئی ہے\u0020</string>
+    <string name="image_received_msg">\u0020تصویر موصول ہوئی ہے\u0020</string>
+    <string name="file_received_msg">\u0020فائل موصول ہوئی ہے\u0020</string>
+    <string name="you_deleted_this_message">\u0020آپ نے یہ پیغام حذف کردیا\u0020</string>
+    <string name="this_message_was_deleted">\u0020یہ پیغام حذف کردیا گیا تھا\u0020</string>
+    <string name="new_new_received">\u0020نئی خبر موصول ہوئی ہے\u0020</string>
 </resources>

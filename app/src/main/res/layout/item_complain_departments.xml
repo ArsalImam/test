@@ -80,12 +80,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_minus10sdp"
                     android:singleLine="true"
-                    android:text="@{` ` + item.conversation.lastMessage.message}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10sdp"
                     android:visibility="gone"
+                    app:customTelloMessage="@{item.conversation.lastMessage}"
                     app:fontName="jameel_noori_nastaleeq.ttf"
-                    app:goneUnless="@{item.conversation!=null &amp;&amp; item.conversation.lastMessage!=null &amp;&amp; item.conversation.lastMessage.message!=null}"
                     tools:text="@string/advantages"
                     tools:visibility="visible" />
             </LinearLayout>
