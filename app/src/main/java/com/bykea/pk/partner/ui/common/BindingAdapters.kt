@@ -370,7 +370,11 @@ object BindingAdapters {
                 }
                 TTMessage.MsgType.TYPE_NEWS.getName(),
                 TTMessage.MsgType.TYPE_NEWSWB.getName() -> {
-                    textView.text = DriverApp.getContext().getString(R.string.new_new_received)
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.new_new_sent)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.new_new_received)
+                    }
                 }
                 else -> {
                     textView.text = StringUtils.SPACE.plus(ttMessage.message)
