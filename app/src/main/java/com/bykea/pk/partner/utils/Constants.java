@@ -36,6 +36,7 @@ public class Constants {
     public static final String USER_TYPE = "d";
     public static final String UNAUTH_MESSAGE = "unAuthrozied User";
     public static final int ESTIMATION_SPEED = 30;
+    public static final String CUSTOMER = "customer";
 
     public static final int MINIMUM_VOICE_RECORDING = 1000;
 

@@ -66,7 +66,10 @@ class ComplainDepartmentActivity : BaseActivity(), MessageCounterListener {
      */
     private fun fetchComplainDepartments() {
         TelloTalkManager.instance().getDepartments().let {
-            lastAdapter?.items = ArrayList(it)
+            lastAdapter?.items = ArrayList(it.filter {
+                !it.department.deptTag.isNullOrEmpty() &&
+                        !it.department.deptTag.toLowerCase().contains(CUSTOMER)
+            })
         }
     }
 
