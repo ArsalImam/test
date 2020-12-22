@@ -56,7 +56,6 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
                 }?.let {
                     departmentConversations = it
                     setTitleCustomToolbarUrdu(it.department.name_u)
-                    tvTitleUrdu.textSize = resources.getDimension(R.dimen._11sdp)
                     imgViewCategory.visibility = View.VISIBLE
                     if (!it.department.dptImage.isNullOrEmpty()) {
                         Utils.loadImgPicasso(imgViewCategory, R.color.white, it.department.dptImage)

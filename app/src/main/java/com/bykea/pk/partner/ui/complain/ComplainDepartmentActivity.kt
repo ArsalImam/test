@@ -30,7 +30,6 @@ class ComplainDepartmentActivity : BaseActivity(), MessageCounterListener {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_complain_department)
 
         setTitleCustomToolbarUrdu(getString(R.string.chat))
-        tvTitleUrdu.textSize = resources.getDimension(R.dimen._11sdp)
 
         setAdapter()
         fetchComplainDepartments()
