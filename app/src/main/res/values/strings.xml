@@ -631,16 +631,16 @@
     <string name="reasons_not_found">\u0020وجوہات نہیں مل سکیں\u0020</string>
     <string name="enter_new_issue">\u0020نیا مسئلہ درج کریں\u0020</string>
     <string name="see_old_issue">\u0020پرانا مسئلہ دیکھیں\u0020</string>
-    <string name="audio_send_msg">\u0020آپ نے ایک وائس میسج بھیجاہے\u0020</string>
-    <string name="video_send_msg">\u0020آپ نے ایک ویڈیو بھیجی ہے \u0020</string>
-    <string name="image_send_msg">\u0020آپ نے ایک تصویر بھیجی ہے\u0020</string>
-    <string name="file_send_msg">\u0020آپ نے ایک فائل بھیجی ہے\u0020</string>
-    <string name="audio_received_msg">\u0020آپ کو ایک  وائس میسج موصول ہوئی ہے\u0020</string>
-    <string name="video_received_msg">\u0020آپ کو ایک ویڈیو موصول ہوئی ہے\u0020</string>
-    <string name="image_received_msg">\u0020آپ کو ایک تصویر موصول ہوئی ہے\u0020</string>
-    <string name="file_received_msg">\u0020آپ کو ایک فائل موصول ہوئی ہے\u0020</string>
+    <string name="audio_send_msg">\u0020آپ نے وائس میسج بھیجاہے\u0020</string>
+    <string name="video_send_msg">\u0020آپ نے ویڈیو بھیجی ہے \u0020</string>
+    <string name="image_send_msg">\u0020آپ نے تصویر بھیجی ہے\u0020</string>
+    <string name="file_send_msg">\u0020آپ نے فائل بھیجی ہے\u0020</string>
+    <string name="audio_received_msg">\u0020آپ کووائس میسج موصول ہوئی ہے\u0020</string>
+    <string name="video_received_msg">\u0020آپ کوویڈیو موصول ہوئی ہے\u0020</string>
+    <string name="image_received_msg">\u0020آپ کوتصویر موصول ہوئی ہے\u0020</string>
+    <string name="file_received_msg">\u0020آپ کوفائل موصول ہوئی ہے\u0020</string>
     <string name="you_deleted_this_message">\u0020یہ پیغام ڈیلیٹ کردیاہے\u0020</string>
     <string name="this_message_was_deleted">\u0020یہ پیغام ڈیلیٹ کردیاہے\u0020</string>
-    <string name="new_new_sent">\u0020آپ نے ایک نیوز بھیجی ہے\u0020</string>
-    <string name="new_new_received">\u0020آپ کوایک نیوز موصول ہوئی ہے\u0020</string>
+    <string name="new_new_sent">\u0020آپ نے نیوز بھیجی ہے\u0020</string>
+    <string name="new_new_received">\u0020آپ کونیوز موصول ہوئی ہے\u0020</string>
 </resources>
