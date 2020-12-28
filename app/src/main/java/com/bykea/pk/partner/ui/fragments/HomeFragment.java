@@ -1858,11 +1858,13 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
 
     @Override
     public void onMessageCounterUpdate(int telloMessageCount) {
-        if (telloMessageCount > DIGIT_ZERO) {
-            messageCountBadge.setVisibility(View.VISIBLE);
-            messageCountBadge.setText(String.valueOf(telloMessageCount));
-        } else {
-            messageCountBadge.setVisibility(View.GONE);
+        if(isVisible()) {
+            if (telloMessageCount > DIGIT_ZERO) {
+                messageCountBadge.setVisibility(View.VISIBLE);
+                messageCountBadge.setText(String.valueOf(telloMessageCount));
+            } else {
+                messageCountBadge.setVisibility(View.GONE);
+            }
         }
     }
 }
