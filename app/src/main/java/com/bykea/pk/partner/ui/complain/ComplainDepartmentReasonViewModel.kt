@@ -27,7 +27,7 @@ class ComplainDepartmentReasonViewModel : ViewModel() {
      * @param departmentTag : Department Tag
      */
     fun fetchDepartmentReason(departmentTag: String) {
-        jobRespository.getJobComplainReasons(MESSAGE_TYPE, object : JobsDataSource.ComplainReasonsCallback {
+        jobRespository.getJobComplainReasons(departmentTag, object : JobsDataSource.ComplainReasonsCallback {
             override fun onSuccess(complainReasonResponse: ComplainReasonResponse) {
                 complainReasonResponse.data?.forEachIndexed { index, complainReason ->
                     complainReason.messageModified = (index + DIGIT_ONE).toString().plus(") ").plus(complainReason.message)

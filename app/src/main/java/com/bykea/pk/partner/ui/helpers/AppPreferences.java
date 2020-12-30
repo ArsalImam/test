@@ -7,6 +7,7 @@ import android.util.Log;
 import com.bykea.pk.partner.BuildConfig;
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.dal.LocCoordinatesInTrip;
+import com.bykea.pk.partner.dal.source.remote.response.CityBannerResponse;
 import com.bykea.pk.partner.dal.source.remote.response.DriverSettingsResponse;
 import com.bykea.pk.partner.models.ReceivedMessageCount;
 import com.bykea.pk.partner.models.data.CitiesData;
@@ -1440,5 +1441,38 @@ public class AppPreferences {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /***
+     * Save latest city banner response in preference for local cache
+     *
+     * @param bannerResponse Latest banner response {@link CityBannerResponse}
+     * @param bannerApiVersion API version
+     */
+    public static void setCityBannerResponse(CityBannerResponse bannerResponse, String bannerApiVersion) {
+        bannerResponse.setSettingsVersion(bannerApiVersion);
+        bannerResponse.setLat(AppPreferences.getLatitude());
+        bannerResponse.setLng(AppPreferences.getLongitude());
+        mSharedPreferences
+                .edit()
+                .putString(Keys.CITY_WISE_BANNER_RESPONSE,
+                        new Gson().toJson(bannerResponse))
+                .apply();
+    }
+
+    /***
+     * Retrieve Latest stored city wise banner response return from local cache.
+     * @return City banner response model {@link CityBannerResponse}
+     */
+    public static CityBannerResponse getCityBanner() {
+        String data = mSharedPreferences.getString(Keys.CITY_WISE_BANNER_RESPONSE,
+                StringUtils.EMPTY);
+        CityBannerResponse bannerResponse;
+        if (StringUtils.isBlank(data)) {
+            bannerResponse = new CityBannerResponse();
+        } else {
+            bannerResponse = new Gson().fromJson(data, CityBannerResponse.class);
+        }
+        return bannerResponse;
     }
 }
