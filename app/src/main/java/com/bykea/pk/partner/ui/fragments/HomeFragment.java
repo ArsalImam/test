@@ -25,13 +25,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.Notifications;
@@ -39,7 +39,6 @@ import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.communication.socket.WebIORequestHandler;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
-import com.bykea.pk.partner.dal.source.remote.Backend;
 import com.bykea.pk.partner.dal.source.remote.response.CityBanner;
 import com.bykea.pk.partner.dal.source.remote.response.CityBannerResponse;
 import com.bykea.pk.partner.dal.source.remote.response.TemperatureSubmitResponse;
@@ -74,6 +73,7 @@ import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.Keys;
 import com.bykea.pk.partner.utils.OnPageChangeListenerUtil;
 import com.bykea.pk.partner.utils.Permissions;
+import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.TripStatus;
 import com.bykea.pk.partner.utils.Utils;
 import com.bykea.pk.partner.widgets.BannerViewBinder;
@@ -102,6 +102,8 @@ import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.squareup.picasso.Picasso;
+import com.tilismtech.tellotalksdk.entities.DepartmentConversations;
+import com.tilismtech.tellotalksdk.listeners.MessageCounterListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -116,7 +118,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import cn.lightsky.infiniteindicator.ImageLoader;
 import cn.lightsky.infiniteindicator.IndicatorConfiguration;
 import cn.lightsky.infiniteindicator.OnPageClickListener;
 import cn.lightsky.infiniteindicator.Page;
@@ -124,16 +125,18 @@ import cn.lightsky.infiniteindicator.Page;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static cn.lightsky.infiniteindicator.IndicatorConfiguration.RIGHT;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_ONE;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_SIX;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THOUSAND;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_THREE;
+import static com.bykea.pk.partner.utils.Constants.DIGIT_TWO;
 import static com.bykea.pk.partner.utils.Constants.DIGIT_ZERO;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 /**
  * Home landing screen which holds all the options for driver
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements MessageCounterListener {
     //region Variables and Widgets
     private Unbinder unbinder;
     private HomeActivity mCurrentActivity;
@@ -215,6 +218,10 @@ public class HomeFragment extends Fragment {
     RelativeLayout layoutBanner;
     @BindView(R.id.infinite_anim_circle)
     InfiniteIndicator mAnimCircleIndicator;
+    @BindView(R.id.frameLayoutMessage)
+    FrameLayout frameLayoutMessage;
+    @BindView(R.id.messageCountBadge)
+    TextView messageCountBadge;
     private ArrayList<CityBanner> mBannerItems = new ArrayList<>();
     private ArrayList<Page> pageViews;
     private int currentIndex = 0;
@@ -471,24 +478,33 @@ public class HomeFragment extends Fragment {
         initCityBanners();
     }
 
+    private void fetchTelloTalkUnreadMessageCount() {
+        if (TelloTalkManager.instance().getTelloApiClient() == null)
+            TelloTalkManager.instance().build();
+        if (TelloTalkManager.instance().getTelloApiClient() != null) {
+            TelloTalkManager.instance().getTelloApiClient().setMessageCounterListener(this);
+        }
+    }
+
     /**
      * Initiate Banners According To Cities
      */
     private void initCityBanners() {
-        CityBannerResponse cityBannerResponse = new CityBannerResponse();
+        /*CityBannerResponse cityBannerResponse = new CityBannerResponse();
         cityBannerResponse.setCityBanners(new ArrayList<>());
         String link = "https://partner-crown.s3-eu-west-1.amazonaws.com/partner_banners/partner_banner_img_1.png";
-        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
-        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
-        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, null));
-        createCollectionForBanner(cityBannerResponse);
+        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, "department"));
+        cityBannerResponse.getCityBanners().add(new CityBanner(link, null,  "trip_history"));
+        cityBannerResponse.getCityBanners().add(new CityBanner(link, null,  "submitted_complains"));
+        createCollectionForBanner(cityBannerResponse);*/
 
-       /* if (AppPreferences.getCityBanner() == null
-                || AppPreferences.getCityBanner().getCityBanners() == null) {
+        if (AppPreferences.getCityBanner() == null ||
+                AppPreferences.getCityBanner().getCityBanners() == null ||
+                Utils.isBannerListUpdated()) {
             requestCityWiseBannerAPI();
         } else {
             createCollectionForBanner(AppPreferences.getCityBanner());
-        }*/
+        }
     }
 
     /***
@@ -586,7 +602,18 @@ public class HomeFragment extends Fragment {
         if (mBannerItems.size() > DIGIT_ZERO) {
             CityBanner cityBanner = mBannerItems.get(currentIndex);
             if (StringUtils.isNotEmpty(cityBanner.getDepartmentTag())) {
-                ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+                DepartmentConversations deptConv = TelloTalkManager.instance().getDepartmentFromTag(cityBanner.getDepartmentTag());
+                if (deptConv != null && deptConv.getDepartment() != null) {
+                    if (deptConv.getDepartment().getDptType().equals(String.valueOf(DIGIT_ONE))) {
+                        TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, deptConv);
+                    } else if (deptConv.getDepartment().getDptType().equals(String.valueOf(DIGIT_TWO))) {
+                        if (deptConv.getDepartment().getDeptTag().equalsIgnoreCase(Utils.fetchTelloTalkTag(Constants.TelloTalkTags.TELLO_TALK_TRIP_HISTORY_KEY))) {
+                            ActivityStackManager.getInstance().startComplainDepartmentBookingActivity(mCurrentActivity, deptConv.getDepartment().getDeptTag());
+                        } else {
+                            ActivityStackManager.getInstance().startComplainDepartmentReasonActivity(mCurrentActivity, cityBanner.getDepartmentTag(), null, null);
+                        }
+                    }
+                }
             }
         }
     };
@@ -814,6 +841,7 @@ public class HomeFragment extends Fragment {
         }
         repository.requestRunningTrip(mCurrentActivity, handler);
 //        Dialogs.INSTANCE.setCalenderCurrentWeek(durationTv);
+        fetchTelloTalkUnreadMessageCount();
         if (enableLocation()) return;
         super.onResume();
     }
@@ -1382,7 +1410,7 @@ public class HomeFragment extends Fragment {
 
 
     @OnClick({R.id.shahkarBtn, R.id.statsBtn, R.id.editBtn, R.id.durationTv, R.id.durationBtn, R.id.previusDurationBtn,
-            R.id.mapPinIv, R.id.walletRL, R.id.offlineRideNavigationRL})
+            R.id.mapPinIv, R.id.walletRL, R.id.offlineRideNavigationRL, R.id.frameLayoutMessage})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -1454,6 +1482,10 @@ public class HomeFragment extends Fragment {
                             AppPreferences.setAvailableStatus(true);
                         });
                 break;
+            }
+            case R.id.frameLayoutMessage: {
+                Utils.preventMultipleTap(view);
+                ActivityStackManager.getInstance().startComplainDepartmentActivity(mCurrentActivity);
             }
         }
     }
@@ -1821,6 +1853,18 @@ public class HomeFragment extends Fragment {
                 public void onError(int errorCode, String errorMessage) {
                 }
             }, AppPreferences.getLatitude(), AppPreferences.getLongitude());
+        }
+    }
+
+    @Override
+    public void onMessageCounterUpdate(int telloMessageCount) {
+        if(isVisible()) {
+            if (telloMessageCount > DIGIT_ZERO) {
+                messageCountBadge.setVisibility(View.VISIBLE);
+                messageCountBadge.setText(String.valueOf(telloMessageCount));
+            } else {
+                messageCountBadge.setVisibility(View.GONE);
+            }
         }
     }
 }

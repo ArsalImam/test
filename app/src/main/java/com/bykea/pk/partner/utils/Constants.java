@@ -20,6 +20,7 @@ public class Constants {
     public static final int DIGIT_THOUSAND = 1000;
     public static final double DECIMAL_THOUSAND = 1000.0;
     public static final int NEGATIVE_DIGIT_ONE = -1;
+    public static final long MIN_FENCE_DISTANCE = 15000; //km
 
     public static final int PRIORITY_ONE = 1;
     public static final int PRIORITY_TWO = 2;
@@ -35,6 +36,7 @@ public class Constants {
     public static final String USER_TYPE = "d";
     public static final String UNAUTH_MESSAGE = "unAuthrozied User";
     public static final int ESTIMATION_SPEED = 30;
+    public static final String CUSTOMER = "customer";
 
     public static final int MINIMUM_VOICE_RECORDING = 1000;
 
@@ -209,9 +211,11 @@ public class Constants {
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
         public static final String CONTENT_AVAILABLE_CHANNEL = "content-available-Channel";
         public static final String DATA_TYPE_TELLO_VAL = "content-available-IM";
-        public static final String DATA_TYPE_TELLO = "jobCode";
+        public static final String DATA_TYPE_TELLO = "tellotalk-content-available";
+        public static final String DATA_TYPE_TELLO_IM = "content-available-IM";
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
+        public static final String KEY_JOB_CODE = "jobCode";
     }
 
 //    public static class FCMEvents {
@@ -257,6 +261,7 @@ public class Constants {
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
         public static final String CONTACT_TYPE = "cType";
+        public static final String BOOKING_HISTORY = "BOOKING_HISTORY";
 
 
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";

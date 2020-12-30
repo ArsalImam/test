@@ -19,9 +19,7 @@ import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.utils.Constants
 import com.bykea.pk.partner.utils.Constants.TelloTalkTags
 import com.bykea.pk.partner.utils.Dialogs
-import com.bykea.pk.partner.utils.TelloTalkManager.Companion.instance
 import com.bykea.pk.partner.utils.Utils
-import com.zendesk.util.StringUtils
 
 
 /**

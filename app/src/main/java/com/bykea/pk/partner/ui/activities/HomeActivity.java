@@ -27,7 +27,6 @@ import com.bykea.pk.partner.Notifications;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
-import com.bykea.pk.partner.dal.source.remote.Backend;
 import com.bykea.pk.partner.dal.source.remote.response.DriverSettingsResponse;
 import com.bykea.pk.partner.dal.util.Injection;
 import com.bykea.pk.partner.models.data.PilotData;
@@ -61,6 +60,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bykea.pk.partner.utils.Constants.Extras.BOOKING_HISTORY;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 public class HomeActivity extends BaseActivity {
@@ -119,7 +119,6 @@ public class HomeActivity extends BaseActivity {
         setToolbarLogo();
 
         Utils.setZendeskIdentity();
-
         initViews();
         setupDrawerToggle();
         Utils.unlockScreen(this);
@@ -142,6 +141,21 @@ public class HomeActivity extends BaseActivity {
         Utils.clearSharedPrefIfDirty();
 
         TelloTalkManager.instance().build();
+        checkIntentPerformAccordingly();
+    }
+
+    /**
+     * Check Intent and Perform Accordingly
+     */
+    private void checkIntentPerformAccordingly() {
+        Intent i = getIntent();
+        if (i != null) {
+            if (i.hasExtra(BOOKING_HISTORY)) {
+                if (recyclerViewAdapter != null) {
+                    recyclerViewAdapter.navigateToTripHistories();
+                }
+            }
+        }
     }
 
     @Override

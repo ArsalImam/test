@@ -42,7 +42,8 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup,android:name">
-        <activity android:name=".ui.complain.ComplainDepartmentReasonActivity"/>
+        <activity android:name=".ui.complain.ComplainDepartmentBookingActivity"/>
+        <activity android:name=".ui.complain.ComplainDepartmentReasonActivity" />
         <activity android:name=".ui.complain.ComplainDepartmentActivity" />
         <activity
             android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"

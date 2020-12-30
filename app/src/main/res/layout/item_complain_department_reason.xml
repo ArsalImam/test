@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:padding="@dimen/_14sdp"
                 android:text="@{item.messageModified}"
-                android:textSize="@dimen/textsize.small.medium"
+                android:textSize="@dimen/_14sdp"
                 app:fontName="jameel_noori_nastaleeq.ttf"
                 tools:text="@string/chat" />
         </LinearLayout>

@@ -3,6 +3,7 @@ package com.bykea.pk.partner.utils
 import android.app.Activity
 import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.util.LANG_TYPE
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
@@ -19,6 +20,8 @@ class TelloTalkManager {
      * tello client instance
      */
     private var telloApiClient: TelloApiClient? = null
+
+    fun getTelloApiClient() = telloApiClient
 
     /**
      * constructor to initialize tello sdk object
@@ -98,6 +101,7 @@ class TelloTalkManager {
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
 
         telloApiClient = builder.build()
+        telloApiClient?.setLocality(LANG_TYPE)
     }
 
     /**
@@ -107,9 +111,8 @@ class TelloTalkManager {
         try {
             if (telloApiClient == null) {
                 build()
-                telloApiClient?.setLocality("ur")
             }
-            telloApiClient?.onMessageNotificationReceived(data as HashMap<String, String>?)
+            telloApiClient?.onMessageNotificationReceived(HashMap<String, String>(data))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -137,7 +140,7 @@ class TelloTalkManager {
      * Get Department Conversation Object Against Tello Talk Department Tag
      */
     fun getDepartmentFromTag(telloTalkTag: String): DepartmentConversations? {
-        return getDepartments().find { it.department.deptTag == telloTalkTag }
+        return getDepartments().find { it.department.deptTag.equals(telloTalkTag, ignoreCase = true) }
     }
 
     /**
