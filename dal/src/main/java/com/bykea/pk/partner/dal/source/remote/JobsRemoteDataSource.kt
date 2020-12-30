@@ -356,7 +356,7 @@ class JobsRemoteDataSource {
         })
     }
 
-    fun getJobComplainReasons(userType: String, messageType: String, lang: String, callback: JobsDataSource.ComplainReasonsCallback) {
+    fun getJobComplainReasons(userType: String, messageType: String?, lang: String, callback: JobsDataSource.ComplainReasonsCallback) {
         Backend.talos.getJobComplainReasons(userType, messageType, lang).enqueue(object : Callback<ComplainReasonResponse> {
             override fun onSuccess(complainReasonResponse: ComplainReasonResponse) = callback.onSuccess(complainReasonResponse)
             override fun onFail(code: Int, subCode: Int?, message: String?) = callback.onFail(code, subCode, message)
@@ -517,6 +517,13 @@ class JobsRemoteDataSource {
     fun getDriverSettings(driverId: String, accessToken: String, callback: JobsDataSource.LoadDataCallback<DriverSettingsResponse>) {
         Backend.talos.getDriverSettings(driverId, accessToken).enqueue(object : Callback<DriverSettingsResponse> {
             override fun onSuccess(response: DriverSettingsResponse) = callback.onDataLoaded(response)
+            override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
+        })
+    }
+
+    fun getCityWiseBanner(driverId: String, accessToken: String, lat: Double, lng: Double, callback: JobsDataSource.LoadDataCallback<CityBannerResponse>) {
+        Backend.talos.getCityWiseBanner(driverId, accessToken, lat, lng, "ur", "d").enqueue(object : Callback<CityBannerResponse> {
+            override fun onSuccess(response: CityBannerResponse) = callback.onDataLoaded(response)
             override fun onFail(code: Int, message: String?) = callback.onDataNotAvailable(code, message.toString())
         })
     }

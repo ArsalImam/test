@@ -42,7 +42,8 @@
         android:theme="@style/AppTheme"
         tools:node="merge"
         tools:replace="android:allowBackup,android:name">
-        <activity android:name=".ui.complain.ComplainDepartmentReasonActivity"/>
+        <activity android:name=".ui.complain.ComplainDepartmentBookingActivity"/>
+        <activity android:name=".ui.complain.ComplainDepartmentReasonActivity" />
         <activity android:name=".ui.complain.ComplainDepartmentActivity" />
         <activity
             android:name=".ui.nodataentry.AddEditDeliveryDetailsActivity"
@@ -78,8 +79,7 @@
             android:hardwareAccelerated="@bool/enable_hardwareAccelerated"
             android:launchMode="singleTask"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:windowSoftInputMode="adjustResize" />
+            android:turnScreenOn="true" />
         <activity android:name=".ui.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

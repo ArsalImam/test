@@ -13,4 +13,7 @@ data class ComplainReason(
         @SerializedName("_id") @Expose var _id: String?,
         @SerializedName("message") @Expose var message: String?,
         @SerializedName("code") @Expose var code: String?
-) : Parcelable
+) : Parcelable {
+    //Variable Creat For Client Handling
+    var messageModified: String? = null
+}

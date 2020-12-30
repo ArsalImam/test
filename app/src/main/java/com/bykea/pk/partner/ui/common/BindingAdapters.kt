@@ -16,7 +16,9 @@ import com.bykea.pk.partner.R
 import com.bykea.pk.partner.dal.Job
 import com.bykea.pk.partner.dal.Rules
 import com.bykea.pk.partner.dal.source.remote.request.nodataentry.DeliveryDetails
+import com.bykea.pk.partner.dal.util.DATE_ONLY
 import com.bykea.pk.partner.dal.util.SEPERATOR
+import com.bykea.pk.partner.dal.util.TIME_ONLY
 import com.bykea.pk.partner.ui.helpers.FontUtils
 import com.bykea.pk.partner.ui.loadboard.list.JobListAdapter
 import com.bykea.pk.partner.utils.Constants
@@ -27,6 +29,8 @@ import com.bykea.pk.partner.utils.Util
 import com.bykea.pk.partner.utils.Utils
 import com.bykea.pk.partner.widgets.AutoFitFontTextView
 import com.bykea.pk.partner.widgets.FontTextView
+import com.tilismtech.tellotalksdk.entities.TTMessage
+import com.zendesk.util.DateUtils
 import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -309,4 +313,75 @@ object BindingAdapters {
         }
     }
 
+    @BindingAdapter("app:dateTimeAccordingly")
+    @JvmStatic
+    fun setDateTimeAccordingly(textView: TextView, date: Date?) {
+        date?.let {
+            if (DateUtils.isSameDay(date, Date())) {
+                textView.text = SimpleDateFormat(TIME_ONLY).format(date)
+            } else {
+                textView.text = SimpleDateFormat(DATE_ONLY).format(date)
+            }
+        } ?: run {
+            textView.text = StringUtils.EMPTY
+        }
+    }
+
+    @BindingAdapter("app:customTelloMessage")
+    @JvmStatic
+    fun setCustomTelloMessage(textView: TextView, ttMessage: TTMessage?) {
+        ttMessage?.let {
+            textView.visibility = View.VISIBLE
+            when (ttMessage.msgType) {
+                TTMessage.MsgType.TYPE_AUDIO.getName() -> {
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.audio_send_msg)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.audio_received_msg)
+                    }
+                }
+                TTMessage.MsgType.TYPE_VIDEO.getName() -> {
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.video_send_msg)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.video_received_msg)
+                    }
+                }
+                TTMessage.MsgType.TYPE_IMAGE.getName() -> {
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.image_send_msg)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.image_received_msg)
+                    }
+                }
+                TTMessage.MsgType.TYPE_FILE.getName() -> {
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.file_send_msg)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.file_received_msg)
+                    }
+                }
+                TTMessage.MsgType.TYPE_DELETED.getName() -> {
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.you_deleted_this_message)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.this_message_was_deleted)
+                    }
+                }
+                TTMessage.MsgType.TYPE_NEWS.getName(),
+                TTMessage.MsgType.TYPE_NEWSWB.getName() -> {
+                    if (ttMessage.msgStatus == TTMessage.MsgStatus.SENT) {
+                        textView.text = DriverApp.getContext().getString(R.string.new_new_sent)
+                    } else {
+                        textView.text = DriverApp.getContext().getString(R.string.new_new_received)
+                    }
+                }
+                else -> {
+                    textView.text = StringUtils.SPACE.plus(ttMessage.message)
+                }
+            }
+        } ?: run {
+            textView.visibility = View.GONE
+        }
+    }
 }
