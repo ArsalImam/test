@@ -97,6 +97,12 @@ public class Settings {
     private HashMap<String, String> priorityList;
 
     /**
+     * Tello Talk Tags
+     */
+    @SerializedName("tello_talk_tags")
+    private HashMap<String, String> telloTalkTags;
+
+    /**
      * Toggle for ask temperature from partner
      */
     @SerializedName("partner_temperature_input_toggle")
@@ -428,5 +434,9 @@ public class Settings {
      */
     public Long getCoolDownLoadboardTimer() {
         return coolDownLoadboardTimer == null ? DIGIT_ZERO : coolDownLoadboardTimer;
+    }
+
+    public HashMap<String, String> getTelloTalkTags() {
+        return telloTalkTags;
     }
 }

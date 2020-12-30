@@ -55,6 +55,7 @@ import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.complain.ComplainAddActivity;
 import com.bykea.pk.partner.ui.complain.ComplainDepartmentActivity;
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentBookingActivity;
 import com.bykea.pk.partner.ui.complain.ComplainDepartmentReasonActivity;
 import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
@@ -733,11 +734,24 @@ public class ActivityStackManager {
         activity.startActivity(intent);
     }
 
+    /**
+     * Start Complain Department Activity (Departments List)
+     *
+     * @param activity       context from which this needs to open
+     */
     public void startComplainDepartmentActivity(Activity activity) {
         Intent intent = new Intent(activity, ComplainDepartmentActivity.class);
         activity.startActivity(intent);
     }
 
+    /**
+     * this method can be used to open complain department booking activity
+     *
+     * @param activity      Context from which this needs to open
+     * @param departmentTag Department Tag
+     * @param tripDetails   Model Send For Intent
+     * @param bookingId     Booking Id to fetch booking details
+     */
     public void startComplainDepartmentReasonActivity(Activity activity, String departmentTag, TripHistoryData tripDetails, String bookingId) {
         Intent intent = new Intent(activity, ComplainDepartmentReasonActivity.class);
 
@@ -746,5 +760,29 @@ public class ActivityStackManager {
 
         intent.putExtra(DEPARTMENT_TAG, departmentTag);
         activity.startActivity(intent);
+    }
+
+    /**
+     * this method can be used to open complain department booking activity
+     *
+     * @param activity       context from which this needs to open
+     * @param departmentTag  Department Tag
+     */
+    public void startComplainDepartmentBookingActivity(Activity activity, String departmentTag) {
+        Intent intent = new Intent(activity, ComplainDepartmentBookingActivity.class);
+        intent.putExtra(DEPARTMENT_TAG, departmentTag);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * Start main activity with the navigation of trip history fragment
+     *
+     * @param context Context
+     */
+    public void startHomeActivityWithBookingHistory(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.putExtra(Constants.Extras.BOOKING_HISTORY, true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
 }

@@ -35,10 +35,10 @@
             android:gravity="center"
             android:padding="@dimen/_14sdp"
             android:text="@string/reasons_not_found"
-            android:textColor="@color/dark_gray656565"
+            android:textColor="@color/black"
             android:textSize="@dimen/_18sdp"
             app:fontName="jameel_noori_nastaleeq.ttf"
-            app:goneUnless="@{!viewModel.items.empty}" />
+            app:goneUnless="@{viewModel.items.empty}" />
 
     </LinearLayout>
 </layout>

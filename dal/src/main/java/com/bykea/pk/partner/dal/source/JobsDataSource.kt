@@ -542,4 +542,6 @@ interface JobsDataSource {
     fun checkFence(lat: String, lng: String, callback: LoadDataCallback<FenceCheckResponse>)
 
     fun getDriverSettings(callback: LoadDataCallback<DriverSettingsResponse>)
+
+    fun getCityWiseBanner(callback: LoadDataCallback<CityBannerResponse>)
 }

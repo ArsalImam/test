@@ -41,8 +41,6 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
         viewModel = obtainViewModel(ComplainDepartmentReasonViewModel::class.java)
         binding.viewModel = viewModel
 
-        setTitleCustomToolbarUrdu(getString(R.string.chat))
-
         intent?.extras?.let { intentExtras ->
             if (intentExtras.containsKey(Constants.INTENT_TRIP_HISTORY_DATA)) {
                 tripHistoryData = intent.getSerializableExtra(Constants.INTENT_TRIP_HISTORY_DATA) as TripHistoryData
@@ -53,14 +51,14 @@ class ComplainDepartmentReasonActivity : BaseActivity() {
             }
             if (intentExtras.containsKey(DEPARTMENT_TAG)) {
                 departmentTag = intentExtras.getString(DEPARTMENT_TAG)
-                TelloTalkManager.instance().getDepartments()?.find { departmentConversations ->
-                    !departmentTag.isNullOrEmpty() && departmentTag == departmentConversations.department.deptTag
+                TelloTalkManager.instance().getDepartments().find { departmentConversations ->
+                    !departmentTag.isNullOrEmpty() && departmentTag.equals(departmentConversations.department.deptTag, ignoreCase = true)
                 }?.let {
                     departmentConversations = it
-                    setTitleCustomToolbarUrdu(it.department.dptName)
+                    setTitleCustomToolbarUrdu(it.department.name_u)
+                    imgViewCategory.visibility = View.VISIBLE
                     if (!it.department.dptImage.isNullOrEmpty()) {
                         Utils.loadImgPicasso(imgViewCategory, R.color.white, it.department.dptImage)
-                        imgViewCategory.visibility = View.VISIBLE
                     }
                 }
             }
