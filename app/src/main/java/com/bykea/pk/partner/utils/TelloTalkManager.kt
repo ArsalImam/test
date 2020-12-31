@@ -1,7 +1,9 @@
 package com.bykea.pk.partner.utils
 
 import android.app.Activity
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.util.LANG_TYPE
 import com.bykea.pk.partner.ui.helpers.AppPreferences
 import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
@@ -18,6 +20,8 @@ class TelloTalkManager {
      * tello client instance
      */
     private var telloApiClient: TelloApiClient? = null
+
+    fun getTelloApiClient() = telloApiClient
 
     /**
      * constructor to initialize tello sdk object
@@ -97,6 +101,7 @@ class TelloTalkManager {
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
 
         telloApiClient = builder.build()
+        telloApiClient?.setLocality(LANG_TYPE)
     }
 
     /**
@@ -107,13 +112,48 @@ class TelloTalkManager {
             if (telloApiClient == null) {
                 build()
             }
-            telloApiClient?.onMessageNotificationReceived(data as HashMap<String, String>?)
+            telloApiClient?.onMessageNotificationReceived(HashMap<String, String>(data))
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun getDepartments() = telloApiClient?.department
+    /**
+     * Get Department Conversation Object Against Tello Talk Department Tag
+     */
+    fun getDepartmentFromKey(telloTalkKey: String): DepartmentConversations? {
+        val telloTalkTag = Utils.fetchTelloTalkTag(telloTalkKey)
+        if (StringUtils.isEmpty(telloTalkTag)) {
+            getDepartmentFromTag(telloTalkTag)?.let {
+                return it
+            } ?: run {
+                Utils.appToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+                return null
+            }
+        } else {
+            Utils.appToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+            return null
+        }
+    }
+
+    /**
+     * Get Department Conversation Object Against Tello Talk Department Tag
+     */
+    fun getDepartmentFromTag(telloTalkTag: String): DepartmentConversations? {
+        return getDepartments().find { it.department.deptTag.equals(telloTalkTag, ignoreCase = true) }
+    }
+
+    /**
+     * Get Department Conversation List
+     */
+    fun getDepartments(): MutableList<DepartmentConversations> {
+        var departmentConversationsList: MutableList<DepartmentConversations> = ArrayList()
+        if (telloApiClient == null) {
+            build()
+        }
+        telloApiClient?.department?.let { departmentConversationsList = it }
+        return departmentConversationsList
+    }
 
     companion object {
         /**
