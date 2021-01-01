@@ -146,7 +146,7 @@ public class Settings {
     @SerializedName("cool_down_loadboard_timer")
     private Long coolDownLoadboardTimer;
 
-    @SerializedName("banner_update_distance")
+    @SerializedName("banner_update_distance_partner")
     private String bannerUpdateDistance;
 
     public HashMap<String, String> getPriorityList() {
