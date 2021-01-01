@@ -3916,11 +3916,19 @@ public class Utils {
                 StringUtils.isNotBlank(AppPreferences.getCityBanner().getSettingsVersion())) {
             version = AppPreferences.getCityBanner().getSettingsVersion();
         }
+
         String settingsVersion = AppPreferences.getSettingsVersion();
+        long minFenceDistance = Constants.MIN_FENCE_DISTANCE;
+
+        if (AppPreferences.getSettings() != null &&
+                AppPreferences.getSettings().getSettings() != null) {
+            minFenceDistance = AppPreferences.getSettings().getSettings().getBannerUpdateDistance();
+        }
+
         return !(StringUtils.isNotBlank(settingsVersion)
                 && StringUtils.isNotBlank(version)
                 && version.equalsIgnoreCase(settingsVersion))
                 || Utils.calculateDistance(AppPreferences.getLatitude(), AppPreferences.getLongitude(),
-                AppPreferences.getCityBanner().getLat(), AppPreferences.getCityBanner().getLng()) > Constants.MIN_FENCE_DISTANCE;
+                AppPreferences.getCityBanner().getLat(), AppPreferences.getCityBanner().getLng()) > minFenceDistance;
     }
 }

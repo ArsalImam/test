@@ -146,6 +146,9 @@ public class Settings {
     @SerializedName("cool_down_loadboard_timer")
     private Long coolDownLoadboardTimer;
 
+    @SerializedName("banner_update_distance")
+    private String bannerUpdateDistance;
+
     public HashMap<String, String> getPriorityList() {
         return priorityList;
     }
@@ -438,5 +441,12 @@ public class Settings {
 
     public HashMap<String, String> getTelloTalkTags() {
         return telloTalkTags;
+    }
+
+    /**
+     * Banner Update Distance
+     */
+    public Long getBannerUpdateDistance() {
+        return StringUtils.isEmpty(bannerUpdateDistance) ? Long.parseLong(bannerUpdateDistance) : Constants.MIN_FENCE_DISTANCE;
     }
 }
