@@ -490,14 +490,6 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
      * Initiate Banners According To Cities
      */
     private void initCityBanners() {
-        /*CityBannerResponse cityBannerResponse = new CityBannerResponse();
-        cityBannerResponse.setCityBanners(new ArrayList<>());
-        String link = "https://partner-crown.s3-eu-west-1.amazonaws.com/partner_banners/partner_banner_img_1.png";
-        cityBannerResponse.getCityBanners().add(new CityBanner(link, null, "department"));
-        cityBannerResponse.getCityBanners().add(new CityBanner(link, null,  "trip_history"));
-        cityBannerResponse.getCityBanners().add(new CityBanner(link, null,  "submitted_complains"));
-        createCollectionForBanner(cityBannerResponse);*/
-
         if (AppPreferences.getCityBanner() == null ||
                 AppPreferences.getCityBanner().getCityBanners() == null ||
                 Utils.isBannerListUpdated()) {
