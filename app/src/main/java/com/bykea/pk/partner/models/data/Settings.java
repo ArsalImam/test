@@ -447,6 +447,6 @@ public class Settings {
      * Banner Update Distance
      */
     public Long getBannerUpdateDistance() {
-        return StringUtils.isEmpty(bannerUpdateDistance) ? Long.parseLong(bannerUpdateDistance) : Constants.MIN_FENCE_DISTANCE;
+        return StringUtils.isNotEmpty(bannerUpdateDistance) ? Long.parseLong(bannerUpdateDistance) : Constants.MIN_FENCE_DISTANCE;
     }
 }
