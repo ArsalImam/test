@@ -97,6 +97,12 @@ public class Settings {
     private HashMap<String, String> priorityList;
 
     /**
+     * Tello Talk Tags
+     */
+    @SerializedName("tello_talk_tags")
+    private HashMap<String, String> telloTalkTags;
+
+    /**
      * Toggle for ask temperature from partner
      */
     @SerializedName("partner_temperature_input_toggle")
@@ -139,6 +145,9 @@ public class Settings {
      */
     @SerializedName("cool_down_loadboard_timer")
     private Long coolDownLoadboardTimer;
+
+    @SerializedName("banner_update_distance_partner")
+    private String bannerUpdateDistance;
 
     public HashMap<String, String> getPriorityList() {
         return priorityList;
@@ -428,5 +437,16 @@ public class Settings {
      */
     public Long getCoolDownLoadboardTimer() {
         return coolDownLoadboardTimer == null ? DIGIT_ZERO : coolDownLoadboardTimer;
+    }
+
+    public HashMap<String, String> getTelloTalkTags() {
+        return telloTalkTags;
+    }
+
+    /**
+     * Banner Update Distance
+     */
+    public Long getBannerUpdateDistance() {
+        return StringUtils.isNotEmpty(bannerUpdateDistance) ? Long.parseLong(bannerUpdateDistance) : Constants.MIN_FENCE_DISTANCE;
     }
 }

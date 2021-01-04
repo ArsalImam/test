@@ -54,6 +54,9 @@ import com.bykea.pk.partner.ui.calling.CallingActivity;
 import com.bykea.pk.partner.ui.calling.JobCallActivity;
 import com.bykea.pk.partner.ui.calling.MultiDeliveryCallingActivity;
 import com.bykea.pk.partner.ui.complain.ComplainAddActivity;
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentActivity;
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentBookingActivity;
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentReasonActivity;
 import com.bykea.pk.partner.ui.complain.ComplainZendeskIdentityActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintListActivity;
 import com.bykea.pk.partner.ui.complain.ComplaintSubmissionActivity;
@@ -73,6 +76,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import static com.bykea.pk.partner.utils.Constants.Extras.DELIVERY_DETAILS_OBJECT;
+import static com.bykea.pk.partner.utils.Constants.Extras.DEPARTMENT_TAG;
 import static com.bykea.pk.partner.utils.Constants.Extras.FAILED_BOOKING_ID;
 import static com.bykea.pk.partner.utils.Constants.Extras.FLOW_FOR;
 import static com.bykea.pk.partner.utils.Constants.INTENT_TRIP_HISTORY_DATA;
@@ -251,6 +255,7 @@ public class ActivityStackManager {
 
     /**
      * this will open feedback activity with taking care of backward compatibility
+     *
      * @param mContext of the activity
      */
     public void startFeedbackActivity(Context mContext) {
@@ -261,7 +266,7 @@ public class ActivityStackManager {
      * this will open feedback activity with taking care of backward compatibility (dependent on the flag)
      *
      * @param mContext of the activity
-     * @param newFlow if true, will ignore backward compatibility
+     * @param newFlow  if true, will ignore backward compatibility
      */
     public void startFeedbackActivity(Context mContext, boolean newFlow) {
         NormalCallData callData = AppPreferences.getCallData();
@@ -672,7 +677,7 @@ public class ActivityStackManager {
      * @param flowFor         : Flow for is to handle add or edit
      * @param deliveryDetails : Delivery Detail Object
      * @param failedBookingId : id of the failed booking against which re route's booking needs
-     *                          to be created
+     *                        to be created
      */
     public void startAddEditDeliveryDetails(Activity activity, int flowFor, DeliveryDetails deliveryDetails, String failedBookingId) {
         Intent intent = new Intent(activity, AddEditDeliveryDetailsActivity.class);
@@ -727,5 +732,57 @@ public class ActivityStackManager {
     public void startDeliveryListingActivity(Activity activity) {
         Intent intent = new Intent(activity, ListDeliveryDetailsActivity.class);
         activity.startActivity(intent);
+    }
+
+    /**
+     * Start Complain Department Activity (Departments List)
+     *
+     * @param activity       context from which this needs to open
+     */
+    public void startComplainDepartmentActivity(Activity activity) {
+        Intent intent = new Intent(activity, ComplainDepartmentActivity.class);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * this method can be used to open complain department booking activity
+     *
+     * @param activity      Context from which this needs to open
+     * @param departmentTag Department Tag
+     * @param tripDetails   Model Send For Intent
+     * @param bookingId     Booking Id to fetch booking details
+     */
+    public void startComplainDepartmentReasonActivity(Activity activity, String departmentTag, TripHistoryData tripDetails, String bookingId) {
+        Intent intent = new Intent(activity, ComplainDepartmentReasonActivity.class);
+
+        if (tripDetails != null) intent.putExtra(INTENT_TRIP_HISTORY_DATA, tripDetails);
+        if (bookingId != null) intent.putExtra(INTENT_TRIP_HISTORY_ID, bookingId);
+
+        intent.putExtra(DEPARTMENT_TAG, departmentTag);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * this method can be used to open complain department booking activity
+     *
+     * @param activity       context from which this needs to open
+     * @param departmentTag  Department Tag
+     */
+    public void startComplainDepartmentBookingActivity(Activity activity, String departmentTag) {
+        Intent intent = new Intent(activity, ComplainDepartmentBookingActivity.class);
+        intent.putExtra(DEPARTMENT_TAG, departmentTag);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * Start main activity with the navigation of trip history fragment
+     *
+     * @param context Context
+     */
+    public void startHomeActivityWithBookingHistory(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.putExtra(Constants.Extras.BOOKING_HISTORY, true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
 }

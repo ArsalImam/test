@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bykea.pk.partner.DriverApp;
 import com.bykea.pk.partner.R;
 import com.bykea.pk.partner.dal.source.JobsDataSource;
 import com.bykea.pk.partner.dal.source.JobsRepository;
@@ -21,14 +22,20 @@ import com.bykea.pk.partner.ui.activities.BanksAccountActivity;
 import com.bykea.pk.partner.ui.activities.HomeActivity;
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager;
 import com.bykea.pk.partner.ui.helpers.AppPreferences;
+import com.bykea.pk.partner.utils.Constants;
 import com.bykea.pk.partner.utils.Dialogs;
 import com.bykea.pk.partner.utils.HTTPStatus;
 import com.bykea.pk.partner.utils.TelloTalkManager;
 import com.bykea.pk.partner.utils.Utils;
+import com.tilismtech.tellotalksdk.entities.DepartmentConversations;
+
+import org.apache.commons.lang3.StringUtils;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static com.bykea.pk.partner.utils.Constants.TelloTalkTags.TELLO_TALK_SUBMITTED_COMPLAINS_KEY;
 
 public class ContactUsFragment extends Fragment {
 
@@ -96,19 +103,15 @@ public class ContactUsFragment extends Fragment {
             case R.id.supportCall:
                 checkContactNumberAndCall(true);
                 break;
-            case R.id.submittedComplains: {
-                TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null);
-//                if (AppPreferences.isEmailVerified()) {
-//                    ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
-//                } else {
-//                    checkIsEmailUpdatedFromRemoteDataSource();
-//                }
-            }
-            break;
-            case R.id.reportComplain: {
-                ActivityStackManager.getInstance().startComplainSubmissionActivity(mCurrentActivity, null, null);
-            }
-            break;
+            case R.id.submittedComplains:
+                DepartmentConversations depConvObj = TelloTalkManager.instance().getDepartmentFromKey(TELLO_TALK_SUBMITTED_COMPLAINS_KEY);
+                if (depConvObj != null) {
+                    TelloTalkManager.instance().openCorporateChat(mCurrentActivity, null, depConvObj);
+                }
+                break;
+            case R.id.reportComplain:
+                ActivityStackManager.getInstance().startComplainDepartmentActivity(mCurrentActivity);
+                break;
             case R.id.bankAccountNumber:
                 startActivity(new Intent(mCurrentActivity, BanksAccountActivity.class));
                 break;
@@ -119,6 +122,7 @@ public class ContactUsFragment extends Fragment {
      * Check ContactNumber object
      * if it not null, get support contact number and land to mobile calling screen
      * if null, generate call if @param generateApiCall is True
+     *
      * @param generateApiCall : Call API If True
      */
     private void checkContactNumberAndCall(boolean generateApiCall) {
@@ -140,7 +144,7 @@ public class ContactUsFragment extends Fragment {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable Boolean isEmailUpdated) {
                 Dialogs.INSTANCE.dismissDialog();
-                if (isEmailUpdated!=null && isEmailUpdated)
+                if (isEmailUpdated != null && isEmailUpdated)
                     AppPreferences.setEmailVerified();
                 ActivityStackManager.getInstance().startComplainListActivity(mCurrentActivity);
             }

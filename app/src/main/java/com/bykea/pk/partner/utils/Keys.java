@@ -77,6 +77,7 @@ public class Keys {
     public static final String SETTING_DATA = "SETTING_DATA";
     public static final String TRACKING_DATA = "TRACKING_DATA";
     public static final String ZENDESK_IDENTITY_SETUP_TIME = "zendesk_identity_setup_time";
+    public static final String CITY_WISE_BANNER_RESPONSE = "CITY_WISE_BANNER_RESPONSE";
 
     /**
      * KEY FOR STRING

@@ -182,7 +182,7 @@ interface JobsDataSource {
     /**
      * Get Job Complain Reasons
      */
-    fun getJobComplainReasons(callback: ComplainReasonsCallback)
+    fun getJobComplainReasons(departmentId: String?, callback: ComplainReasonsCallback)
 
     /**
      * Get fair estimation
@@ -542,4 +542,6 @@ interface JobsDataSource {
     fun checkFence(lat: String, lng: String, callback: LoadDataCallback<FenceCheckResponse>)
 
     fun getDriverSettings(callback: LoadDataCallback<DriverSettingsResponse>)
+
+    fun getCityWiseBanner(callback: LoadDataCallback<CityBannerResponse>)
 }

@@ -13,6 +13,7 @@ public class Constants {
     public static final int DIGIT_TWO = 2;
     public static final int DIGIT_FOUR = 4;
     public static final int DIGIT_FIVE = 5;
+    public static final int DIGIT_SIX = 6;
     public static final int DIGIT_EIGHT = 8;
     public static final int DIGIT_TEN = 10;
     public static final int DIGIT_THIRTY = 30;
@@ -21,6 +22,7 @@ public class Constants {
     public static final int DIGIT_THOUSAND = 1000;
     public static final double DECIMAL_THOUSAND = 1000.0;
     public static final int NEGATIVE_DIGIT_ONE = -1;
+    public static final long MIN_FENCE_DISTANCE = 10000; //km
 
     public static final int PRIORITY_ONE = 1;
     public static final int PRIORITY_TWO = 2;
@@ -35,6 +37,8 @@ public class Constants {
     public static final String DEVICE_TYPE = "android";
     public static final String USER_TYPE = "d";
     public static final String UNAUTH_MESSAGE = "unAuthrozied User";
+    public static final int ESTIMATION_SPEED = 30;
+    public static final String CUSTOMER = "customer";
 
     public static final int MINIMUM_VOICE_RECORDING = 1000;
 
@@ -197,9 +201,11 @@ public class Constants {
         public static final String NOTIFICATION_CONTENT_TITLE = "Bykea Partner";
         public static final String CONTENT_AVAILABLE_CHANNEL = "content-available-Channel";
         public static final String DATA_TYPE_TELLO_VAL = "content-available-IM";
-        public static final String DATA_TYPE_TELLO = "jobCode";
+        public static final String DATA_TYPE_TELLO = "tellotalk-content-available";
+        public static final String DATA_TYPE_TELLO_IM = "content-available-IM";
         public static final String EVENT_TYPE = "event";
         public static final String DATA_TYPE = "data";
+        public static final String KEY_JOB_CODE = "jobCode";
     }
 
 //    public static class FCMEvents {
@@ -245,6 +251,7 @@ public class Constants {
     public static class Extras {
         public static final String LOCATION_SERVICE_STATUS = "LOCATION_SERVICE_STATUS";
         public static final String CONTACT_TYPE = "cType";
+        public static final String BOOKING_HISTORY = "BOOKING_HISTORY";
 
 
         public static final String SELECTED_VEHICLE_DATA = "SELECTED_VEHICLE_DATA";
@@ -289,6 +296,7 @@ public class Constants {
         public static final int VIEW_DELIVERY_DETAILS = DIGIT_THREE;
         public static final String DELIVERY_DETAILS_OBJECT = "DELIVERY_DETAILS_OBJECT";
         public static final String FAILED_BOOKING_ID = "FAILED_BOOKING_ID";
+        public static final String DEPARTMENT_TAG = "DEPARTMENT_TAG";
     }
 
     public static class Broadcast {
@@ -797,5 +805,13 @@ public class Constants {
         public static final String AUDIO_FILE_NAME = "voice_note" + FILE_EXT;
         public static final int AUDIO_MAX_DURATION = 60;
         public static final int AUDIO_MAX_DURATION_IN_MILLIS = AUDIO_MAX_DURATION * 1000;
+    }
+
+    /**
+     * Tello Talk Department Key (Get Tag From Server Sent In Settings)
+     */
+    public static class TelloTalkTags{
+        public static final String TELLO_TALK_TRIP_HISTORY_KEY = "trip_history";
+        public static final String TELLO_TALK_SUBMITTED_COMPLAINS_KEY = "submitted_complains";
     }
 }

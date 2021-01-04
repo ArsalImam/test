@@ -628,4 +628,20 @@
     <string name="city">\u0020شہر\u0020</string>
     <string name="install_google_map">Please Install Google Map</string>
     <string name="permission_allow_call">کال فیچر کے استعمال کے لئے اجازت کی ضرورت ہے</string>
+    <string name="chat">\u0020چیٹ\u0020</string>
+    <string name="reasons_not_found">\u0020وجوہات نہیں مل سکیں\u0020</string>
+    <string name="enter_new_issue">\u0020نیا مسئلہ درج کریں\u0020</string>
+    <string name="see_old_issue">\u0020پرانا مسئلہ دیکھیں\u0020</string>
+    <string name="audio_send_msg">\u0020آپ نے وائس میسج بھیجاہے\u0020</string>
+    <string name="video_send_msg">\u0020آپ نے ویڈیو بھیجی ہے \u0020</string>
+    <string name="image_send_msg">\u0020آپ نے تصویر بھیجی ہے\u0020</string>
+    <string name="file_send_msg">\u0020آپ نے فائل بھیجی ہے\u0020</string>
+    <string name="audio_received_msg">\u0020آپ کووائس میسج موصول ہوئی ہے\u0020</string>
+    <string name="video_received_msg">\u0020آپ کوویڈیو موصول ہوئی ہے\u0020</string>
+    <string name="image_received_msg">\u0020آپ کوتصویر موصول ہوئی ہے\u0020</string>
+    <string name="file_received_msg">\u0020آپ کوفائل موصول ہوئی ہے\u0020</string>
+    <string name="you_deleted_this_message">\u0020یہ پیغام ڈیلیٹ کردیاہے\u0020</string>
+    <string name="this_message_was_deleted">\u0020یہ پیغام ڈیلیٹ کردیاہے\u0020</string>
+    <string name="new_new_sent">\u0020آپ نے نیوز بھیجی ہے\u0020</string>
+    <string name="new_new_received">\u0020آپ کونیوز موصول ہوئی ہے\u0020</string>
 </resources>

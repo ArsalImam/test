@@ -1,12 +1,14 @@
 package com.bykea.pk.partner.utils
 
 import android.app.Activity
-import com.bykea.pk.partner.BuildConfig
+import com.bykea.pk.partner.DriverApp
 import com.bykea.pk.partner.R
+import com.bykea.pk.partner.dal.util.LANG_TYPE
 import com.bykea.pk.partner.ui.helpers.AppPreferences
+import com.tilismtech.tellotalksdk.entities.DepartmentConversations
 import com.tilismtech.tellotalksdk.managers.TelloApiClient
 import org.apache.commons.lang3.StringUtils
-import org.json.JSONObject
+import java.util.HashMap
 
 /**
  * this is the utitlity manager class for tellotalk
@@ -18,6 +20,8 @@ class TelloTalkManager {
      * tello client instance
      */
     private var telloApiClient: TelloApiClient? = null
+
+    fun getTelloApiClient() = telloApiClient
 
     /**
      * constructor to initialize tello sdk object
@@ -81,21 +85,11 @@ class TelloTalkManager {
      *
      * [activity] context of the activity from which it will open
      */
-    fun openCorporateChat(activity: Activity?, template: String? = null) {
+    fun openCorporateChat(activity: Activity?, template: String? = null, departmentConversations: DepartmentConversations? = null) {
         if (telloApiClient == null) {
             build()
         }
-        telloApiClient?.openCorporateChat(activity, template)
-    }
-
-    /**
-     * this will awake tello's client on fcm received for fcm
-     */
-    fun onMessageReceived() {
-        if (telloApiClient == null) {
-            build()
-        }
-        telloApiClient?.onMessageNotificationReceived()
+        telloApiClient?.openCorporateChat(activity, template, StringUtils.EMPTY, departmentConversations)
     }
 
     fun build() {
@@ -107,6 +101,7 @@ class TelloTalkManager {
                 .notificationIcon(R.drawable.ic_stat_onesignal_default)
 
         telloApiClient = builder.build()
+        telloApiClient?.setLocality(LANG_TYPE)
     }
 
     /**
@@ -117,10 +112,47 @@ class TelloTalkManager {
             if (telloApiClient == null) {
                 build()
             }
-            telloApiClient?.buildNotification(JSONObject(data))
+            telloApiClient?.onMessageNotificationReceived(HashMap<String, String>(data))
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    /**
+     * Get Department Conversation Object Against Tello Talk Department Tag
+     */
+    fun getDepartmentFromKey(telloTalkKey: String): DepartmentConversations? {
+        val telloTalkTag = Utils.fetchTelloTalkTag(telloTalkKey)
+        if (StringUtils.isEmpty(telloTalkTag)) {
+            getDepartmentFromTag(telloTalkTag)?.let {
+                return it
+            } ?: run {
+                Utils.appToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+                return null
+            }
+        } else {
+            Utils.appToast(DriverApp.getContext().getString(R.string.something_went_wrong))
+            return null
+        }
+    }
+
+    /**
+     * Get Department Conversation Object Against Tello Talk Department Tag
+     */
+    fun getDepartmentFromTag(telloTalkTag: String): DepartmentConversations? {
+        return getDepartments().find { it.department.deptTag.equals(telloTalkTag, ignoreCase = true) }
+    }
+
+    /**
+     * Get Department Conversation List
+     */
+    fun getDepartments(): MutableList<DepartmentConversations> {
+        var departmentConversationsList: MutableList<DepartmentConversations> = ArrayList()
+        if (telloApiClient == null) {
+            build()
+        }
+        telloApiClient?.department?.let { departmentConversationsList = it }
+        return departmentConversationsList
     }
 
     companion object {

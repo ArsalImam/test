@@ -10,6 +10,7 @@ import com.bykea.pk.partner.dal.source.withdraw.WithdrawRepository
 import com.bykea.pk.partner.dal.util.Injection
 import com.bykea.pk.partner.ui.booking.BookingDetailViewModel
 import com.bykea.pk.partner.ui.bykeacash.BykeaCashFormViewModel
+import com.bykea.pk.partner.ui.complain.ComplainDepartmentReasonViewModel
 import com.bykea.pk.partner.ui.complain.ComplaintListViewModel
 import com.bykea.pk.partner.ui.loadboard.detail.JobDetailViewModel
 import com.bykea.pk.partner.ui.loadboard.list.JobListViewModel
@@ -40,6 +41,7 @@ class ViewModelFactory private constructor(private val bookingsRepository: JobsR
                     isAssignableFrom(ListDeliveryDetailsViewModel::class.java) -> ListDeliveryDetailsViewModel()
                     isAssignableFrom(AddEditDeliveryDetailsViewModel::class.java) -> AddEditDeliveryDetailsViewModel()
                     isAssignableFrom(ViewDeliveryDetailViewsModel::class.java) -> ViewDeliveryDetailViewsModel()
+                    isAssignableFrom(ComplainDepartmentReasonViewModel::class.java) -> ComplainDepartmentReasonViewModel()
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }

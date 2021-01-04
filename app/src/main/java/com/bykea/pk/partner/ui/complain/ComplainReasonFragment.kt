@@ -15,6 +15,7 @@ import com.bykea.pk.partner.dal.source.JobsRepository
 import com.bykea.pk.partner.dal.source.remote.data.ComplainReason
 import com.bykea.pk.partner.dal.source.remote.response.ComplainReasonResponse
 import com.bykea.pk.partner.dal.util.Injection
+import com.bykea.pk.partner.dal.util.MESSAGE_TYPE
 import com.bykea.pk.partner.databinding.FragmentComplainReasonBinding
 import com.bykea.pk.partner.ui.helpers.ActivityStackManager
 import com.bykea.pk.partner.ui.helpers.AppPreferences
@@ -53,7 +54,7 @@ class ComplainReasonFragment : Fragment() {
         if (mCurrentActivity?.tripHistoryDate != null) {
             //CREATE TICKET FOR RIDE REASONS
             Dialogs.INSTANCE.showLoader(mCurrentActivity)
-            jobsRepository?.getJobComplainReasons(object : JobsDataSource.ComplainReasonsCallback {
+            jobsRepository?.getJobComplainReasons(MESSAGE_TYPE, object : JobsDataSource.ComplainReasonsCallback {
                 override fun onSuccess(complainReasonResponse: ComplainReasonResponse) {
                     Dialogs.INSTANCE.dismissDialog()
                     rideOrGeneralComplainReasonsList = complainReasonResponse?.data!!
@@ -126,7 +127,7 @@ class ComplainReasonFragment : Fragment() {
             mCurrentActivity?.tripHistoryDate?.let {
                 template = String.format(mCurrentActivity?.getString(R.string.tello_trip_template)!!, it?.tripNo, reason.message)
             }
-            TelloTalkManager.instance().openCorporateChat(activity, template)
+            TelloTalkManager.instance().openCorporateChat(activity, template, null)
         }
     }
 

@@ -62,6 +62,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bykea.pk.partner.utils.Constants.Extras.BOOKING_HISTORY;
 import static com.bykea.pk.partner.utils.Constants.ScreenRedirections.HOME_SCREEN_S;
 
 public class HomeActivity extends BaseActivity {
@@ -120,7 +121,6 @@ public class HomeActivity extends BaseActivity {
         setToolbarLogo();
 
         Utils.setZendeskIdentity();
-
         initViews();
         setupDrawerToggle();
         Utils.unlockScreen(this);
@@ -144,6 +144,21 @@ public class HomeActivity extends BaseActivity {
 
         TelloTalkManager.instance().build();
 
+        checkIntentPerformAccordingly();
+    }
+
+    /**
+     * Check Intent and Perform Accordingly
+     */
+    private void checkIntentPerformAccordingly() {
+        Intent i = getIntent();
+        if (i != null) {
+            if (i.hasExtra(BOOKING_HISTORY)) {
+                if (recyclerViewAdapter != null) {
+                    recyclerViewAdapter.navigateToTripHistories();
+                }
+            }
+        }
     }
 
     @Override
