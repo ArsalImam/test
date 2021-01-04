@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -141,6 +143,7 @@ public class HomeActivity extends BaseActivity {
         Utils.clearSharedPrefIfDirty();
 
         TelloTalkManager.instance().build();
+
         checkIntentPerformAccordingly();
     }
 
@@ -169,6 +172,14 @@ public class HomeActivity extends BaseActivity {
             else {
                 ActivityStackManager.getInstance().startLocationService(mCurrentActivity);
             }
+        } else if (requestCode == Constants.OVERLAY_PERMISSION_REQUEST_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "Overlay permission denied", Toast.LENGTH_LONG).show();
+//                PermissionDenied();
+            } else {
+                // Permission Granted-System will work
+            }
+
         } else if (requestCode == WithdrawalActivity.REQ_CODE_WITH_DRAW) {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.containerView);
             if (currentFragment instanceof WalletFragment) {

@@ -147,6 +147,12 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     private final String TAG = BookingActivity.class.getSimpleName();
 
+    @BindView(R.id.llBatchPickUpInfo)
+    LinearLayout llBatchPickUpInfo;
+    @BindView(R.id.tvBatchPickUpCustomerName)
+    TextView tvBatchPickUpCustomerName;
+    @BindView(R.id.tvBatchPickUpAddress)
+    TextView tvBatchPickUpAddress;
     @BindView(R.id.blueDot)
     ImageView blueDot;
     @BindView(R.id.rLPWalletAmount)
@@ -387,6 +393,15 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
      * and call type is delivery
      */
     private void updateCustomerPickUp() {
+
+        if (Utils.isNewBatchService(callData.getServiceCode())) {
+            llBatchPickUpInfo.setVisibility(View.VISIBLE);
+            tvBatchPickUpCustomerName.setText(callData.getSenderName() == null ? "-" : callData.getSenderName());
+            tvBatchPickUpAddress.setText(callData.getSenderAddress() == null ||
+                    callData.getSenderAddress().equalsIgnoreCase(callData.getStartAddress()) ? "-" : callData.getSenderAddress());
+            ivPickUpCustomerPhone.setTag(Utils.phoneNumberToShow(callData.getSenderPhone()));
+        }
+
         if ((Util.INSTANCE.isBykeaCashJob(callData.getServiceCode())
                 || (Utils.isDeliveryService(callData.getCallType()) && (callData.getServiceCode() != null && callData.getServiceCode() != OFFLINE_DELIVERY)))
                 && (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL) ||
@@ -871,7 +886,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
 
     @OnClick({R.id.cancelBtn, R.id.chatBtn, R.id.jobBtn, R.id.cvLocation, R.id.cvRouteView, R.id.cvDirections, R.id.ivPickUpCustomerPhone,
             R.id.ivAddressEdit, R.id.ivTopUp, R.id.ivCustomerPhone, R.id.tvDetailsBanner, R.id.tvBykeaSupportContactNumber,
-            R.id.imgViewAudioPlay, R.id.progressBarForAudioPlay})
+            R.id.imgViewAudioPlay, R.id.ivBatchPickUpCustomerPhone, R.id.progressBarForAudioPlay})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -888,6 +903,9 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                         if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.IOS) ||
                                 (callData.getServiceCode() != null && callData.getServiceCode() == DISPATCH_RIDE))
                             Utils.sendSms(mCurrentActivity, callData.getPhoneNo());
+                        else if (callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.OPEN_API) ||
+                                callData.getCreator_type().toUpperCase().equalsIgnoreCase(Constants.DISPATCH))
+                            Utils.sendCall(mCurrentActivity, callData.getSenderPhone());
                         else
                             Utils.sendSms(mCurrentActivity, callData.getSenderPhone());
                     }
@@ -905,7 +923,6 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                 }
                 intent1.putExtra("from", Constants.CONFIRM_DROPOFF_REQUEST_CODE);
                 startActivityForResult(intent1, Constants.CONFIRM_DROPOFF_REQUEST_CODE);
-//                startActivityForResult(new Intent(mCurrentActivity, PlacesActivity.class), 49);
                 break;
             case R.id.ivCustomerPhone:
                 if (ivCustomerPhone.getTag() != null) {
@@ -924,6 +941,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     Utils.callingIntent(mCurrentActivity, tvBykeaSupportContactNumber.getText().toString());
                 }
                 break;
+            case R.id.ivBatchPickUpCustomerPhone:
             case R.id.ivPickUpCustomerPhone:
                 if (ivPickUpCustomerPhone.getTag() != null) {
                     String phoneNumber = ivPickUpCustomerPhone.getTag().toString();
@@ -1701,7 +1719,7 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
             updateButtonState();
             updateMarkers(true);
 
-            updateBatchDropOffDetails();
+            if (Utils.isNewBatchService(callData.getServiceCode())) updateBatchDropOffDetails();
         }
     }
 
@@ -1724,8 +1742,14 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
         if (CollectionUtils.isEmpty(callData.getBookingList())) {
             llEndAddress.setVisibility(View.GONE);
         } else {
-            llEndAddress.setVisibility(View.VISIBLE);
-            endAddressTv.setText(callData.getBookingsSummary());
+            if (callData.getStatus() != null) {
+                if (callData.getStatus().equalsIgnoreCase(TripStatus.ON_ACCEPT_CALL)) {
+                    llEndAddress.setVisibility(View.GONE);
+                } else {
+                    llEndAddress.setVisibility(View.VISIBLE);
+                    endAddressTv.setText(callData.getBookingsSummary());
+                }
+            }
         }
     }
 
@@ -2837,6 +2861,8 @@ public class BookingActivity extends BaseActivity implements GoogleApiClient.OnC
                     showEstimatedDistTime();
                     updateDropOff(true);
                     configCountDown();
+                    if (Utils.isNewBatchService(callData.getServiceCode()))
+                        updateBatchDropOffDetails();
                 } else {
                     Dialogs.INSTANCE.showError(mCurrentActivity, jobBtn, message);
                 }

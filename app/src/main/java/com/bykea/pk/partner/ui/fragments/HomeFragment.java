@@ -208,6 +208,8 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
     FontTextView totalScoreTv;
     @BindView(R.id.driverImageView)
     ImageView driverImageView;
+    @BindView(R.id.imageViewDriveCrown)
+    ImageView imageViewDriveCrown;
     @BindView(R.id.muntakhibTvUrdu)
     FontTextView muntakhibTvUrdu;
     @BindView(R.id.authorizedbookingTimeTv)
@@ -267,7 +269,6 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
 
         resetPositionOfMapPinAndSelectedCashView((int) getResources().getDimension(R.dimen._79sdp),
                 (int) getResources().getDimension(R.dimen._110sdp));
-
         return view;
     }
 
@@ -359,6 +360,19 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
      */
     private void setActiveStatusClick() {
         mCurrentActivity.setToolbarLogoBismilla(v -> {
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                    !Settings.canDrawOverlays(getActivity())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Show alert dialog to the user saying a separate permission is needed
+                    // Launch the settings activity if the user prefers
+                    Dialogs.INSTANCE.showNegativeAlertDialog(getActivity(),
+                            getString(R.string.permission_allow_call),
+                            view -> Utils.openAllowOverLayIntent(getActivity()), null);
+                    return;
+                }
+            }
             if (Utils.isGpsEnable()) {
                 if (Connectivity.isConnectedFast(mCurrentActivity)) {
                     if (Utils.isPartnerTemperatureRequired()) {
@@ -407,7 +421,7 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
 
     private void setDriverStatusActive() {
         if (AppPreferences.getAvailableStatus()) {
-            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, getString(R.string.offline_msg_ur), v -> {
+            Dialogs.INSTANCE.showNegativeAlertDialog(mCurrentActivity, DriverApp.getContext().getString(R.string.offline_msg_ur), v -> {
                 Dialogs.INSTANCE.dismissDialog();
                 callAvailableStatusAPI(false);
             }, null);
@@ -640,6 +654,11 @@ public class HomeFragment extends Fragment implements MessageCounterListener {
                 if (StringUtils.isNotBlank(AppPreferences.getPilotData().getPilotImage())) {
                     Utils.loadImgPicasso(driverImageView, R.drawable.profile_pic,
                             Utils.getImageLink(AppPreferences.getPilotData().getPilotImage()));
+                }
+                if (response.getData().getPartnerCategory() != null &&
+                        imageViewDriveCrown != null &&
+                        StringUtils.isNotBlank(response.getData().getPartnerCategory().getCrownUrl())) {
+                    Picasso.get().load(response.getData().getPartnerCategory().getCrownUrl()).into(imageViewDriveCrown);
                 }
                 if (weeklyBookingTv != null)
                     weeklyBookingTv.setText(String.valueOf(response.getData().getDriverBooking()));

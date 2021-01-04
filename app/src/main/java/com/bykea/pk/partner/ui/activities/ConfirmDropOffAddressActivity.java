@@ -167,14 +167,13 @@ public class ConfirmDropOffAddressActivity extends BaseActivity {
                 Utils.redLog("Auto", "Autocomplete item selected: " + primaryText);
                 Utils.redLog("bykea", "Called getPlaceById to get Place details for " + placeId);
                 //TODO: Replace place details call with Geocode call
-                new PlacesRepository().getPlaceDetails(placeId, mCurrentActivity, new PlacesDataHandler() {
+                new PlacesRepository().geoCodeWithPlaceId(placeId, mCurrentActivity, new PlacesDataHandler() {
                     @Override
                     public void onPlaceDetailsResponse(PlaceDetailsResponse response) {
 
                         NearByResults results = response.getResult();
                         if (results != null) {
                             String result = StringUtils.isNotBlank(primaryText) ? primaryText : Utils.formatAddress(results.getFormatted_address());
-//                            mAutocompleteView.setText(result);
                             PlacesResult placesResult = new PlacesResult(result, "",
                                     results.getGeometry().getLocation().getLat(), results.getGeometry().getLocation().getLng());
                             updateDropOff(placesResult);

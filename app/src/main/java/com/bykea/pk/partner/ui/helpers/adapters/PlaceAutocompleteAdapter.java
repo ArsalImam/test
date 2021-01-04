@@ -13,8 +13,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.bykea.pk.partner.models.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.models.data.Predictions;
-import com.bykea.pk.partner.models.response.PlaceAutoCompleteResponse;
 import com.bykea.pk.partner.repositories.places.PlacesDataHandler;
 import com.bykea.pk.partner.repositories.places.PlacesRepository;
 import com.bykea.pk.partner.R;
@@ -113,7 +113,7 @@ public class PlaceAutocompleteAdapter
 
                                             @Override
                                             public void onPlaceAutoCompleteResponse(PlaceAutoCompleteResponse response) {
-                                                ArrayList<Predictions> resultList = response.getPredictions();
+                                                ArrayList<Predictions> resultList = response.getData().getPredictions();
                                                 if (resultList != null) {
                                                     // The API successfully returned results.
                                                     if (resultList.size() > 0) {
