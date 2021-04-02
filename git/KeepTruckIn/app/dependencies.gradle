@@ -1,0 +1,44 @@
+final RetrofitVersion = '2.5.0'
+final OkHttpVersion = '3.12.1'
+
+ext {
+    //Dependencies of Network Libs
+    networkDependencies = [
+            retrofit             : "com.squareup.retrofit2:retrofit:${RetrofitVersion}",
+            retrofitGsonConverter: "com.squareup.retrofit2:converter-gson:${RetrofitVersion}",
+            okHttp3Logging       : "com.squareup.okhttp3:logging-interceptor:${OkHttpVersion}",
+            picasso              : "com.squareup.picasso:picasso:2.71828"
+    ]
+    //Dependencies of Misc Libs
+    miscDependencies = [
+            commonLang      : "commons-lang:commons-lang:2.6",
+            commonCollection: "org.apache.commons:commons-collections4:4.0",
+            intuit          : "com.intuit.sdp:sdp-android:1.0.6",
+            transformation  : "jp.wasabeef:picasso-transformations:2.2.1"
+    ]
+
+    //Dependencies of Android Support Libs
+    supportDependencies = [
+            appCompat       : "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion",
+            customTabs      : "androidx.browser:browser:1.0.0",
+            design          : "com.google.android.material:material:1.1.0",
+            support         : "androidx.legacy:legacy-support-v4:1.0.0",
+            recyclerView    : "androidx.recyclerview:recyclerview:1.1.0",
+            constraintLayout: "androidx.constraintlayout:constraintlayout:1.1.3",
+            multidex        : "androidx.multidex:multidex:2.0.0",
+            lifecycle       : "androidx.lifecycle:lifecycle-extensions:2.0.0"
+    ]
+
+    //Dependencies of DI Libs
+    supportDependencies = [
+            androidxHilt    : "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha01",
+            dagger          : "com.google.dagger:hilt-android:2.28-alpha",
+            fragmentKtx     : "androidx.fragment:fragment-ktx:1.2.4",
+            design          : "com.google.android.material:material:1.1.0",
+            support         : "androidx.legacy:legacy-support-v4:1.0.0",
+            recyclerView    : "androidx.recyclerview:recyclerview:1.1.0",
+            constraintLayout: "androidx.constraintlayout:constraintlayout:1.1.3",
+            multidex        : "androidx.multidex:multidex:2.0.0",
+            lifecycle       : "androidx.lifecycle:lifecycle-extensions:2.0.0"
+    ]
+}

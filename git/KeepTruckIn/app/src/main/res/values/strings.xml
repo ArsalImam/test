@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">KeepTruckIn</string>
+    <string name="in_future">in the future</string>
+    <string name="moments_ago">moments ago</string>
+    <string name="minutes_ago">minutes ago</string>
+    <string name="hours_ago">an hour ago</string>
+    <string name="a_minutes_ago">a minute ago</string>
+    <string name="a_hours_ago">hours ago</string>
+    <string name="yesterday">yesterday</string>
+    <string name="days_ago">days ago</string>
+    <string name="title_city_search">Search</string>
+    <string name="hint_city_search">Search cities</string>
+    <string name="text_search">Search</string>
+</resources>
